@@ -13,7 +13,6 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { ModeOfOperation } from './constants'
 import { DepositWithdrawHeader } from './DepositWithdrawHeader'
 import useBreakPoint from '@/hooks/useBreakPoint'
-//import useBoolean from '@/hooks/useBoolean'
 import GammaActionModal from '@/pages/FarmV4/GammaActionModal'
 import GammaActionModalContentStack from '@/pages/FarmV4/GammaActionModalContentStack'
 import useTransaction from '@/hooks/useTransaction'
@@ -30,7 +29,6 @@ import BigNumber from 'bignumber.js'
 import { withdrawBigStringFarm } from '@/utils/misc'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { bigNumberFormatter } from '@/utils'
-//import useSolSub from '@/hooks/useSolSub'
 import { blob, struct, publicKey as pbk, u128, u8, u64, u32 } from '@/utils/marshmallow'
 
 export const DepositWithdrawSlider: FC = () => {
@@ -51,8 +49,6 @@ export const DepositWithdrawSlider: FC = () => {
     setSendingTransaction,
     selectedCardLiquidityAcc,
     setSelectedCardLiquidityAcc
-    //liveBalanceTracking,
-    //connectionId
   } = useGamma()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [userSourceTokenBal, setUserSourceTokenBal] = useState<number>()
@@ -63,15 +59,12 @@ export const DepositWithdrawSlider: FC = () => {
   const [userTargetWithdrawAmount, setUserTargetWithdrawAmount] = useState<string>('')
   const [transactionLPAmount, setTransactionLPAmount] = useState<BN>()
   //const [isButtonLoading, setIsButtonLoading] = useBoolean()
-  const [actionType, setActionType] = useState<string>('')
   //const [isClaim, setIsClaim] = useBoolean(false)
+  const [actionType, setActionType] = useState<string>('')
   const isDeposit = useMemo(() => modeOfOperation === ModeOfOperation.DEPOSIT, [modeOfOperation])
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
   const { balance } = useWalletBalance()
-  //const { off } = useSolSub()
-  //const [isOpenSubscription, setIsOpenDubscription] = useState<boolean>(false)
-  //const [subscriptionId, setSubscriptionId] = useState<number>()
   const [updatedPoolState, setUpdatedPoolState] = useState<any>({})
   const [withdrawableBalanceA, setWithdrawableBalanceA] = useState<BN>(new BN(0))
   const [withdrawableBalanceB, setWithdrawableBalanceB] = useState<BN>(new BN(0))
@@ -149,7 +142,6 @@ export const DepositWithdrawSlider: FC = () => {
             setSelectedCardLiquidityAcc(updatedLiqAcc)
             connection.removeAccountChangeListener(id)
           })
-          //setSubscriptionId(id)
         } catch (e) {
           console.log('Error in getting the updated liquidity account on account change', e)
         }
@@ -157,19 +149,21 @@ export const DepositWithdrawSlider: FC = () => {
           const poolIdKey = await getpoolId(selectedCard)
           const id = connection.onAccountChange(poolIdKey, async (info) => {
             const decodedAccount = POOL_STATE_LAYOUT.decode(info.data)
-            const updatedLiqAcc = {
+            const updatedPoolData = {
+              ...selectedCardPool,
               lpSupply: decodedAccount.lp_supply,
               protocolFeesToken0: decodedAccount.protocol_fees_token_0,
               protocolFeesToken1: decodedAccount.protocol_fees_token_1,
               fundFeesToken0: decodedAccount.fund_fees_token_0,
               fundFeesToken1: decodedAccount.fund_fees_token_1,
               token0Vault: decodedAccount.token_0_vault,
-              token1Vault: decodedAccount.token_1_vault
+              token1Vault: decodedAccount.token_1_vault,
+              mint0Decimals: selectedCardPool?.mint0Decimals,
+              mint1Decimals: selectedCardPool?.mint1Decimals
             }
-            setUpdatedPoolState(updatedLiqAcc)
+            setUpdatedPoolState(updatedPoolData)
             connection.removeAccountChangeListener(id)
           })
-          //setSubscriptionId(id)
         } catch (e) {
           console.log('Error in getting the updated pool state account on account change', e)
         }
@@ -201,33 +195,33 @@ export const DepositWithdrawSlider: FC = () => {
     })()
   }, [selectedCardLiquidityAcc, selectedCardPool, updatedPoolState])
 
-  console.log('selectedCardLiquidityAcc', 
-    selectedCardLiquidityAcc?.lpTokensOwned?.toNumber(),
-    selectedCardLiquidityAcc?.token0Deposited?.toNumber(),
-    selectedCardLiquidityAcc?.token0Withdrawn?.toNumber(),
-    selectedCardLiquidityAcc?.token1Deposited?.toNumber(),
-    selectedCardLiquidityAcc?.token1Withdrawn?.toNumber()
-  )
+  // console.log('selectedCardLiquidityAcc', 
+  //   selectedCardLiquidityAcc?.lpTokensOwned?.toNumber(),
+  //   selectedCardLiquidityAcc?.token0Deposited?.toNumber(),
+  //   selectedCardLiquidityAcc?.token0Withdrawn?.toNumber(),
+  //   selectedCardLiquidityAcc?.token1Deposited?.toNumber(),
+  //   selectedCardLiquidityAcc?.token1Withdrawn?.toNumber()
+  // )
 
-  console.log('poolState',
-    selectedCardPool?.lpSupply?.toNumber(),
-    selectedCardPool?.token0Vault?.toBase58(),
-    selectedCardPool?.token1Vault?.toBase58(),
-    selectedCardPool?.protocolFeesToken0?.toNumber(),
-    selectedCardPool?.protocolFeesToken0?.toNumber(),
-    selectedCardPool?.fundFeesToken0?.toNumber(),
-    selectedCardPool?.fundFeesToken1?.toNumber()
-  )
+  // console.log('poolState',
+  //   selectedCardPool?.lpSupply?.toNumber(),
+  //   selectedCardPool?.token0Vault?.toBase58(),
+  //   selectedCardPool?.token1Vault?.toBase58(),
+  //   selectedCardPool?.protocolFeesToken0?.toNumber(),
+  //   selectedCardPool?.protocolFeesToken0?.toNumber(),
+  //   selectedCardPool?.fundFeesToken0?.toNumber(),
+  //   selectedCardPool?.fundFeesToken1?.toNumber()
+  // )
 
-  console.log('updatedPoolstate',
-    updatedPoolState?.lpSupply?.toNumber(),
-    updatedPoolState?.token0Vault?.toBase58(),
-    updatedPoolState?.token1Vault?.toBase58(),
-    updatedPoolState?.protocolFeesToken0?.toNumber(),
-    updatedPoolState?.protocolFeesToken0?.toNumber(),
-    updatedPoolState?.fundFeesToken0?.toNumber(),
-    updatedPoolState?.fundFeesToken1?.toNumber()
-  )
+  // console.log('updatedPoolstate',
+  //   updatedPoolState?.lpSupply?.toNumber(),
+  //   updatedPoolState?.token0Vault?.toBase58(),
+  //   updatedPoolState?.token1Vault?.toBase58(),
+  //   updatedPoolState?.protocolFeesToken0?.toNumber(),
+  //   updatedPoolState?.protocolFeesToken0?.toNumber(),
+  //   updatedPoolState?.fundFeesToken0?.toNumber(),
+  //   updatedPoolState?.fundFeesToken1?.toNumber()
+  // )
 
   //eslint-disable-next-line
   useEffect(() => {

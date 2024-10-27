@@ -226,58 +226,67 @@ export const calculateOtherTokenAndLPAmount = async (
     poolState: any,
     connection: Connection
 ): Promise<{ lpTokenAmount: BN, otherTokenAmountInString: string }> => {
-    try{
-        console.log('###############',
-            poolState?.lpSupply?.toNumber(),
-            poolState?.token0Vault?.toBase58(),
-            poolState?.token1Vault?.toBase58(),
-            poolState?.protocolFeesToken0?.toNumber(),
-            poolState?.protocolFeesToken0?.toNumber(),
-            poolState?.fundFeesToken0?.toNumber(),
-            poolState?.fundFeesToken1?.toNumber()
-          )
+    try {
         if (!givenTokenAmount || +givenTokenAmount <= 0) {
             return { lpTokenAmount: new BN(0), otherTokenAmountInString: '' }
         }
-        let lpTokenAmount: BN;
-        let otherTokenAmountInString: string;
-    
         const tokenAccountInfo0 = await connection.getParsedAccountInfo(poolState?.token0Vault)
         const amount0 = (tokenAccountInfo0?.value?.data as any).parsed?.info?.tokenAmount?.amount
         const protocolFees0 = poolState?.protocolFeesToken0
         const fundFees0 = poolState?.fundFeesToken0
         const swapTokenAmount0 = new BN(amount0)?.sub(protocolFees0?.add(fundFees0))
-    
+
         const tokenAccountInfo1 = await connection.getParsedAccountInfo(poolState?.token1Vault)
         const amount1 = (tokenAccountInfo1?.value?.data as any).parsed?.info?.tokenAmount?.amount
         const protocolFees1 = poolState?.protocolFeesToken1
         const fundFees1 = poolState?.fundFeesToken1
         const swapTokenAmount1 = new BN(amount1)?.sub(protocolFees1?.add(fundFees1))
-    
+
         const lpTokenSupply = poolState?.lpSupply
-    
+        let lpTokenAmount: BN
+        let otherTokenAmountInString: string
+
         if (tokenType === TokenType.Token0) {
             const inputToken0 = convertToNativeValue(givenTokenAmount, poolState?.mint0Decimals)
-            lpTokenAmount = new BN(inputToken0)?.mul(lpTokenSupply)
-            if (lpTokenAmount.eq(new BN(0))) lpTokenAmount = new BN(0) //to prevent divide by zero erro
-            else lpTokenAmount = new BN(inputToken0)?.mul(lpTokenSupply)?.div(swapTokenAmount0)
-            let otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount1)
-            if (otherTokenAmount.eq(new BN(0))) otherTokenAmount = new BN(0) //to prevent divide by zero error 
-            else otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount1)?.div(lpTokenSupply)
+
+            //console.log('inputToken0', inputToken0)
+            if (swapTokenAmount0.eq(new BN(0))) {
+                lpTokenAmount = new BN(0)
+            } else {
+                lpTokenAmount = new BN(inputToken0).mul(lpTokenSupply).div(swapTokenAmount0)
+            }
+            //console.log('lpTokenAmount 0', lpTokenAmount?.toNumber(), swapTokenAmount0?.toNumber(), 
+            //lpTokenSupply?.toNumber())
+
+            let otherTokenAmount: BN;
+            if (lpTokenSupply.eq(new BN(0))) {
+                otherTokenAmount = new BN(0)
+            } else {
+                otherTokenAmount = lpTokenAmount.mul(swapTokenAmount1).div(lpTokenSupply)
+            }
             otherTokenAmountInString = withdrawBigStringFarm(otherTokenAmount?.toString(), poolState?.mint1Decimals)
         } else {
             const inputToken1 = convertToNativeValue(givenTokenAmount, poolState?.mint1Decimals)
-            lpTokenAmount = new BN(inputToken1)?.mul(lpTokenSupply)
-            if (lpTokenAmount.eq(new BN(0))) lpTokenAmount = new BN(0) //to prevent divide by zero error
-            else lpTokenAmount = new BN(inputToken1)?.mul(lpTokenSupply)?.div(swapTokenAmount1)
-            let otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount0)
-            if (otherTokenAmount.eq(new BN(0))) otherTokenAmount = new BN(0) //to prevent divide by zero error       
-            else otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount0)?.div(lpTokenSupply)
+            //console.log('inputToken1', inputToken1)
+            if (swapTokenAmount1.eq(new BN(0))) {
+                lpTokenAmount = new BN(0)
+            } else {
+                lpTokenAmount = new BN(inputToken1).mul(lpTokenSupply).div(swapTokenAmount1)
+            }
+            //console.log('lpTokenAmount 1', lpTokenAmount?.toNumber())
+
+            let otherTokenAmount: BN;
+            if (lpTokenSupply.eq(new BN(0))) {
+                otherTokenAmount = new BN(0)
+            } else {
+                otherTokenAmount = lpTokenAmount.mul(swapTokenAmount0).div(lpTokenSupply)
+            }
             otherTokenAmountInString = withdrawBigStringFarm(otherTokenAmount?.toString(), poolState?.mint0Decimals)
         }
         return { lpTokenAmount, otherTokenAmountInString }
-    } catch(e) {
+    } catch (e) {
         console.log('Error while fetching lptoken amount & othertoken amount for depositing', e)
+        return { lpTokenAmount: new BN(0), otherTokenAmountInString: '' }
     }
 }
 
@@ -286,15 +295,15 @@ export const lpTokensToTradingTokens = async (
     poolState: any,
     connection: Connection
 ): Promise<{ tokenAmount0: BN; tokenAmount1: BN }> => {
-    console.log('**********',
-        poolState?.lpSupply?.toNumber(),
-        poolState?.token0Vault?.toBase58(),
-        poolState?.token1Vault?.toBase58(),
-        poolState?.protocolFeesToken0?.toNumber(),
-        poolState?.protocolFeesToken0?.toNumber(),
-        poolState?.fundFeesToken0?.toNumber(),
-        poolState?.fundFeesToken1?.toNumber()
-      )
+    // console.log('**********',
+    //     poolState?.lpSupply?.toNumber(),
+    //     poolState?.token0Vault?.toBase58(),
+    //     poolState?.token1Vault?.toBase58(),
+    //     poolState?.protocolFeesToken0?.toNumber(),
+    //     poolState?.protocolFeesToken0?.toNumber(),
+    //     poolState?.fundFeesToken0?.toNumber(),
+    //     poolState?.fundFeesToken1?.toNumber()
+    // )
     try {
         const tokenAccountInfo0 = await connection.getParsedAccountInfo(poolState?.token0Vault)
         const amount0 = (tokenAccountInfo0?.value?.data as any).parsed?.info?.tokenAmount?.amount
@@ -324,12 +333,12 @@ export const lpTokensToTradingTokens = async (
 
         const tokenAmount0 = lpTokenAmount.mul(swapTokenAmount0).div(lpTokenSupply)
         const tokenAmount1 = lpTokenAmount.mul(swapTokenAmount1).div(lpTokenSupply)
-        
+
         return { tokenAmount0, tokenAmount1 }
 
     } catch (e) {
         console.log('Error while fetching token amounts for withdrawing', e)
-        return { tokenAmount0: new BN(0), tokenAmount1: new BN(0)}
+        return { tokenAmount0: new BN(0), tokenAmount1: new BN(0) }
     }
 }
 
@@ -356,13 +365,13 @@ export const deposit = async (
             program
         )
     }
-    console.log('user deposits', userSourceDepositAmount, userTargetDepositAmount)
+    //console.log('user deposits', userSourceDepositAmount, userTargetDepositAmount)
     const token0SlippageAmount = handleSlippageCalculation(userSourceDepositAmount, slippage, true)
     const token1SlippageAmount = handleSlippageCalculation(userTargetDepositAmount, slippage, true)
-    console.log('user deposits with slippage', token0SlippageAmount, token1SlippageAmount)
+    //console.log('user deposits with slippage', token0SlippageAmount, token1SlippageAmount)
     const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.mintA?.decimals)
     const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.mintB?.decimals)
-    console.log('user deposits of native value', token0Amount, token1Amount)
+    //console.log('user deposits of native value', token0Amount, token1Amount, lpAmount?.toNumber())
     const depositIX: TransactionInstruction = await program.instruction.deposit(
         lpAmount,
         new BN(token0Amount),
