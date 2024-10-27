@@ -407,16 +407,16 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [GammaProgram, selectedCard])
 
-  console.log("POOL KA STATE",
-    selectedCardPool,
-    selectedCardPool?.lpSupply?.toNumber(),
-    selectedCardPool?.token0Vault?.toBase58(),
-    selectedCardPool?.token1Vault?.toBase58(),
-    selectedCardPool?.protocolFeesToken0?.toNumber(),
-    selectedCardPool?.protocolFeesToken1?.toNumber(),
-    selectedCardPool?.fundFeesToken0?.toNumber(),
-    selectedCardPool?.fundFeesToken1?.toNumber()
-  )
+  // console.log("POOL INIT",
+  //   selectedCardPool,
+  //   selectedCardPool?.lpSupply?.toNumber(),
+  //   selectedCardPool?.token0Vault?.toBase58(),
+  //   selectedCardPool?.token1Vault?.toBase58(),
+  //   selectedCardPool?.protocolFeesToken0?.toNumber(),
+  //   selectedCardPool?.protocolFeesToken1?.toNumber(),
+  //   selectedCardPool?.fundFeesToken0?.toNumber(),
+  //   selectedCardPool?.fundFeesToken1?.toNumber()
+  // )
 
   useEffect(() => {
     ;(async () => {

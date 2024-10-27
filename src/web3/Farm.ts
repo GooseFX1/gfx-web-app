@@ -138,7 +138,7 @@ const createLiquidityAccountIX = async (
     const createLiquidityIX: TransactionInstruction = await program.instruction.initUserPoolLiquidity({
         accounts: createLiquidityInstructionAccount
     })
-    console.log('createLiquidityIX', createLiquidityIX, userPublicKey?.toBase58())
+    //console.log('createLiquidityIX', createLiquidityIX, userPublicKey?.toBase58())
     return createLiquidityIX
 }
 
@@ -390,20 +390,20 @@ export const deposit = async (
         depositAmountTX.add(liquidityAccIX)
     }
     depositAmountTX.add(depositIX)
-    console.log('depositAmountTX', depositAmountTX)
+    //console.log('depositAmountTX', depositAmountTX)
     if (selectedCard?.mintA?.symbol === 'SOL') {
         const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintA?.address), userPublicKey)
         const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
-        console.log('mint a is SOL', selectedCard?.mintA?.symbol, ataAddress, depositAmountTX)
+        //console.log('mint a is SOL', selectedCard?.mintA?.symbol, ataAddress, depositAmountTX)
         depositAmountTX.add(tr)
     }
     if (selectedCard?.mintB?.symbol === 'SOL') {
         const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintB?.address), userPublicKey)
         const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
-        console.log('mint b is SOL', selectedCard?.mintB?.symbol, ataAddress, depositAmountTX)
+        //console.log('mint b is SOL', selectedCard?.mintB?.symbol, ataAddress, depositAmountTX)
         depositAmountTX.add(tr)
     }
-    console.log("FINAL TX FOR DEPOSIT: ", depositAmountTX)
+    //console.log("FINAL TX FOR DEPOSIT: ", depositAmountTX)
     return depositAmountTX
 }
 
@@ -453,16 +453,16 @@ export const withdraw = async (
     if (selectedCard?.mintA?.symbol === 'SOL') {
         const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintA?.address), userPublicKey)
         const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
-        console.log('mint a is SOL', selectedCard?.mintA?.symbol, ataAddress)
+        //console.log('mint a is SOL', selectedCard?.mintA?.symbol, ataAddress)
         withdrawAmountTX.add(tr)
     }
     if (selectedCard?.mintB?.symbol === 'SOL') {
         const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintB?.address), userPublicKey)
         const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
-        console.log('mint b is SOL', selectedCard?.mintB?.symbol, ataAddress)
+        //console.log('mint b is SOL', selectedCard?.mintB?.symbol, ataAddress)
         withdrawAmountTX.add(tr)
     }
-    console.log("FINAL TX FOR WITHDRAW: ", withdrawAmountTX)
+    //console.log("FINAL TX FOR WITHDRAW: ", withdrawAmountTX)
     return withdrawAmountTX
 }
 
@@ -552,7 +552,7 @@ const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, 
             }),
             createSyncNativeInstruction(associatedTokenAccount)
         )
-        console.log("nativeAmount", nativeAmount, tx)
+        //console.log("nativeAmount", nativeAmount, tx)
         return tx
     } catch (e) {
         console.log('There was an error while wrapping sol to wsol', e)
