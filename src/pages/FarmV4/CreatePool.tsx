@@ -20,7 +20,7 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import { createPool } from '@/web3/Farm'
-import { useAccounts, useGamma, usePriceFeedFarm } from '@/context'
+import { useAccounts, useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
 import useTransaction from '@/hooks/useTransaction'
 import { notifyUsingPromiseForCreatePool } from '@/utils/perpsNotifications'
 
@@ -46,6 +46,7 @@ export const CreatePool: FC<{
   const { getUIAmount } = useAccounts()
   const walletTokenA = useMemo(() => tokenA ? getUIAmount(tokenA?.address).toFixed(2) : '0.00', [tokenA, userPublicKey])
   const walletTokenB = useMemo(() => tokenB ? getUIAmount(tokenB?.address).toFixed(2) : '0.00', [tokenB, userPublicKey])
+  const { connection } = useConnectionConfig()
 
   const settings = {
     dots: false,
@@ -74,7 +75,7 @@ export const CreatePool: FC<{
     else {
       try {
         const txBuilder = createTransactionBuilder()
-        const tx = await createPool(tokenA, tokenB, amountTokenA, amountTokenB, userPublicKey, GammaProgram)
+        const tx = await createPool(tokenA, tokenB, amountTokenA, amountTokenB, userPublicKey, GammaProgram, connection)
         txBuilder.add(tx)
         setSendingTransaction(true)
         const { success } = await sendTransaction(txBuilder, null, notifyUsingPromiseForCreatePool)
@@ -84,7 +85,7 @@ export const CreatePool: FC<{
           setTokenB(null)
           setAmountTokenA('')
           setAmountTokenB('')
-          slider.current.slickGoTo(0)
+          slider.current.slickGoTo(1)
           return
         } else {
           setIsConfettiVisible(true)
