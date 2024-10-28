@@ -3,8 +3,15 @@ import { useGamma } from '@/context'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'gfx-component-lib'
 import { PoolStats } from './PoolStats'
 import { MyPositionStats } from '@/pages/FarmV4/MyPositionStats'
+import BN from 'bn.js'
 
-const DepositWithdrawAccordion: FC = (): ReactElement => {
+const DepositWithdrawAccordion: FC<{
+  withdrawableBalanceA: BN
+  withdrawableBalanceB: BN
+}> = ({
+  withdrawableBalanceA,
+  withdrawableBalanceB
+}): ReactElement => {
   const { selectedCard } = useGamma()
   return (
     <Accordion
@@ -12,7 +19,7 @@ const DepositWithdrawAccordion: FC = (): ReactElement => {
       type={'multiple'}
       variant="default"
       className="dark:bg-black-1 bg-grey-5 mx-2.5 my-3 !rounded-[4px]"
-      defaultValue={['lp-stats']}
+      defaultValue={selectedCard?.hasDeposit ? ['lp-stats'] : ['pool-stats']}
     >
       {selectedCard?.hasDeposit ? (
         <AccordionItem value="lp-stats">
@@ -20,7 +27,7 @@ const DepositWithdrawAccordion: FC = (): ReactElement => {
             <h4>My Position</h4>
           </AccordionTrigger>
           <AccordionContent>
-            <MyPositionStats />
+            <MyPositionStats withdrawableBalanceA={withdrawableBalanceA} withdrawableBalanceB={withdrawableBalanceB} />
           </AccordionContent>
         </AccordionItem>
       ) : null}

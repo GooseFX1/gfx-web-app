@@ -245,9 +245,9 @@ export const DepositWithdrawSlider: FC = () => {
     setSelectedCard({})
     setSelectedCardPool({})
     setSelectedCardLiquidityAcc({})
+    setUpdatedPoolState({})
     setModeOfOperation(ModeOfOperation?.DEPOSIT)
     setOpenDepositWithdrawSlider(false)
-    setUpdatedPoolState({})
   }
 
   const handleInputChange = async (input: string, sourceToken: boolean) => {
@@ -324,10 +324,21 @@ export const DepositWithdrawSlider: FC = () => {
     if (isDeposit && (!userSourceTokenBal && !userTargetTokenBal)) return `Insufficient Tokens`
     else if (isDeposit && !userSourceTokenBal) return `Insufficient ${selectedCard?.mintA?.symbol}`
     else if (isDeposit && !userTargetTokenBal) return `Insufficient ${selectedCard?.mintB?.symbol}`
+    else if (isDeposit && 
+      (+userSourceDepositAmount > userSourceTokenBal || +userTargetDepositAmount > userTargetTokenBal)) 
+        return `Insufficient funds!`
     else if (isDeposit && (!userSourceDepositAmount || new BigNumber(userSourceDepositAmount)?.isZero()
       || !userTargetDepositAmount || new BigNumber(userTargetDepositAmount)?.isZero())) return `Enter Amounts`
     else if (!isDeposit && (!userSourceWithdrawAmount || new BigNumber(userSourceWithdrawAmount)?.isZero()
       || !userTargetWithdrawAmount || new BigNumber(userTargetWithdrawAmount)?.isZero())) return `Enter Amounts`
+    else if (!isDeposit &&
+      (new BigNumber(userSourceWithdrawAmount)?.
+        isGreaterThan(new BigNumber(withdrawBigStringFarm(withdrawableBalanceA?.toString(),
+          selectedCardPool?.mint0Decimals))) ||
+        new BigNumber(userTargetWithdrawAmount)?.
+          isGreaterThan(new BigNumber(withdrawBigStringFarm(withdrawableBalanceB?.toString(),
+            selectedCardPool?.mint1Decimals)))))
+      return `Insufficient funds!`
     else if (isDeposit) return `Deposit`
     else return `Withdraw`
   }, [selectedCard, userSourceTokenBal, userTargetTokenBal, userTargetWithdrawAmount,
@@ -340,8 +351,9 @@ export const DepositWithdrawSlider: FC = () => {
       || !userTargetDepositAmount || new BigNumber(userTargetDepositAmount)?.isZero())) return true
     else if (!isDeposit && (!userSourceWithdrawAmount || new BigNumber(userSourceWithdrawAmount)?.isZero()
       || !userTargetWithdrawAmount || new BigNumber(userTargetWithdrawAmount)?.isZero())) return true
-    else if (isDeposit && (new BigNumber(userSourceDepositAmount)?.isGreaterThan(new BigNumber(userSourceTokenBal))
-      || new BigNumber(userTargetDepositAmount)?.isGreaterThan(new BigNumber(userTargetTokenBal)))) return true
+    else if (isDeposit && 
+      (+userSourceDepositAmount > userSourceTokenBal || +userTargetDepositAmount > userTargetTokenBal))
+        return true
     else if (!isDeposit &&
       (new BigNumber(userSourceWithdrawAmount)?.
         isGreaterThan(new BigNumber(withdrawBigStringFarm(withdrawableBalanceA?.toString(),
@@ -615,14 +627,16 @@ export const DepositWithdrawSlider: FC = () => {
               setUserTargetDepositAmount={setUserTargetDepositAmount}
               setUserTargetWithdrawAmount={setUserTargetWithdrawAmount}
             />
-            <DepositWithdrawAccordion />
+            <DepositWithdrawAccordion 
+              withdrawableBalanceA={withdrawableBalanceA} 
+              withdrawableBalanceB={withdrawableBalanceB} 
+            />
             <DepositWithdrawLabel text={'1. Enter Amounts'} />
             <TokenRow
               isMintA={true}
               token={selectedCard?.mintA}
               balance={userSourceTokenBal}
               isDeposit={isDeposit}
-              withdrawableBalanceA={withdrawableBalanceA}
             />
             <DepositWithdrawInput
               isDeposit={isDeposit}
@@ -631,14 +645,13 @@ export const DepositWithdrawSlider: FC = () => {
               withdrawAmount={userSourceWithdrawAmount}
               handleHalf={() => handleHalf(true)}
               handleMax={() => handleMax(true)}
-              disabled={isDeposit && userSourceTokenBal <= 0}
+              disabled={isDeposit ? userSourceTokenBal <= 0 : withdrawableBalanceA?.lte(new BN(0))}
             />
             <TokenRow
               isMintA={false}
               token={selectedCard?.mintB}
               balance={userTargetTokenBal}
               isDeposit={isDeposit}
-              withdrawableBalanceB={withdrawableBalanceB}
             />
             <DepositWithdrawInput
               isDeposit={isDeposit}
@@ -647,7 +660,7 @@ export const DepositWithdrawSlider: FC = () => {
               withdrawAmount={userTargetWithdrawAmount}
               handleHalf={() => handleHalf(false)}
               handleMax={() => handleMax(false)}
-              disabled={isDeposit && userTargetTokenBal <= 0}
+              disabled={isDeposit ? userTargetTokenBal <= 0 : withdrawableBalanceB?.lte(new BN(0))}
             />
             <ReviewConfirm
               tokenAActionValue={isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount}

@@ -1,30 +1,23 @@
 import { FC, ReactElement, useMemo } from 'react'
-import { useDarkMode, useGamma } from '@/context'
+import { useDarkMode } from '@/context'
 import { Badge, cn, Icon } from 'gfx-component-lib'
-import { loadIconImage, truncateAddress, truncateBigNumber, truncateBigString } from '@/utils'
+import { loadIconImage, truncateAddress, truncateBigNumber } from '@/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GAMMAToken } from '@/types/gamma'
-import BN from 'bn.js'
 
 export const TokenRow: FC<{
   isMintA: boolean
   token: GAMMAToken
   balance: number
   isDeposit: boolean
-  withdrawableBalanceA?: BN
-  withdrawableBalanceB?: BN
 }> =
-  ({ isMintA,
-    token,
+  ({ token,
     balance,
-    isDeposit,
-    withdrawableBalanceA,
-    withdrawableBalanceB
+    isDeposit
   }): ReactElement => {
     const { mode } = useDarkMode()
     const { wallet } = useWallet()
     const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
-    const { selectedCardPool } = useGamma()
 
     const getWalletIcon = () =>
       (userPublicKey && balance > 0) ?
@@ -58,19 +51,14 @@ export const TokenRow: FC<{
             </a>
           </div>
         </div>
-        {isDeposit && <div className={'flex flex-row items-center'}>
-          {isDeposit && (<Icon src={getWalletIcon()} size="sm" />)}
+        {isDeposit && <div className='flex flex-row items-center'>
+          <Icon src={getWalletIcon()} size='sm' />
           <div
             className={cn(
               'ml-1.5 text-regular font-semibold dark:text-grey-8 text-black-4',
               userPublicKey && balance > 0 ? 'opacity-100' : 'opacity-50'
-            )}
-          >
-            {isDeposit ?
-              truncateBigNumber(balance) : isMintA ? truncateBigString(withdrawableBalanceA?.toString(),
-              selectedCardPool?.mint0Decimals) : truncateBigString(withdrawableBalanceB?.toString(),
-              selectedCardPool?.mint1Decimals)}
-            {!isDeposit && ' in pool'}
+            )}>
+            {truncateBigNumber(balance)}
           </div>
         </div>}
       </div>

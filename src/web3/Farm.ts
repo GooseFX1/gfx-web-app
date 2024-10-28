@@ -295,15 +295,6 @@ export const lpTokensToTradingTokens = async (
     poolState: any,
     connection: Connection
 ): Promise<{ tokenAmount0: BN; tokenAmount1: BN }> => {
-    // console.log('**********',
-    //     poolState?.lpSupply?.toNumber(),
-    //     poolState?.token0Vault?.toBase58(),
-    //     poolState?.token1Vault?.toBase58(),
-    //     poolState?.protocolFeesToken0?.toNumber(),
-    //     poolState?.protocolFeesToken0?.toNumber(),
-    //     poolState?.fundFeesToken0?.toNumber(),
-    //     poolState?.fundFeesToken1?.toNumber()
-    // )
     try {
         const tokenAccountInfo0 = await connection.getParsedAccountInfo(poolState?.token0Vault)
         const amount0 = (tokenAccountInfo0?.value?.data as any).parsed?.info?.tokenAmount?.amount
@@ -311,29 +302,25 @@ export const lpTokensToTradingTokens = async (
         const fundFees0 = poolState?.fundFeesToken0
         const swapTokenAmount0 = new BN(amount0)?.sub(protocolFees0?.add(fundFees0))
 
-        // console.log('amount0', amount0)
-        // console.log('protocolFees0', protocolFees0?.toNumber())
-        // console.log('fundFees0', fundFees0?.toNumber())
-        // console.log('swapTokenAmount0', swapTokenAmount0?.toNumber())
-
         const tokenAccountInfo1 = await connection.getParsedAccountInfo(poolState?.token1Vault)
         const amount1 = (tokenAccountInfo1?.value?.data as any).parsed?.info?.tokenAmount?.amount
         const protocolFees1 = poolState?.protocolFeesToken1
         const fundFees1 = poolState?.fundFeesToken1
         const swapTokenAmount1 = new BN(amount1)?.sub(protocolFees1?.add(fundFees1))
 
-        // console.log('amount1', amount1)
-        // console.log('protocolFees1', protocolFees1?.toNumber())
-        // console.log('fundFees1', fundFees1?.toNumber())
-        // console.log('swapTokenAmount1', swapTokenAmount1?.toNumber())
-
         const lpTokenSupply = poolState?.lpSupply
 
-        //console.log('lpTokenSupply', lpTokenSupply?.toNumber())
+        let tokenAmount0: BN
+        let tokenAmount1: BN
 
-        const tokenAmount0 = lpTokenAmount.mul(swapTokenAmount0).div(lpTokenSupply)
-        const tokenAmount1 = lpTokenAmount.mul(swapTokenAmount1).div(lpTokenSupply)
-
+        if(lpTokenSupply.eq(new BN(0))) {
+            tokenAmount0 = new BN(0)
+            tokenAmount1 = new BN(0)
+        } else {
+            tokenAmount0 = lpTokenAmount.mul(swapTokenAmount0).div(lpTokenSupply)
+            tokenAmount1 = lpTokenAmount.mul(swapTokenAmount1).div(lpTokenSupply)
+        }
+        
         return { tokenAmount0, tokenAmount1 }
 
     } catch (e) {
@@ -473,7 +460,8 @@ export const createPool = async (
     amountTokenA: string,
     amountTokenB: string,
     userPubKey: PublicKey,
-    program: Program
+    program: Program,
+    connection: Connection
 ) => {
     let token0 = new PublicKey(tokenA?.address)
     let token1 = new PublicKey(tokenB?.address)
@@ -481,6 +469,8 @@ export const createPool = async (
     let amountToken1 = amountTokenB
     let decimalsToken0 = tokenA?.decimals
     let decimalsToken1 = tokenB?.decimals
+    let token0Symbol = tokenA?.symbol
+    let token1Symbol = tokenB?.symbol
 
     const compare = new PublicKey(tokenA?.address)?.toBuffer()?.compare(new PublicKey(tokenB?.address)?.toBuffer())
 
@@ -491,6 +481,8 @@ export const createPool = async (
         amountToken1 = amountTokenA
         decimalsToken0 = tokenB?.decimals
         decimalsToken1 = tokenA?.decimals
+        token0Symbol = tokenB?.symbol
+        token1Symbol = tokenA?.symbol
     }
     const accsForCreatePool = await getAccountsForCreatePool(token0, token1, userPubKey)
     const createPoolAcc = { ...accsForCreatePool }
@@ -502,8 +494,23 @@ export const createPool = async (
         new BN(+new Date()), {
         accounts: createPoolAcc
     })
-    const createPoolTxn = new Transaction()
+    let createPoolTxn: Transaction
+    if (token0Symbol === 'SOL') createPoolTxn = await wrapSolToken(userPubKey, connection, amountToken0)
+    else if (token1Symbol === 'SOL') createPoolTxn = await wrapSolToken(userPubKey, connection, amountToken1)
+    else createPoolTxn = new Transaction()
+
     createPoolTxn.add(createPoolIX)
+
+    if (token0Symbol === 'SOL') {
+        const ataAddress = await getAssociatedTokenAddress(token0, userPubKey)
+        const tr = createCloseAccountInstruction(ataAddress, userPubKey, userPubKey)
+        createPoolTxn.add(tr)
+    }
+    if (token1Symbol === 'SOL') {
+        const ataAddress = await getAssociatedTokenAddress(token1, userPubKey)
+        const tr = createCloseAccountInstruction(ataAddress, userPubKey, userPubKey)
+        createPoolTxn.add(tr)
+    }
     return createPoolTxn
 }
 
