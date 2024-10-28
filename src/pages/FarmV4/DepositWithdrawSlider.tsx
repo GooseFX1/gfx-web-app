@@ -464,7 +464,7 @@ export const DepositWithdrawSlider: FC = () => {
         successMessage: `You successfully ${type} ${sourceAmount}, ${targetAmount} ${direction} ${poolMessage}`
       })
       //console.log('success', success)
-
+      console.log('DepositResponse', success)
       if (!success) {
         //off(connectionId)
         console.log('An error occurred while depositing!')
@@ -475,6 +475,7 @@ export const DepositWithdrawSlider: FC = () => {
         setUserSourceDepositAmount('')
         setUserTargetDepositAmount('')
         setShowConfetti.on()
+        console.log('showConfetti', showConfetti)
         setTimeout(() => setShowConfetti.off(), 10000)
         //setOpenDepositWithdrawSlider(false)
         //setSelectedCardLiquidityAcc({})
@@ -569,7 +570,7 @@ export const DepositWithdrawSlider: FC = () => {
       dark:bg-opacity-50 backdrop-blur-sm
       `)}
       />
-      <LottieConfetti onClick={setShowConfetti.off} visible={showConfetti} />
+      {showConfetti && <LottieConfetti onClick={setShowConfetti.off}/>}
       <DialogContent
         className={`sm:w-[393px] sm:max-h-screen border-1 border-solid sm:border-r-0 dark:border-black-4
       sm:rounded-none border-b-0 rounded-b-[0px] max-h-[calc(100vh-56px)] gap-0

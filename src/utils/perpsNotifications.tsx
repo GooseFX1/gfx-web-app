@@ -183,6 +183,7 @@ export const notifyUsingPromise = async (
       <p className={cn(`pt-1`)}>{successMessage || 'Congratulations, your transaction was completed!'}</p>
       <OpenSolScanLink link={`https://solscan.io/tx/${response.txid}`} />
     </IntemediaryToast>, config)
+    return true;
   } catch (e) {
     if (e.message === '6005') {
       toast(<IntemediaryToast className={cn(`w-[290px]`)}>
@@ -195,7 +196,7 @@ export const notifyUsingPromise = async (
           Contact Us
         </OpenToastLink>
       </IntemediaryToast>, config)
-      return
+      return false
     }
     toast(<IntemediaryToast className={cn(`w-[290px]`)}>
       <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
@@ -204,6 +205,7 @@ export const notifyUsingPromise = async (
         Contact Us
       </OpenToastLink>
     </IntemediaryToast>, config)
+    return false
   }
 }
 export const notifyUsingPromiseForFillTx = async (
