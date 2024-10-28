@@ -25,7 +25,8 @@ const Farm: FC = () => {
             <AlertDescription className="dark:text-white text-black-4 ">
               <h5 className="inline">Notice: </h5>
               SSLv2 is currently paused and under development for Phase 3. We will resume work after our GAMMA
-              launch. See our socials for more info.
+              launch. See our socials for more info. If you have issues withdrawing please open a support ticket in
+              our Discord and it will have it resolved. Thank you.
             </AlertDescription>
           </Alert>
         </div>
