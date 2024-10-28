@@ -9,7 +9,7 @@ function LottieConfetti({
                         }: { onClick?: () => void}) {
   return <Lottie
     animationData={CreatePoolConfetti}
-    className="h-full w-full bg-transparent absolute top-0 left-0 z-10"
+    className="h-full w-full bg-transparent absolute top-0 left-0 z-[9999999]"
     onClick={onClick}
   />
 }

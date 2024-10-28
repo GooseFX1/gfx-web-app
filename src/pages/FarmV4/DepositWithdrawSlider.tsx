@@ -565,12 +565,12 @@ export const DepositWithdrawSlider: FC = () => {
 
   return (
     <Dialog modal={false} open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
+      {showConfetti && <LottieConfetti onClick={setShowConfetti.off}/>}
       <div
         className={cn(`fixed top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50
       dark:bg-opacity-50 backdrop-blur-sm
       `)}
       />
-      {showConfetti && <LottieConfetti onClick={setShowConfetti.off}/>}
       <DialogContent
         className={`sm:w-[393px] sm:max-h-screen border-1 border-solid sm:border-r-0 dark:border-black-4
       sm:rounded-none border-b-0 rounded-b-[0px] max-h-[calc(100vh-56px)] gap-0
