@@ -87,6 +87,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       setBalanceBySymbol(account.mint, t.value)
     }
   }))
+  console.log(tokenAccounts.map((account)=>[account?.pda?.toBase58(), account.symbol]))
   const { callbackOn, callbackOff } = useSolSubMulti({
     subType: SubType.AccountChange,
     publicKeys: tokens
@@ -145,6 +146,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       const data = account.account.data as ParsedAccountData
       addresses += data.parsed.info.mint + ','
       tokenInfo[data.parsed.info.mint] = data.parsed.info
+      tokenInfo[data.parsed.info.mint].pda = account.pubkey
     })
 
     addresses = addresses.slice(0, -1)
@@ -189,7 +191,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         currentWalletValue = currentWalletValue.add(value)
       }
     }
-
+    console.log('tokenAccounts', tokenAccounts)
     setTokenAccounts(Object.values(tokenAccounts))
     setBalance(tokenAccounts)
     setWalletValue(currentWalletValue.toFixed(2))

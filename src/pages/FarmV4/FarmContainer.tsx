@@ -28,7 +28,8 @@ export const FarmContainer: FC = () => {
     setCurrentSort,
     showDeposited,
     setShowDeposited,
-    filteredPools
+    filteredPools,
+    hasOwnedPools
   } = useGamma()
   const { wallet } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
@@ -45,13 +46,13 @@ export const FarmContainer: FC = () => {
     } else {
       document.body.style.overflow = 'auto'
     }
-    return ()=>{
+    return () => {
       document.body.style.overflow = 'auto'
     }
   }, [openDepositWithdrawSlider])
 
   const numberOfTokensDeposited = filteredPools.reduce((acc, data) => {
-    if(data?.hasDeposit) return acc + 1
+    if (data?.hasDeposit) return acc + 1
 
     return acc
   }, 0)
@@ -81,7 +82,7 @@ export const FarmContainer: FC = () => {
       return !prev
     })
   }
-  
+
   const handleFilterByCreated = useCallback(
     () => {
       setShowCreatedPools((prev) => {
@@ -97,7 +98,7 @@ export const FarmContainer: FC = () => {
     },
     [showCreatedPools, userCache]
   )
-  
+
   const handleSort = useCallback(
     (id: string) => {
       // persists current sort in local storage
@@ -170,22 +171,24 @@ export const FarmContainer: FC = () => {
                         placement={'bottom'}
                       >
                         <DialogBody className={'flex-col flex-[1 0] p-2 overflow-auto pb-0'}>
-                          <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
-                          <div className="flex items-center justify-between ">
+                          {hasOwnedPools ? <>
+                            <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
+                            <div className="flex items-center justify-between ">
                             <span
-                              className="h-full text-regular text-left dark:text-grey-2 text-grey-1 
+                              className="h-full text-regular text-left dark:text-grey-2 text-grey-1
                                               font-semibold"
                             >
-                              Show created pools
+                            Show created pools
                             </span>
-                            <Switch
-                              variant={'default'}
-                              size={'sm'}
-                              colorScheme={'primary'}
-                              checked={showCreatedPools}
-                              onClick={handleFilterByCreated}
-                            />
-                          </div>
+                              <Switch
+                                variant={'default'}
+                                size={'sm'}
+                                colorScheme={'primary'}
+                                checked={showCreatedPools}
+                                onClick={handleFilterByCreated}
+                              />
+                            </div>
+                          </> : null}
                           <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
 
                           <div className={'grid grid-cols-1 gap-3'}>
@@ -194,7 +197,7 @@ export const FarmContainer: FC = () => {
                                 <Badge
                                   className={cn(
                                     currentSort !== s.id &&
-                                      `dark:bg-black-1
+                                    `dark:bg-black-1
                                       bg-white
                                       dark:before:to-black-4
                                       dark:before:from-black-4

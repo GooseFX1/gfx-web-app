@@ -106,6 +106,9 @@ interface GAMMADataModel {
   stats: GAMMAStats
   isConfettiVisible: boolean
   setIsConfettiVisible: Dispatch<SetStateAction<boolean>>
+  liveBalanceTracking: any
+  connectionId: string
+  hasOwnedPools: boolean
 }
 
 export type TokenListToken = {
@@ -433,10 +436,14 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [GammaProgram, selectedCard])
 
-  const filteredPools = useMemo(() => {
+  const { filteredPools, hasOwnedPools } = useMemo(() => {
     const userLpPositions = new Map(lpPositions.map((lp) => [lp.poolStatePublicKey, lp]))
-    return pools
+    let hasOwnedPools = false
+    const filteredPools = pools
       .map((pool) => {
+        if (pool.poolCreator == base58PublicKey && !hasOwnedPools) {
+          hasOwnedPools = true
+        }
         const userLpPosition = userLpPositions.get(pool.id)
         return {
           ...pool,
@@ -447,18 +454,21 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       })
       .filter((pool) => {
+        const show = showCreatedPools ? pool.poolCreator == base58PublicKey : true
+
         if (showDeposited) {
-          return pool.hasDeposit
+          return pool.hasDeposit && show
         }
-        return true
+        return show
       })
-  }, [pools, lpPositions, showDeposited])
-  useEffect(()=>{
+    return { filteredPools, hasOwnedPools }
+  }, [pools, lpPositions, showDeposited, base58PublicKey, showCreatedPools])
+  useEffect(() => {
     if (!base58PublicKey || filteredPools.length == 0 || !selectedCard?.id) return
-    const pool = filteredPools.filter(pool=>pool.id === selectedCard.id)
+    const pool = filteredPools.filter(pool => pool.id === selectedCard.id)
     if (pool.length == 0) return
     setSelectedCard(pool[0])
-  },[base58PublicKey,filteredPools])
+  }, [base58PublicKey, filteredPools])
   const isSearchActive = searchTokens.trim().length > 0
 
   return (
@@ -512,7 +522,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         createPoolType,
         setCreatePoolType,
         isConfettiVisible,
-        setIsConfettiVisible
+        setIsConfettiVisible,
+        hasOwnedPools
       }}
     >
       {children}

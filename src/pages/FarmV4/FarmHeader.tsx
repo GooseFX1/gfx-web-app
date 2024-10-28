@@ -23,7 +23,7 @@ export const FarmHeader: FC = () => {
 
   const totalEarnings = useMemo(() => {
     const number = 0.00
-    return '$' + truncateBigNumber(number)
+    return truncateBigNumber(number)
   }, [])
 
   const infoCards = useMemo(() => {

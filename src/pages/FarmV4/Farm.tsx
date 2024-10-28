@@ -5,8 +5,7 @@ import { Faqs } from './Faqs'
 import GammaOnboard from './GammaOnboard'
 import { useGamma, useRewardToggle } from '@/context'
 import { POOL_TYPE } from './constants'
-import CreatePoolConfetti from '@/animations/createPoolConfetti.json'
-import Lottie from 'lottie-react'
+import LottieConfetti from '@/pages/FarmV4/LottieConfetti'
 
 const FarmV4: FC = () => {
   const { isProMode } = useRewardToggle()
@@ -26,11 +25,7 @@ const FarmV4: FC = () => {
       className={`dark:bg-black-1 bg-grey-5 h-[calc(100vh - 56px)] overflow-auto max-w-[1440px]
        m-auto no-scrollbar gap-7.5`}
     >
-      {isConfettiVisible && <Lottie
-        animationData={CreatePoolConfetti}
-        className="h-full w-full bg-transparent absolute top-0 left-0 z-10"
-        onClick={() => setIsConfettiVisible(false)}
-      />
+      {isConfettiVisible && <LottieConfetti onClick={() => setIsConfettiVisible(false)} />
       }
       <GammaOnboard />
       <FarmHeader />

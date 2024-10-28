@@ -14,16 +14,16 @@ import {
   Switch
 } from 'gfx-component-lib'
 import { GAMMA_SORT_CONFIG } from '@/pages/FarmV4/constants'
-import { useDarkMode, useGamma, useConnectionConfig } from '@/context'
+import { useConnectionConfig, useDarkMode, useGamma } from '@/context'
 
-function FarmSort({isOpen, setIsOpen}:{
+function FarmSort({ isOpen, setIsOpen }: {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
 }) {
   const { userCache, updateUserCache } = useConnectionConfig()
-  const {showCreatedPools, setShowCreatedPools, currentSort, setCurrentSort} = useGamma()
-  const {mode} = useDarkMode()
-  
+  const { showCreatedPools, setShowCreatedPools, currentSort, setCurrentSort, hasOwnedPools } = useGamma()
+  const { mode } = useDarkMode()
+
   const handleFilterByCreated = useCallback(
     () => {
       setShowCreatedPools((prev) => {
@@ -70,26 +70,29 @@ function FarmSort({isOpen, setIsOpen}:{
       </DropdownMenuTrigger>
 
       <DropdownMenuContent portal={false} align={'end'}>
-        <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
-        <div className="flex items-center justify-between ">
+        {hasOwnedPools ? <>
+          <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
+          <div className="flex items-center justify-between ">
           <span
             className="h-full text-regular text-left dark:text-grey-2 text-grey-1
                         font-semibold mr-3"
           >
-            Show created pools
+          Show created pools
           </span>
-          <Switch
-            variant={'default'}
-            size={'sm'}
-            colorScheme={'primary'}
-            checked={showCreatedPools}
-            onClick={handleFilterByCreated}
-          />
-        </div>
+            <Switch
+              variant={'default'}
+              size={'sm'}
+              colorScheme={'primary'}
+              checked={showCreatedPools}
+              onClick={handleFilterByCreated}
+            />
+          </div>
+        </> : null
+        }
         <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
 
         <DropdownMenuRadioGroup asChild value={currentSort} onValueChange={(id) => handleSort(id)}>
-          <div className={'grid grid-cols-1 gap-1.5 items-center'}>
+          <div className={'grid grid-cols-2 gap-1.5 items-center'}>
             {GAMMA_SORT_CONFIG.map((s) => (
               <DropdownMenuItem isActive={currentSort == s.id} asChild key={s.id}>
                 <DropdownMenuRadioItem value={s.id}>

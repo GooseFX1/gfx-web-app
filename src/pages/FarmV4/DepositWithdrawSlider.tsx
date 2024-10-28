@@ -19,17 +19,19 @@ import useTransaction from '@/hooks/useTransaction'
 import {
   calculateOtherTokenAndLPAmount,
   deposit,
-  withdraw,
-  getpoolId,
   getLiquidityPoolKey,
-  lpTokensToTradingTokens
+  getpoolId,
+  lpTokensToTradingTokens,
+  withdraw
 } from '@/web3/Farm'
 import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
 import { withdrawBigStringFarm } from '@/utils/misc'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { bigNumberFormatter } from '@/utils'
-import { blob, struct, publicKey as pbk, u128, u8, u64, u32 } from '@/utils/marshmallow'
+import { blob, publicKey as pbk, struct, u128, u32, u64, u8 } from '@/utils/marshmallow'
+import useBoolean from '@/hooks/useBoolean'
+import LottieConfetti from '@/pages/FarmV4/LottieConfetti'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
@@ -65,6 +67,7 @@ export const DepositWithdrawSlider: FC = () => {
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
   const { balance } = useWalletBalance()
+  const [showConfetti, setShowConfetti] = useBoolean(false)
   const [updatedPoolState, setUpdatedPoolState] = useState<any>({})
   const [withdrawableBalanceA, setWithdrawableBalanceA] = useState<BN>(new BN(0))
   const [withdrawableBalanceB, setWithdrawableBalanceB] = useState<BN>(new BN(0))
@@ -462,9 +465,18 @@ export const DepositWithdrawSlider: FC = () => {
       )
       txBuilder.add(tx)
       setSendingTransaction(true)
-      const { success } = await sendTransaction(txBuilder)
+      const poolMessage = `(${selectedCard?.mintA?.symbol}-${selectedCard?.mintB?.symbol}) pool.`
+      // eslint-disable-next-line max-len
+      const sourceAmount = `${bigNumberFormatter(new BigNumber(isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount))} ${selectedCard?.mintA?.symbol}`
+      // eslint-disable-next-line max-len
+      const targetAmount = `${bigNumberFormatter(new BigNumber(isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount))} ${selectedCard?.mintB?.symbol}`
+      const type = isDeposit ? 'deposited' : 'withdrew'
+      const direction = isDeposit ? 'into' : 'from'
+      const { success } = await sendTransaction(txBuilder, {
+        successMessage: `You successfully ${type} ${sourceAmount}, ${targetAmount} ${direction} ${poolMessage}`
+      })
       //console.log('success', success)
-
+      console.log('DepositResponse', success)
       if (!success) {
         //off(connectionId)
         console.log('An error occurred while depositing!')
@@ -474,8 +486,11 @@ export const DepositWithdrawSlider: FC = () => {
         setSendingTransaction(false)
         setUserSourceDepositAmount('')
         setUserTargetDepositAmount('')
-        // setOpenDepositWithdrawSlider(false)
-        // setSelectedCardLiquidityAcc({})
+        setShowConfetti.on()
+        console.log('showConfetti', showConfetti)
+        setTimeout(() => setShowConfetti.off(), 10000)
+        //setOpenDepositWithdrawSlider(false)
+        //setSelectedCardLiquidityAcc({})
       }
     } catch (e) {
       setSendingTransaction(false)
@@ -562,6 +577,7 @@ export const DepositWithdrawSlider: FC = () => {
 
   return (
     <Dialog modal={false} open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
+      {showConfetti && <LottieConfetti onClick={setShowConfetti.off}/>}
       <div
         className={cn(`fixed top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50
       dark:bg-opacity-50 backdrop-blur-sm
