@@ -343,7 +343,50 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       clearTimeout(timeout)
     }
   }, [searchTokens])
-
+  const getUserLpPositions = useCallback(async() =>
+    fetchLpPositions(base58PublicKey).then(async (positions: UserPortfolioLPPosition[] | null) => {
+      if (positions) {
+        let positionsToSet = []
+        const tokenListResponse = await fetchTokensByPublicKey(
+          positions
+            .reduce((acc, icc) => acc + icc.mintA.address + ',' + icc.mintB.address + ',', '')
+            .slice(0, -1)
+        )
+        if (tokenListResponse && tokenListResponse.success) {
+          const priceMap = new Map(tokenListResponse.data.tokens.map((token) => [token.address, token.price]))
+          positionsToSet = positions.map((position) => {
+            const tokenAPrice = priceMap.get(position.mintA.address)
+            const tokenBPrice = priceMap.get(position.mintB.address)
+            const uiValueA = new Decimal(position.tokenADeposited)
+              .div(Math.pow(10, parseInt(position.mintA.decimals)))
+            const valueA = uiValueA.mul(tokenAPrice)
+            const uiValueB = new Decimal(position.tokenBDeposited)
+              .div(Math.pow(10, parseInt(position.mintB.decimals)))
+            const valueB = uiValueB.mul(tokenBPrice)
+            const totalValue = valueA.add(valueB)
+            return {
+              ...position,
+              totalValue: totalValue.toString(),
+              valueA: valueA.toString(),
+              valueB: valueB.toString(),
+              uiValueA: uiValueA.toString(),
+              uiValueB: uiValueB.toString()
+            }
+          })
+        } else {
+          positionsToSet = positions.map((position) => ({
+            ...position,
+            totalValue: '0.0',
+            valueA: '0.0',
+            valueB: '0.0',
+            uiValueA: '0.0',
+            uiValueB: '0.0'
+          }))
+        }
+        setLpPositions(positionsToSet)
+      }
+    })
+  , [base58PublicKey])
   useEffect(() => {
     if (base58PublicKey) {
       // user data and portfolio stat fetching
@@ -357,48 +400,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       })
       // lp position fet
-      fetchLpPositions(base58PublicKey).then(async (positions: UserPortfolioLPPosition[] | null) => {
-        if (positions) {
-          let positionsToSet = []
-          const tokenListResponse = await fetchTokensByPublicKey(
-            positions
-              .reduce((acc, icc) => acc + icc.mintA.address + ',' + icc.mintB.address + ',', '')
-              .slice(0, -1)
-          )
-          if (tokenListResponse && tokenListResponse.success) {
-            const priceMap = new Map(tokenListResponse.data.tokens.map((token) => [token.address, token.price]))
-            positionsToSet = positions.map((position) => {
-              const tokenAPrice = priceMap.get(position.mintA.address)
-              const tokenBPrice = priceMap.get(position.mintB.address)
-              const uiValueA = new Decimal(position.tokenADeposited)
-                .div(Math.pow(10, parseInt(position.mintA.decimals)))
-              const valueA = uiValueA.mul(tokenAPrice)
-              const uiValueB = new Decimal(position.tokenBDeposited)
-                .div(Math.pow(10, parseInt(position.mintB.decimals)))
-              const valueB = uiValueB.mul(tokenBPrice)
-              const totalValue = valueA.add(valueB)
-              return {
-                ...position,
-                totalValue: totalValue.toString(),
-                valueA: valueA.toString(),
-                valueB: valueB.toString(),
-                uiValueA: uiValueA.toString(),
-                uiValueB: uiValueB.toString()
-              }
-            })
-          } else {
-            positionsToSet = positions.map((position) => ({
-              ...position,
-              totalValue: '0.0',
-              valueA: '0.0',
-              valueB: '0.0',
-              uiValueA: '0.0',
-              uiValueB: '0.0'
-            }))
-          }
-          setLpPositions(positionsToSet)
-        }
-      })
+      getUserLpPositions()
     } else {
       setUser(null)
       setPortfolioStats(null)
@@ -481,6 +483,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (!result) return;
     setPoolPage(1)
     setPools([])
+    getUserLpPositions()
   },[])
   return (
     <GAMMAContext.Provider
