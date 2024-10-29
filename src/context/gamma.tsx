@@ -1,4 +1,15 @@
-import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import {
   fetchAggregateStats,
   fetchAllPools,
@@ -7,7 +18,8 @@ import {
   fetchPortfolioStats,
   fetchTokenList,
   fetchTokensByPublicKey,
-  fetchUser
+  fetchUser,
+  forceCronUpdate
 } from '@/api/gamma'
 import {
   GAMMAConfig,
@@ -106,8 +118,7 @@ interface GAMMADataModel {
   stats: GAMMAStats
   isConfettiVisible: boolean
   setIsConfettiVisible: Dispatch<SetStateAction<boolean>>
-  liveBalanceTracking: any
-  connectionId: string
+  forceCronAndUpdateLocalData: () => Promise<void>
 }
 
 export type TokenListToken = {
@@ -478,7 +489,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [base58PublicKey, filteredPools])
   
   const isSearchActive = searchTokens.trim().length > 0
-
+  const forceCronAndUpdateLocalData = useCallback(async()=>{
+    const result = await forceCronUpdate();
+    if (!result) return;
+    setPoolPage(1)
+    setPools([])
+  },[])
   return (
     <GAMMAContext.Provider
       value={{
@@ -530,7 +546,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         createPoolType,
         setCreatePoolType,
         isConfettiVisible,
-        setIsConfettiVisible
+        setIsConfettiVisible,
+        forceCronAndUpdateLocalData
       }}
     >
       {children}

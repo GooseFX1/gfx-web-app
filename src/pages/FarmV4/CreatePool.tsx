@@ -42,7 +42,13 @@ export const CreatePool: FC<{
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
-  const { setSendingTransaction, createPoolType, setCreatePoolType, setIsConfettiVisible } = useGamma()
+  const {
+    setSendingTransaction,
+    createPoolType,
+    setCreatePoolType,
+    setIsConfettiVisible,
+    forceCronAndUpdateLocalData
+  } = useGamma()
   const { getUIAmount } = useAccounts()
   const walletTokenA = useMemo(() => tokenA ? getUIAmount(tokenA?.address).toFixed(2) : '0.00', [tokenA, userPublicKey])
   const walletTokenB = useMemo(() => tokenB ? getUIAmount(tokenB?.address).toFixed(2) : '0.00', [tokenB, userPublicKey])
@@ -88,6 +94,7 @@ export const CreatePool: FC<{
           slider.current.slickGoTo(1)
           return
         } else {
+          await forceCronAndUpdateLocalData()
           setIsConfettiVisible(true)
           setSendingTransaction(false)
           setIsCreatePool(false)
