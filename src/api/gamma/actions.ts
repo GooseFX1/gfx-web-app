@@ -167,6 +167,17 @@ const fetchTokensByPublicKey = async (tokens: string): Promise<GAMMAListTokenRes
     }
   }
 }
+
+const forceCronUpdate = async () => {
+  try {
+    await httpClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.FORCE_CRON)
+    return true;
+  } catch (e) {
+    console.log('Error forcing cron update', e)
+    return false
+  }
+}
+
 export {
   fetchGAMMAConfig,
   fetchAggregateStats,
@@ -176,5 +187,6 @@ export {
   fetchAllPools,
   fetchTokenList,
   fetchTokensByPublicKey,
-  fetchPoolsByMints
+  fetchPoolsByMints,
+  forceCronUpdate
 }
