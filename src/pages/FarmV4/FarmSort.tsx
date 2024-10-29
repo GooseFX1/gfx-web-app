@@ -21,7 +21,7 @@ function FarmSort({ isOpen, setIsOpen }: {
   setIsOpen: (isOpen: boolean) => void
 }) {
   const { userCache, updateUserCache } = useConnectionConfig()
-  const { showCreatedPools, setShowCreatedPools, currentSort, setCurrentSort, hasOwnedPools } = useGamma()
+  const { showCreatedPools, setShowCreatedPools, currentSort, setCurrentSort } = useGamma()
   const { mode } = useDarkMode()
 
   const handleFilterByCreated = useCallback(
@@ -70,7 +70,7 @@ function FarmSort({ isOpen, setIsOpen }: {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent portal={false} align={'end'}>
-        {hasOwnedPools ? <>
+        <>
           <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
           <div className="flex items-center justify-between ">
           <span
@@ -87,8 +87,7 @@ function FarmSort({ isOpen, setIsOpen }: {
               onClick={handleFilterByCreated}
             />
           </div>
-        </> : null
-        }
+        </>
         <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
 
         <DropdownMenuRadioGroup asChild value={currentSort} onValueChange={(id) => handleSort(id)}>

@@ -108,7 +108,6 @@ interface GAMMADataModel {
   setIsConfettiVisible: Dispatch<SetStateAction<boolean>>
   liveBalanceTracking: any
   connectionId: string
-  hasOwnedPools: boolean
 }
 
 export type TokenListToken = {
@@ -436,14 +435,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [GammaProgram, selectedCard])
 
-  const { filteredPools, hasOwnedPools } = useMemo(() => {
+  const { filteredPools } = useMemo(() => {
     const userLpPositions = new Map(lpPositions.map((lp) => [lp.poolStatePublicKey, lp]))
-    let hasOwnedPools = false
     const filteredPools = pools
       .map((pool) => {
-        if (pool.poolCreator == base58PublicKey && !hasOwnedPools) {
-          hasOwnedPools = true
-        }
         const userLpPosition = userLpPositions.get(pool.id)
         return {
           ...pool,
@@ -461,7 +456,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
         return show
       })
-    return { filteredPools, hasOwnedPools }
+    return { filteredPools }
   }, [pools, lpPositions, showDeposited, base58PublicKey, showCreatedPools])
   useEffect(() => {
     if (!base58PublicKey || filteredPools.length == 0 || !selectedCard?.id) return
@@ -522,8 +517,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         createPoolType,
         setCreatePoolType,
         isConfettiVisible,
-        setIsConfettiVisible,
-        hasOwnedPools
+        setIsConfettiVisible
       }}
     >
       {children}

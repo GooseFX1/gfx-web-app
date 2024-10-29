@@ -28,8 +28,7 @@ export const FarmContainer: FC = () => {
     setCurrentSort,
     showDeposited,
     setShowDeposited,
-    filteredPools,
-    hasOwnedPools
+    filteredPools
   } = useGamma()
   const { wallet } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
@@ -171,7 +170,6 @@ export const FarmContainer: FC = () => {
                         placement={'bottom'}
                       >
                         <DialogBody className={'flex-col flex-[1 0] p-2 overflow-auto pb-0'}>
-                          {hasOwnedPools ? <>
                             <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
                             <div className="flex items-center justify-between ">
                             <span
@@ -188,7 +186,6 @@ export const FarmContainer: FC = () => {
                                 onClick={handleFilterByCreated}
                               />
                             </div>
-                          </> : null}
                           <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
 
                           <div className={'grid grid-cols-1 gap-3'}>
