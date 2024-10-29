@@ -95,6 +95,7 @@ const fetchPortfolioStats = async (userId: string): Promise<UserPortfolioStats |
 }
 
 const fetchLpPositions = async (userId: string): Promise<UserPortfolioLPPosition[] | null> => {
+  if (!userId) return null
   try {
     const response = await httpClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.LP_POSITIONS}/${userId}`)
     return response.status === 200 ? response.data.data.accounts : []
