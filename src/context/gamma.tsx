@@ -173,7 +173,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
   //const [connectionId, setConnectionId] = useState<string>()
 
-  // TODO:
   useEffect(() => {
     // first render only
     if (tokenList.length == 0) {
@@ -271,15 +270,27 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         if (poolsData && poolsData.success) {
           setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
           const existingPools = append ? pools : []
-          const hasSetOfPools = new Set(pools.map((pool) => `${pool.mintA.address}_${pool.mintB.address}`))
-          for (const pool of poolsData.data.pools) {
-            if (hasSetOfPools.has(`${pool.mintA.address}_${pool.mintB.address}`) && append) {
-              continue
+          const existingPoolsMap = new Map(
+            existingPools.map((pool) => [`${pool.mintA.address}_${pool.mintB.address}`, pool])
+          )
+          
+          // Process new pools, overwriting existing entries to maintain sort order
+          const updatedPools = poolsData.data.pools.map((pool) => {
+            const key = `${pool.mintA.address}_${pool.mintB.address}`
+            // If pool exists and we're appending, use existing data
+            if (existingPoolsMap.has(key) && append) {
+              existingPoolsMap.delete(key) // Remove from map since we've handled it
+              return pool // Use new pool to maintain sort order
             }
-            hasSetOfPools.add(`${pool.mintA.address}_${pool.mintB.address}`)
-            existingPools.push(pool)
+            return pool
+          })
+          
+          // Add any remaining existing pools that weren't in the new data
+          if (append) {
+            updatedPools.push(...Array.from(existingPoolsMap.values()))
           }
-          setPools([...existingPools])
+          
+          setPools(updatedPools)
         }
       })
       .finally(() => setIsLoadingPools.off())
@@ -455,15 +466,17 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           return pool.hasDeposit && show
         }
         return show
-      })
+      })    
     return { filteredPools }
   }, [pools, lpPositions, showDeposited, base58PublicKey, showCreatedPools])
+
   useEffect(() => {
     if (!base58PublicKey || filteredPools.length == 0 || !selectedCard?.id) return
     const pool = filteredPools.filter(pool => pool.id === selectedCard.id)
     if (pool.length == 0) return
     setSelectedCard(pool[0])
   }, [base58PublicKey, filteredPools])
+  
   const isSearchActive = searchTokens.trim().length > 0
 
   return (
