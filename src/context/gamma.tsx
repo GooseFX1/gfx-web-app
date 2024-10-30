@@ -1,4 +1,15 @@
-import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import {
   fetchAggregateStats,
   fetchAllPools,
@@ -106,8 +117,6 @@ interface GAMMADataModel {
   stats: GAMMAStats
   isConfettiVisible: boolean
   setIsConfettiVisible: Dispatch<SetStateAction<boolean>>
-  liveBalanceTracking: any
-  connectionId: string
 }
 
 export type TokenListToken = {
@@ -332,20 +341,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       clearTimeout(timeout)
     }
   }, [searchTokens])
-
-  useEffect(() => {
-    if (base58PublicKey) {
-      // user data and portfolio stat fetching
-      fetchUser(base58PublicKey).then((userData) => {
-        if (userData) {
-          setUser(userData)
-
-          fetchPortfolioStats(userData.id).then((stats) => {
-            if (stats) setPortfolioStats(stats)
-          })
-        }
-      })
-      // lp position fet
+  const getUserLpPositions = useCallback(async() =>
       fetchLpPositions(base58PublicKey).then(async (positions: UserPortfolioLPPosition[] | null) => {
         if (positions) {
           let positionsToSet = []
@@ -385,13 +381,34 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
               uiValueB: '0.0'
             }))
           }
+          console.log('LP Positions', positionsToSet)
           setLpPositions(positionsToSet)
         }
       })
+    , [base58PublicKey])
+  useEffect(() => {
+    let userLpPollTimeout: NodeJS.Timeout | undefined
+    if (base58PublicKey) {
+      // user data and portfolio stat fetching
+      fetchUser(base58PublicKey).then((userData) => {
+        if (userData) {
+          setUser(userData)
+
+          fetchPortfolioStats(userData.id).then((stats) => {
+            if (stats) setPortfolioStats(stats)
+          })
+        }
+      })
+      // lp position fet
+      getUserLpPositions()
+      userLpPollTimeout = setInterval(async()=>await getUserLpPositions(),2000)
     } else {
       setUser(null)
       setPortfolioStats(null)
       setLpPositions([])
+    }
+    return () => {
+      clearInterval(userLpPollTimeout)
     }
   }, [base58PublicKey])
 
@@ -444,7 +461,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           ...pool,
           userLpPosition: userLpPosition,
           hasDeposit: userLpPosition
-            ? new BN(userLpPosition?.lpTokensOwned)?.gt(new BN(0))
+            ? new BN(userLpPosition?.lpTokensOwned)?.gt(new BN(100))
             : false
         }
       })

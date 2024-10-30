@@ -1,6 +1,6 @@
 import useSolSub, { SolsSubs, SubType } from '@/hooks/useSolSub'
 import useActivityTracker, { UseActivityTrackerProps } from '@/hooks/useActivityTracker'
-import { PublicKey } from '@solana/web3.js'
+import { AccountChangeCallback, ProgramAccountChangeCallback, PublicKey } from '@solana/web3.js'
 import { useCallback, useEffect } from 'react'
 import useBoolean from '@/hooks/useBoolean'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -39,7 +39,11 @@ export default useSolSubActivity
 
 interface UseSolSubActivityMultiProps {
   subType: SubType
-  publicKeys: { publicKey: PublicKey; callback: () => void; subType?: SubType }[]
+  publicKeys: {
+    publicKey: PublicKey;
+    callback: AccountChangeCallback | ProgramAccountChangeCallback;
+    subType?: SubType
+  }[]
 }
 
 function useSolSubMulti({
