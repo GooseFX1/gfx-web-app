@@ -284,7 +284,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           const existingPoolsMap = new Map(
             existingPools.map((pool) => [`${pool.mintA.address}_${pool.mintB.address}`, pool])
           )
-          
+
           // Process new pools, overwriting existing entries to maintain sort order
           const updatedPools = poolsData.data.pools.map((pool) => {
             const key = `${pool.mintA.address}_${pool.mintB.address}`
@@ -295,12 +295,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
             }
             return pool
           })
-          
+
           // Add any remaining existing pools that weren't in the new data
           if (append) {
             updatedPools.push(...Array.from(existingPoolsMap.values()))
           }
-          
+
           setPools(updatedPools)
         }
       })
@@ -355,50 +355,52 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [searchTokens])
   const getUserLpPositions = useCallback(async() =>
-    fetchLpPositions(base58PublicKey).then(async (positions: UserPortfolioLPPosition[] | null) => {
-      if (positions) {
-        let positionsToSet = []
-        const tokenListResponse = await fetchTokensByPublicKey(
-          positions
-            .reduce((acc, icc) => acc + icc.mintA.address + ',' + icc.mintB.address + ',', '')
-            .slice(0, -1)
-        )
-        if (tokenListResponse && tokenListResponse.success) {
-          const priceMap = new Map(tokenListResponse.data.tokens.map((token) => [token.address, token.price]))
-          positionsToSet = positions.map((position) => {
-            const tokenAPrice = priceMap.get(position.mintA.address)
-            const tokenBPrice = priceMap.get(position.mintB.address)
-            const uiValueA = new Decimal(position.tokenADeposited)
-              .div(Math.pow(10, parseInt(position.mintA.decimals)))
-            const valueA = uiValueA.mul(tokenAPrice)
-            const uiValueB = new Decimal(position.tokenBDeposited)
-              .div(Math.pow(10, parseInt(position.mintB.decimals)))
-            const valueB = uiValueB.mul(tokenBPrice)
-            const totalValue = valueA.add(valueB)
-            return {
+      fetchLpPositions(base58PublicKey).then(async (positions: UserPortfolioLPPosition[] | null) => {
+        if (positions) {
+          let positionsToSet = []
+          const tokenListResponse = await fetchTokensByPublicKey(
+            positions
+              .reduce((acc, icc) => acc + icc.mintA.address + ',' + icc.mintB.address + ',', '')
+              .slice(0, -1)
+          )
+          if (tokenListResponse && tokenListResponse.success) {
+            const priceMap = new Map(tokenListResponse.data.tokens.map((token) => [token.address, token.price]))
+            positionsToSet = positions.map((position) => {
+              const tokenAPrice = priceMap.get(position.mintA.address)
+              const tokenBPrice = priceMap.get(position.mintB.address)
+              const uiValueA = new Decimal(position.tokenADeposited)
+                .div(Math.pow(10, parseInt(position.mintA.decimals)))
+              const valueA = uiValueA.mul(tokenAPrice)
+              const uiValueB = new Decimal(position.tokenBDeposited)
+                .div(Math.pow(10, parseInt(position.mintB.decimals)))
+              const valueB = uiValueB.mul(tokenBPrice)
+              const totalValue = valueA.add(valueB)
+              return {
+                ...position,
+                totalValue: totalValue.toString(),
+                valueA: valueA.toString(),
+                valueB: valueB.toString(),
+                uiValueA: uiValueA.toString(),
+                uiValueB: uiValueB.toString()
+              }
+            })
+          } else {
+            positionsToSet = positions.map((position) => ({
               ...position,
-              totalValue: totalValue.toString(),
-              valueA: valueA.toString(),
-              valueB: valueB.toString(),
-              uiValueA: uiValueA.toString(),
-              uiValueB: uiValueB.toString()
-            }
-          })
-        } else {
-          positionsToSet = positions.map((position) => ({
-            ...position,
-            totalValue: '0.0',
-            valueA: '0.0',
-            valueB: '0.0',
-            uiValueA: '0.0',
-            uiValueB: '0.0'
-          }))
+              totalValue: '0.0',
+              valueA: '0.0',
+              valueB: '0.0',
+              uiValueA: '0.0',
+              uiValueB: '0.0'
+            }))
+          }
+          console.log('LP Positions', positionsToSet)
+          setLpPositions(positionsToSet)
         }
-        setLpPositions(positionsToSet)
-      }
-    })
-  , [base58PublicKey])
+      })
+    , [base58PublicKey])
   useEffect(() => {
+    let userLpPollTimeout: NodeJS.Timeout | undefined
     if (base58PublicKey) {
       // user data and portfolio stat fetching
       fetchUser(base58PublicKey).then((userData) => {
@@ -412,10 +414,14 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
       // lp position fet
       getUserLpPositions()
+      userLpPollTimeout = setInterval(async()=>await getUserLpPositions(),2000)
     } else {
       setUser(null)
       setPortfolioStats(null)
       setLpPositions([])
+    }
+    return () => {
+      clearInterval(userLpPollTimeout)
     }
   }, [base58PublicKey])
 
@@ -468,7 +474,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           ...pool,
           userLpPosition: userLpPosition,
           hasDeposit: userLpPosition
-            ? new BN(userLpPosition?.lpTokensOwned)?.gt(new BN(0))
+            ? new BN(userLpPosition?.lpTokensOwned)?.gt(new BN(100))
             : false
         }
       })
@@ -479,7 +485,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           return pool.hasDeposit && show
         }
         return show
-      })    
+      })
     return { filteredPools }
   }, [pools, lpPositions, showDeposited, base58PublicKey, showCreatedPools])
 
@@ -489,7 +495,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (pool.length == 0) return
     setSelectedCard(pool[0])
   }, [base58PublicKey, filteredPools])
-  
+
   const isSearchActive = searchTokens.trim().length > 0
   const forceCronAndUpdateLocalData = useCallback(async()=>{
     const result = await forceCronUpdate();

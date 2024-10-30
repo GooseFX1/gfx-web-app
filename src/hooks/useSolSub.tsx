@@ -1,4 +1,4 @@
-import { PublicKey } from '@solana/web3.js'
+import { AccountChangeCallback, ProgramAccountChangeCallback, PublicKey } from '@solana/web3.js'
 import { useCallback, useEffect } from 'react'
 import SolanaSubscriber from '../utils/connectionSub'
 import { useConnectionConfig } from '../context'
@@ -14,7 +14,7 @@ interface PubKeyAndRetrieval {
 }
 
 interface BaseSub {
-  callback: (info?: any) => void
+  callback: AccountChangeCallback | ProgramAccountChangeCallback
   SubType: SubType
   id: string
 }
@@ -49,10 +49,13 @@ function useSolSub(): {
     }
     switch (sub.SubType) {
       case SubType.AccountChange:
-        await SolanaSubscriber.subscribeAccountChange(pubkey, sub.id, sub.callback)
+        await SolanaSubscriber.subscribeAccountChange(pubkey, sub.id, sub.callback as AccountChangeCallback)
         break
       case SubType.ProgramAccountChange:
-        await SolanaSubscriber.subscribeProgramAccountChange(pubkey, sub.id, sub.callback)
+        await SolanaSubscriber.subscribeProgramAccountChange(
+          pubkey, sub.id,
+          sub.callback as ProgramAccountChangeCallback
+        )
         break
       default:
         console.warn('unkown option passed for sub')
