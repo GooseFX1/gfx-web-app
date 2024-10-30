@@ -118,8 +118,8 @@ interface GAMMADataModel {
   stats: GAMMAStats
   isConfettiVisible: boolean
   setIsConfettiVisible: Dispatch<SetStateAction<boolean>>
-  updateUserLpPositions: () => Promise<void>
   forceCronAndUpdateLocalData: () => Promise<void>
+  updateUserLpPositions: () => Promise<void>
 }
 
 export type TokenListToken = {
@@ -405,6 +405,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       })
     , [base58PublicKey])
+    
   useEffect(() => {
     if (base58PublicKey) {
       // user data and portfolio stat fetching
@@ -501,9 +502,13 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const forceCronAndUpdateLocalData = useCallback(async()=>{
     const result = await forceCronUpdate();
     if (!result) return;
-    setPoolPage(1)
-    setPools([])
-    getUserLpPositions()
+    // will trigger updatePool useEffect
+    setTimeout(()=>{
+      updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type },false)
+      setPoolPage(1)
+      setPools([])
+      getUserLpPositions()
+    },1000)
   },[])
   return (
     <GAMMAContext.Provider
@@ -557,8 +562,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setCreatePoolType,
         isConfettiVisible,
         setIsConfettiVisible,
-        updateUserLpPositions: getUserLpPositions,
-        forceCronAndUpdateLocalData
+        forceCronAndUpdateLocalData,
+        updateUserLpPositions: getUserLpPositions
       }}
     >
       {children}

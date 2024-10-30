@@ -20,9 +20,10 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import { createPool } from '@/web3/Farm'
-import { useAccounts, useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
+import { useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
 import useTransaction from '@/hooks/useTransaction'
 import { notifyUsingPromiseForCreatePool } from '@/utils/perpsNotifications'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 export const CreatePool: FC<{
   isCreatePool: boolean
@@ -49,9 +50,10 @@ export const CreatePool: FC<{
     setIsConfettiVisible,
     forceCronAndUpdateLocalData
   } = useGamma()
-  const { getUIAmount } = useAccounts()
-  const walletTokenA = useMemo(() => tokenA ? getUIAmount(tokenA?.address).toFixed(2) : '0.00', [tokenA, userPublicKey])
-  const walletTokenB = useMemo(() => tokenB ? getUIAmount(tokenB?.address).toFixed(2) : '0.00', [tokenB, userPublicKey])
+  const {balance} = useWalletBalance();
+
+  const walletTokenA = balance[tokenA?.address].tokenAmount.uiAmountString;
+  const walletTokenB = balance[tokenB?.address].tokenAmount.uiAmountString;
   const { connection } = useConnectionConfig()
 
   const settings = {
