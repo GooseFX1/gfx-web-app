@@ -117,6 +117,7 @@ interface GAMMADataModel {
   stats: GAMMAStats
   isConfettiVisible: boolean
   setIsConfettiVisible: Dispatch<SetStateAction<boolean>>
+  updateUserLpPositions: () => Promise<void>
 }
 
 export type TokenListToken = {
@@ -341,7 +342,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       clearTimeout(timeout)
     }
   }, [searchTokens])
-  const getUserLpPositions = useCallback(async() =>
+  const getUserLpPositions = useCallback(async () =>
       fetchLpPositions(base58PublicKey).then(async (positions: UserPortfolioLPPosition[] | null) => {
         if (positions) {
           let positionsToSet = []
@@ -381,13 +382,17 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
               uiValueB: '0.0'
             }))
           }
-          console.log('LP Positions', positionsToSet)
-          setLpPositions(positionsToSet)
+          setLpPositions(prev=>{
+            if (JSON.stringify(prev) !== JSON.stringify(positionsToSet)){
+              console.log('setting new lp positions')
+              return positionsToSet
+            }
+            return prev
+          })
         }
       })
     , [base58PublicKey])
   useEffect(() => {
-    let userLpPollTimeout: NodeJS.Timeout | undefined
     if (base58PublicKey) {
       // user data and portfolio stat fetching
       fetchUser(base58PublicKey).then((userData) => {
@@ -401,14 +406,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
       // lp position fet
       getUserLpPositions()
-      userLpPollTimeout = setInterval(async()=>await getUserLpPositions(),2000)
     } else {
       setUser(null)
       setPortfolioStats(null)
       setLpPositions([])
-    }
-    return () => {
-      clearInterval(userLpPollTimeout)
     }
   }, [base58PublicKey])
 
@@ -450,7 +451,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       }
     })()
-  }, [GammaProgram, selectedCard])
+  }, [GammaProgram, selectedCard, publicKey])
 
   const { filteredPools } = useMemo(() => {
     const userLpPositions = new Map(lpPositions.map((lp) => [lp.poolStatePublicKey, lp]))
@@ -459,9 +460,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const userLpPosition = userLpPositions.get(pool.id)
         return {
           ...pool,
-          userLpPosition: userLpPosition,
+          userLpPosition: userLpPosition ? structuredClone(userLpPosition) : undefined,
           hasDeposit: userLpPosition
-            ? new BN(userLpPosition?.lpTokensOwned)?.gt(new BN(100))
+            ? new BN(userLpPosition?.lpTokensOwned)?.gt(new BN(0))
             : false
         }
       })
@@ -473,8 +474,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
         return show
       })
+    console.log('recalc filtered pools')
     return { filteredPools }
   }, [pools, lpPositions, showDeposited, base58PublicKey, showCreatedPools])
+
   useEffect(() => {
     if (!base58PublicKey || filteredPools.length == 0 || !selectedCard?.id) return
     const pool = filteredPools.filter(pool => pool.id === selectedCard.id)
@@ -534,7 +537,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         createPoolType,
         setCreatePoolType,
         isConfettiVisible,
-        setIsConfettiVisible
+        setIsConfettiVisible,
+        updateUserLpPositions: getUserLpPositions
       }}
     >
       {children}
