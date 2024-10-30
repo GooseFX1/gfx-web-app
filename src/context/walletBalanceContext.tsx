@@ -87,7 +87,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       setBalanceBySymbol(account.mint, t.value)
     }
   }))
-  console.log(tokenAccounts.map((account)=>[account?.pda?.toBase58(), account.symbol]))
+  
   const { callbackOn, callbackOff } = useSolSubMulti({
     subType: SubType.AccountChange,
     publicKeys: tokens
