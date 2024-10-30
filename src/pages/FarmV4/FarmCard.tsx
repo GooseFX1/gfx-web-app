@@ -1,5 +1,5 @@
 import { useDarkMode, useGamma } from '@/context'
-import { Badge, Button, cn, Icon } from 'gfx-component-lib'
+import { Badge, Button, cn, Icon, Skeleton } from 'gfx-component-lib'
 import { FC, ReactElement } from 'react'
 import { PoolStats } from './PoolStats'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
@@ -81,3 +81,34 @@ const FarmCard: FC<{
 }
 
 export default FarmCard
+
+export const FarmCardLoader: FC<{className?:string}> = ({className}) => <div className={cn(`
+  w-full max-w-[341px] h-[196px] p-2.5 border  flex gap-2 flex-col
+        border-solid dark:border-black-4 border-grey-4 bg-white dark:bg-black-2 rounded-[8px]
+`, className)}>
+  <div className={'flex w-full'}>
+    <div>
+      <div className="relative">
+        <Skeleton
+          className={`w-[25px] h-[25px] rounded-full border-solid dark:border-black-2 border-white border-[3px]`}
+        />
+        <Skeleton
+          className={`absolute top-0 left-[19px] w-[25px] h-[25px] rounded-full border-solid dark:border-black-2 
+        border-white border-[3px]`}
+        />
+      </div>
+      <Skeleton className={'rounded-0.5 w-[125px] h-[25px]'} />
+    </div>
+    <Skeleton
+      className={cn(`cursor-pointer bg-blue-1 text-white h-[30px] w-[75px] rounded-full ml-auto`)} />
+  </div>
+
+  <Skeleton className={'rounded-0.5 w-full h-[25px]'} />
+
+  <Skeleton className={'rounded-0.5 w-full h-[25px]'} />
+
+  <Skeleton className={'rounded-0.5 w-full h-[25px]'} />
+
+  <Skeleton className={'rounded-0.5 w-full h-[25px]'} />
+
+</div>

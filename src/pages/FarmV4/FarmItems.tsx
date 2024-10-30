@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react'
 import NoResultsFound from './NoResultsFound'
-import { useDarkMode, useGamma, useRewardToggle } from '@/context'
-import { Button, Icon } from 'gfx-component-lib'
+import { useGamma, useRewardToggle } from '@/context'
+import { Button } from 'gfx-component-lib'
 import { POOL_LIST_PAGE_SIZE, POOL_TYPE } from '@/pages/FarmV4/constants'
 import FarmItemsMigrate from '@/pages/FarmV4/FarmItemsMigrate'
 import FarmItemsLite from '@/pages/FarmV4/FarmItemsLite'
@@ -31,11 +31,9 @@ const FarmItems: FC<{
     showDeposited,
     updatePools,
     poolPage,
-    poolsHasMoreData,
-    isLoadingPools
+    poolsHasMoreData
   } = useGamma()
   const { isProMode } = useRewardToggle()
-  const { mode } = useDarkMode()
   const isSearchActive = useMemo(() => searchTokens.length > 0, [searchTokens])
 
   let noResultsTitle = ''
@@ -112,12 +110,7 @@ const FarmItems: FC<{
         />
       ) : (numberOfTokensDeposited === 0 && showDeposited) || filteredPools.length === 0 ? (
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
-      ) : isLoadingPools ? <div className={'w-full justify-center items-center flex'}>
-        <Icon
-          className={'animate-spin'}
-          src={`img/assets/refresh_${mode}.svg`} size="sm"
-        />
-      </div>: isProMode ? (
+      ) : isProMode ? (
         <FarmItemsPro
         />
       ) : <FarmItemsLite

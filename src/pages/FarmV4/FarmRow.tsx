@@ -1,11 +1,10 @@
 import { FC, useMemo } from 'react'
-import { Badge, cn, Icon } from 'gfx-component-lib'
+import { Badge, cn, Icon, Skeleton } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import useBreakpoint from '../../hooks/useBreakPoint'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
-import { numberFormatter } from '@/utils'
-import { loadIconImage } from '@/utils'
+import { loadIconImage, numberFormatter } from '@/utils'
 
 const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): JSX.Element => {
   const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
@@ -14,9 +13,9 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
   const { mode } = useDarkMode()
 
   const formattedTVL = useMemo(() => {
-      const liquidity = parseFloat(pool.tvl)
-      return liquidity ? numberFormatter(liquidity) : '0.00'
-    }, [pool])
+    const liquidity = parseFloat(pool.tvl)
+    return liquidity ? numberFormatter(liquidity) : '0.00'
+  }, [pool])
   const formattedVolume = useMemo(
     () => numberFormatter(pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD),
     [pool.stats.daily.volumeTokenAUSD, pool.stats.daily.volumeTokenBUSD]
@@ -93,3 +92,35 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
 }
 
 export default FarmRow
+
+export const FarmRowLoader: FC = () => {
+  const { isMobile, isTablet, isDesktop } = useBreakpoint()
+  return <div className={cn(
+    `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_0.5fr] dark:bg-black-2 px-2.5 cursor-pointer
+      h-15 border border-solid dark:border-black-4 border-grey-4 bg-white rounded-tiny py-3.75`,
+    isMobile && `grid-cols-[1.5fr_0.5fr]`,
+    isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
+  )}>
+    <div className="flex flex-row items-center">
+      <Skeleton className={`border-solid dark:border-black-2 border-white
+          border-[2px] rounded-full h-[25px] w-[25px]`} />
+      <Skeleton className={`relative right-[10px] border-solid dark:border-black-2
+          border-white border-[2px] rounded-full h-[25px] w-[25px]`} />
+
+      <Skeleton className={'w-[100px] h-[25px] rounded-0.5'} />
+    </div>
+    <Skeleton className={'w-[100px] h-[25px] rounded-0.5 inline-flex m-auto'}/>
+
+    {(isTablet || isDesktop) && (
+      <Skeleton className={'w-[100px] h-[25px] rounded-0.5 inline-flex m-auto'} />
+
+    )}
+    {isDesktop && (
+      <Skeleton className={'w-[100px] h-[25px] rounded-0.5 inline-flex m-auto'} />
+
+    )}
+    {(isTablet || isDesktop) && (
+      <Skeleton className={'w-[100px] h-[25px] rounded-0.5 inline-flex m-auto'} />
+    )}
+  </div>
+}
