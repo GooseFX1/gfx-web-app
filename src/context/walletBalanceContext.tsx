@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
+  AccountInfo,
   GetProgramAccountsFilter,
   ParsedAccountData,
   PublicKey,
@@ -13,7 +14,7 @@ import { useSolSubMulti } from '@/hooks/useSolSubActivity'
 import { SubType } from '@/hooks/useSolSub'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
-import { confirmTransaction } from '@/web3'
+import { AccountLayout, confirmTransaction } from '@/web3'
 import { toast } from 'sonner'
 import { fetchTokensByPublicKey } from '@/api/gamma'
 import Decimal from 'decimal.js-light'
@@ -67,27 +68,33 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
 
   const tokens = tokenAccounts.map((account) => ({
     publicKey: account.pda,
-    callback: async () => {
-      console.log('updating balance for', account)
+    callback: async (accountInfo: AccountInfo<Buffer>) => {
+      console.log(`updating balance for ${account.symbol}`, account)
+
       if (account.mint === NATIVE_MINT.toBase58()) {
-        const t = await connection.getBalance(account.pda)
         const dec = account.decimals || 9
+        const uiAmount = new Decimal(accountInfo.lamports).div(10 ** dec).toNumber()
         setBalanceBySymbol(account.mint, {
-          amount: t.toString(),
+          amount: accountInfo.lamports.toString(),
           decimals: dec,
-          uiAmount: t / 10 ** dec,
-          uiAmountString: (t / 10 ** dec).toFixed(2)
+          uiAmount: uiAmount,
+          uiAmountString: uiAmount.toFixed(2)
         })
-        console.log('updating balance for - sol', t)
+        console.log('updating balance for - sol', uiAmount)
         return
       }
-      const t = await connection.getTokenAccountBalance(account.pda, 'confirmed')
-      console.log('updating balance for - token', t)
-
-      setBalanceBySymbol(account.mint, t.value)
+      const decodedAccount = AccountLayout.decode(accountInfo.data);
+      const uiAmount = new Decimal(decodedAccount.amount.toString()).div(10 ** account.decimals).toNumber();
+      const amount: TokenAmount = {
+        amount: decodedAccount.amount.toString(),
+        decimals: account.decimals,
+        uiAmount: uiAmount,
+        uiAmountString: uiAmount.toFixed(2)
+      }
+      console.log(`updating balance for - ${account.symbol}`, uiAmount)
+      setBalanceBySymbol(account.mint, amount)
     }
   }))
-  console.log(tokenAccounts.map((account)=>[account?.pda?.toBase58(), account.symbol]))
   const { callbackOn, callbackOff } = useSolSubMulti({
     subType: SubType.AccountChange,
     publicKeys: tokens
@@ -95,6 +102,9 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   useEffect(() => {
     if (tokenAccounts.length > 0) {
       callbackOn()
+    }
+    return () => {
+      callbackOff()
     }
   }, [tokenAccounts])
   useEffect(() => {

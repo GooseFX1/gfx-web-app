@@ -119,6 +119,7 @@ interface GAMMADataModel {
   isConfettiVisible: boolean
   setIsConfettiVisible: Dispatch<SetStateAction<boolean>>
   forceCronAndUpdateLocalData: () => Promise<void>
+  updateUserLpPositions: () => Promise<void>
 }
 
 export type TokenListToken = {
@@ -343,50 +344,58 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       clearTimeout(timeout)
     }
   }, [searchTokens])
-  const getUserLpPositions = useCallback(async() =>
-    fetchLpPositions(base58PublicKey).then(async (positions: UserPortfolioLPPosition[] | null) => {
-      if (positions) {
-        let positionsToSet = []
-        const tokenListResponse = await fetchTokensByPublicKey(
-          positions
-            .reduce((acc, icc) => acc + icc.mintA.address + ',' + icc.mintB.address + ',', '')
-            .slice(0, -1)
-        )
-        if (tokenListResponse && tokenListResponse.success) {
-          const priceMap = new Map(tokenListResponse.data.tokens.map((token) => [token.address, token.price]))
-          positionsToSet = positions.map((position) => {
-            const tokenAPrice = priceMap.get(position.mintA.address)
-            const tokenBPrice = priceMap.get(position.mintB.address)
-            const uiValueA = new Decimal(position.tokenADeposited)
-              .div(Math.pow(10, parseInt(position.mintA.decimals)))
-            const valueA = uiValueA.mul(tokenAPrice)
-            const uiValueB = new Decimal(position.tokenBDeposited)
-              .div(Math.pow(10, parseInt(position.mintB.decimals)))
-            const valueB = uiValueB.mul(tokenBPrice)
-            const totalValue = valueA.add(valueB)
-            return {
+
+  const getUserLpPositions = useCallback(async () =>
+      fetchLpPositions(base58PublicKey).then(async (positions: UserPortfolioLPPosition[] | null) => {
+        if (positions) {
+          let positionsToSet = []
+          const tokenListResponse = await fetchTokensByPublicKey(
+            positions
+              .reduce((acc, icc) => acc + icc.mintA.address + ',' + icc.mintB.address + ',', '')
+              .slice(0, -1)
+          )
+          if (tokenListResponse && tokenListResponse.success) {
+            const priceMap = new Map(tokenListResponse.data.tokens.map((token) => [token.address, token.price]))
+            positionsToSet = positions.map((position) => {
+              const tokenAPrice = priceMap.get(position.mintA.address)
+              const tokenBPrice = priceMap.get(position.mintB.address)
+              const uiValueA = new Decimal(position.tokenADeposited)
+                .div(Math.pow(10, parseInt(position.mintA.decimals)))
+              const valueA = uiValueA.mul(tokenAPrice)
+              const uiValueB = new Decimal(position.tokenBDeposited)
+                .div(Math.pow(10, parseInt(position.mintB.decimals)))
+              const valueB = uiValueB.mul(tokenBPrice)
+              const totalValue = valueA.add(valueB)
+              return {
+                ...position,
+                totalValue: totalValue.toString(),
+                valueA: valueA.toString(),
+                valueB: valueB.toString(),
+                uiValueA: uiValueA.toString(),
+                uiValueB: uiValueB.toString()
+              }
+            })
+          } else {
+            positionsToSet = positions.map((position) => ({
               ...position,
-              totalValue: totalValue.toString(),
-              valueA: valueA.toString(),
-              valueB: valueB.toString(),
-              uiValueA: uiValueA.toString(),
-              uiValueB: uiValueB.toString()
+              totalValue: '0.0',
+              valueA: '0.0',
+              valueB: '0.0',
+              uiValueA: '0.0',
+              uiValueB: '0.0'
+            }))
+          }
+          setLpPositions(prev=>{
+            if (JSON.stringify(prev) !== JSON.stringify(positionsToSet)){
+              console.log('setting new lp positions')
+              return positionsToSet
             }
+            return prev
           })
-        } else {
-          positionsToSet = positions.map((position) => ({
-            ...position,
-            totalValue: '0.0',
-            valueA: '0.0',
-            valueB: '0.0',
-            uiValueA: '0.0',
-            uiValueB: '0.0'
-          }))
         }
-        setLpPositions(positionsToSet)
-      }
-    })
-  , [base58PublicKey])
+      })
+    , [base58PublicKey])
+    
   useEffect(() => {
     if (base58PublicKey) {
       // user data and portfolio stat fetching
@@ -446,7 +455,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       }
     })()
-  }, [GammaProgram, selectedCard])
+  }, [GammaProgram, selectedCard, publicKey])
 
   const { filteredPools } = useMemo(() => {
     const userLpPositions = new Map(lpPositions.map((lp) => [lp.poolStatePublicKey, lp]))
@@ -455,7 +464,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const userLpPosition = userLpPositions.get(pool.id)
         return {
           ...pool,
-          userLpPosition: userLpPosition,
+          userLpPosition: userLpPosition ? structuredClone(userLpPosition) : undefined,
           hasDeposit: userLpPosition
             ? new BN(userLpPosition?.lpTokensOwned)?.gt(new BN(0))
             : false
@@ -469,8 +478,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
         return show
       })
+    console.log('recalc filtered pools')
     return { filteredPools }
   }, [pools, lpPositions, showDeposited, base58PublicKey, showCreatedPools])
+
   useEffect(() => {
     if (!base58PublicKey || filteredPools.length == 0 || !selectedCard?.id) return
     const pool = filteredPools.filter(pool => pool.id === selectedCard.id)
@@ -538,6 +549,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isConfettiVisible,
         setIsConfettiVisible,
         forceCronAndUpdateLocalData
+        updateUserLpPositions: getUserLpPositions
       }}
     >
       {children}
