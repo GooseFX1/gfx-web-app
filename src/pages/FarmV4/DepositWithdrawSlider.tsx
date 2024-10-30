@@ -50,7 +50,8 @@ export const DepositWithdrawSlider: FC = () => {
     sendingTransaction,
     setSendingTransaction,
     selectedCardLiquidityAcc,
-    setSelectedCardLiquidityAcc
+    setSelectedCardLiquidityAcc,
+    updateUserLpPositions
   } = useGamma()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [userSourceTokenBal, setUserSourceTokenBal] = useState<number>()
@@ -486,8 +487,8 @@ export const DepositWithdrawSlider: FC = () => {
         setSendingTransaction(false)
         setUserSourceDepositAmount('')
         setUserTargetDepositAmount('')
+        setTimeout(()=>updateUserLpPositions(),1000)
         setShowConfetti.on()
-        console.log('showConfetti', showConfetti)
         setTimeout(() => setShowConfetti.off(), 10000)
         //setOpenDepositWithdrawSlider(false)
         //setSelectedCardLiquidityAcc({})
@@ -526,6 +527,7 @@ export const DepositWithdrawSlider: FC = () => {
         setUserSourceWithdrawAmount('')
         setUserTargetWithdrawAmount('')
         setActionType('')
+        setTimeout(()=>updateUserLpPositions(),1000)
         // setOpenDepositWithdrawSlider(false)
         // setSelectedCardLiquidityAcc({})
         // setModeOfOperation(ModeOfOperation.DEPOSIT)
