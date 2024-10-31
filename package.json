@@ -61,7 +61,7 @@
     "goosefx-stake-rewards-sdk": "^2.0.1",
     "highcharts": "^10.2.1",
     "highcharts-react-official": "^3.1.0",
-    "lottie-react": "^2.2.1",
+    "lottie-react": "2.2.1",
     "moment": "^2.29.2",
     "openbook-ts": "file:./openbook-package",
     "perps-wasm": "file:./perps-wasm",
