@@ -168,7 +168,7 @@ export const notifyUsingPromise = async (
     onDismiss: (t: ToastT) => {
       if (onDismiss) onDismiss(t)
       toast.dismiss(t.id)
-    },
+    }
   } as ExternalToast
   config.id = toast(<IntemediaryToast className={cn(`w-[290px]`)}>
     <IntemediaryToastHeading stage={'loading'}>Loading...</IntemediaryToastHeading>
