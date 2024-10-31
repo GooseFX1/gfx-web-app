@@ -86,7 +86,7 @@ export const CreatePool: FC<{
         const tx = await createPool(tokenA, tokenB, amountTokenA, amountTokenB, userPublicKey, GammaProgram, connection)
         txBuilder.add(tx)
         setSendingTransaction(true)
-        const { success } = await sendTransaction(txBuilder, null, notifyUsingPromiseForCreatePool)
+        const { success, txSig } = await sendTransaction(txBuilder, null, notifyUsingPromiseForCreatePool)
         if (!success) {
           setSendingTransaction(false)
           setTokenA(null)
@@ -96,7 +96,7 @@ export const CreatePool: FC<{
           slider.current.slickGoTo(1)
           return
         } else {
-          await forceCronAndUpdateLocalData()
+          await forceCronAndUpdateLocalData(txSig)
           setIsConfettiVisible(true)
           setSendingTransaction(false)
           setIsCreatePool(false)

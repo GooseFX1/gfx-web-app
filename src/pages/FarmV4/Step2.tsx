@@ -73,7 +73,7 @@ const Step2: FC<{
   const [existingPool, setExistingPool] = useState<GAMMAPool>()
   const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
   const { connected } = useWallet()
-
+  const { balance } = useWalletBalance()
   useEffect(() => {
     if (+amountTokenA && +amountTokenB) {
       !priceSwitch
@@ -113,7 +113,10 @@ const Step2: FC<{
       setPoolExists(false)
     })()
   }, [tokenA, tokenB, setPoolExists])
-
+  console.log({
+    balanceA: balance[tokenA?.address].tokenAmount.uiAmount,
+    balanceB: balance[tokenB?.address].tokenAmount.uiAmount
+  })
   return (
     <>
       <div
@@ -263,21 +266,24 @@ const Step2: FC<{
             />
           </div> */}
         {/* We need the swap component here but later */}
-        {tokenA &&
-        tokenB &&
-        +amountTokenA &&
-        +amountTokenB &&
-        (+amountTokenA > +walletTokenA || +amountTokenB > +walletTokenB) ? (
-          <span className="text-red-1 font-sembold text-regular">
+        {(tokenA &&
+          tokenB) && (
+          (+amountTokenA &&
+          +amountTokenB &&
+          (+amountTokenA > +walletTokenA || +amountTokenB > +walletTokenB)) ||
+          (balance[tokenA?.address].tokenAmount.uiAmount <= 0.0 ||
+            balance[tokenB?.address].tokenAmount.uiAmount <= 0.0))
+          ? (
+            <span className="text-red-1 font-sembold text-regular">
             {connected ? 'You don\'t have enough tokens in the wallet!' : 'Please connect your wallet to proceed!'}
           </span>
-        ) : tokenA && tokenB && tokenA?.symbol === tokenB?.symbol ? (
-          <span className="text-red-1 font-sembold text-regular">
+          ) : tokenA && tokenB && tokenA?.symbol === tokenB?.symbol ? (
+            <span className="text-red-1 font-sembold text-regular">
             Token A and Token B cannot be same! Please create a pool with two different mints!
           </span>
-        ) : (
-          <></>
-        )}
+          ) : (
+            <></>
+          )}
         {poolExists && (
           <div>
             <Container className={'flex flex-col gap-2.5 p-2.5'}>
