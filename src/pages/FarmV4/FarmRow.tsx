@@ -107,20 +107,20 @@ export const FarmRowLoader: FC = () => {
       <Skeleton className={`relative right-[10px] border-solid dark:border-black-2
           border-white border-[2px] rounded-full h-[25px] w-[25px]`} />
 
-      <Skeleton className={'w-[100px] h-[25px] rounded-0.5'} />
+      <Skeleton className={'w-[100px] h-[25px] rounded-[2px]'} />
     </div>
-    <Skeleton className={'w-[100px] h-[25px] rounded-0.5 inline-flex m-auto'}/>
+    <Skeleton className={'w-[100px] h-[25px] rounded-[2px] inline-flex m-auto'}/>
 
     {(isTablet || isDesktop) && (
-      <Skeleton className={'w-[100px] h-[25px] rounded-0.5 inline-flex m-auto'} />
+      <Skeleton className={'w-[100px] h-[25px] rounded-[2px] inline-flex m-auto'} />
 
     )}
     {isDesktop && (
-      <Skeleton className={'w-[100px] h-[25px] rounded-0.5 inline-flex m-auto'} />
+      <Skeleton className={'w-[100px] h-[25px] rounded-[2px] inline-flex m-auto'} />
 
     )}
     {(isTablet || isDesktop) && (
-      <Skeleton className={'w-[100px] h-[25px] rounded-0.5 inline-flex m-auto'} />
+      <Skeleton className={'w-[100px] h-[25px] rounded-[2px] inline-flex m-auto'} />
     )}
   </div>
 }
