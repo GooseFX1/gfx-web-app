@@ -371,10 +371,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           positionsToSet = positions.map((position) => {
             const tokenAPrice = priceMap.get(position.mintA.address)
             const tokenBPrice = priceMap.get(position.mintB.address)
-            const uiValueA = new Decimal(position.tokenADeposited)
+            const uiValueA = new Decimal(position.tokenADeposited).sub(position.tokenAWithdrawn)
               .div(Math.pow(10, parseInt(position.mintA.decimals)))
             const valueA = uiValueA.mul(tokenAPrice)
-            const uiValueB = new Decimal(position.tokenBDeposited)
+            const uiValueB = new Decimal(position.tokenBDeposited).sub(position.tokenBWithdrawn)
               .div(Math.pow(10, parseInt(position.mintB.decimals)))
             const valueB = uiValueB.mul(tokenBPrice)
             const totalValue = valueA.add(valueB)
