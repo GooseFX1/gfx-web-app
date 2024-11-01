@@ -1,4 +1,4 @@
-import { Connection, PublicKey } from '@solana/web3.js'
+import { AccountChangeCallback, Connection, ProgramAccountChangeCallback, PublicKey } from '@solana/web3.js'
 import { APP_RPC } from '../context'
 import { SubType, Unsubs } from '../hooks/useSolSub'
 
@@ -16,10 +16,15 @@ class SolanaSub {
     if (endpoint === this.connection.rpcEndpoint) return
     this.connection = new Connection(endpoint, 'processed')
   }
-  subscribeAccountChange = async (publicKey: PublicKey, subId: string, callback: () => void) => {
+  subscribeAccountChange = async (
+    publicKey: PublicKey,
+    subId: string,
+    callback: AccountChangeCallback
+  ) => {
     if (this.subs.has(subId)) {
       await this.connection.removeAccountChangeListener(this.subs.get(subId).id)
     }
+
     const id = await this.connection.onAccountChange(publicKey, callback, {
       commitment: 'confirmed',
       encoding: 'base64'
@@ -36,7 +41,11 @@ class SolanaSub {
     this.connection.removeAccountChangeListener(item.id)
     this.subs.delete(subId)
   }
-  subscribeProgramAccountChange = async (programId: PublicKey, subId: string, callback: () => void) => {
+  subscribeProgramAccountChange = async (
+    programId: PublicKey,
+    subId: string,
+    callback: ProgramAccountChangeCallback
+  ) => {
     if (this.subs.has(subId)) {
       await this.connection.removeProgramAccountChangeListener(this.subs.get(subId).id)
     }

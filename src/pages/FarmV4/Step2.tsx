@@ -12,6 +12,7 @@ import {
   Input,
   InputElementLeft,
   InputGroup,
+  Skeleton,
   Tooltip,
   TooltipContent,
   TooltipTrigger
@@ -72,7 +73,7 @@ const Step2: FC<{
   const [existingPool, setExistingPool] = useState<GAMMAPool>()
   const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
   const { connected } = useWallet()
-
+  const { balance } = useWalletBalance()
   useEffect(() => {
     if (+amountTokenA && +amountTokenB) {
       !priceSwitch
@@ -112,7 +113,10 @@ const Step2: FC<{
       setPoolExists(false)
     })()
   }, [tokenA, tokenB, setPoolExists])
-
+  console.log({
+    balanceA: balance[tokenA?.address].tokenAmount.uiAmount,
+    balanceB: balance[tokenB?.address].tokenAmount.uiAmount
+  })
   return (
     <>
       <div
@@ -262,21 +266,24 @@ const Step2: FC<{
             />
           </div> */}
         {/* We need the swap component here but later */}
-        {tokenA &&
-        tokenB &&
-        +amountTokenA &&
-        +amountTokenB &&
-        (+amountTokenA > +walletTokenA || +amountTokenB > +walletTokenB) ? (
-          <span className="text-red-1 font-sembold text-regular">
+        {(tokenA &&
+          tokenB) && (
+          (+amountTokenA &&
+          +amountTokenB &&
+          (+amountTokenA > +walletTokenA || +amountTokenB > +walletTokenB)) ||
+          (balance[tokenA?.address].tokenAmount.uiAmount <= 0.0 ||
+            balance[tokenB?.address].tokenAmount.uiAmount <= 0.0))
+          ? (
+            <span className="text-red-1 font-sembold text-regular">
             {connected ? 'You don\'t have enough tokens in the wallet!' : 'Please connect your wallet to proceed!'}
           </span>
-        ) : tokenA && tokenB && tokenA?.symbol === tokenB?.symbol ? (
-          <span className="text-red-1 font-sembold text-regular">
+          ) : tokenA && tokenB && tokenA?.symbol === tokenB?.symbol ? (
+            <span className="text-red-1 font-sembold text-regular">
             Token A and Token B cannot be same! Please create a pool with two different mints!
           </span>
-        ) : (
-          <></>
-        )}
+          ) : (
+            <></>
+          )}
         {poolExists && (
           <div>
             <Container className={'flex flex-col gap-2.5 p-2.5'}>
@@ -335,7 +342,7 @@ function TokenSelectionInput({
           data.push(token)
         }
       }
-      return data.sort((a,b)=>balance[a.address].value.gt(balance[b.address].value)?-1:1)
+      return data.sort((a, b) => balance[a.address].value.gt(balance[b.address].value) ? -1 : 1)
     },
     [topBalances, tokenList, balance, searchValue]
   )
@@ -476,41 +483,96 @@ function TokenSelectionInput({
                   ).then(() => setPage(page + 1))
                 }}
               >
-                {tokenList.length > 0 || topBalancesWithTokenList.length > 0 ? (
-                  <WindowingContainer
-                    className={'h-full'}
-                    rootElement={scrollingContainerRef}
-                    items={
-                      searchValue.length > 0 || createPoolType === 'primary' || !publicKey
-                        ? tokenList
-                        : topBalancesWithTokenList
-                    }
-                    render={(curToken: JupToken) => (
-                      <DropdownMenuItem
-                        className={`cursor-pointer p-1.5 border-1 border-transparent flex 
+                {isLoadingTokenList && !(tokenList.length > 0 || topBalancesWithTokenList.length > 0) ?
+                  <div className={'flex flex-col gap-2'}>
+                    <DropdownMenuItem disabled={true} className={`
+                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full h-[42px] gap-2 items-center
+                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}>
+                      <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
+                      <div className={'flex flex-col gap-1'}>
+                        <Skeleton className={`w-[80px] h-[20px]`} />
+                        <Skeleton className={`w-[80px] h-[20px]`} />
+                      </div>
+                      <div className={'flex flex-col gap-1 ml-auto'}>
+                        <Skeleton className={`w-[80px] h-[20px]`} />
+                        <Skeleton className={`w-[80px] h-[20px]`} />
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled={true} className={`
+                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full h-[42px] gap-2 items-center
+                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}>
+                      <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
+                      <div className={'flex flex-col gap-1'}>
+                        <Skeleton className={`w-[80px] h-[20px]`} />
+                        <Skeleton className={`w-[80px] h-[20px]`} />
+                      </div>
+                      <div className={'flex flex-col gap-1 ml-auto'}>
+                        <Skeleton className={`w-[80px] h-[20px]`} />
+                        <Skeleton className={`w-[80px] h-[20px]`} />
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled={true} className={`
+                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full h-[42px] gap-2 items-center
+                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}>
+                      <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
+                      <div className={'flex flex-col gap-1'}>
+                        <Skeleton className={`w-[80px] h-[20px]`} />
+                        <Skeleton className={`w-[80px] h-[20px]`} />
+                      </div>
+                      <div className={'flex flex-col gap-1 ml-auto'}>
+                        <Skeleton className={`w-[80px] h-[20px]`} />
+                        <Skeleton className={`w-[80px] h-[20px]`} />
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled={true} className={`
+                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full h-[42px] gap-2 items-center
+                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}>
+                      <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
+                      <div className={'flex flex-col gap-1'}>
+                        <Skeleton className={`w-[80px] h-[20px]`} />
+                        <Skeleton className={`w-[80px] h-[20px]`} />
+                      </div>
+                      <div className={'flex flex-col gap-1 ml-auto'}>
+                        <Skeleton className={`w-[80px] h-[20px]`} />
+                        <Skeleton className={`w-[80px] h-[20px]`} />
+                      </div>
+                    </DropdownMenuItem>
+                  </div>
+                  : (tokenList.length > 0 || topBalancesWithTokenList.length > 0) ? (
+                    <WindowingContainer
+                      className={'h-full'}
+                      rootElement={scrollingContainerRef}
+                      items={
+                        searchValue.length > 0 || createPoolType === 'primary' || !publicKey
+                          ? tokenList
+                          : topBalancesWithTokenList
+                      }
+                      render={(curToken: JupToken) => (
+                        <DropdownMenuItem
+                          className={`cursor-pointer p-1.5 border-1 border-transparent flex 
                         hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
-                        onClick={() => {
-                          setToken(curToken)
-                          setSearchValue('')
-                        }}
-                        key={curToken?.address}
-                        disabled={otherToken?.address === curToken?.address}
-                      >
-                        <div className={'flex w-full flex-1'}>
-                          <div className={`flex gap-2`}>
-                            <Icon
-                              className={`rounded-circle h-[24px] w-[24px] border 
+                          onClick={() => {
+                            setToken(curToken)
+                            setSearchValue('')
+                          }}
+                          key={curToken?.address}
+                          disabled={otherToken?.address === curToken?.address}
+                        >
+                          <div className={'flex w-full flex-1'}>
+                            <div className={`flex gap-2`}>
+                              <Icon
+                                className={`rounded-circle h-[24px] w-[24px] border 
                                 border-solid dark:border-black-4 border-grey-4`}
-                              src={loadIconImage(curToken?.logoURI, mode)}
-                            />
-                            <div>
-                              <p
-                                className={`text-b2 font-bold 
+                                src={loadIconImage(curToken?.logoURI, mode)}
+                              />
+                              <div>
+                                <p
+                                  className={`text-b2 font-bold 
                                   dark:text-text-darkmode-primary text-text-lightmode-primary`}
-                              >
-                                {curToken?.symbol}
-                              </p>
-                              <span className={'inline-flex gap-1'}>
+                                >
+                                  {curToken?.symbol}
+                                </p>
+                                <span className={'inline-flex gap-1'}>
                                 <span className={'max-w-[118px] self-center'}>
                                   <p
                                     className={`text-b3 dark:text-text-darkmode-secondary 
@@ -539,31 +601,31 @@ function TokenSelectionInput({
                                   </Badge>
                                 </a>
                               </span>
+                              </div>
                             </div>
-                          </div>
-                          <div className={'w-full ml-auto flex flex-col gap-1 items-end'}>
-                            <p
-                              className={`text-b2 font-bold dark:text-text-darkmode-primary 
+                            <div className={'w-full ml-auto flex flex-col gap-1 items-end'}>
+                              <p
+                                className={`text-b2 font-bold dark:text-text-darkmode-primary 
                                 text-text-lightmode-primary`}
-                            >
-                              {numberFormatter(balance[curToken?.address].tokenAmount.uiAmount)}
-                            </p>
-                            <p
-                              className={`text-b3 dark:text-text-darkmode-secondary text-text-lightmode-secondary 
+                              >
+                                {numberFormatter(balance[curToken?.address].tokenAmount.uiAmount)}
+                              </p>
+                              <p
+                                className={`text-b3 dark:text-text-darkmode-secondary text-text-lightmode-secondary 
                                 truncate font-semibold
                                 `}
-                            >
-                              ${bigNumberFormatter(new BigNumber(balance[curToken?.address].value.toString()))}
-                            </p>
+                              >
+                                ${bigNumberFormatter(new BigNumber(balance[curToken?.address].value.toString()))}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </DropdownMenuItem>
-                    )}
-                  />
-                ) : (
-                  <DropdownMenuItem disabled={true}>No Tokens Found</DropdownMenuItem>
-                )}
-                {isLoadingTokenList ? <DropdownMenuItem disabled={true}>LOADING</DropdownMenuItem> : null}
+                        </DropdownMenuItem>
+                      )}
+                    />
+                  ) : (
+                    <DropdownMenuItem disabled={true}>No Tokens Found</DropdownMenuItem>
+                  )}
+
               </ScrollingHydrateContainer>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -9,5 +9,6 @@ export enum GAMMA_ENDPOINTS_V1 {
   USER = `/v1/user`,
   PORTFOLIO_STATS = `/v1/portfolio-stats`,
   LP_POSITIONS = `/v1/user-liquidity`,
-  TOKEN_LIST = '/v1/token-list'
+  TOKEN_LIST = '/v1/token-list',
+  FORCE_CRON = '/v1/force-cron',
 }

@@ -20,9 +20,10 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import { createPool } from '@/web3/Farm'
-import { useAccounts, useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
+import { useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
 import useTransaction from '@/hooks/useTransaction'
 import { notifyUsingPromiseForCreatePool } from '@/utils/perpsNotifications'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 export const CreatePool: FC<{
   isCreatePool: boolean
@@ -42,10 +43,17 @@ export const CreatePool: FC<{
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
-  const { setSendingTransaction, createPoolType, setCreatePoolType, setIsConfettiVisible } = useGamma()
-  const { getUIAmount } = useAccounts()
-  const walletTokenA = useMemo(() => tokenA ? getUIAmount(tokenA?.address).toFixed(2) : '0.00', [tokenA, userPublicKey])
-  const walletTokenB = useMemo(() => tokenB ? getUIAmount(tokenB?.address).toFixed(2) : '0.00', [tokenB, userPublicKey])
+  const {
+    setSendingTransaction,
+    createPoolType,
+    setCreatePoolType,
+    setIsConfettiVisible,
+    forceCronAndUpdateLocalData
+  } = useGamma()
+  const {balance} = useWalletBalance();
+
+  const walletTokenA = balance[tokenA?.address].tokenAmount.uiAmountString;
+  const walletTokenB = balance[tokenB?.address].tokenAmount.uiAmountString;
   const { connection } = useConnectionConfig()
 
   const settings = {
@@ -78,7 +86,7 @@ export const CreatePool: FC<{
         const tx = await createPool(tokenA, tokenB, amountTokenA, amountTokenB, userPublicKey, GammaProgram, connection)
         txBuilder.add(tx)
         setSendingTransaction(true)
-        const { success } = await sendTransaction(txBuilder, null, notifyUsingPromiseForCreatePool)
+        const { success, txSig } = await sendTransaction(txBuilder, null, notifyUsingPromiseForCreatePool)
         if (!success) {
           setSendingTransaction(false)
           setTokenA(null)
@@ -88,6 +96,7 @@ export const CreatePool: FC<{
           slider.current.slickGoTo(1)
           return
         } else {
+          await forceCronAndUpdateLocalData(txSig)
           setIsConfettiVisible(true)
           setSendingTransaction(false)
           setIsCreatePool(false)

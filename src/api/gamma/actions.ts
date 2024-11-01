@@ -95,6 +95,7 @@ const fetchPortfolioStats = async (userId: string): Promise<UserPortfolioStats |
 }
 
 const fetchLpPositions = async (userId: string): Promise<UserPortfolioLPPosition[] | null> => {
+  if (!userId) return null
   try {
     const response = await httpClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.LP_POSITIONS}/${userId}`)
     return response.status === 200 ? response.data.data.accounts : []
@@ -167,6 +168,17 @@ const fetchTokensByPublicKey = async (tokens: string): Promise<GAMMAListTokenRes
     }
   }
 }
+
+const forceCronUpdate = async () => {
+  try {
+    await httpClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.FORCE_CRON)
+    return true;
+  } catch (e) {
+    console.log('Error forcing cron update', e)
+    return false
+  }
+}
+
 export {
   fetchGAMMAConfig,
   fetchAggregateStats,
@@ -176,5 +188,6 @@ export {
   fetchAllPools,
   fetchTokenList,
   fetchTokensByPublicKey,
-  fetchPoolsByMints
+  fetchPoolsByMints,
+  forceCronUpdate
 }

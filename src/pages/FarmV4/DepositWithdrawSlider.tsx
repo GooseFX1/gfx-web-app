@@ -50,7 +50,8 @@ export const DepositWithdrawSlider: FC = () => {
     sendingTransaction,
     setSendingTransaction,
     selectedCardLiquidityAcc,
-    setSelectedCardLiquidityAcc
+    setSelectedCardLiquidityAcc,
+    forceCronAndUpdateLocalData
   } = useGamma()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [userSourceTokenBal, setUserSourceTokenBal] = useState<number>()
@@ -472,7 +473,7 @@ export const DepositWithdrawSlider: FC = () => {
       const targetAmount = `${bigNumberFormatter(new BigNumber(isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount))} ${selectedCard?.mintB?.symbol}`
       const type = isDeposit ? 'deposited' : 'withdrew'
       const direction = isDeposit ? 'into' : 'from'
-      const { success } = await sendTransaction(txBuilder, {
+      const { success, txSig } = await sendTransaction(txBuilder, {
         successMessage: `You successfully ${type} ${sourceAmount}, ${targetAmount} ${direction} ${poolMessage}`
       })
       //console.log('success', success)
@@ -486,8 +487,8 @@ export const DepositWithdrawSlider: FC = () => {
         setSendingTransaction(false)
         setUserSourceDepositAmount('')
         setUserTargetDepositAmount('')
+        await forceCronAndUpdateLocalData(txSig)
         setShowConfetti.on()
-        console.log('showConfetti', showConfetti)
         setTimeout(() => setShowConfetti.off(), 10000)
         //setOpenDepositWithdrawSlider(false)
         //setSelectedCardLiquidityAcc({})
@@ -514,7 +515,7 @@ export const DepositWithdrawSlider: FC = () => {
       )
       txBuilder.add(tx)
       setSendingTransaction(true)
-      const { success } = await sendTransaction(txBuilder)
+      const { success, txSig } = await sendTransaction(txBuilder)
 
       if (!success) {
         //off(connectionId)
@@ -526,6 +527,7 @@ export const DepositWithdrawSlider: FC = () => {
         setUserSourceWithdrawAmount('')
         setUserTargetWithdrawAmount('')
         setActionType('')
+        await forceCronAndUpdateLocalData(txSig);
         // setOpenDepositWithdrawSlider(false)
         // setSelectedCardLiquidityAcc({})
         // setModeOfOperation(ModeOfOperation.DEPOSIT)
