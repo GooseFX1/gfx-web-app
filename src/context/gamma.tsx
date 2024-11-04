@@ -481,7 +481,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
         return show
       })
-    console.log('recalc filtered pools', { newPools, userLpPositions })
     return { filteredPools: newPools }
   }, [pools, lpPositions, showDeposited, base58PublicKey, showCreatedPools])
 
@@ -506,11 +505,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       await connection.confirmTransaction(blockHeightConfirmationStrategy, 'confirmed')
     }
     const result = await forceCronUpdate()
-
     if (!result) return
-    console.log('Calling Update Token From ForceCron')
     getUserLpPositions()
-    console.log('Calling Update Pool From ForceCron')
     // will trigger updatePool useEffect
     updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type }, false)
     setPoolPage(1)
