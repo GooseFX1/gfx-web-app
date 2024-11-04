@@ -1,15 +1,4 @@
-import {
-  createContext,
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from 'react'
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState } from 'react'
 import {
   fetchAggregateStats,
   fetchAllPools,
@@ -504,7 +493,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [base58PublicKey, filteredPools])
 
   const isSearchActive = searchTokens.trim().length > 0
-  const forceCronAndUpdateLocalData = useCallback(async (txSig?: string) => {
+  const forceCronAndUpdateLocalData = async (txSig?: string) => {
+
     if (txSig) {
       // if txSig is given wait for confirmation
       const blockHash = await connection.getLatestBlockhash()
@@ -516,13 +506,16 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       await connection.confirmTransaction(blockHeightConfirmationStrategy, 'confirmed')
     }
     const result = await forceCronUpdate()
+
     if (!result) return
+    console.log('Calling Update Token From ForceCron')
+    getUserLpPositions()
+    console.log('Calling Update Pool From ForceCron')
     // will trigger updatePool useEffect
     updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type }, false)
     setPoolPage(1)
-    setPools([])
-    getUserLpPositions()
-  }, [connection])
+  }
+
   return (
     <GAMMAContext.Provider
       value={{

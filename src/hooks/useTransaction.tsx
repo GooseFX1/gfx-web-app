@@ -35,7 +35,7 @@ function useTransaction(): useTransactionReturn {
   )
   const supportedTransactionTypes = useMemo(() =>
     wallet?.adapter?.supportedTransactionVersions ?? baseSet, [wallet])
-  const sendTransaction = useCallback(
+  const sendTransaction =
     async (txnIn: Transaction | TransactionBuilder, connectionData?: SendTxnOptions, notify = notifyUsingPromise) => {
 
       const connection = connectionData?.connection ?? originalConnection
@@ -88,9 +88,8 @@ function useTransaction(): useTransactionReturn {
       const promise = promiseBuilder<Awaited<ReturnType<typeof exec>>>(exec())
       const success = await notify(promise, null, txSig, connectionData?.successMessage, connectionData?.errorMessage)
       return { txSig, success }
-    },
-    [originalConnection, sendTransactionOriginal, supportedTransactionTypes, publicKey]
-  )
+    }
+
   return {
     createTransactionBuilder,
     sendTransaction

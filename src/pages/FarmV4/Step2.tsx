@@ -113,10 +113,7 @@ const Step2: FC<{
       setPoolExists(false)
     })()
   }, [tokenA, tokenB, setPoolExists])
-  console.log({
-    balanceA: balance[tokenA?.address].tokenAmount.uiAmount,
-    balanceB: balance[tokenB?.address].tokenAmount.uiAmount
-  })
+
   return (
     <>
       <div
