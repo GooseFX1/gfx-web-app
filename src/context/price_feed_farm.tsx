@@ -19,6 +19,7 @@ import { PublicKey } from '@solana/web3.js'
 import sslJson from '../pages/FarmV3/idl/sslv2.json'
 import GammaJson from '../pages/FarmV4/idl/gamma.json'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+import { GAMMA_PROGRAM_ID } from '../web3'
 
 interface IPrices {
   [x: string]: {
@@ -102,6 +103,7 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
     () =>
       new coralProgram(
         GammaJson as any,
+        GAMMA_PROGRAM_ID,
         new AnchorProvider(connection, wal as WalletContextState, { commitment: 'finalized' })
       ),
     [connection]
