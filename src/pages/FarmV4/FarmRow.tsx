@@ -7,7 +7,7 @@ import { useWalletBalance } from '@/context/walletBalanceContext'
 import { loadIconImage, numberFormatter } from '@/utils'
 
 const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): JSX.Element => {
-  const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
+  const { setSelectedCard, setOpenDepositWithdrawSlider, viewRange } = useGamma()
   const { isMobile, isTablet, isDesktop } = useBreakpoint()
   const { base58PublicKey } = useWalletBalance()
   const { mode } = useDarkMode()
@@ -16,12 +16,39 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
     const liquidity = parseFloat(pool.tvl)
     return liquidity ? numberFormatter(liquidity) : '0.00'
   }, [pool])
-  const formattedVolume = useMemo(
-    () => numberFormatter(pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD),
-    [pool.stats.daily.volumeTokenAUSD, pool.stats.daily.volumeTokenBUSD]
+  const { formattedVolume, formattedFees, formattedAPR } = useMemo(
+    () => {
+      if (!pool.stats) {
+        return {
+          formattedVolume: '0.00',
+          formattedFees: '0.00',
+          formattedAPR: '0.00'
+        }
+      }
+      switch (viewRange) {
+        case 0:
+          return {
+            formattedVolume: numberFormatter(pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD),
+            formattedFees: numberFormatter(pool.stats.daily.tradeFeesUSD),
+            formattedAPR: numberFormatter(pool.stats.daily.feesAprUSD)
+          }
+        case 1:
+          return {
+            formattedVolume: numberFormatter(pool.stats.weekly.volumeTokenAUSD + pool.stats.weekly.volumeTokenBUSD),
+            formattedFees: numberFormatter(pool.stats.weekly.tradeFeesUSD),
+            formattedAPR: numberFormatter(pool.stats.weekly.feesAprUSD)
+          }
+        case 2:
+          return {
+            formattedVolume: numberFormatter(pool.stats.monthly.volumeTokenAUSD + pool.stats.monthly.volumeTokenBUSD),
+            formattedFees: numberFormatter(pool.stats.monthly.tradeFeesUSD),
+            formattedAPR: numberFormatter(pool.stats.monthly.feesAprUSD)
+          }
+      }
+    },
+    [pool.stats, viewRange]
   )
-  const formattedFees = useMemo(() => numberFormatter(pool.stats.daily.tradeFeesUSD), [pool.stats.daily.tradeFeesUSD])
-  const formattedAPR = useMemo(() => numberFormatter(pool.stats.daily.feesAprUSD), [pool.stats.daily.feesAprUSD])
+
 
   return (
     <div
@@ -109,7 +136,7 @@ export const FarmRowLoader: FC = () => {
 
       <Skeleton className={'w-[100px] h-[25px] rounded-[2px]'} />
     </div>
-    <Skeleton className={'w-[100px] h-[25px] rounded-[2px] inline-flex m-auto'}/>
+    <Skeleton className={'w-[100px] h-[25px] rounded-[2px] inline-flex m-auto'} />
 
     {(isTablet || isDesktop) && (
       <Skeleton className={'w-[100px] h-[25px] rounded-[2px] inline-flex m-auto'} />

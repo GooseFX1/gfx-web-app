@@ -33,7 +33,7 @@ import {
   POOL_TYPE,
   TOKEN_LIST_PAGE_SIZE
 } from '@/pages/FarmV4/constants'
-import { usePriceFeedFarm } from '.'
+import { usePriceFeedFarm, useRewardToggle } from '.'
 import { useConnectionConfig } from './settings'
 import { getLiquidityPoolKey, getpoolId } from '@/web3/Farm'
 import useBoolean from '@/hooks/useBoolean'
@@ -41,6 +41,8 @@ import Decimal from 'decimal.js-light'
 import { aborter } from '@/utils'
 import BN from 'bn.js'
 import { BlockheightBasedTransactionConfirmationStrategy } from '@solana/web3.js'
+
+type ViewRange = 0 | 1 | 2
 
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
@@ -110,6 +112,9 @@ interface GAMMADataModel {
   setIsConfettiVisible: Dispatch<SetStateAction<boolean>>
   forceCronAndUpdateLocalData: (txSig?: string) => Promise<void>
   updateUserLpPositions: () => Promise<void>
+  viewRange: ViewRange
+  setViewRange: Dispatch<SetStateAction<ViewRange>>
+  computedViewRange: '24H' | '7D' | '30D'
 }
 
 export type TokenListToken = {
@@ -173,8 +178,14 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   })
   const [createPoolType, setCreatePoolType] = useState<string>('')
   const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
+  const [viewRange, setViewRange] = useState<ViewRange>(0)
+  const { isProMode } = useRewardToggle()
   //const [connectionId, setConnectionId] = useState<string>()
-
+  useEffect(() => {
+    if (!isProMode && viewRange != 0) {
+      setViewRange(0)
+    }
+  }, [isProMode, viewRange])
   useEffect(() => {
     // first render only
     if (tokenList.length == 0) {
@@ -511,7 +522,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type }, false)
     setPoolPage(1)
   }
-
+  const computedViewRange = viewRange == 0 ? '24H' : viewRange == 1 ? '7D' : '30D'
   return (
     <GAMMAContext.Provider
       value={{
@@ -565,7 +576,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isConfettiVisible,
         setIsConfettiVisible,
         forceCronAndUpdateLocalData,
-        updateUserLpPositions: getUserLpPositions
+        updateUserLpPositions: getUserLpPositions,
+        setViewRange,
+        viewRange,
+        computedViewRange
       }}
     >
       {children}

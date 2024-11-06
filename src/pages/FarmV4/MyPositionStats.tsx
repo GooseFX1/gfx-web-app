@@ -1,35 +1,36 @@
 import { FC, ReactElement } from 'react'
 import { useDarkMode, useGamma } from '@/context'
 import { Icon } from 'gfx-component-lib'
-import { bigNumberFormatter, loadIconImage, truncateBigString } from '@/utils'
+import { bigNumberFormatter, loadIconImage } from '@/utils'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
+import Decimal from 'decimal.js-light'
 
 export const MyPositionStats: FC<{
   withdrawableBalanceA: BN
   withdrawableBalanceB: BN
 }> = ({
-  withdrawableBalanceA,
-  withdrawableBalanceB
-}): ReactElement => {
-    const { selectedCard, selectedCardPool } = useGamma()
-    const { mode } = useDarkMode()
-    if (!selectedCard || !selectedCard.hasDeposit) return null
+        withdrawableBalanceA,
+        withdrawableBalanceB
+      }): ReactElement => {
+  const { selectedCard, selectedCardPool } = useGamma()
+  const { mode } = useDarkMode()
+  if (!selectedCard || !selectedCard.hasDeposit) return null
 
-    return (
-      <>
-        <div className="flex justify-between mb-2">
+  return (
+    <>
+      <div className="flex justify-between mb-2">
           <span
             className={`!text-regular font-semibold dark:text-text-darkmode-secondary
                text-text-lightmode-secondary`}
           >
             Est. 24H Fees
           </span>
-          <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">
+        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">
             ${bigNumberFormatter(new BigNumber(selectedCard.userLpPosition?.stats?.daily?.feesUSD))}
           </span>
-        </div>
-        <div className="flex justify-between mb-2">
+      </div>
+      <div className="flex justify-between mb-2">
           <span
             className={`!text-regular font-semibold dark:text-text-darkmode-secondary
                text-text-lightmode-secondary
@@ -37,13 +38,16 @@ export const MyPositionStats: FC<{
           >
             Token A
           </span>
-          <span className="!text-regular font-semibold dark:text-grey-8 text-black-4 inline-flex gap-1">
+        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4 inline-flex gap-1">
             <Icon
               src={loadIconImage(selectedCard.mintA.logoURI, mode)} size={'sm'} />
-            {truncateBigString(withdrawableBalanceA?.toString(), selectedCardPool?.mint0Decimals)}
+          {bigNumberFormatter(new BigNumber(
+            new Decimal(withdrawableBalanceA?.toString())
+              .div(Math.pow(10, selectedCardPool?.mint0Decimals || 0)).toString()
+          ))}
           </span>
-        </div>
-        <div className="flex justify-between mb-2">
+      </div>
+      <div className="flex justify-between mb-2">
           <span
             className={`!text-regular font-semibold dark:text-text-darkmode-secondary
                text-text-lightmode-secondary
@@ -51,11 +55,14 @@ export const MyPositionStats: FC<{
           >
             Token B
           </span>
-          <span className="!text-regular font-semibold dark:text-grey-8 text-black-4 inline-flex gap-1">
+        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4 inline-flex gap-1">
             <Icon src={loadIconImage(selectedCard.mintB.logoURI, mode)} size={'sm'} />
-            {truncateBigString(withdrawableBalanceB?.toString(), selectedCardPool?.mint1Decimals)}
+          {bigNumberFormatter(new BigNumber(
+            new Decimal(withdrawableBalanceB?.toString())
+              .div(Math.pow(10, selectedCardPool?.mint1Decimals || 0)).toString()
+          ))}
           </span>
-        </div>
-      </>
-    )
-  }
+      </div>
+    </>
+  )
+}
