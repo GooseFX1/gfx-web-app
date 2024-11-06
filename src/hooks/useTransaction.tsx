@@ -13,6 +13,7 @@ type SendTxnOptions = {
   confirmationWaitType?: Commitment
   successMessage?: string
   errorMessage?: string
+  transactionDuration?: number
 }
 type useTransactionReturn = {
   createTransactionBuilder: (txn?: TXN) => TransactionBuilder
@@ -86,7 +87,11 @@ function useTransaction(): useTransactionReturn {
           })
       }
       const promise = promiseBuilder<Awaited<ReturnType<typeof exec>>>(exec())
-      const success = await notify(promise, null, txSig, connectionData?.successMessage, connectionData?.errorMessage)
+      const success = await notify(promise, null,
+        txSig,
+        connectionData?.successMessage,
+        connectionData?.errorMessage,
+        connectionData?.transactionDuration)
       return { txSig, success }
     }
 

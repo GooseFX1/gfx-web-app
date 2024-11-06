@@ -24,6 +24,7 @@ import { useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
 import useTransaction from '@/hooks/useTransaction'
 import { notifyUsingPromiseForCreatePool } from '@/utils/perpsNotifications'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+import { INTERVALS } from '@/utils/time'
 
 export const CreatePool: FC<{
   isCreatePool: boolean
@@ -50,10 +51,10 @@ export const CreatePool: FC<{
     setIsConfettiVisible,
     forceCronAndUpdateLocalData
   } = useGamma()
-  const {balance} = useWalletBalance();
+  const { balance } = useWalletBalance()
 
-  const walletTokenA = balance[tokenA?.address].tokenAmount.uiAmountString;
-  const walletTokenB = balance[tokenB?.address].tokenAmount.uiAmountString;
+  const walletTokenA = balance[tokenA?.address].tokenAmount.uiAmountString
+  const walletTokenB = balance[tokenB?.address].tokenAmount.uiAmountString
   const { connection } = useConnectionConfig()
 
   const settings = {
@@ -86,7 +87,13 @@ export const CreatePool: FC<{
         const tx = await createPool(tokenA, tokenB, amountTokenA, amountTokenB, userPublicKey, GammaProgram, connection)
         txBuilder.add(tx)
         setSendingTransaction(true)
-        const { success, txSig } = await sendTransaction(txBuilder, null, notifyUsingPromiseForCreatePool)
+        const {
+          success,
+          txSig
+        } = await sendTransaction(
+          txBuilder,
+          { transactionDuration: INTERVALS.MINUTE * 5 },
+          notifyUsingPromiseForCreatePool)
         if (!success) {
           setSendingTransaction(false)
           setTokenA(null)

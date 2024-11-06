@@ -1,8 +1,9 @@
 import { FC } from 'react'
 import { JupToken } from './constants'
 import { Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
-import { loadIconImage } from '@/utils'
+import { bigNumberFormatter, loadIconImage } from '@/utils'
 import { useDarkMode } from '@/context'
+import BigNumber from 'bignumber.js'
 
 const Step3: FC<{
     tokenA: JupToken
@@ -67,7 +68,7 @@ const Step3: FC<{
                         Inital Price
                     </span>
                     <span className="text-regular font-semibold dark:text-grey-8 text-black-4">
-                        ${initialPrice}
+                        ${bigNumberFormatter(new BigNumber(initialPrice))}
                     </span>
                 </div>
                 <div className="flex justify-between mb-3">
@@ -75,7 +76,7 @@ const Step3: FC<{
                         {`Token A (${tokenA?.symbol})`}
                     </span>
                     <span className="text-regular font-semibold dark:text-grey-8 text-black-4">
-                        {amountTokenA} {tokenA?.symbol}
+                        {bigNumberFormatter(new BigNumber(amountTokenA))} {tokenA?.symbol}
                     </span>
                 </div>
                 <div className="flex justify-between mb-3">
@@ -83,7 +84,7 @@ const Step3: FC<{
                         {`Token B (${tokenB?.symbol})`}
                     </span>
                     <span className="text-regular font-semibold dark:text-grey-8 text-black-4">
-                        {amountTokenB} {tokenB?.symbol}
+                        {bigNumberFormatter(new BigNumber(amountTokenB))} {tokenB?.symbol}
                     </span>
                 </div>
                 {/* <div className="flex justify-between mb-2">

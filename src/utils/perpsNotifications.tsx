@@ -161,7 +161,8 @@ export const notifyUsingPromise = async (
   onDismiss?: (toast: ToastT) => void,
   tentativeTxId?: string,
   successMessage?: ReactNode,
-  errorMessage?: ReactNode
+  errorMessage?: ReactNode,
+  transactionDuration: number = 60000
 ): Promise<boolean> => {
   const config = {
     dismissible: true,
@@ -174,7 +175,7 @@ export const notifyUsingPromise = async (
     <IntemediaryToastHeading stage={'loading'}>Loading...</IntemediaryToastHeading>
     <p>Please wait a few moments for the transaction to confirm...</p>
     {Boolean(tentativeTxId) && <OpenSolScanLink link={`https://solscan.io/tx/${tentativeTxId}`} />}
-  </IntemediaryToast>, { ...config, duration: 60000 })
+  </IntemediaryToast>, { ...config, duration: transactionDuration })
 
   try {
     const response = await promise as SuccessResponse

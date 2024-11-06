@@ -1,6 +1,6 @@
 import { useGamma } from '@/context'
 import { FC, ReactElement, useMemo } from 'react'
-import { Container } from 'gfx-component-lib'
+import { Container, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import DepositWithdrawLabel from './DepositWithdrawLabel'
 import { bigNumberFormatter, numberFormatter } from '@/utils'
 import { useWalletBalance } from '@/context/walletBalanceContext'
@@ -26,8 +26,8 @@ export const ReviewConfirm: FC<{
       <Container colorScheme={'default'} className={'mx-2.5 my-3 p-2.5 w-auto rounded-[4px]'}>
         <div className="flex justify-between mb-2">
           <span
-            className="!font-regular font-semibold underline
-                        dark:text-grey-2 text-grey-1 decoration-dotted"
+            className="!font-regular font-semibold
+                        dark:text-grey-2 text-grey-1"
           >
             Est. 24H Fees
           </span>
@@ -37,23 +37,31 @@ export const ReviewConfirm: FC<{
           </span>
         </div>
         <div className="flex justify-between mb-2">
-          <span
-            className="!font-regular font-semibold dark:text-grey-2 
-                        text-grey-1 underline decoration-dotted"
-          >
+          <Tooltip>
+            <TooltipTrigger className={`!font-regular !font-semibold dark:text-text-darkmode-secondary
+                        text-grey-1 underline decoration-dotted`}>
             Pool Fee Rate
-          </span>
+            </TooltipTrigger>
+            <TooltipContent>
+              This fee is dynamically calculated based on volatility in the pools to provide the best returns for LPs.
+              Ranging between 0.1% to 10%.
+            </TooltipContent>
+          </Tooltip>
+
           <span className="!font-regular font-semibold dark:text-grey-8 text-black-4">
             {bigNumberFormatter(new BigNumber(selectedCard?.config?.protocolFeeRate || 0.00).div(100e3), 2)}%
           </span>
         </div>
         <div className="flex justify-between mb-2">
-          <span
-            className="!font-regular font-semibold 
-                        dark:text-grey-2 text-grey-1 underline decoration-dotted"
-          >
+          <Tooltip>
+            <TooltipTrigger className={`!font-regular font-semibold 
+                        dark:text-grey-2 text-grey-1 underline decoration-dotted`}>
             Total Deposit
-          </span>
+            </TooltipTrigger>
+            <TooltipContent>
+              This is the sum of your deposits of Token A/B
+            </TooltipContent>
+          </Tooltip>
           <span className="!font-regular font-semibold dark:text-grey-8 text-black-4">
             ${bigNumberFormatter(depositValue, depositValue.gt(0) ? 4 : 2)}
           </span>
