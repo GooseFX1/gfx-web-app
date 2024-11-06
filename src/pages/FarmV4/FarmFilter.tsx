@@ -38,10 +38,10 @@ const FarmRowItem: FC<{
 const FarmFilter: FC = () => {
   // const { userCache, updateUserCache } = useConnectionConfig()
   const { isMobile, isTablet, isDesktop } = useBreakPoint()
-  const { currentSort, setCurrentSort } = useGamma()
+  const { currentSort, setCurrentSort, computedViewRange } = useGamma()
 
   const handleColumnSort = useCallback(
-    (id: string) => 
+    (id: string) =>
       // TODO: reinstate this
       // persists current sort in local storage
       // setCurrentSort(id)
@@ -78,16 +78,17 @@ const FarmFilter: FC = () => {
       />
       {(isTablet || isDesktop) && (
         <FarmRowItem
-          title={'24H Volume'}
-          tooltip={'24H Volume is reset daily at 10PM UTC'}
+          title={`${computedViewRange} Volume`}
+          tooltip={`${computedViewRange} Volume is reset daily at 10PM UTC`}
           onClick={handleColumnSort(currentSort === '3' ? '4' : '3')}
           invert={currentSort == '3'}
         />
       )}
-      {isDesktop && <FarmRowItem title={'24H Fees'} onClick={handleColumnSort('5')} invert={currentSort == '5'} />}
+      {isDesktop &&
+        <FarmRowItem title={`${computedViewRange} Fees`} onClick={handleColumnSort('5')} invert={currentSort == '5'} />}
       {(isTablet || isDesktop) && (
         <FarmRowItem
-          title={'24H APR'}
+          title={`${computedViewRange} APR`}
           tooltip={'Values are displayed in native token'}
           onClick={handleColumnSort(currentSort === '7' ? '8' : '7')}
           invert={currentSort == '7'}

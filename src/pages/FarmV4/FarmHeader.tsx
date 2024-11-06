@@ -12,8 +12,7 @@ import { CreatePool } from './CreatePool'
 import BigNumber from 'bignumber.js'
 
 export const FarmHeader: FC = () => {
-  const [range, setRange] = useState<number>(0)
-  const { setCurrentPoolType, stats } = useGamma()
+  const { setCurrentPoolType, stats, viewRange: range, computedViewRange, setViewRange: setRange } = useGamma()
   const { wallet } = useWallet()
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
   const { isMobile } = useBreakPoint()
@@ -33,14 +32,14 @@ export const FarmHeader: FC = () => {
         tooltip: 'TVL represents the total USD value of all assets deposited in our pools'
       },
       {
-        name: '24H Volume',
+        name: `${computedViewRange} Volume`,
         value: range === 0 ? bigNumberFormatter(new BigNumber(stats?.stats24h?.volume)) :
           range === 1 ? bigNumberFormatter(new BigNumber(stats?.stats7d?.volume)) :
             bigNumberFormatter(new BigNumber(stats?.stats30d?.volume)),
         tooltip: ''
       },
       {
-        name: '24H Fees', value: range === 0 ?
+        name: `${computedViewRange} Fees`, value: range === 0 ?
           bigNumberFormatter(new BigNumber(stats?.stats24h?.fees)) : range === 1 ?
             bigNumberFormatter(new BigNumber(stats?.stats7d?.fees)) :
             bigNumberFormatter(new BigNumber(stats?.stats30d?.fees)),
@@ -49,12 +48,12 @@ export const FarmHeader: FC = () => {
     ]
     if (userPubKey) {
       data.unshift({
-        name: 'Total Earned', value: totalEarnings,
+        name: 'Total Earned', value: totalEarnings.toString(),
         tooltip: ''
       })
     }
     return data
-  }, [userPubKey])
+  }, [userPubKey, range, totalEarnings, computedViewRange])
 
   const options = useMemo(
     () => [
