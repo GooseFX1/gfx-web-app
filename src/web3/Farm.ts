@@ -1,33 +1,33 @@
-import { PublicKey, TransactionInstruction, Connection, SystemProgram } from "@solana/web3.js"
+import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
 import {
-    TOKEN_PROGRAM_ID,
-    getAssociatedTokenAddress,
     createAssociatedTokenAccountInstruction,
+    createCloseAccountInstruction,
     createSyncNativeInstruction,
+    getAssociatedTokenAddress,
     NATIVE_MINT,
-    createCloseAccountInstruction
+    TOKEN_PROGRAM_ID
 } from '@solana/spl-token-v2'
-import { Idl, Program } from "@project-serum/anchor"
-import { Transaction } from "@solana/web3.js"
+import { Idl, Program } from '@project-serum/anchor'
 import BN from 'bn.js'
 import {
-    GAMMA_PROGRAM_ID,
-    POOL_VAULT_SEED_PREFIX,
-    toPublicKey,
-    AUTHORITY_PREFIX,
-    USER_POOL_LIQUIDITY_PREFIX,
-    TOKEN_2022_PROGRAM_ID,
-    SYSTEM,
-    MEMO_ID,
     AMM_CONFIG,
-    POOL_SEED_PRFIX,
+    AUTHORITY_PREFIX,
     GAMMA_FEE_ACCOUNT,
+    GAMMA_PROGRAM_ID,
+    MEMO_ID,
     OBSERVATION_PREFIX,
-    SYS_VAR_RENT
+    POOL_SEED_PRFIX,
+    POOL_VAULT_SEED_PREFIX,
+    SYS_VAR_RENT,
+    SYSTEM,
+    TOKEN_2022_PROGRAM_ID,
+    toPublicKey,
+    USER_POOL_LIQUIDITY_PREFIX
 } from './ids'
-import { convertToNativeValue, withdrawBigStringFarm } from "@/utils"
-import { JupToken } from "@/pages/FarmV4/constants"
-import { ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token"
+import { convertToNativeValue, withdrawBigStringFarm } from '@/utils'
+import { JupToken } from '@/pages/FarmV4/constants'
+import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import Decimal from 'decimal.js-light'
 
 enum TokenType {
     Token0,
@@ -366,11 +366,14 @@ export const deposit = async (
         accounts: depositInstructionAccount
     })
     let depositAmountTX: Transaction
+    const slippageRatio = slippage/100;
     if (selectedCard?.mintA?.symbol === 'SOL') {
-        depositAmountTX = await wrapSolToken(userPublicKey, connection, userSourceDepositAmount)
+        const depAmount = new Decimal(userSourceDepositAmount).mul(1+slippageRatio).toString()
+        depositAmountTX = await wrapSolToken(userPublicKey, connection, depAmount)
     }
     else if (selectedCard?.mintB?.symbol === 'SOL') {
-        depositAmountTX = await wrapSolToken(userPublicKey, connection, userTargetDepositAmount)
+        const depAmount = new Decimal(userTargetDepositAmount).mul(1+slippageRatio).toString()
+        depositAmountTX = await wrapSolToken(userPublicKey, connection, depAmount)
     }
     else depositAmountTX = new Transaction()
     if (liquidityAccIX !== undefined) {
