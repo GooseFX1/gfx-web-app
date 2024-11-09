@@ -5,6 +5,7 @@ import {
   AccountsProvider,
   CryptoProvider,
   GammaProvider,
+  CurrentLPPositionsProvider,
   NavCollapseProvider,
   OrderBookProvider,
   OrderProvider,
@@ -125,8 +126,10 @@ export const Router: FC = () => {
                           <Route exact path={['/farm']}>
                             <PriceFeedFarmProvider>
                               <GammaProvider>
-                                <JupWidget />
-                                <FarmV4 />
+                                <CurrentLPPositionsProvider>
+                                  <JupWidget />
+                                  <FarmV4 />
+                                </CurrentLPPositionsProvider>
                               </GammaProvider>
                             </PriceFeedFarmProvider>
                           </Route>

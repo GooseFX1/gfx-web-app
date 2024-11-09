@@ -90,24 +90,7 @@ const FarmItems: FC<{
   return (
     <div>
       {currentPoolType.name === POOL_TYPE.migrate.name ? (
-        <FarmItemsMigrate
-          openPositionsAcrossPrograms={[
-            {
-              tokenA: {
-                name: 'SOL',
-                balance: '0.24',
-                symbol: 'SOL',
-                src: '/img/crypto/SOL.svg'
-              },
-              tokenB: {
-                name: 'USDC',
-                balance: '0.24',
-                symbol: 'USDC',
-                src: '/img/crypto/USDC.svg'
-              }
-            }
-          ]}
-        />
+        <FarmItemsMigrate />
       ) : (numberOfTokensDeposited === 0 && showDeposited) || filteredPools.length === 0 ? (
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
       ) : isProMode ? (

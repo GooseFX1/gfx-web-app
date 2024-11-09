@@ -1,6 +1,7 @@
 export * from './accounts'
 export * from './crypto'
 export * from './dark_mode'
+export * from './lp_migrate_positions'
 export * from './order'
 export * from './orderbook'
 export * from './nav_collapse'

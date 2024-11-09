@@ -1,11 +1,11 @@
 import { FC } from 'react'
 import { Badge, Button, cn, Container, Icon } from 'gfx-component-lib'
+import { MigratePosition } from '@/context/lp_migrate_positions'
 
 type MigratePositionCardProps = {
-  //TODO: type this
-  position: any
+  position: MigratePosition[]
   positionsOnOtherPrograms: string[]
-  apr: number
+  apr: string
 }
 const MigratePositionCard: FC<MigratePositionCardProps> = ({ position, positionsOnOtherPrograms, apr }) => (
   <div
@@ -16,15 +16,25 @@ const MigratePositionCard: FC<MigratePositionCardProps> = ({ position, positions
   >
     <div className={'flex flex-1 gap-7 items-center'}>
       <div className={'relative'}>
-        <Icon src={position.tokenA.src} />
-        <Icon className={'absolute left-2/3 top-0'} src={position.tokenB.src} />
+        <Icon 
+          src={position.tokenA.logoURI} 
+          size="lg"
+          className={'border-solid dark:border-black-2 border-white border-[3px] rounded-full'} 
+        />
+        <Icon
+          src={position.tokenB.logoURI}
+          size="lg"
+          className={
+            'absolute left-2/3 top-0 border-solid dark:border-black-2 border-white border-[3px] rounded-full'
+          }
+        />
       </div>
       <h3
         className={`
         text-text-lightmode-primary dark:text-text-darkmode-primary
         `}
       >
-        {position.tokenA.name} - {position.tokenB.name}
+        {position.tokenA.symbol} - {position.tokenB.symbol}
       </h3>
     </div>
     <Container
@@ -58,7 +68,7 @@ const MigratePositionCard: FC<MigratePositionCardProps> = ({ position, positions
           ))}
         </div>
         <p className={'font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary'}>
-          {positionsOnOtherPrograms.length + 1} Positions
+          {positionsOnOtherPrograms.length === 1 ? '1 Position' : `${positionsOnOtherPrograms.length} Positions`}
         </p>
       </div>
       <div className={'flex justify-between'}>
