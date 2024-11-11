@@ -17,7 +17,6 @@ import {
 } from './context'
 import { APP_DEFAULT_ROUTE } from './constants'
 import Maintenance from './pages/Maintenance'
-import { JupWidget } from '@/components/JupWidget'
 import { TraderProvider } from './context/trader_risk_group'
 import { StatsProvider } from './context/stats'
 import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
@@ -125,7 +124,7 @@ export const Router: FC = () => {
                           <Route exact path={['/farm']}>
                             <PriceFeedFarmProvider>
                               <GammaProvider>
-                                <JupWidget />
+                                {/*<JupWidget />*/}
                                 <FarmV4 />
                               </GammaProvider>
                             </PriceFeedFarmProvider>
