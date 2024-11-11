@@ -17,13 +17,14 @@ const FarmRowItem: FC<{
       //onClick={onClick}
       className={cn(
         `justify-center p-0 break-words text-h4 text-text-lightmode-secondary
-      dark:text-text-darkmode-secondary
+      dark:text-text-darkmode-secondary font-semibold font-nunito
     `,
-        className
+        className,
+        tooltip ? 'underline decoration-dotted' : ''
       )}
       iconRight={iconRight ? <CircularArrow className={`min-h-5 min-w-5`} invert={invert} /> : <></>}
     >
-      <span className={tooltip ? 'underline decoration-dotted' : ''}>{title}</span>
+      {title}
     </Button>
   )
   return tooltip ? (

@@ -64,7 +64,7 @@ const FarmFilter: FC = () => {
   return (
     <div
       className={cn(
-        `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_0.5fr] border-b-1 border-solid 
+        `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_0.5fr] border-b-1 border-solid
         border-border-lightmode-secondary dark:border-border-darkmode-secondary h-10 px-2 items-center`,
         isMobile && `grid-cols-[1.5fr_0.5fr]`,
         isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
