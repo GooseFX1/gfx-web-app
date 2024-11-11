@@ -1,11 +1,10 @@
 import { FC, useMemo } from 'react'
-import { Badge, Button, Icon, cn } from 'gfx-component-lib'
+import { Badge, Button, cn, Icon } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import { ModeOfOperation } from './constants'
-import { loadIconImage } from '@/utils'
+import { loadIconImage, numberFormatter } from '@/utils'
 import NoResultsFound from '@/pages/FarmV4/NoResultsFound'
 import { noPoolsFound } from '@/pages/FarmV4/FarmItems'
-import { numberFormatter } from '@/utils'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import useBreakPoint from '@/hooks/useBreakPoint'
 
@@ -60,7 +59,7 @@ const MyPositions: FC = () => {
   //const canClaim = false
 
   return (
-    <div>
+    <div className={`flex flex-col gap-2`}>
       {positions.length > 0 ? (
         positions.map((pool: GAMMAPoolWithUserLiquidity) => (
           <div
