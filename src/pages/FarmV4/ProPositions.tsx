@@ -5,7 +5,7 @@ import { useGamma } from '@/context'
 import { POOL_TYPE } from './constants'
 import SearchBar from '@/components/common/SearchBar'
 import MyPositionSortHeader from './MyPositionSortHeader'
-import MyPositions from './MyPositions'
+import MyPositionItems from './MyPositions'
 import FarmSort from '@/pages/FarmV4/FarmSort'
 import useBoolean from '@/hooks/useBoolean'
 
@@ -14,8 +14,7 @@ const ProPositions: FC = () => {
     currentPoolType,
     setCurrentPoolType,
     searchTokens,
-    setSearchTokens,
-    sortConfig
+    setSearchTokens
   } = useGamma()
   const [isOpen, setIsOpen] = useBoolean(false)
   return (
@@ -69,12 +68,12 @@ const ProPositions: FC = () => {
             className={'!max-w-full flex-1'}
           />
           <div className="flex justify-between ml-3">
-           <FarmSort isOpen={isOpen} setIsOpen={setIsOpen.set} />
+            <FarmSort isOpen={isOpen} setIsOpen={setIsOpen.set} />
           </div>
         </div>
       </div>
-      <MyPositionSortHeader sort={sortConfig.direction} sortType={sortConfig.key} />
-      <MyPositions />
+      <MyPositionSortHeader />
+      <MyPositionItems />
     </div>
   )
 }

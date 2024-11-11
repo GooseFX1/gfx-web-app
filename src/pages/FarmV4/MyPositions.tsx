@@ -7,6 +7,7 @@ import NoResultsFound from '@/pages/FarmV4/NoResultsFound'
 import { noPoolsFound } from '@/pages/FarmV4/FarmItems'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import useBreakPoint from '@/hooks/useBreakPoint'
+import { FarmRowLoader } from '@/pages/FarmV4/FarmRow'
 
 const renderPosition = (p: GAMMAPoolWithUserLiquidity) => {
   const liq = p.userLpPosition  
@@ -178,5 +179,18 @@ const MyPositions: FC = () => {
     </div>
   )
 }
+const MyPositionItems: FC = () =>{
+  const {isLoadingPools} = useGamma()
 
-export default MyPositions
+  if (isLoadingPools) {
+    return <div className={'flex flex-col gap-2'}>
+      <FarmRowLoader/>
+      <FarmRowLoader/>
+      <FarmRowLoader/>
+      <FarmRowLoader/>
+    </div>
+  }
+
+  return <MyPositions/>
+}
+export default MyPositionItems

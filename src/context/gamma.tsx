@@ -193,7 +193,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [viewRange, setViewRange] = useState<ViewRange>(0)
   const { isProMode } = useRewardToggle()
 
-  const handlePoolSort  = useCallback(
+  const handlePoolSort = useCallback(
     (id: string) => {
       // persists current sort in local storage
       setCurrentSort(() => {
@@ -211,10 +211,16 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
   //const [connectionId, setConnectionId] = useState<string>()
   useEffect(() => {
-    if (!isProMode && viewRange != 0) {
-      setViewRange(0)
+    if (!isProMode) {
+      // reset based on mode
+      if (viewRange != 0) {
+        setViewRange(0)
+      }
+      if (currentSort != '1') {
+        setCurrentSort('1')
+      }
     }
-  }, [isProMode, viewRange])
+  }, [isProMode, viewRange, currentSort])
   useEffect(() => {
     // first render only
     if (tokenList.length == 0) {
