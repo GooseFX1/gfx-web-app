@@ -4,12 +4,12 @@ import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { useGamma } from '@/context'
 import { POOL_TYPE } from './constants'
 import SearchBar from '@/components/common/SearchBar'
-import PositionHeader from './PositionHeader'
+import MyPositionSortHeader from './MyPositionSortHeader'
 import MyPositions from './MyPositions'
 import FarmSort from '@/pages/FarmV4/FarmSort'
 import useBoolean from '@/hooks/useBoolean'
 
-const Positions: FC = () => {
+const ProPositions: FC = () => {
   const {
     currentPoolType,
     setCurrentPoolType,
@@ -73,10 +73,10 @@ const Positions: FC = () => {
           </div>
         </div>
       </div>
-      <PositionHeader sort={sortConfig.direction} sortType={sortConfig.key} />
+      <MyPositionSortHeader sort={sortConfig.direction} sortType={sortConfig.key} />
       <MyPositions />
     </div>
   )
 }
 
-export default Positions
+export default ProPositions

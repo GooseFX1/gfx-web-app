@@ -37,7 +37,7 @@ const FarmRowItem: FC<{
   )
 }
 
-const PositionHeader: FC<{
+const MyPositionSortHeader: FC<{
   sort: string
   sortType: string
 }> = ({ sort, sortType }) => {
@@ -116,4 +116,4 @@ const PositionHeader: FC<{
 
 //   /> 
 
-export default PositionHeader
+export default MyPositionSortHeader

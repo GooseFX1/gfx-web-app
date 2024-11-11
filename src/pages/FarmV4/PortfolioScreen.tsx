@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react'
 import UnusedTokens from './UnusedTokens'
 import ComingSoon from './ComingSoon'
-import Positions from './Positions'
+import ProPositions from './ProPositions'
 import { useGamma } from '@/context'
 import Decimal from 'decimal.js-light'
 import { commafy } from '@/utils'
@@ -52,7 +52,7 @@ const PortfolioScreen: FC = (): JSX.Element => {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-      <Positions />
+      <ProPositions />
     </div>
   )
 }
