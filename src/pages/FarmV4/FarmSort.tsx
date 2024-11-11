@@ -21,7 +21,7 @@ function FarmSort({ isOpen, setIsOpen }: {
   setIsOpen: (isOpen: boolean) => void
 }) {
   const { userCache, updateUserCache } = useConnectionConfig()
-  const { showCreatedPools, setShowCreatedPools, currentSort, setCurrentSort } = useGamma()
+  const { showCreatedPools, setShowCreatedPools, currentSort, handlePoolSort } = useGamma()
   const { mode } = useDarkMode()
 
   const handleFilterByCreated = useCallback(
@@ -38,23 +38,6 @@ function FarmSort({ isOpen, setIsOpen }: {
       })
     },
     [showCreatedPools, userCache]
-  )
-
-  const handleSort = useCallback(
-    (id: string) => {
-      // persists current sort in local storage
-      setCurrentSort(() => {
-        updateUserCache({
-          gamma: {
-            ...userCache.gamma,
-            currentSort: id
-          }
-        })
-        // sets value to context
-        return id
-      })
-    },
-    [setCurrentSort, userCache]
   )
 
   return (
@@ -90,7 +73,7 @@ function FarmSort({ isOpen, setIsOpen }: {
         </>
         <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
 
-        <DropdownMenuRadioGroup asChild value={currentSort} onValueChange={(id) => handleSort(id)}>
+        <DropdownMenuRadioGroup asChild value={currentSort} onValueChange={(id) => handlePoolSort(id)}>
           <div className={'grid grid-cols-2 gap-1.5 items-center'}>
             {GAMMA_SORT_CONFIG.map((s) => (
               <DropdownMenuItem isActive={currentSort == s.id} asChild key={s.id}>

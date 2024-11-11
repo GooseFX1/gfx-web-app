@@ -25,10 +25,10 @@ export const FarmContainer: FC = () => {
     showCreatedPools,
     setShowCreatedPools,
     currentSort,
-    setCurrentSort,
     showDeposited,
     setShowDeposited,
-    filteredPools
+    filteredPools,
+    handlePoolSort
   } = useGamma()
   const { wallet } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
@@ -98,22 +98,6 @@ export const FarmContainer: FC = () => {
     [showCreatedPools, userCache]
   )
 
-  const handleSort = useCallback(
-    (id: string) => {
-      // persists current sort in local storage
-      setCurrentSort(() => {
-        updateUserCache({
-          gamma: {
-            ...userCache.gamma,
-            currentSort: id
-          }
-        })
-        // sets value to context
-        return id
-      })
-    },
-    [setCurrentSort, userCache]
-  )
 
   return (
     <div className={'flex flex-col gap-3.75'}>
@@ -213,7 +197,7 @@ export const FarmContainer: FC = () => {
                                     name="sort"
                                     value={s.id}
                                     checked={currentSort === s.id}
-                                    onChange={() => handleSort(s.id)}
+                                    onChange={() => handlePoolSort(s.id)}
                                     className={'hidden'}
                                   />
                                   <span className="m-0 text-regular font-bold pl-2">{s.name}</span>

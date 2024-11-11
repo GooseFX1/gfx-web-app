@@ -195,14 +195,14 @@ export const sslErrorMessage = (): Message => ({
 //   'apr24h',
 //   'apr7d'
 export const GAMMA_SORT_CONFIG: GAMMASortConfig[] = [
-  { id: '1', name: 'Liquidity: High to Low', direction: 'DESC', key: 'liquidity' },
-  { id: '2', name: 'Liquidity: Low to High', direction: 'ASC', key: 'liquidity' },
-  { id: '3', name: 'Volume: High to Low', direction: 'DESC', key: 'volume24h' },
-  { id: '4', name: 'Volume: Low to High', direction: 'ASC', key: 'volume24h' },
-  { id: '5', name: 'Fees: High to Low', direction: 'DESC', key: 'fee24h' },
-  { id: '6', name: 'Fees: Low to High', direction: 'ASC', key: 'fee24h' },
-  { id: '7', name: 'APR: High to Low', direction: 'DESC', key: 'apr24h' },
-  { id: '8', name: 'APR: Low to High', direction: 'ASC', key: 'apr24h' }
+  { id: '1', name: 'Liquidity: High to Low', direction: 'DESC',  key:'liquidity' },
+  { id: '2', name: 'Liquidity: Low to High', direction: 'ASC',  key: 'liquidity'},
+  { id: '3', name: 'Volume: High to Low', direction: 'DESC',  key: 'volume'},
+  { id: '4', name: 'Volume: Low to High', direction: 'ASC',  key: 'volume'},
+  { id: '5', name: 'Fees: High to Low', direction: 'DESC',  key:'fee'},
+  { id: '6', name: 'Fees: Low to High', direction: 'ASC', key: 'fee'},
+  { id: '7', name: 'APR: High to Low', direction: 'DESC',  key: 'apr'},
+  { id: '8', name: 'APR: Low to High', direction: 'ASC', key: 'apr'},
 ]
 export type GAMMASortConfig = {
   id: string
@@ -212,6 +212,7 @@ export type GAMMASortConfig = {
 }
 export const GAMMA_SORT_CONFIG_MAP: Map<string, GAMMASortConfig> =
   new Map(GAMMA_SORT_CONFIG.map((item) => [item.id, item]))
+export type PoolSortId = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8'
 export const BASE_SLIPPAGE = [0.1, 0.5, 1.0]
 export const TOKEN_LIST_PAGE_SIZE = 50
 export const POOL_LIST_PAGE_SIZE = 200
