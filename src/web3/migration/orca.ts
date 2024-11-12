@@ -73,7 +73,7 @@ const getOrcaPositionAccountsForMints = async (
     })
 
     allPositions.push({
-      source: 'OrcaCLMM',
+      source: 'Orca',
       tokenA: whirlpool.tokenMintA,
       tokenB: whirlpool.tokenMintB,
       amountTokenA: positionInfo.tokenEstA,

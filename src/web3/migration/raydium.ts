@@ -135,7 +135,7 @@ export const getRaydiumCLMMPositions = async (
       epochInfo: effectiveEpochInfo
     })
     migratePositions.push({
-      source: 'RaydiumCLMM',
+      source: 'Raydium',
       tokenA: new PublicKey(poolInfo.mintA.address),
       tokenB: new PublicKey(poolInfo.mintB.address),
       amountTokenA: position.amountSlippageA.amount,

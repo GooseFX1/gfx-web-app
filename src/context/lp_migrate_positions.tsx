@@ -2,7 +2,7 @@ import React, { ReactNode, createContext, useState, useEffect, useContext, FC } 
 import { useConnectionConfig } from '@/context/settings'
 import { TokenListToken } from '@/context'
 import { useWalletBalance } from '@/context/walletBalanceContext'
-import { PublicKey } from '@solana/web3.js'
+import { PublicKey, Connection } from '@solana/web3.js'
 import { getRaydiumCLMMPositions } from '@/web3/migration/raydium'
 import { getMeteoraDynamicCLMMPositions } from '@/web3/migration/meteora'
 import { getOrcaCLMMPositionsForUser } from '@/web3/migration/orca'
@@ -10,7 +10,8 @@ import { fetchTokensByPublicKey } from '@/api/gamma/actions'
 import { GAMMAListTokenResponse } from '@/types/gamma'
 
 const WHIRLPOOL_PROGRAM_ID = new PublicKey(`whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc`)
-export type Source = 'RaydiumCLMM' | `MeteoraCLMM` | 'OrcaCLMM'
+
+export type Source = 'Raydium' | `Meteora` | 'Orca'
 
 type PositionFromSDK = {
   source: Source
@@ -37,37 +38,39 @@ export const LPMigratePositionsContext = createContext<LPMigratePositionsDataMod
 
 export const CurrentLPPositionsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
-  const { publicKey } = useWalletBalance()
+  const { connected, publicKey } = useWalletBalance()
   const [lpPositions, setLPPositions] = useState<MigratePosition[] | null>(null)
 
   useEffect(() => {
     if (publicKey) {
-      getAllPositions(publicKey).then((pos) => setLPPositions(pos))
+      getAllPositions(connection, publicKey).then((pos) => setLPPositions(pos))
     } else {
       setLPPositions([])
     }
-  }, [publicKey])
+  }, [publicKey, connected, connection])
 
-  const getAllPositions = async (publicKey: PublicKey) => {
-    const epochInfo = await connection.getEpochInfo()
+  const getAllPositions = async (con: Connection, pKey: PublicKey) => {
+    const epochInfo = await con.getEpochInfo()
 
     try {
       const [raydiumPositions, meteoraPositions, orcaPositions] = await Promise.all([
-        getRaydiumCLMMPositions(connection, publicKey, {}, false, epochInfo),
-        getMeteoraDynamicCLMMPositions(connection, publicKey),
-        getOrcaCLMMPositionsForUser(connection, publicKey, WHIRLPOOL_PROGRAM_ID)
+        getRaydiumCLMMPositions(con, pKey, {}, false, epochInfo),
+        getMeteoraDynamicCLMMPositions(con, pKey),
+        getOrcaCLMMPositionsForUser(con, pKey, WHIRLPOOL_PROGRAM_ID)
       ])
 
       const allPositions = [...raydiumPositions, ...meteoraPositions, ...orcaPositions]
       if (allPositions.length == 0) return []
 
       const tokenMap = await fetchTokensForPublicKey(allPositions)
-      
+
       const positionsEnrichedWithTokenData = allPositions.map((pos) => ({
         ...pos,
         tokenA: tokenMap.get(pos.tokenA.toString())!,
         tokenB: tokenMap.get(pos.tokenB.toString())!
       }))
+      console.log(positionsEnrichedWithTokenData)
+
       return positionsEnrichedWithTokenData
     } catch (error) {
       console.error('Error fetching positions:', error)

@@ -80,12 +80,6 @@ const FarmItems: FC<{
       noResultsSubText = noPoolsFound.subText
       break
   }
-  const openPositionsAcrossPrograms = 9
-  const openPositionImages = [
-    '/img/crypto/ORCA.svg',
-    '/img/crypto/raydium.svg',
-    '/img/crypto/meteora.svg'
-  ]
 
   return (
     <div>
@@ -96,10 +90,7 @@ const FarmItems: FC<{
       ) : isProMode ? (
         <FarmItemsPro
         />
-      ) : <FarmItemsLite
-        openPositionImages={openPositionImages}
-        openPositionsAcrossPrograms={openPositionsAcrossPrograms}
-      />
+      ) : <FarmItemsLite />
       }
       {((!(numberOfTokensDeposited === 0 && showDeposited) || filteredPools.length !== 0)
           && currentPoolType.type != 'migrate') && poolsHasMoreData &&

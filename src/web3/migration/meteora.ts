@@ -19,7 +19,7 @@ export const getMeteoraDynamicCLMMPositions = async (
           const amountTokenA = new BN(new Decimal(position.positionData.totalXAmount).floor().toString())
           const amountTokenB = new BN(new Decimal(position.positionData.totalYAmount).floor().toString())
           return {
-            source: 'MeteoraCLMM' as Source,
+            source: 'Meteora' as Source,
             tokenA: info.tokenX.publicKey,
             tokenB: info.tokenY.publicKey,
             amountTokenA,
