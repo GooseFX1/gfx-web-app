@@ -52,6 +52,7 @@ import Decimal from 'decimal.js-light'
 import { aborter } from '@/utils'
 import BN from 'bn.js'
 import { BlockheightBasedTransactionConfirmationStrategy } from '@solana/web3.js'
+import usePrevious from '@/hooks/usePrevious'
 
 type ViewRange = 0 | 1 | 2
 
@@ -192,11 +193,14 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
   const [viewRange, setViewRange] = useState<ViewRange>(0)
   const { isProMode } = useRewardToggle()
-
+  const prevIsProMode = usePrevious(isProMode)
   const handlePoolSort = useCallback(
     (id: string) => {
       // persists current sort in local storage
-      setCurrentSort(() => {
+      setCurrentSort((prevState) => {
+        if (prevState === id) {
+          return prevState
+        }
         updateUserCache({
           gamma: {
             ...userCache.gamma,
@@ -211,7 +215,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
   //const [connectionId, setConnectionId] = useState<string>()
   useEffect(() => {
-    if (!isProMode) {
+    if (!isProMode && prevIsProMode !== isProMode) {
       // reset based on mode
       if (viewRange != 0) {
         setViewRange(0)
@@ -220,7 +224,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setCurrentSort('1')
       }
     }
-  }, [isProMode, viewRange, currentSort])
+  }, [isProMode, viewRange, currentSort, prevIsProMode])
   useEffect(() => {
     // first render only
     if (tokenList.length == 0) {

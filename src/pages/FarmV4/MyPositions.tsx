@@ -60,7 +60,7 @@ const MyPositions: FC = () => {
   //const canClaim = false
 
   return (
-    <div className={`flex flex-col gap-2`}>
+    <div className={`flex flex-col gap-[15px] mt-[15px]`}>
       {positions.length > 0 ? (
         positions.map((pool: GAMMAPoolWithUserLiquidity) => (
           <div
@@ -183,7 +183,7 @@ const MyPositionItems: FC = () =>{
   const {isLoadingPools} = useGamma()
 
   if (isLoadingPools) {
-    return <div className={'flex flex-col gap-2'}>
+    return <div className={'flex flex-col gap-[15px] mt-[15px]'}>
       <FarmRowLoader/>
       <FarmRowLoader/>
       <FarmRowLoader/>

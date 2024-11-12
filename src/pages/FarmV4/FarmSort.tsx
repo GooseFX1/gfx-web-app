@@ -43,12 +43,17 @@ function FarmSort({ isOpen, setIsOpen }: {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
-        <Button className="p-0 !h-[35px] !w-[35px] mx-3" variant={'ghost'}>
+        <Button className="p-0 !h-[35px] !w-[35px] mx-3 relative" variant={'ghost'}>
           <Icon
             src={`img/assets/farm_filter_${mode}.svg`}
             size={'md'}
             className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
           />
+          {(currentSort !== '1' || showCreatedPools) ? <img
+            className={`absolute top-0.5 left-0 border-1 border-solid w-2.5 h-2.5
+                        border-background-lightmode-primary dark:border-background-darkmode-primary rounded-full`}
+            src={'/img/assets/red-notification-circle.svg'}
+          />:null}
         </Button>
       </DropdownMenuTrigger>
 

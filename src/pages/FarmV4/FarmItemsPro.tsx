@@ -11,12 +11,13 @@ const FarmItemsPro: FC = () => {
     <>
       <FarmItemsProSort />
       <div>
-        {isLoadingPools ? <div className={'flex flex-col gap-2 mt-2'}>
+        {isLoadingPools ? <div className={'flex flex-col gap-[15px] mt-[15px]'}>
           <FarmRowLoader />
           <FarmRowLoader />
           <FarmRowLoader />
           <FarmRowLoader />
         </div> : <WindowingContainer
+          itemPadding={15}
           items={filteredPools}
           render={(pool: GAMMAPoolWithUserLiquidity, i) => (
             <FarmRow pool={pool} key={`${pool?.mintA.name}-${pool?.mintB.name}-${i}`} />

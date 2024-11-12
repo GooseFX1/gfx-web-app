@@ -1,25 +1,26 @@
-import React, { FC, HTMLAttributes, useLayoutEffect, useRef, useState, useMemo } from 'react'
+import React, { FC, HTMLAttributes, useLayoutEffect, useRef, useState } from 'react'
 
 type WindowContainerProps<T> = {
   rootElement?: HTMLElement
   items: T[]
   render: (item: T, index: number) => JSX.Element
   itemClassName?: string
+  itemPadding?: number
 } & HTMLAttributes<HTMLDivElement>
 
 const WindowingContainer: FC<WindowContainerProps<unknown>> = ({
-  items,
-  render,
-  rootElement,
-  className,
-  itemClassName,
-  ...rest
-}): JSX.Element => {
+                                                                 items,
+                                                                 render,
+                                                                 rootElement,
+                                                                 className,
+                                                                 itemClassName,
+                                                                 itemPadding: ITEM_PADDING = 8,
+                                                                 ...rest
+                                                               }): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null)
   const [visibleRange, setVisibleRange] = useState({ start: 0, end: 10 })
   const [itemHeight, setItemHeight] = useState(0)
   const [containerHeight, setContainerHeight] = useState(0)
-  const ITEM_PADDING = useMemo(() => 8, [])
 
   useLayoutEffect(() => {
     const elementToTarget = rootElement || ref.current

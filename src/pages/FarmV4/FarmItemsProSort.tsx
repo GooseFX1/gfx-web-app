@@ -18,7 +18,7 @@ const FarmRowItem: FC<{
       onClick={onClick}
       className={cn(
         `justify-center p-0 break-words text-h4 text-text-lightmode-secondary
-      dark:text-text-darkmode-secondary
+      dark:text-text-darkmode-secondary font-semibold font-nunito
     `,
         className
       )}
