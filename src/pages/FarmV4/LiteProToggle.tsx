@@ -1,4 +1,4 @@
-import { useDarkMode, useRewardToggle } from '@/context'
+import { useConnectionConfig, useDarkMode, useRewardToggle } from '@/context'
 import {
   cn,
   Button,
@@ -19,6 +19,7 @@ export const LiteProToggle = (): ReactElement => {
   const { mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const {userCache, updateUserCache} = useConnectionConfig();
 
   const handleToggle = useCallback(() => {
     if (isMobile) {
@@ -26,6 +27,12 @@ export const LiteProToggle = (): ReactElement => {
     } else {
       setIsPortfolio.off()
       setIsProMode.toggle()
+      updateUserCache({
+        gamma: {
+          ...userCache.gamma,
+          viewMode: isProMode ? 'lite' : 'pro'
+        }
+      })
     }
   }, [setIsPortfolio, setIsProMode, isMobile, setIsDialogOpen])
 
