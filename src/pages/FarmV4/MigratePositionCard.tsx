@@ -2,6 +2,7 @@ import { FC, useState, useMemo } from 'react'
 import { Badge, Button, cn, Container, Icon } from 'gfx-component-lib'
 import { MigratePosition } from '@/context/lp_migrate_positions'
 import MigrateDialog from './MigrateDialog'
+import { useLPMigratePositions } from '@/context/lp_migrate_positions'
 
 type MigratePositionCardProps = {
   positionsByPair: MigratePosition[]
@@ -9,16 +10,14 @@ type MigratePositionCardProps = {
 }
 const MigratePositionCard: FC<MigratePositionCardProps> = ({ positionsByPair, apr }) => {
   const [migrateModal, setMigrateModal] = useState<boolean>(false)
+  const { lpSources } = useLPMigratePositions()
 
   const tokenA = useMemo(() => positionsByPair[0].tokenA, [positionsByPair])
   const tokenB = useMemo(() => positionsByPair[0].tokenB, [positionsByPair])
 
+  
   const renderLPSource = (sources: string[]): string[] =>
-    sources.map((source: string) => {
-      if (source === 'Raydium') return '/img/crypto/raydium.svg'
-      if (source === 'Orca') return '/img/crypto/ORCA.svg'
-      if (source === 'Meteora') return '/img/crypto/meteora.svg'
-    })
+    sources.map((source: string) => lpSources[source])
     
   const positionsOnOtherPrograms = useMemo(
     () => (positionsByPair ? renderLPSource(positionsByPair.map((pos) => pos.source)) : []),

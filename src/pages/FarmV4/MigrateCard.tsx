@@ -8,9 +8,7 @@ import { useGamma, useLPMigratePositions } from '@/context'
 const MigrateCard: FC = () => {
   const { connected } = useWallet()
   const { setCurrentPoolType } = useGamma()
-  const { lpPositions } = useLPMigratePositions()
-
-  const openPositionImages = ['/img/crypto/ORCA.svg', '/img/crypto/raydium.svg', '/img/crypto/meteora.svg']
+  const { lpPositions, lpSources } = useLPMigratePositions()
 
   return (
     <Container
@@ -29,14 +27,14 @@ const MigrateCard: FC = () => {
               <div
                 className={cn(
                   `flex relative`,
-                  lpPositions.length == 1 && `w-[30px]`,
-                  lpPositions.length == 2 && `w-[52px]`,
-                  lpPositions.length == 3 && `w-[74px]`
+                  Object.keys(lpSources).length == 1 && `w-[30px]`,
+                  Object.keys(lpSources).length == 2 && `w-[52px]`,
+                  Object.keys(lpSources).length == 3 && `w-[74px]`
                 )}
               >
-                {lpPositions.map((p, i) => (
+                {Object.keys(lpSources).map((p, i) => (
                   <Icon
-                    src={openPositionImages[1]}
+                    src={lpSources[p]}
                     key={i}
                     className={`[&:nth-child(2)]:left-1/4 [&:nth-child(2)]:absolute 
                   [&:nth-child(3)]:left-2/4 [&:nth-child(3)]:absolute`}

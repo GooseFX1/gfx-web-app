@@ -19,6 +19,7 @@ import Decimal from 'decimal.js-light'
 import { numberFormatter } from '@/utils'
 import useTransaction from '@/hooks/useTransaction'
 import { migrateMeteoraDlmmToGamma } from '@/web3/Farm'
+import { useLPMigratePositions } from '@/context/lp_migrate_positions'
 
 interface MigrateDialogProps {
   isOpen: boolean
@@ -34,6 +35,7 @@ const MigrateDialog: FC<MigrateDialogProps> = ({ isOpen, onClose, positions }) =
   const [selectedPosition, setSelectedPosition] = useState<MigratePosition | null>(null)
   const [isMigrating, setIsMigrating] = useBoolean(false)
   const { GammaProgram } = usePriceFeedFarm()
+  const { lpSources } = useLPMigratePositions()
 
   const settings = {
     dots: false,
@@ -45,11 +47,6 @@ const MigrateDialog: FC<MigrateDialogProps> = ({ isOpen, onClose, positions }) =
     beforeChange: (_current, next) => setCurrentSlide(next),
     prevArrow: <></>,
     nextArrow: <></>
-  }
-  const platforms = {
-    Raydium: '/img/crypto/raydium.svg',
-    Orca: '/img/crypto/ORCA.svg',
-    Meteora: '/img/crypto/meteora.svg'
   }
 
   const handleSelectPosition = (pos: MigratePosition) => {
@@ -132,13 +129,13 @@ const MigrateDialog: FC<MigrateDialogProps> = ({ isOpen, onClose, positions }) =
               <SelectPositions
                 positions={positions}
                 handleSelectPosition={handleSelectPosition}
-                platforms={platforms}
+                lpSources={lpSources}
                 calcUSDValue={calcUSDValue}
               />
             </div>
             {selectedPosition && (
               <div className="slide">
-                <ReviewAndMigrate position={selectedPosition} platforms={platforms} calcUSDValue={calcUSDValue} />
+                <ReviewAndMigrate position={selectedPosition} lpSources={lpSources} calcUSDValue={calcUSDValue} />
               </div>
             )}
           </Slider>
@@ -176,7 +173,7 @@ const MigrateDialog: FC<MigrateDialogProps> = ({ isOpen, onClose, positions }) =
 
 const SelectPositions: FC<{
   positions: MigratePosition[]
-  platforms: Record<string, string>
+  lpSources: Record<string, string>
   handleSelectPosition: (pos: MigratePosition) => void
   calcUSDValue: (
     tokenAAmount: number,
@@ -184,7 +181,7 @@ const SelectPositions: FC<{
     tokenBAmount: number,
     tokenB: TokenListToken
   ) => Decimal
-}> = ({ positions, handleSelectPosition, platforms, calcUSDValue }) => (
+}> = ({ positions, handleSelectPosition, lpSources, calcUSDValue }) => (
   <div className="p-2.5 max-h-[412px] overflow-scroll">
     {positions.map((p) => {
       const amountA = new Decimal(p.amountTokenA.toString()).div(10 ** p.tokenA.decimals)
@@ -200,7 +197,7 @@ const SelectPositions: FC<{
           onClick={() => handleSelectPosition(p)}
         >
           <div className="flex items-center gap-1 mb-2">
-            <Icon src={platforms[p.source]} className={'rounded-full'} size={'sm'} />
+            <Icon src={lpSources[p.source]} className={'rounded-full'} size={'sm'} />
             <h3>{p.source}</h3>
           </div>
           <div className="flex items-center justify-between mb-2">
@@ -243,14 +240,14 @@ const SelectPositions: FC<{
 
 const ReviewAndMigrate: FC<{
   position: MigratePosition
-  platforms: Record<string, string>
+  lpSources: Record<string, string>
   calcUSDValue: (
     tokenAAmount: number,
     tokenA: TokenListToken,
     tokenBAmount: number,
     tokenB: TokenListToken
   ) => Decimal
-}> = ({ position, platforms, calcUSDValue }) => (
+}> = ({ position, lpSources, calcUSDValue }) => (
   <div className="p-2.5 max-h-[412px] overflow-scroll">
     <div
       key={position.source}
@@ -286,7 +283,7 @@ const ReviewAndMigrate: FC<{
         <span>AMM</span>
         <span className="flex items-center gap-1">
           <Icon
-            src={platforms[position.source]}
+            src={lpSources[position.source]}
             className={'border-solid dark:border-black-2 border-white border-[1px] rounded-full'}
             size={'sm'}
           />

@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useState, useEffect, useContext, FC } from 'react'
+import React, { ReactNode, createContext, useState, useEffect, useContext, FC, useMemo } from 'react'
 import { useConnectionConfig } from '@/context/settings'
 import { TokenListToken } from '@/context'
 import { useWalletBalance } from '@/context/walletBalanceContext'
@@ -29,9 +29,10 @@ export type MigratePosition = {
   amountTokenB: anchor.BN
 }
 
-
 interface LPMigratePositionsDataModel {
   lpPositions: MigratePosition[] | null
+  positionsByPair: Record<string, MigratePosition[]>
+  lpSources: Record<string, string>
 }
 
 export const LPMigratePositionsContext = createContext<LPMigratePositionsDataModel | null>(null)
@@ -40,6 +41,36 @@ export const CurrentLPPositionsProvider: FC<{ children: ReactNode }> = ({ childr
   const { connection } = useConnectionConfig()
   const { connected, publicKey } = useWalletBalance()
   const [lpPositions, setLPPositions] = useState<MigratePosition[] | null>(null)
+
+  const positionsByPair: Record<string, MigratePosition[]> = useMemo(() => {
+    if (lpPositions === null || lpPositions.length === 0) return {}
+    return lpPositions.reduce((acc, pos) => {
+      const { tokenA, tokenB } = pos
+      const key = `${tokenA.address}-${tokenB.address}`
+      if (!acc[key]) {
+        acc[key] = []
+      }
+      acc[key].push(pos)
+      return acc
+    }, {})
+  }, [lpPositions])
+
+  const lpSources = useMemo(() => {
+    if (lpPositions === null) return {};
+    const platforms = {
+      Raydium: '/img/crypto/raydium.svg',
+      Orca: '/img/crypto/ORCA.svg',
+      Meteora: '/img/crypto/meteora.svg'
+    }
+    return lpPositions.reduce((acc, pos) => {
+      const key = pos.source;
+      const value = platforms[key];
+      if (value) {
+        acc[key] = value;
+      }
+      return acc;
+    }, {});
+  }, [lpPositions])
 
   useEffect(() => {
     if (publicKey) {
@@ -78,7 +109,9 @@ export const CurrentLPPositionsProvider: FC<{ children: ReactNode }> = ({ childr
     }
   }
 
-  async function fetchTokensForPublicKey(positions: PositionFromSDK[]): Promise<Map<string, TokenListToken | null>> {
+  async function fetchTokensForPublicKey(
+    positions: PositionFromSDK[]
+  ): Promise<Map<string, TokenListToken | null>> {
     const allTokenAddresses = [
       ...positions.map((pos) => pos.tokenA.toString()),
       ...positions.map((pos) => pos.tokenB.toString())
@@ -87,28 +120,30 @@ export const CurrentLPPositionsProvider: FC<{ children: ReactNode }> = ({ childr
     const tokenMap: Map<string, TokenListToken | null> = new Map(
       Array.from(allTokenAddresses).map((address) => [address, null])
     )
-    
+
     // Fetch tokens only for addresses that haven't been fetched yet
     try {
       const res: GAMMAListTokenResponse | null = await fetchTokensByPublicKey([...tokenMap.keys()].join(','))
       console.log('Tokens fetch:', res)
       if (res.success && res.data.tokens.length > 0) {
-        res.data.tokens.map(t => tokenMap.set(t.address, t))
+        res.data.tokens.map((t) => tokenMap.set(t.address, t))
       } else {
         console.warn('No tokens returned from fetchTokensByPublicKey.')
       }
       return tokenMap
     } catch (error) {
-      console.log('Error fetching tokens:', error);
+      console.log('Error fetching tokens:', error)
       // Handle the error appropriately, possibly rethrow or return partial results
-      throw error;
+      throw error
     }
   }
 
   return (
     <LPMigratePositionsContext.Provider
       value={{
-        lpPositions
+        lpPositions,
+        positionsByPair,
+        lpSources
       }}
     >
       {children}
