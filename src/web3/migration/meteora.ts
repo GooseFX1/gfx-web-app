@@ -10,23 +10,25 @@ import Decimal from 'decimal.js'
 export const getMeteoraDynamicCLMMPositions = async (
   connection: Connection,
   user: PublicKey
-): Promise<Array<MigratePosition>> => {
-  DLMM.migratePosition
-  return DLMM.getAllLbPairPositionsByUser(connection, user).then((info) =>
+): Promise<Array<MigratePosition>> =>
+  // DLMM.migratePosition
+  DLMM.getAllLbPairPositionsByUser(connection, user).then((info) =>
     Array.from(info.values())
-      .map((info) =>
-        info.lbPairPositionsData.map((position) => {
-          const amountTokenA = new BN(new Decimal(position.positionData.totalXAmount).floor().toString())
-          const amountTokenB = new BN(new Decimal(position.positionData.totalYAmount).floor().toString())
+      .map((info) => {
+        console.log('DLMM info', info)
+        return info.lbPairPositionsData.map(({ positionData }) => {
+          console.log('DLMM position', positionData)
+          const amountTokenA = new BN(new Decimal(positionData.totalXAmount).floor().toString())
+          const amountTokenB = new BN(new Decimal(positionData.totalYAmount).floor().toString())
           return {
             source: 'Meteora' as Source,
             tokenA: info.tokenX.publicKey,
             tokenB: info.tokenY.publicKey,
             amountTokenA,
-            amountTokenB
+            amountTokenB,
+            positionData
           }
         })
-      )
+      })
       .flat()
   )
-}

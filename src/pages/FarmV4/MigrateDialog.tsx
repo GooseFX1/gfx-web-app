@@ -14,8 +14,11 @@ import {
   Icon
 } from 'gfx-component-lib'
 import { TokenListToken } from '@/context/gamma'
+import { usePriceFeedFarm } from '@/context'
 import Decimal from 'decimal.js-light'
 import { numberFormatter } from '@/utils'
+import useTransaction from '@/hooks/useTransaction'
+import { migrateMeteoraDlmmToGamma } from '@/web3/Farm'
 
 interface MigrateDialogProps {
   isOpen: boolean
@@ -27,8 +30,10 @@ const MigrateDialog: FC<MigrateDialogProps> = ({ isOpen, onClose, positions }) =
   const breakpoint = useBreakPoint()
   const slider = React.useRef<Slider>(null)
   const [currentSlide, setCurrentSlide] = useState<number>(0)
+  const { createTransactionBuilder, sendTransaction } = useTransaction()
   const [selectedPosition, setSelectedPosition] = useState<MigratePosition | null>(null)
   const [isMigrating, setIsMigrating] = useBoolean(false)
+  const { GammaProgram } = usePriceFeedFarm()
 
   const settings = {
     dots: false,
@@ -53,12 +58,6 @@ const MigrateDialog: FC<MigrateDialogProps> = ({ isOpen, onClose, positions }) =
     slider.current?.slickNext()
   }
 
-  const handleMigrate = async () => {
-    console.log(selectedPosition)
-    setIsMigrating.on()
-    setTimeout(setIsMigrating.off, 2000)
-  }
-
   const prev = () => {
     slider?.current?.slickPrev()
     if (currentSlide == 1) return
@@ -74,6 +73,31 @@ const MigrateDialog: FC<MigrateDialogProps> = ({ isOpen, onClose, positions }) =
     const priceB = new Decimal(tokenBAmount).mul(tokenB.price)
     const total = priceA.add(priceB).toNumber()
     return numberFormatter(total, 2)
+  }
+
+  const handleMigrate = async () => {
+    setIsMigrating.on()
+    try {
+      const txBuilder = createTransactionBuilder()
+      //liveBalanceTracking(connection, userPublicKey, selectedCard)
+      const tx = await migrateMeteoraDlmmToGamma(GammaProgram)
+      txBuilder.add(tx)
+      const { success, txSig } = await sendTransaction(txBuilder, {
+        successMessage: `You successfully`
+      })
+      console.log('Response', txSig, success)
+      if (!success) {
+        console.log('An error occurred while depositing!')
+        setIsMigrating.off()
+        return
+      } else {
+        // setShowConfetti.on()
+        // setTimeout(() => setShowConfetti.off(), 10000)
+      }
+    } catch (e) {
+      setIsMigrating.off()
+      console.log('An error occurred while depositing.', e)
+    }
   }
 
   return (
@@ -248,10 +272,8 @@ const ReviewAndMigrate: FC<{
             />
             <Icon
               src={position.tokenB.logoURI}
-              className={
-                `absolute top-[-2px] left-[10px] border-solid dark:border-black-2 
-                border-white border-[1px] rounded-full`
-              }
+              className={`absolute top-[-2px] left-[10px] border-solid dark:border-black-2 
+                border-white border-[1px] rounded-full`}
               size={'sm'}
             />
           </div>
