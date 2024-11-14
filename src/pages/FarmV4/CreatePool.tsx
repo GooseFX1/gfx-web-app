@@ -95,19 +95,19 @@ export const CreatePool: FC<{
           txBuilder,
           { transactionDuration: INTERVALS.MINUTE * 5 },
           notifyUsingPromiseForCreatePool)
+        setSendingTransaction(false)
+
         if (!success) {
-          setSendingTransaction(false)
-          setTokenA(null)
-          setTokenB(null)
-          setAmountTokenA('')
-          setAmountTokenB('')
-          slider.current.slickGoTo(1)
+          // allow re-attempt
+          // setTokenA(null)
+          // setTokenB(null)
+          // setAmountTokenA('')
+          // setAmountTokenB('')
+          // slider.current.slickGoTo(1)
           return
         } else {
           await forceCronAndUpdateLocalData(txSig)
           setIsConfettiVisible(true)
-          setSendingTransaction(false)
-          setIsCreatePool(false)
         }
       } catch (e) {
         console.log('Error while creating a new pool.', e)
