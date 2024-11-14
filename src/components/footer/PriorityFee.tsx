@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Button,
   cn,
@@ -19,10 +19,12 @@ import { PriorityFeeName, useConnectionConfig, useDarkMode } from '@/context'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import useBoolean from '@/hooks/useBoolean'
+import useNetworkStatus from '@/hooks/useNetworkStatus'
 
 const PriorityFee: FC = () => {
   const { mode } = useDarkMode()
   const { priorityFee, setPriorityFee } = useConnectionConfig()
+  const { status } = useNetworkStatus()
   const [localPriorityFee, setLocalPriorityFee] = useState<PriorityFeeName>(priorityFee)
   const { isMobile } = useBreakPoint()
   const [isOpen, setIsOpen] = useBoolean(false)
@@ -42,6 +44,13 @@ const PriorityFee: FC = () => {
     }
   }, [priorityFee])
   const saveDisabled = priorityFee === localPriorityFee
+
+  useEffect(() => {
+    if (status >= 1) {
+      setPriorityFee('Turbo')
+    }
+  }, [status])
+
   const handleSave = useCallback(() => {
     setIsOpen.off()
     if (priorityFee !== localPriorityFee) {
