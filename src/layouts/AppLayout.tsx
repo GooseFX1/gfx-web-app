@@ -9,19 +9,21 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const { mode } = useDarkMode()
   // To enable dark mode using tailwind - using dark:classname
   return (
-    <div
-      className={cn(
-        `overflow-x-hidden min-w-vw min-h-vh max-sm:max-h-vh bg-background-lightmode-primary
-     dark:bg-background-darkmode-primary`,
-        rewardModal ? 'overflow-hidden' : '',
-        mode === 'dark' ? 'dark' : ''
-      )}
-    >
+    <>
       <MainNav />
-      <div className={`min-2xl:w-[2500px] mt-[56px] min-md:mb-[45px]`} id="gfx-app-layout">
-        {children}
+      <div
+        className={cn(
+          `overflow-x-hidden min-w-vw min-h-vh max-sm:max-h-vh bg-background-lightmode-primary
+     dark:bg-background-darkmode-primary`,
+          rewardModal ? 'overflow-hidden' : '',
+          mode === 'dark' ? 'dark' : ''
+        )}
+      >
+        <div className={`min-2xl:w-[2500px] min-md:mb-[45px]`} id="gfx-app-layout">
+          {children}
+        </div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
+    </>
   )
 }
