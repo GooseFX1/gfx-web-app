@@ -363,6 +363,170 @@ const getAccountsForMigrateMeteoraDlmmToGamma = async () => {
   return accountObj
 }
 
+const getAccountsForMigrateOrcaWhirlpoolToGamma = async () => {
+    const whirlpoolProgram = null
+    const whirlpool = null
+    const tokenProgramA = null
+    const tokenProgramB = null
+    const memoProgram = null
+    const whirlpoolPosition = null
+    const whirlpoolPositionTokenAccount = null
+    const whirlpoolTokenVaultA = null
+    const whirlpoolTokenVaultB = null
+    const whirlpoolTickArrayLower = null
+    const whirlpoolTickArrayUpper = null
+    const gammaOwner = null
+    const gammaAuthority = null
+    const gammaPoolState = null
+    const gammaUserPoolLiquidity = null
+    const gammaToken0Account = null
+    const gammaToken1Account = null
+    const gammaToken0Vault = null
+    const gammaToken1Vault = null
+    const tokenProgram = null
+    const tokenProgram2022 = null
+    const gammaVault0Mint = null
+    const gammaVault1Mint = null
+
+  const accountObj = {
+    whirlpoolProgram,
+    whirlpool,
+    tokenProgramA,
+    tokenProgramB,
+    memoProgram,
+    whirlpoolPosition,
+    whirlpoolPositionTokenAccount,
+    whirlpoolTokenVaultA,
+    whirlpoolTokenVaultB,
+    whirlpoolTickArrayLower,
+    whirlpoolTickArrayUpper,
+    gammaOwner,
+    gammaAuthority,
+    gammaPoolState,
+    gammaUserPoolLiquidity,
+    gammaToken0Account,
+    gammaToken1Account,
+    gammaToken0Vault,
+    gammaToken1Vault,
+    tokenProgram,
+    tokenProgram2022,
+    gammaVault0Mint,
+    gammaVault1Mint
+  }
+
+  return accountObj
+}
+
+const getAccountsForMigrateRaydiumClmmToGamma = async () => {
+  const raydiumClmmProgram = null
+  const raydiumNftOwner = null
+  const raydiumNftAccount = null
+  const raydiumPersonalPosition = null
+  const raydiumPoolState = null
+  const raydiumProtocolPosition = null
+  const raydiumTokenVault0 = null
+  const raydiumTokenVault1 = null
+  const raydiumTickArrayLower = null
+  const raydiumTickArrayUpper = null
+  const gammaOwner = null
+  const gammaAuthority = null
+  const gammaPoolState = null
+  const gammaUserPoolLiquidity = null
+  const gammaToken0Account = null
+  const gammaToken1Account = null
+  const gammaToken0Vault = null
+  const gammaToken1Vault = null
+  const gammaVault0Mint = null
+  const gammaVault1Mint = null
+  const tokenProgram = null
+  const tokenProgram2022 = null
+
+  const accountObj = {
+    raydiumClmmProgram,
+    raydiumNftOwner,
+    raydiumNftAccount,
+    raydiumPersonalPosition,
+    raydiumPoolState,
+    raydiumProtocolPosition,
+    raydiumTokenVault0,
+    raydiumTokenVault1,
+    raydiumTickArrayLower,
+    raydiumTickArrayUpper,
+    gammaOwner,
+    gammaAuthority,
+    gammaPoolState,
+    gammaUserPoolLiquidity,
+    gammaToken0Account,
+    gammaToken1Account,
+    gammaToken0Vault,
+    gammaToken1Vault,
+    gammaVault0Mint,
+    gammaVault1Mint,
+    tokenProgram,
+    tokenProgram2022,
+  }
+
+  return accountObj
+}
+
+const getAccountsForMigrateRaydiumCpSwap = async () => {
+  const raydiumCpSwapProgram = 0
+  const owner = 0
+  const raydiumCpSwapAuthority = 0
+  const raydiumCpSwapPoolState = 0
+  const raydiumCpSwapOwnerLpToken = 0
+  const raydiumCpSwapToken0Account = 0
+  const raydiumCpSwapToken1Account = 0
+  const raydiumCpSwapToken0Vault = 0
+  const raydiumCpSwapToken1Vault = 0
+  const raydiumCpSwapVault0Mint = 0
+  const raydiumCpSwapVault1Mint = 0
+  const raydiumCpSwapLpMint = 0
+  const memoProgram = 0
+  const gammaOwner = 0
+  const gammaAuthority = 0
+  const gammaPoolState = 0
+  const gammaUserPoolLiquidity = 0
+  const gammaToken0Account = 0
+  const gammaToken1Account = 0
+  const gammaToken0Vault = 0
+  const gammaToken1Vault = 0
+  const gammaVault0Mint = 0
+  const gammaVault1Mint = 0
+  const tokenProgram = 0
+  const tokenProgram2022 = 0
+
+  const accountObj = {
+    raydiumCpSwapProgram,
+    owner,
+    raydiumCpSwapAuthority,
+    raydiumCpSwapPoolState,
+    raydiumCpSwapOwnerLpToken,
+    raydiumCpSwapToken0Account,
+    raydiumCpSwapToken1Account,
+    raydiumCpSwapToken0Vault,
+    raydiumCpSwapToken1Vault,
+    raydiumCpSwapVault0Mint,
+    raydiumCpSwapVault1Mint,
+    raydiumCpSwapLpMint,
+    memoProgram,
+    gammaOwner,
+    gammaAuthority,
+    gammaPoolState,
+    gammaUserPoolLiquidity,
+    gammaToken0Account,
+    gammaToken1Account,
+    gammaToken0Vault,
+    gammaToken1Vault,
+    gammaVault0Mint,
+    gammaVault1Mint,
+    tokenProgram,
+    tokenProgram2022
+  }
+
+  return accountObj
+}
+
 //Instruction - 1
 export const deposit = async (
   userSourceDepositAmount: string,
@@ -577,6 +741,85 @@ export const migrateMeteoraDlmmToGamma = async (
   const migrateMeteoraDlmmToGammaTxn: Transaction = new Transaction()
   migrateMeteoraDlmmToGammaTxn.add(migrateMeteoraDlmmToGammaIX)
   return migrateMeteoraDlmmToGammaTxn
+}
+
+//Instruction - 5
+export const migrateOrcaWhirlpoolToGamma = async (
+  program: Program
+) => {
+  const liquidityAmount = 0
+  const tokenMinA = 0
+  const tokenMinB = 0
+  const remainingAccounts = 0
+  const lpTokenAmount = 0
+  const maximumToken0Amount = 0
+  const maximumToken1Amount = 0
+
+  const accounts = await getAccountsForMigrateOrcaWhirlpoolToGamma()
+  const migrateOrcaWhirlpoolToGammaIX: TransactionInstruction =
+    await program.instruction.migrateOrcaWhirlpoolToGammaV2(
+      liquidityAmount,
+      tokenMinA,
+      tokenMinB,
+      remainingAccounts,
+      lpTokenAmount,
+      maximumToken0Amount,
+      maximumToken1Amount,
+      { accounts }
+    )
+  
+  const migrateOrcaWhirlpoolToGammaTxn: Transaction = new Transaction()
+  migrateOrcaWhirlpoolToGammaTxn.add(migrateOrcaWhirlpoolToGammaIX)
+  return migrateOrcaWhirlpoolToGammaTxn
+}
+
+//Instruction - 6
+export const migrateRaydiumClmmToGamma = async (program: Program) => {
+  const liquidity = 0
+  const amount0Min = 0
+  const amount1Min = 0
+  const lpTokenAmount = 0
+  const maximumToken0Amount = 0
+  const maximumToken1Amount = 0
+
+  const accounts = await getAccountsForMigrateRaydiumClmmToGamma()
+  const migrateRaydiumClmmToGammaIX: TransactionInstruction =
+    await program.instruction.migrateRaydiumClmmToGamma(
+      liquidity,
+      amount0Min,
+      amount1Min,
+      lpTokenAmount,
+      maximumToken0Amount,
+      maximumToken1Amount,
+      { accounts }
+    )
+
+  const migrateRaydiumClmmToGammaTxn: Transaction = new Transaction()
+  migrateRaydiumClmmToGammaTxn.add(migrateRaydiumClmmToGammaIX)
+  return migrateRaydiumClmmToGammaTxn
+}
+
+//Instruction - 7
+export const migrateRaydiumCpSwapToGamma = async (program: Program) => {
+  const lpTokenAmount = 0
+  const minimumToken0Amount = 0
+  const minimumToken1Amount = 0
+  const maximumToken0Amount = 0
+  const maximumToken1Amount = 0
+
+  const accounts = await getAccountsForMigrateRaydiumCpSwap()
+  const migrateRaydiumCpSwapIX: TransactionInstruction = await program.instruction.migrateRaydiumCpSwap(
+     lpTokenAmount,
+     minimumToken0Amount,
+     minimumToken1Amount,
+     maximumToken0Amount,
+     maximumToken1Amount,
+    { accounts }
+  )
+
+  const migrateRaydiumCpSwapTxn: Transaction = new Transaction()
+  migrateRaydiumCpSwapTxn.add(migrateRaydiumCpSwapIX)
+  return migrateRaydiumCpSwapTxn
 }
 
 const checkIfTokenAccExists = async (
