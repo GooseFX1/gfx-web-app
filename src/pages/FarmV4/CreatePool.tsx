@@ -45,6 +45,7 @@ export const CreatePool: FC<{
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
   const {
+    sendingTransaction,
     setSendingTransaction,
     createPoolType,
     setCreatePoolType,
@@ -225,7 +226,7 @@ export const CreatePool: FC<{
                 <Button
                   colorScheme={'blue'}
                   className={'w-[157px] font-bold next-btn'}
-                  disabled={checkButtonStatus}
+                  disabled={checkButtonStatus || sendingTransaction}
                   onClick={next}
                 >
                   {currentSlide === 1 ? 'Next' : 'Create & Deposit'}
