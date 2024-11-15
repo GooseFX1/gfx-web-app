@@ -31,7 +31,7 @@ const StickyFooter: FC<StickyFooterProps> = ({
   const { isMobile } = useBreakPoint()
   const { mode, isDarkMode } = useDarkMode()
   const { slippage, setSlippage, isCustomSlippage } = useGamma()
-  const [value, setValue] = useState<number>(0)
+  const [value, setValue] = useState<number>(slippage)
   const localIsCustomSlippage = isCustomSlippage || !BASE_SLIPPAGE.includes(value)
   return (
     <div
@@ -115,7 +115,8 @@ const StickyFooter: FC<StickyFooterProps> = ({
               onChange={(e) => setValue(parseFloat(e.target.value))}
               type={'number'}
             />
-            <Button fullWidth colorScheme={'blue'} disabled={value == slippage} onClick={() => setSlippage(value)}>
+            <Button fullWidth colorScheme={'blue'} disabled={value == slippage || value <= 0.0}
+                    onClick={() => setSlippage(value)}>
               Save
             </Button>
           </PopoverContent>

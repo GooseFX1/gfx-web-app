@@ -78,7 +78,7 @@ export const FarmHeader: FC = () => {
   )
 
   return (
-    <div className="mt-3">
+    <div className="mt-[15px]">
       <CreatePool isCreatePool={isCreatePool} setIsCreatePool={setIsCreatePool} />
       <DepositWithdrawSlider />
       <div className={'max-sm:px-2.5 px-5'}>

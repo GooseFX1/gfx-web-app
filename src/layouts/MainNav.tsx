@@ -72,7 +72,7 @@ export const MainNav: FC = () => {
   )
 
   return (
-    <div className={`w-screen flex flex-col fixed top-0 z-[10]`}>
+    <div className={`w-screen flex flex-col sticky top-0 z-[10]`}>
       {rewardModal && (
         <ModalSlide
           rewardModal={rewardModal}

@@ -2,28 +2,30 @@ import React, { FC } from 'react'
 import { Button, cn, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import { CircularArrow } from '@/components/common/Arrow'
 import useBreakPoint from '@/hooks/useBreakPoint'
+import { useGamma } from '@/context'
 
 const FarmRowItem: FC<{
   title: string | JSX.Element
-  //onClick: () => void
+  onClick?: () => void
   className?: string
   invert?: boolean
   tooltip?: React.ReactNode
-  iconRight: boolean
-}> = ({ title, className, invert, tooltip, iconRight }) => {
+  iconRight?: boolean
+}> = ({ title, className, invert, tooltip, iconRight, onClick }) => {
   const Comp = (
     <Button
       variant={'default'}
-      //onClick={onClick}
+      onClick={onClick}
       className={cn(
         `justify-center p-0 break-words text-h4 text-text-lightmode-secondary
-      dark:text-text-darkmode-secondary
+      dark:text-text-darkmode-secondary font-semibold font-nunito
     `,
-        className
+        className,
+        tooltip ? 'underline decoration-dotted' : ''
       )}
       iconRight={iconRight ? <CircularArrow className={`min-h-5 min-w-5`} invert={invert} /> : <></>}
     >
-      <span className={tooltip ? 'underline decoration-dotted' : ''}>{title}</span>
+      {title}
     </Button>
   )
   return tooltip ? (
@@ -36,11 +38,10 @@ const FarmRowItem: FC<{
   )
 }
 
-const PositionHeader: FC<{
-  sort: string
-  sortType: string
-}> = ({ sort, sortType }) => {
+const MyPositionSortHeader: FC = () => {
   const { isMobile, isTablet, isDesktop } = useBreakPoint()
+  const { handlePoolSort, sortConfig } = useGamma()
+  const { direction: sort, key: sortType } = sortConfig
   return (
     <div
       className={cn(
@@ -70,8 +71,8 @@ const PositionHeader: FC<{
           title={'Fee'}
           tooltip={`The percentage fee taken by the pool,
                                  this influence the rewards you’ll earn.`}
-          //onClick={handleSort('volume')}
-          invert={sort == 'DESC' && sortType == 'volume'}
+          invert={sort == 'DESC' && sortType == 'fee'}
+          onClick={() => handlePoolSort(sort == 'ASC' ? '5' : '6')}
           iconRight={true}
         />
       )}
@@ -81,17 +82,15 @@ const PositionHeader: FC<{
       {(isTablet || isDesktop) && (
         <FarmRowItem
           title={'APR'}
-          //onClick={handleSort('balance')}
-          invert={sort == 'DESC' && sortType == 'balance'}
+          onClick={() => handlePoolSort(sort == 'ASC' ? '7' : '8')}
+          invert={sort == 'DESC' && sortType == 'apr'}
           iconRight={true}
         />
       )}
       {(isTablet || isDesktop) && (
         <FarmRowItem
           title={'Actions'}
-          //onClick={handleSort('balance')}
           iconRight={false}
-          //className='justify-end'
         />
       )}
     </div>
@@ -115,4 +114,4 @@ const PositionHeader: FC<{
 
 //   /> 
 
-export default PositionHeader
+export default MyPositionSortHeader

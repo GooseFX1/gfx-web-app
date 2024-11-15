@@ -31,13 +31,13 @@ const FarmCard: FC<{
           <Icon
             src={loadIconImage(pool?.mintA?.logoURI, mode)}
             size="lg"
-            className={'border-solid dark:border-black-2 border-white border-[3px] rounded-full'}
+            className={'outline dark:outline-black-2 outline-white outline-[3px] rounded-full'}
           />
           <Icon
             src={loadIconImage(pool?.mintB?.logoURI, mode)}
             size="lg"
             className={
-              'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'
+              'absolute left-[30px] outline dark:outline-black-2 outline-white outline-[3px] rounded-full'
             }
           />
           {/* {canClaim && <span className={'absolute rounded-full bg-red-2 w-3 h-3 top-[-4px] left-[-4px]'} />} */}
@@ -83,7 +83,7 @@ const FarmCard: FC<{
 export default FarmCard
 
 export const FarmCardLoader: FC<{className?:string}> = ({className}) => <div className={cn(`
-  w-full max-w-[341px] h-[207px] p-2.5 border  flex gap-2 flex-col
+  w-full max-w-screen sm:max-w-[341px] h-[207px] p-2.5 border  flex gap-2 flex-col
         border-solid dark:border-black-4 border-grey-4 bg-white dark:bg-black-2 rounded-[8px]
 `, className)}>
   <div className={'flex w-full'}>

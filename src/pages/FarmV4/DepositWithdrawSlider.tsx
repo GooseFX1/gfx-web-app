@@ -5,7 +5,6 @@ import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
 import DepositWithdrawAccordion from './DepositWithdrawAccordion'
 import DepositWithdrawLabel from './DepositWithdrawLabel'
-import SwapNow from './SwapNow'
 import { TokenRow } from './TokenRow'
 import { ReviewConfirm } from './ReviewConfirm'
 import StickyFooter from './StickyFooter'
@@ -683,7 +682,7 @@ export const DepositWithdrawSlider: FC = () => {
             <ReviewConfirm
               tokenAActionValue={isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount}
               tokenBActionValue={isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount} />
-            {isDeposit && userPublicKey && (userSourceTokenBal === 0 || userTargetTokenBal === 0) && <SwapNow />}
+            {/*{isDeposit && userPublicKey && (userSourceTokenBal === 0 || userTargetTokenBal === 0) && <SwapNow />}*/}
           </div>
         </DialogBody>
         <DialogFooter>

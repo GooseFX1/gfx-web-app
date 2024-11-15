@@ -17,7 +17,7 @@ import {
   TooltipContent,
   TooltipTrigger
 } from 'gfx-component-lib'
-import { useDarkMode, useGamma } from '../../context'
+import { TokenListToken, useDarkMode, useGamma } from '../../context'
 import { JupToken, POPULAR_TOKENS, TOKEN_LIST_PAGE_SIZE } from './constants'
 //import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
@@ -31,12 +31,13 @@ import { aborter, bigNumberFormatter, loadIconImage, numberFormatter, truncateAd
 import SearchBar from '@/components/common/SearchBar'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import BigNumber from 'bignumber.js'
+import Decimal from 'decimal.js-light'
 
 const Step2: FC<{
-  tokenA: JupToken
-  setTokenA: Dispatch<SetStateAction<JupToken>>
-  tokenB: JupToken
-  setTokenB: Dispatch<SetStateAction<JupToken>>
+  tokenA: TokenListToken
+  setTokenA: Dispatch<SetStateAction<TokenListToken>>
+  tokenB: TokenListToken
+  setTokenB: Dispatch<SetStateAction<TokenListToken>>
   handleChange: (e: any, boolean) => void
   amountTokenA: string
   amountTokenB: string
@@ -74,6 +75,7 @@ const Step2: FC<{
   const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
   const { connected } = useWallet()
   const { balance } = useWalletBalance()
+  const [aToBRatio, setAToBRatio] = useBoolean(true)
   useEffect(() => {
     if (+amountTokenA && +amountTokenB) {
       !priceSwitch
@@ -90,6 +92,20 @@ const Step2: FC<{
     setIsCreatePool(false)
     setOpenDepositWithdrawSlider(true)
   }, [tokenA, tokenB, existingPool, setSelectedCard])
+  const { priceAToB, priceBToA } = useMemo(() => {
+    if (!tokenA || !tokenB) return {
+      priceAToB: '',
+      priceBToA: ''
+    }
+
+    const priceAToB = new Decimal(tokenB.price).div(tokenA.price).toFixed(tokenA.decimals)
+    const priceBToA = new Decimal(tokenA.price).div(tokenB.price).toFixed(tokenB.decimals)
+
+    return {
+      priceAToB,
+      priceBToA
+    }
+  }, [tokenA, tokenB])
 
   useLayoutEffect(() => {
     ;(async () => {
@@ -199,8 +215,11 @@ const Step2: FC<{
               </TooltipContent>
             </Tooltip>
             <div
-              className={cn('flex flex-row items-center', (!tokenA || !tokenB) && 'invisible')}
-              onClick={() => setPriceSwitch((prev) => !prev)}
+              className={cn('flex flex-row items-center cursor-pointer', (!tokenA || !tokenB) && 'invisible')}
+              onClick={() => {
+                setPriceSwitch((prev) => !prev)
+                setAToBRatio.toggle()
+              }}
             >
               <img src={`/img/assets/switch_${mode}.svg`} alt="switch" className="mr-1.5" />
               <span
@@ -228,6 +247,15 @@ const Step2: FC<{
               {!priceSwitch ? `${tokenA?.symbol} / ${tokenB?.symbol}` : `${tokenB?.symbol} / ${tokenA?.symbol}`}
             </span>
           </div>
+          {priceAToB && priceBToA  && <p
+            className={`text-text-lightmode-secondary dark:text-text-darkmode-secondary text-h4 font-semibold`}>
+            1.0 {aToBRatio ? tokenB?.symbol : tokenA?.symbol}
+            <Button
+              className={`cursor-pointer text-blue-1 dark:text-white text-[20px] font-bold p-1 h-max`}
+              variant={'link'}
+              onClick={setAToBRatio.toggle}>≈</Button>
+            {aToBRatio ? priceAToB : priceBToA} {aToBRatio ? tokenA?.symbol : tokenB?.symbol}
+          </p>}
         </div>
         {/* <div>
             <div className="font-sans text-regular font-semibold dark:text-grey-8 text-black-4">
@@ -266,8 +294,8 @@ const Step2: FC<{
         {(tokenA &&
           tokenB) && (
           (+amountTokenA &&
-          +amountTokenB &&
-          (+amountTokenA > +walletTokenA || +amountTokenB > +walletTokenB)) ||
+            +amountTokenB &&
+            (+amountTokenA > +walletTokenA || +amountTokenB > +walletTokenB)) ||
           (balance[tokenA?.address].tokenAmount.uiAmount <= 0.0 ||
             balance[tokenB?.address].tokenAmount.uiAmount <= 0.0))
           ? (

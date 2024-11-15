@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import FarmFilter from '@/pages/FarmV4/FarmFilter'
+import FarmItemsProSort from '@/pages/FarmV4/FarmItemsProSort'
 import FarmRow, { FarmRowLoader } from '@/pages/FarmV4/FarmRow'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import WindowingContainer from '@/pages/FarmV4/WindowingContainer'
@@ -9,14 +9,15 @@ const FarmItemsPro: FC = () => {
   const { filteredPools, isLoadingPools } = useGamma()
   return (
     <>
-      <FarmFilter />
+      <FarmItemsProSort />
       <div>
-        {isLoadingPools ? <div className={'flex flex-col gap-2 mt-2'}>
+        {isLoadingPools ? <div className={'flex flex-col gap-[15px] mt-[15px]'}>
           <FarmRowLoader />
           <FarmRowLoader />
           <FarmRowLoader />
           <FarmRowLoader />
         </div> : <WindowingContainer
+          itemPadding={15}
           items={filteredPools}
           render={(pool: GAMMAPoolWithUserLiquidity, i) => (
             <FarmRow pool={pool} key={`${pool?.mintA.name}-${pool?.mintB.name}-${i}`} />

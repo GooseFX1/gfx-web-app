@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
+import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { useConnectionConfig, useDarkMode, useGamma, useRewardToggle } from '../../context'
 import { GAMMA_SORT_CONFIG, POOL_TYPE } from './constants'
@@ -25,10 +25,10 @@ export const FarmContainer: FC = () => {
     showCreatedPools,
     setShowCreatedPools,
     currentSort,
-    setCurrentSort,
     showDeposited,
     setShowDeposited,
-    filteredPools
+    filteredPools,
+    handlePoolSort
   } = useGamma()
   const { wallet } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
@@ -98,22 +98,6 @@ export const FarmContainer: FC = () => {
     [showCreatedPools, userCache]
   )
 
-  const handleSort = useCallback(
-    (id: string) => {
-      // persists current sort in local storage
-      setCurrentSort(() => {
-        updateUserCache({
-          gamma: {
-            ...userCache.gamma,
-            currentSort: id
-          }
-        })
-        // sets value to context
-        return id
-      })
-    },
-    [setCurrentSort, userCache]
-  )
 
   return (
     <div className={'flex flex-col gap-3.75'}>
@@ -153,13 +137,18 @@ export const FarmContainer: FC = () => {
               <div className="flex justify-between items-center">
                 {breakpoint.isMobile ? (
                   <div>
-                    <Button className="p-0 !h-[35px] !w-[35px] mx-2" variant={'ghost'}>
+                    <Button className="p-0 !h-[35px] !w-[35px] mx-2 relative" variant={'ghost'}>
                       <Icon
                         src={`img/assets/farm_filter_${mode}.svg`}
                         size={'md'}
                         className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
                         onClick={() => (isSortFilterOpen ? setIsSortFilterOpen.off() : setIsSortFilterOpen.on())}
                       />
+                      {(currentSort !== '1' || showCreatedPools) ? <img
+                        className={`absolute top-0.5 left-0 border-1 border-solid w-2.5 h-2.5
+                        border-background-lightmode-primary dark:border-background-darkmode-primary rounded-full`}
+                        src={'/img/assets/red-notification-circle.svg'}
+                      /> : null}
                     </Button>
                     <Dialog open={isSortFilterOpen} onOpenChange={setIsSortFilterOpen.set}>
                       <DialogOverlay />
@@ -170,22 +159,22 @@ export const FarmContainer: FC = () => {
                         placement={'bottom'}
                       >
                         <DialogBody className={'flex-col flex-[1 0] p-2 overflow-auto pb-0'}>
-                            <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
-                            <div className="flex items-center justify-between ">
+                          <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
+                          <div className="flex items-center justify-between ">
                             <span
                               className="h-full text-regular text-left dark:text-grey-2 text-grey-1
                                               font-semibold"
                             >
                             Show created pools
                             </span>
-                              <Switch
-                                variant={'default'}
-                                size={'sm'}
-                                colorScheme={'primary'}
-                                checked={showCreatedPools}
-                                onClick={handleFilterByCreated}
-                              />
-                            </div>
+                            <Switch
+                              variant={'default'}
+                              size={'sm'}
+                              colorScheme={'primary'}
+                              checked={showCreatedPools}
+                              onClick={handleFilterByCreated}
+                            />
+                          </div>
                           <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
 
                           <div className={'grid grid-cols-1 gap-3'}>
@@ -213,7 +202,7 @@ export const FarmContainer: FC = () => {
                                     name="sort"
                                     value={s.id}
                                     checked={currentSort === s.id}
-                                    onChange={() => handleSort(s.id)}
+                                    onChange={() => handlePoolSort(s.id)}
                                     className={'hidden'}
                                   />
                                   <span className="m-0 text-regular font-bold pl-2">{s.name}</span>

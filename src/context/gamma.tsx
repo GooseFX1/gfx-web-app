@@ -1,4 +1,15 @@
-import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import {
   fetchAggregateStats,
   fetchAllPools,
@@ -41,6 +52,7 @@ import Decimal from 'decimal.js-light'
 import { aborter } from '@/utils'
 import BN from 'bn.js'
 import { BlockheightBasedTransactionConfirmationStrategy } from '@solana/web3.js'
+import usePrevious from '@/hooks/usePrevious'
 
 type ViewRange = 0 | 1 | 2
 
@@ -115,6 +127,7 @@ interface GAMMADataModel {
   viewRange: ViewRange
   setViewRange: Dispatch<SetStateAction<ViewRange>>
   computedViewRange: '24H' | '7D' | '30D'
+  handlePoolSort: (id: string) => void
 }
 
 export type TokenListToken = {
@@ -132,7 +145,7 @@ export type TokenListToken = {
 
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { userCache, connection } = useConnectionConfig()
+  const { userCache, connection, updateUserCache } = useConnectionConfig()
   const { base58PublicKey, publicKey } = useWalletBalance()
   const [gammaConfig, setGammaConfig] = useState<GAMMAConfig | null>(null)
   const [pools, setPools] = useState<GAMMAPool[]>([])
@@ -180,12 +193,38 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
   const [viewRange, setViewRange] = useState<ViewRange>(0)
   const { isProMode } = useRewardToggle()
+  const prevIsProMode = usePrevious(isProMode)
+  const handlePoolSort = useCallback(
+    (id: string) => {
+      // persists current sort in local storage
+      setCurrentSort((prevState) => {
+        if (prevState === id) {
+          return prevState
+        }
+        updateUserCache({
+          gamma: {
+            ...userCache.gamma,
+            currentSort: id
+          }
+        })
+        // sets value to context
+        return id
+      })
+    },
+    [setCurrentSort, userCache]
+  )
   //const [connectionId, setConnectionId] = useState<string>()
   useEffect(() => {
-    if (!isProMode && viewRange != 0) {
-      setViewRange(0)
+    if (!isProMode && prevIsProMode !== isProMode) {
+      // reset based on mode
+      if (viewRange != 0) {
+        setViewRange(0)
+      }
+      if (currentSort != '1') {
+        setCurrentSort('1')
+      }
     }
-  }, [isProMode, viewRange])
+  }, [isProMode, viewRange, currentSort, prevIsProMode])
   useEffect(() => {
     // first render only
     if (tokenList.length == 0) {
@@ -269,13 +308,17 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (poolType === 'migrate') {
       return
     }
+    let key = `${sortConfig.key.toLowerCase()}`
+    if (sortConfig.id !== '1' && sortConfig.id !== '2') {
+      key = `${key}${computedViewRange.toLowerCase()}`
+    }
     setIsLoadingPools.on()
     fetchAllPools(
       page,
       pageSize,
       poolType,
       sortConfig.direction.toLowerCase() as 'desc' | 'asc',
-      sortConfig.key.toLowerCase(),
+      key,
       searchTokens,
       signal
     )
@@ -333,7 +376,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [currentPoolType])
   useEffect(() => {
     updatePools({ page: poolPage, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type })
-  }, [poolPage, sortConfig])
+  }, [poolPage, sortConfig, viewRange])
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -579,7 +622,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         updateUserLpPositions: getUserLpPositions,
         setViewRange,
         viewRange,
-        computedViewRange
+        computedViewRange,
+        handlePoolSort
       }}
     >
       {children}
