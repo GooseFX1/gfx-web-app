@@ -94,8 +94,8 @@ const Step2: FC<{
   }, [tokenA, tokenB, existingPool, setSelectedCard])
   const { priceAToB, priceBToA } = useMemo(() => {
     if (!tokenA || !tokenB) return {
-      priceAToB: '0.00',
-      priceBToA: '0.00'
+      priceAToB: '',
+      priceBToA: ''
     }
 
     const priceAToB = new Decimal(tokenB.price).div(tokenA.price).toFixed(tokenA.decimals)
@@ -215,8 +215,11 @@ const Step2: FC<{
               </TooltipContent>
             </Tooltip>
             <div
-              className={cn('flex flex-row items-center', (!tokenA || !tokenB) && 'invisible')}
-              onClick={() => setPriceSwitch((prev) => !prev)}
+              className={cn('flex flex-row items-center cursor-pointer', (!tokenA || !tokenB) && 'invisible')}
+              onClick={() => {
+                setPriceSwitch((prev) => !prev)
+                setAToBRatio.toggle()
+              }}
             >
               <img src={`/img/assets/switch_${mode}.svg`} alt="switch" className="mr-1.5" />
               <span
@@ -244,9 +247,9 @@ const Step2: FC<{
               {!priceSwitch ? `${tokenA?.symbol} / ${tokenB?.symbol}` : `${tokenB?.symbol} / ${tokenA?.symbol}`}
             </span>
           </div>
-          {priceAToB != '0.0' && priceBToA != '0.0' && <p
+          {priceAToB && priceBToA  && <p
             className={`text-text-lightmode-secondary dark:text-text-darkmode-secondary text-h4 font-semibold`}>
-            Ratio 1.0 {aToBRatio ? tokenB?.symbol : tokenA?.symbol}
+            1.0 {aToBRatio ? tokenB?.symbol : tokenA?.symbol}
             <Button
               className={`cursor-pointer text-blue-1 dark:text-white text-[20px] font-bold p-1 h-max`}
               variant={'link'}
