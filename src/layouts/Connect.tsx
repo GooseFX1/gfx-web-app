@@ -185,7 +185,7 @@ export const Connect: FC<MenuItemProps> = ({
                   text-text-lightmode-primary dark:text-text-darkmode-primary font-semibold
                 `}
                 >
-                  ~ {balance.SOL.tokenAmount.uiAmountString} SOL
+                  ~ {balance[base58PublicKey].tokenAmount.uiAmountString} SOL
                 </h4>
                 <p
                   className={`
