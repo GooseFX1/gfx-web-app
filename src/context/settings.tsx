@@ -111,7 +111,8 @@ function newCache(): USER_CONFIG_CACHE {
       showDepositedFilter: false,
       showCreatedFilter: false,
       docsBanner: true,
-      currentSort: '1'
+      currentSort: '1',
+      viewMode: 'lite'
     },
     hasSignedTC: false,
     endpointName: 'QuickNode',

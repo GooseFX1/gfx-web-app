@@ -11,6 +11,7 @@ type UserGAMMAConfig = {
   showCreatedFilter: boolean
   docsBanner: boolean
   currentSort: string
+  viewMode: 'lite' | 'pro';
 }
 
 export interface USER_CONFIG_CACHE {

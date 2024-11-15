@@ -1,5 +1,6 @@
 import useBoolean from '@/hooks/useBoolean'
 import React, { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction } from 'react'
+import { useConnectionConfig } from './settings'
 interface IRewardToggleConfig {
   rewardModal: boolean
   rewardToggle: Dispatch<SetStateAction<boolean>>
@@ -12,9 +13,10 @@ interface IRewardToggleConfig {
 }
 const RewardToggleContext = createContext<IRewardToggleConfig | null>(null)
 export const RewardToggleProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const {userCache} = useConnectionConfig();
   const [mode, setMode] = useState<boolean>(false)
   const [panelIndex, setPanelIndex] = useState<number>(0)
-  const [isProMode, setIsProMode] = useBoolean(false)
+  const [isProMode, setIsProMode] = useBoolean(userCache.gamma.viewMode === 'pro')
   const [isPortfolio, setIsPortfolio] = useBoolean(false)
   const closeModalBox = (val: boolean) => {
     if (val) {
@@ -25,7 +27,7 @@ export const RewardToggleProvider: FC<{ children: ReactNode }> = ({ children }) 
       document.body.style.overflow = 'auto'
     }
   }
-  const changePanel = (index: number) => setPanelIndex(index)
+  const changePanel = (index: number) => setPanelIndex(index);
   return (
     <RewardToggleContext.Provider
       value={{
