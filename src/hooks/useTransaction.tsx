@@ -44,7 +44,8 @@ function useTransaction(): useTransactionReturn {
       let blockHash = await connection.getLatestBlockhash()
 
       const txn = txnIn instanceof TransactionBuilder ?
-        txnIn._getTransaction(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0)) : txnIn
+        await txnIn._getTransaction(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0), connection) :
+        txnIn
       console.log('signing txn', txn)
       const txSig = await sendTransactionOriginal(txn, connection, options).catch((err) => {
         console.log('[ERROR] Transaction failed', err)

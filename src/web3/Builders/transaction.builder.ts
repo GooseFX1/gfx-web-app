@@ -1,5 +1,6 @@
 import {
   ComputeBudgetProgram,
+  Connection,
   PublicKey,
   Transaction,
   TransactionInstruction,
@@ -64,18 +65,34 @@ class TransactionBuilder {
     return this
   }
   /** @deprecated Internal use in useTransaction hook - compile */
-  _getTransaction(
+  async _getTransaction(
     walletPublicKey:PublicKey,
     recentBlockhash:string,
-    useVersionedTransaction: boolean
-  ): VersionedTransaction|Transaction {
+    useVersionedTransaction: boolean,
+    connection: Connection
+  ): Promise<VersionedTransaction|Transaction> {
     if (this._usePriorityFee) {
       const ix = ComputeBudgetProgram.setComputeUnitPrice({
         microLamports: this._priorityFee
       })
 
       this._instructions.unshift(ix)
+      let computeUnits = 1.4e6
+      const message = new TransactionMessage({
+        instructions: [ComputeBudgetProgram.setComputeUnitLimit({units:computeUnits}),...this._instructions],
+        payerKey:walletPublicKey,
+        recentBlockhash: recentBlockhash
+      }).compileToV0Message()
+
+      const simTx = new VersionedTransaction(message);
+      const simRes = await connection.simulateTransaction(simTx, {
+        sigVerify: false
+      });
+      computeUnits = simRes.value.unitsConsumed
+      console.log('Assuming comsumption of', computeUnits, 'compute units')
+      this._instructions.unshift(ComputeBudgetProgram.setComputeUnitLimit({units: computeUnits}))
     }
+
     if (useVersionedTransaction){
       const message = new TransactionMessage({
         instructions: this._instructions,
@@ -83,9 +100,9 @@ class TransactionBuilder {
         recentBlockhash: recentBlockhash
       }).compileToV0Message()
 
-      return new VersionedTransaction(message)
+      return new VersionedTransaction(message);
     }
-    return new Transaction().add(...this._instructions);
+      return new Transaction().add(...this._instructions);
   }
 
   clear(): TransactionBuilder {
