@@ -45,6 +45,7 @@ export const CreatePool: FC<{
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
   const {
+    sendingTransaction,
     setSendingTransaction,
     createPoolType,
     setCreatePoolType,
@@ -94,19 +95,19 @@ export const CreatePool: FC<{
           txBuilder,
           { transactionDuration: INTERVALS.MINUTE * 5 },
           notifyUsingPromiseForCreatePool)
+        setSendingTransaction(false)
+
         if (!success) {
-          setSendingTransaction(false)
-          setTokenA(null)
-          setTokenB(null)
-          setAmountTokenA('')
-          setAmountTokenB('')
-          slider.current.slickGoTo(1)
+          // allow re-attempt
+          // setTokenA(null)
+          // setTokenB(null)
+          // setAmountTokenA('')
+          // setAmountTokenB('')
+          // slider.current.slickGoTo(1)
           return
         } else {
           await forceCronAndUpdateLocalData(txSig)
           setIsConfettiVisible(true)
-          setSendingTransaction(false)
-          setIsCreatePool(false)
         }
       } catch (e) {
         console.log('Error while creating a new pool.', e)
@@ -225,7 +226,7 @@ export const CreatePool: FC<{
                 <Button
                   colorScheme={'blue'}
                   className={'w-[157px] font-bold next-btn'}
-                  disabled={checkButtonStatus}
+                  disabled={checkButtonStatus || sendingTransaction}
                   onClick={next}
                 >
                   {currentSlide === 1 ? 'Next' : 'Create & Deposit'}

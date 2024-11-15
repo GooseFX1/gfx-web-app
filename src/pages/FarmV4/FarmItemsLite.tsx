@@ -16,7 +16,7 @@ const FarmItemsLite: FC<{
 
   // TODO: Enable MigrateCard
   return (
-    <div className="w-full border-top grid gap-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+    <div className="w-full border-top grid gap-3 grid-cols-1 sm:grid-cols-2 md-lg:grid-cols-3 lg:grid-cols-4">
       {/* {!isSearchActive && currentPoolType.name != POOL_TYPE.migrate.name && (
         <MigrateCard
           openPositionImages={openPositionImages}

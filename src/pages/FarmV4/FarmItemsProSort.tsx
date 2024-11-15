@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react'
+import React, { FC } from 'react'
 import { Button, cn, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import { CircularArrow } from '@/components/common/Arrow'
 import useBreakPoint from '@/hooks/useBreakPoint'
@@ -6,22 +6,23 @@ import { useGamma } from '@/context'
 
 const FarmRowItem: FC<{
   title: string
-  onClick: () => void
+  onClick?: () => void
   className?: string
   invert?: boolean
   tooltip?: React.ReactNode
-}> = ({ title, className, invert, onClick, tooltip }) => {
+  canSort?: boolean
+}> = ({ title, className, invert, onClick, tooltip, canSort = true }) => {
   const Comp = (
     <Button
       variant={'default'}
       onClick={onClick}
       className={cn(
         `justify-center p-0 break-words text-h4 text-text-lightmode-secondary
-      dark:text-text-darkmode-secondary
+      dark:text-text-darkmode-secondary font-semibold font-nunito
     `,
         className
       )}
-      iconRight={<CircularArrow className={`min-h-5 min-w-5`} invert={invert} />}
+      iconRight={canSort ? <CircularArrow className={`min-h-5 min-w-5`} invert={invert} /> : undefined}
     >
       {title}
     </Button>
@@ -35,62 +36,43 @@ const FarmRowItem: FC<{
     Comp
   )
 }
-const FarmFilter: FC = () => {
+const FarmItemsProSort: FC = () => {
   // const { userCache, updateUserCache } = useConnectionConfig()
   const { isMobile, isTablet, isDesktop } = useBreakPoint()
-  const { currentSort, setCurrentSort, computedViewRange } = useGamma()
-
-  const handleColumnSort = useCallback(
-    (id: string) =>
-      // TODO: reinstate this
-      // persists current sort in local storage
-      // setCurrentSort(id)
-      // setCurrentSort(() => {
-      //   updateUserCache({
-      //     gamma: {
-      //       ...userCache.gamma,
-      //       currentSort: id
-      //     }
-      //   })
-      //   // sets value to context
-      //   return id
-      // })
-
-      id
-    ,
-    [setCurrentSort]
-  )
+  const { currentSort, handlePoolSort, computedViewRange } = useGamma()
 
   return (
     <div
       className={cn(
-        `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_0.5fr] border-b-1 border-solid 
+        `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_0.5fr] border-b-1 border-solid
         border-border-lightmode-secondary dark:border-border-darkmode-secondary h-10 px-2 items-center`,
         isMobile && `grid-cols-[1.5fr_0.5fr]`,
         isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
       )}
     >
-      <FarmRowItem title={'Name'} onClick={handleColumnSort('1')} className={'justify-start'} invert={false} />
+      <FarmRowItem title={'Name'} className={'justify-start'} canSort={false} />
       <FarmRowItem
         title={'Liquidity'}
-        onClick={handleColumnSort(currentSort === '1' ? '2' : '1')}
+        onClick={() => handlePoolSort(currentSort === '1' ? '2' : '1')}
         invert={currentSort == '1'}
       />
       {(isTablet || isDesktop) && (
         <FarmRowItem
           title={`${computedViewRange} Volume`}
           tooltip={`${computedViewRange} Volume is reset daily at 10PM UTC`}
-          onClick={handleColumnSort(currentSort === '3' ? '4' : '3')}
+          onClick={() => handlePoolSort(currentSort === '3' ? '4' : '3')}
           invert={currentSort == '3'}
         />
       )}
       {isDesktop &&
-        <FarmRowItem title={`${computedViewRange} Fees`} onClick={handleColumnSort('5')} invert={currentSort == '5'} />}
+        <FarmRowItem title={`${computedViewRange} Fees`}
+                     onClick={() => handlePoolSort(currentSort === '5' ? '6' : '5')}
+                     invert={currentSort == '5'} />}
       {(isTablet || isDesktop) && (
         <FarmRowItem
           title={`${computedViewRange} APR`}
           tooltip={'Values are displayed in native token'}
-          onClick={handleColumnSort(currentSort === '7' ? '8' : '7')}
+          onClick={() => handlePoolSort(currentSort === '7' ? '8' : '7')}
           invert={currentSort == '7'}
         />
       )}
@@ -98,4 +80,4 @@ const FarmFilter: FC = () => {
   )
 }
 
-export default FarmFilter
+export default FarmItemsProSort

@@ -165,7 +165,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     const solBalance = await connection.getBalance(publicKey)
     const solUIAmount = solBalance / 10 ** 9
 
-    tokenAccounts[NATIVE_MINT.toBase58()] = {
+    const sol = {
       isNative: true,
       symbol: 'SOL',
       name: 'Solana',
@@ -184,6 +184,8 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       price: 0.0,
       value: new Decimal(0.0)
     }
+    tokenAccounts[NATIVE_MINT.toBase58()] = sol
+    tokenAccounts[publicKey.toBase58()] = sol
     let currentWalletValue = new Decimal(0.0)
     const tokenListResponse = await fetchTokensByPublicKey(addresses)
 

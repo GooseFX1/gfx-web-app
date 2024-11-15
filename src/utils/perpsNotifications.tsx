@@ -162,20 +162,22 @@ export const notifyUsingPromise = async (
   tentativeTxId?: string,
   successMessage?: ReactNode,
   errorMessage?: ReactNode,
-  transactionDuration: number = 60000
+  transactionLoadingDuration = 60000,
+  transactionDuration = 45000
 ): Promise<boolean> => {
   const config = {
     dismissible: true,
     onDismiss: (t: ToastT) => {
       if (onDismiss) onDismiss(t)
       toast.dismiss(t.id)
-    }
+    },
+    duration: transactionDuration
   } as ExternalToast
   config.id = toast(<IntemediaryToast className={cn(`w-[290px]`)}>
     <IntemediaryToastHeading stage={'loading'}>Loading...</IntemediaryToastHeading>
     <p>Please wait a few moments for the transaction to confirm...</p>
     {Boolean(tentativeTxId) && <OpenSolScanLink link={`https://solscan.io/tx/${tentativeTxId}`} />}
-  </IntemediaryToast>, { ...config, duration: transactionDuration })
+  </IntemediaryToast>, { ...config, duration: transactionLoadingDuration })
 
   try {
     const response = await promise as SuccessResponse
@@ -217,7 +219,8 @@ export const notifyUsingPromiseForFillTx = async (
     dismissible: true,
     onDismiss: (t: ToastT) => {
       toast.dismiss(t.id)
-    }
+    },
+    duration: 45000
   } as ExternalToast
   config.id = toast(<IntemediaryToast className={cn(`w-[290px]`)}>
     <IntemediaryToastHeading stage={'loading'}>Placing Order...</IntemediaryToastHeading>
@@ -251,7 +254,8 @@ export const notifyUsingPromiseForCloseTx = async (promise: Promise<unknown>): P
     dismissible: true,
     onDismiss: (t: ToastT) => {
       toast.dismiss(t.id)
-    }
+    },
+    duration: 45000
   } as ExternalToast
   config.id = toast(<IntemediaryToast className={cn(`w-[290px]`)}>
     <IntemediaryToastHeading stage={'loading'}>Closing Position...</IntemediaryToastHeading>
@@ -284,7 +288,8 @@ export const notifyUsingPromiseForCreatePool = async (promise: Promise<unknown>)
     dismissible: true,
     onDismiss: (t: ToastT) => {
       toast.dismiss(t.id)
-    }
+    },
+    duration: 45000
   } as ExternalToast
   config.id = toast(<IntemediaryToast className={cn(`w-[290px]`)}>
     <IntemediaryToastHeading stage={'loading'}>Creating pool...</IntemediaryToastHeading>

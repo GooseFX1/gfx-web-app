@@ -1,13 +1,13 @@
 import { FC, useMemo } from 'react'
-import { Badge, Button, Icon, cn } from 'gfx-component-lib'
+import { Badge, Button, cn, Icon } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import { ModeOfOperation } from './constants'
-import { loadIconImage } from '@/utils'
+import { loadIconImage, numberFormatter } from '@/utils'
 import NoResultsFound from '@/pages/FarmV4/NoResultsFound'
 import { noPoolsFound } from '@/pages/FarmV4/FarmItems'
-import { numberFormatter } from '@/utils'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import useBreakPoint from '@/hooks/useBreakPoint'
+import { FarmRowLoader } from '@/pages/FarmV4/FarmRow'
 
 const renderPosition = (p: GAMMAPoolWithUserLiquidity) => {
   const liq = p.userLpPosition  
@@ -60,7 +60,7 @@ const MyPositions: FC = () => {
   //const canClaim = false
 
   return (
-    <div>
+    <div className={`flex flex-col gap-[15px] mt-[15px]`}>
       {positions.length > 0 ? (
         positions.map((pool: GAMMAPoolWithUserLiquidity) => (
           <div
@@ -179,5 +179,18 @@ const MyPositions: FC = () => {
     </div>
   )
 }
+const MyPositionItems: FC = () =>{
+  const {isLoadingPools} = useGamma()
 
-export default MyPositions
+  if (isLoadingPools) {
+    return <div className={'flex flex-col gap-[15px] mt-[15px]'}>
+      <FarmRowLoader/>
+      <FarmRowLoader/>
+      <FarmRowLoader/>
+      <FarmRowLoader/>
+    </div>
+  }
+
+  return <MyPositions/>
+}
+export default MyPositionItems

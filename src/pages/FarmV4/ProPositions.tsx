@@ -4,18 +4,17 @@ import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { useGamma } from '@/context'
 import { POOL_TYPE } from './constants'
 import SearchBar from '@/components/common/SearchBar'
-import PositionHeader from './PositionHeader'
-import MyPositions from './MyPositions'
+import MyPositionSortHeader from './MyPositionSortHeader'
+import MyPositionItems from './MyPositions'
 import FarmSort from '@/pages/FarmV4/FarmSort'
 import useBoolean from '@/hooks/useBoolean'
 
-const Positions: FC = () => {
+const ProPositions: FC = () => {
   const {
     currentPoolType,
     setCurrentPoolType,
     searchTokens,
-    setSearchTokens,
-    sortConfig
+    setSearchTokens
   } = useGamma()
   const [isOpen, setIsOpen] = useBoolean(false)
   return (
@@ -69,14 +68,14 @@ const Positions: FC = () => {
             className={'!max-w-full flex-1'}
           />
           <div className="flex justify-between ml-3">
-           <FarmSort isOpen={isOpen} setIsOpen={setIsOpen.set} />
+            <FarmSort isOpen={isOpen} setIsOpen={setIsOpen.set} />
           </div>
         </div>
       </div>
-      <PositionHeader sort={sortConfig.direction} sortType={sortConfig.key} />
-      <MyPositions />
+      <MyPositionSortHeader />
+      <MyPositionItems />
     </div>
   )
 }
 
-export default Positions
+export default ProPositions
