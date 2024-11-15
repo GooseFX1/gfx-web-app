@@ -36,14 +36,14 @@ const NetworkStatus: FC = () => {
         }
       case 1:
         return {
-          networkStatus: 'Degraded',
+          networkStatus: 'Congested',
           textColor: 'text-background-yellow',
           bgColor: 'bg-background-yellow',
           description: STATUS.DEGRADED
         }
       case 2:
         return {
-          networkStatus: 'Congested',
+          networkStatus: 'Degraded',
           textColor: 'text-background-red',
           bgColor: 'bg-background-red',
           description: STATUS.CONGESTED
