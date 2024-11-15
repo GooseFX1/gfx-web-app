@@ -98,8 +98,8 @@ const Step2: FC<{
       priceBToA: ''
     }
 
-    const priceAToB = new Decimal(tokenB.price).div(tokenA.price).toFixed(tokenA.decimals)
-    const priceBToA = new Decimal(tokenA.price).div(tokenB.price).toFixed(tokenB.decimals)
+    const priceAToB = new Decimal(tokenA.price).div(tokenB.price).toFixed(tokenA.decimals)
+    const priceBToA = new Decimal(tokenB.price).div(tokenA.price).toFixed(tokenB.decimals)
 
     return {
       priceAToB,
@@ -257,12 +257,12 @@ const Step2: FC<{
           </div>
           {priceAToB && priceBToA  && <p
             className={`text-text-lightmode-secondary dark:text-text-darkmode-secondary text-h4 font-semibold`}>
-            1.0 {aToBRatio ? tokenB?.symbol : tokenA?.symbol}
+            1.0 {aToBRatio ? tokenA?.symbol : tokenB?.symbol}
             <Button
               className={`cursor-pointer text-blue-1 dark:text-white text-[20px] font-bold p-1 h-max`}
               variant={'link'}
               onClick={setAToBRatio.toggle}>≈</Button>
-            {aToBRatio ? priceAToB : priceBToA} {aToBRatio ? tokenA?.symbol : tokenB?.symbol}
+            {aToBRatio ? priceAToB : priceBToA} {aToBRatio ? tokenB?.symbol : tokenA?.symbol}
           </p>}
         </div>
         {/* <div>
