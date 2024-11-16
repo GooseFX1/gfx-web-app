@@ -40,7 +40,7 @@ function useTransaction(): useTransactionReturn {
     async (txnIn: Transaction | TransactionBuilder, connectionData?: SendTxnOptions, notify = notifyUsingPromise) => {
 
       const connection = connectionData?.connection ?? originalConnection
-      const options = { ...connectionData?.options, skipPreflight: true }
+      const options: SendTransactionOptions = { ...connectionData?.options, skipPreflight: true }
       let blockHash = await connection.getLatestBlockhash()
 
       const txn = txnIn instanceof TransactionBuilder ?
@@ -56,7 +56,7 @@ function useTransaction(): useTransactionReturn {
         return { txSig: '', success: false }
       }
       const exec = async () => {
-        blockHash = await connection.getLatestBlockhash()
+        blockHash = await connection.getLatestBlockhash('confirmed')
         console.log('blockhash', blockHash)
         const blockHeightConfirmationStrategy: BlockheightBasedTransactionConfirmationStrategy = {
           signature: txSig,
