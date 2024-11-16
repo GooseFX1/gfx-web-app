@@ -40,8 +40,12 @@ function useTransaction(): useTransactionReturn {
     async (txnIn: Transaction | TransactionBuilder, connectionData?: SendTxnOptions, notify = notifyUsingPromise) => {
 
       const connection = connectionData?.connection ?? originalConnection
-      const options: SendTransactionOptions = { ...connectionData?.options, skipPreflight: true }
-      let blockHash = await connection.getLatestBlockhash()
+      const options: SendTransactionOptions = {
+        ...connectionData?.options,
+        skipPreflight: true,
+        maxRetries: connectionData?.options?.maxRetries ?? 0
+      }
+      let blockHash = await connection.getLatestBlockhash('confirmed')
 
       const txn = txnIn instanceof TransactionBuilder ?
         await txnIn._getTransaction(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0), connection) :
