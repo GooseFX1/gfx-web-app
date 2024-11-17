@@ -22,7 +22,7 @@ export const TermsOfService: FC<{
   const { blacklisted, userCache, updateUserCache } = useConnectionConfig()
   const breakpoint = useBreakPoint()
   const isMobile = breakpoint.isMobile
-  const isOnAmm = window.location.pathname.includes('farm')
+  const isOnAmm = window.location.pathname.includes('gamma')
   const [toShow, setToShow] = useState<boolean>(!!visible || (isOnAmm && userCache.gamma.hasGAMMAOnboarded) || !isOnAmm)
   const [checked, setChecked] = useState<boolean>(false)
   // const [isRead, setRead] = useState<boolean>(false)
@@ -32,7 +32,7 @@ export const TermsOfService: FC<{
       setToShow(false)
       return;
     }
-    const isOnAmm = window.location.pathname.includes('farm');
+    const isOnAmm = window.location.pathname.includes('gamma');
     const canShowTos = (isOnAmm && userCache.gamma.hasGAMMAOnboarded) || (!isOnAmm && !userCache.hasSignedTC);
 
     if (visible || canShowTos) {
