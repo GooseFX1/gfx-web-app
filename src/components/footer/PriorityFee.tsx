@@ -86,11 +86,11 @@ const PriorityFee: FC = () => {
               value: 'Default'
             },
             {
-              label: <PriorityFeeItem title={'Fast'} fee={0.002} />,
+              label: <PriorityFeeItem title={'Fast'} fee={0.0002} />,
               value: 'Fast'
             },
             {
-              label: <PriorityFeeItem title={'Turbo'} fee={0.005} />,
+              label: <PriorityFeeItem title={'Turbo'} fee={0.0005} />,
               value: 'Turbo'
             }
           ]}

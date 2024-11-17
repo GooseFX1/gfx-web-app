@@ -251,10 +251,10 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     let fee = 0.0
     switch (priorityFee) {
       case 'Fast':
-        fee = 40000
+        fee = 200000
         break
       case 'Turbo':
-        fee = 50000
+        fee = 500000
         break
     }
     return {
