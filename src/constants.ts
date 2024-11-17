@@ -9,7 +9,7 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
   twitter: 'https://www.twitter.com/GooseFX1'
 } as const
 
-export const APP_DEFAULT_ROUTE = '/farm'
+export const APP_DEFAULT_ROUTE = '/gamma'
 export const SOLSCAN_BASE = 'https://api.solscan.io'
 
 export const ENVS = {

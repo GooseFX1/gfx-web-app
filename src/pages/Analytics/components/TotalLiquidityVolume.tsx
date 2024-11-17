@@ -27,7 +27,7 @@ export const TotalLiquidityVolume: FC = () => {
           {farmData ? (
             ` $ ` + moneyFormatterWithComma(farmData?.aggregatedVolume?.stakeVolume, '', 2)
           ) : (
-            <a href="/farm"> If not loading..Please load farm page </a>
+            <a href="/gamma"> If not loading..Please load farm page </a>
           )}{' '}
         </span>{' '}
         <br />
