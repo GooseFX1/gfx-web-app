@@ -114,7 +114,7 @@ export const FarmHeader: FC = () => {
               )}
               onClick={() => {
                 setIsPortfolio.on()
-                setCurrentPoolType(POOL_TYPE?.primary)
+                setCurrentPoolType(POOL_TYPE?.all)
               }}
             >
               Portfolio
@@ -187,7 +187,7 @@ export const FarmHeader: FC = () => {
                   className="text-regular font-semibold dark:text-white text-blue-1 underline cursor-pointer"
                   onClick={() => {
                     setIsPortfolio.on()
-                    setCurrentPoolType(POOL_TYPE?.primary)
+                    setCurrentPoolType(POOL_TYPE?.all)
                   }}
                 >
                   Go to Portfolio
