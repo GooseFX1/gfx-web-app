@@ -98,7 +98,7 @@ export const MainNav: FC = () => {
         <DesktopNav />
         <div className={`flex items-center gap-2 absolute right-0 mr-2.5 min-md:mr-0 min-md:pr-[15px]`}>
           <RewardsButton />
-          {pathname.includes('farm') && <LiteProToggle />}
+          {pathname.includes('gamma') && <LiteProToggle />}
           <Connect />
           {/* <NotificationButton /> */}
           {/*<More />*/}
@@ -162,20 +162,20 @@ const MobileNav: FC = () => {
               overflow-y-scroll`}
           >
             <ListItem
-              variant={pathname.includes('farm') && 'primary'}
+              variant={pathname.includes('gamma') && 'primary'}
               className={cn(
                 `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
                          dark:text-text-darkmode-tertiary h-[43px]`,
-                pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+                pathname.includes('gamma') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
               )}
               onClick={() => {
                 setIsOpen.off()
-                history.push('/farm')
+                history.push('/gamma')
               }}
             >
               <img
                 className="h-[35px] w-[35px]"
-                src={`/img/mainnav/pool-${mode}${pathname.includes('farm') ? '-active' : '-inactive'}.svg`}
+                src={`/img/mainnav/pool-${mode}${pathname.includes('gamma') ? '-active' : '-inactive'}.svg`}
                 alt="dark"
               />
               &nbsp;Pools
@@ -302,15 +302,15 @@ const DesktopNav: FC = () => {
     <div className={`flex items-center gap-6 mx-auto`}>
       <Button
         variant={'ghost'}
-        onClick={() => history.push('/farm')}
+        onClick={() => history.push('/gamma')}
         className={cn(
           `tracking-wider flex-col gap-1.5 p-0 text-center text-h6 font-semibold font-poppins`,
-          pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+          pathname.includes('gamma') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
         )}
       >
         <img
           className="!w-[26px] !h-[26px] mb-0.5"
-          src={`/img/mainnav/pool-${mode}${pathname.includes('farm') ? '-active' : '-inactive'}.svg`}
+          src={`/img/mainnav/pool-${mode}${pathname.includes('gamma') ? '-active' : '-inactive'}.svg`}
           alt="dark"
         />
         Pools

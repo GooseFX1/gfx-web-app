@@ -313,7 +313,7 @@ const CollapsibleContent: FC<{
   }, [filteredLiquidityAccounts, tokenMintAddress, currentSlot, withdrawAmount])
   const openActionModal = useCallback(
     (actionValue: string) => {
-      if (actionValue === 'deposit' && window.location.pathname === '/farm/temp-withdraw') return
+      if (actionValue === 'deposit' && window.location.pathname === '/ssl/temp-withdraw') return
       // to check if the deposit value in USD + liquidity value in USD is not greater than caps
       const depositAmountInUSD =
         prices[getPriceObject(coin?.token)]?.current &&

@@ -121,7 +121,7 @@ export const Router: FC = () => {
                               <Farm />
                             </PriceFeedFarmProvider>
                           </Route>
-                          <Route exact path={['/farm']}>
+                          <Route exact path={['/gamma']}>
                             <PriceFeedFarmProvider>
                               <GammaProvider>
                                 {/*<JupWidget />*/}

@@ -49,7 +49,7 @@ export function JupWidget(): JSX.Element {
       return () => clearInterval(intervalId.current)
     }
   }, [isLoaded])
-  const isFarmOrSSL = pathname.includes('farm') || pathname.includes('ssl')
+  const isFarmOrSSL = pathname.includes('gamma') || pathname.includes('ssl')
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (isLoaded && Boolean(window.Jupiter.init) && isFarmOrSSL && isDesktop) {
