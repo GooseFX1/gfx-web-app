@@ -4,8 +4,9 @@ import { getLatestPriorityFees, getPriorityFeeFromLevel, useConnectionConfig } f
 import { BlockheightBasedTransactionConfirmationStrategy, Commitment, Connection, Transaction } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { SendTransactionOptions } from '@solana/wallet-adapter-base'
-import { notifyUsingPromise, promiseBuilder } from '@/utils/perpsNotifications'
+import { notifyUsingPromise, promiseBuilder, SpawnLoaderToast } from '@/utils/perpsNotifications'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+import { toast } from 'sonner'
 
 type SendTxnOptions = {
   connection?: Connection
@@ -38,36 +39,38 @@ function useTransaction(): useTransactionReturn {
     wallet?.adapter?.supportedTransactionVersions ?? baseSet, [wallet])
   const sendTransaction =
     async (txnIn: Transaction | TransactionBuilder, connectionData?: SendTxnOptions, notify = notifyUsingPromise) => {
-
+      console.log('STARTING SEND TXN')
       const connection = connectionData?.connection ?? originalConnection
       const options: SendTransactionOptions = {
         ...connectionData?.options,
         skipPreflight: true,
-        maxRetries: connectionData?.options?.maxRetries ?? 0
+        maxRetries: connectionData?.options?.maxRetries ?? 3
       }
-      let blockHash = await connection.getLatestBlockhash('confirmed')
+      const blockHash = await connection.getLatestBlockhash('confirmed')
       const result = await getLatestPriorityFees(
-        (txnIn instanceof TransactionBuilder ? await txnIn.usePriorityFee(false)
-          ._getTransaction(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0), connection) : txnIn)
+        (txnIn instanceof TransactionBuilder ? await txnIn
+          ._getTransactionWithoutPriorityFee(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0)) : txnIn)
       )
       const priorityFromLevel = getPriorityFeeFromLevel(priorityFee, result)
-    console.log({result,priorityFromLevel})
+      console.log({ result, priorityFromLevel })
       const txn = txnIn instanceof TransactionBuilder ?
         await txnIn
           .setPriorityFee(priorityFromLevel)
           ._getTransaction(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0), connection) :
         txnIn
       console.log('signing txn', txn)
+      const id = SpawnLoaderToast({ duration: connectionData.transactionDuration })
       const txSig = await sendTransactionOriginal(txn, connection, options).catch((err) => {
         console.log('[ERROR] Transaction failed', err)
         return ''
       })
-      console.log('got signature response', txSig)
+      console.log('got signature response', { txSig })
       if (!txSig) {
+        toast.dismiss(id)
         return { txSig: '', success: false }
       }
       const exec = async () => {
-        blockHash = await connection.getLatestBlockhash('confirmed')
+
         console.log('blockhash', blockHash)
         const blockHeightConfirmationStrategy: BlockheightBasedTransactionConfirmationStrategy = {
           signature: txSig,
@@ -103,7 +106,10 @@ function useTransaction(): useTransactionReturn {
         txSig,
         connectionData?.successMessage,
         connectionData?.errorMessage,
-        connectionData?.transactionDuration)
+        connectionData?.transactionDuration,
+        undefined,
+        id
+      )
       return { txSig, success }
     }
 
