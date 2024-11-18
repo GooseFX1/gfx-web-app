@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import TransactionBuilder, { TXN } from '@/web3/Builders/transaction.builder'
-import { useConnectionConfig } from '@/context'
+import { getLatestPriorityFees, getPriorityFeeFromLevel, useConnectionConfig } from '@/context'
 import { BlockheightBasedTransactionConfirmationStrategy, Commitment, Connection, Transaction } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { SendTransactionOptions } from '@solana/wallet-adapter-base'
@@ -26,7 +26,7 @@ type useTransactionReturn = {
 const baseSet = new Set()
 
 function useTransaction(): useTransactionReturn {
-  const { priorityFeeValue } = useConnectionConfig()
+  const { priorityFeeValue, priorityFee } = useConnectionConfig()
   const { sendTransaction: sendTransactionOriginal, wallet } = useWallet()
   const { connection: originalConnection } = useConnectionConfig()
   const { publicKey } = useWalletBalance()
@@ -46,9 +46,16 @@ function useTransaction(): useTransactionReturn {
         maxRetries: connectionData?.options?.maxRetries ?? 0
       }
       let blockHash = await connection.getLatestBlockhash('confirmed')
-
+      const result = await getLatestPriorityFees(
+        (txnIn instanceof TransactionBuilder ? await txnIn.usePriorityFee(false)
+          ._getTransaction(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0), connection) : txnIn)
+      )
+      const priorityFromLevel = getPriorityFeeFromLevel(priorityFee, result)
+    console.log({result,priorityFromLevel})
       const txn = txnIn instanceof TransactionBuilder ?
-        await txnIn._getTransaction(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0), connection) :
+        await txnIn
+          .setPriorityFee(priorityFromLevel)
+          ._getTransaction(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0), connection) :
         txnIn
       console.log('signing txn', txn)
       const txSig = await sendTransactionOriginal(txn, connection, options).catch((err) => {

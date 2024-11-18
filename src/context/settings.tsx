@@ -11,7 +11,13 @@ import React, {
 } from 'react'
 import { ENV } from '@solana/spl-token-registry'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { ComputeBudgetProgram, Connection, TransactionInstruction } from '@solana/web3.js'
+import {
+  ComputeBudgetProgram,
+  Connection,
+  Transaction,
+  TransactionInstruction,
+  VersionedTransaction
+} from '@solana/web3.js'
 import { fetchBrowserCountryCode } from '../api/analytics'
 import { fetchIsUnderMaintenance } from '../api/config'
 import { ENVS } from '../constants'
@@ -19,7 +25,7 @@ import useActivityTracker from '@/hooks/useActivityTracker'
 import { axiosFetchWithRetries } from '../api'
 import { INTERVALS } from '@/utils/time'
 import { USER_CONFIG_CACHE } from '@/types/app_params'
-
+import bs58 from 'bs58'
 
 const countries = [
   { code: 'BY', name: 'Belarus' },
@@ -399,4 +405,56 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       {children}
     </SettingsContext.Provider>
   )
+}
+
+
+export async function getLatestPriorityFees(txn: Transaction | VersionedTransaction) {
+  const response = await fetch(HELIUS_RPC.endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      id: `getPriorityFeeEstimate-${Date.now()}`,
+      method: 'getPriorityFeeEstimate',
+      params: [
+        {
+          transaction: bs58.encode(txn.serialize()), // Pass the serialized transaction in Base58
+          options: {
+            includeAllPriorityFeeLevels: true
+          }
+        }
+      ]
+    })
+  })
+  const data = await response.json()
+  console.log(
+    'Fee in function for ',
+    data.result
+  )
+  return data.result.priorityFeeLevels as PriorityFeeLevelsFromHelius
+}
+
+type PriorityFeeLevelsFromHelius = {
+  min: number,
+  low: number,
+  medium: number,
+  high: number,
+  veryHigh: number,
+  unsafeMax: number
+}
+
+export function getPriorityFeeFromLevel(
+  priorityFee: PriorityFeeName,
+  priorityFeeLevels: PriorityFeeLevelsFromHelius
+) {
+  switch (priorityFee) {
+    case 'Default':
+      return priorityFeeLevels.low;
+    case 'Fast':
+      return priorityFeeLevels.medium;
+    case 'Turbo':
+      return priorityFeeLevels.high;
+    default:
+      return priorityFeeLevels.min;
+  }
 }

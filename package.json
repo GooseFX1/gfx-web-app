@@ -51,7 +51,7 @@
     "bignumber.js": "^9.1.2",
     "bn.js": "^5.2.0",
     "borsh": "^0.6.0",
-    "bs58": "^4.0.1",
+    "bs58": "^6.0.0",
     "coingecko-api": "^1.0.10",
     "decimal.js": "^10.4.3",
     "gfx-component-lib": "^1.14.1",
