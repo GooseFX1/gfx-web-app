@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { cn, Dialog, DialogBody, DialogContent, DialogFooter } from 'gfx-component-lib'
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogOverlay } from 'gfx-component-lib'
 import { useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
@@ -577,20 +577,23 @@ export const DepositWithdrawSlider: FC = () => {
   }, [isDeposit, userSourceWithdrawAmount, userTargetWithdrawAmount])
 
   return (
-    <Dialog modal={false} open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
+    <Dialog  open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
+      <DialogOverlay/>
+
       {showConfetti && <LottieConfetti onClick={setShowConfetti.off}/>}
-      <div
-        className={cn(`fixed top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50
-      dark:bg-opacity-50 backdrop-blur-sm
-      `)}
-      />
+      {/*This one for not closing on click outside*/}
+      {/*<div*/}
+      {/*  className={cn(`fixed top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50*/}
+      {/*dark:bg-opacity-50 backdrop-blur-sm*/}
+      {/*`)}*/}
+      {/*/>*/}
       <DialogContent
         className={`sm:w-[393px] sm:max-h-screen border-1 border-solid sm:border-r-0 dark:border-black-4
       sm:rounded-none border-b-0 rounded-b-[0px] max-h-[calc(100vh-56px)] gap-0
       `}
         fullScreen={true}
         placement={isMobile ? 'bottom' : 'right'}
-        onInteractOutside={(e) => e.preventDefault()}
+        // onInteractOutside={(e) => e.preventDefault()}
         aria-describedby={null}
       >
         <GammaActionModal
