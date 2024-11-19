@@ -43,11 +43,16 @@ const ProPositions: FC = () => {
       </div>
       <div className="flex items-center max-sm:flex-col max-sm:gap-4 mb-3.75">
         <RadioOptionGroup
-          defaultValue={'Primary'}
+          defaultValue={'All'}
           value={currentPoolType.name}
           className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-4 mr-2'}
           optionClassName={`min-md:w-[85px]`}
           options={[
+            {
+              value: POOL_TYPE.all.name,
+              label: 'All',
+              onClick: () => setCurrentPoolType(POOL_TYPE.all)
+            },
             {
               value: POOL_TYPE.primary.name,
               label: 'Primary',

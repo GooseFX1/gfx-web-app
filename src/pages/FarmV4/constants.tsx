@@ -13,7 +13,7 @@ export type Faq = {
 export type Pool = {
   index: number
   name: string
-  type: 'hyper' | 'primary' | 'migrate'
+  type: 'all' | 'hyper' | 'primary' | 'migrate'
 }
 
 export type JupToken = {
@@ -25,11 +25,17 @@ export type JupToken = {
 }
 
 export type PoolType = {
+  all: Pool,
   primary: Pool
   hyper: Pool
   migrate: Pool
 }
 export const POOL_TYPE: PoolType = {
+  all: {
+    index: 0,
+    name: 'All',
+    type: 'all'
+  },
   primary: {
     index: 1,
     name: 'Primary',
