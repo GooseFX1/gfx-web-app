@@ -1,12 +1,24 @@
-import { FC, ReactElement, useState } from 'react'
+import React, { FC, ReactElement, useState } from 'react'
 import { Connect } from '@/layouts'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Button, Icon, IconTooltip, Input, Popover, PopoverContent, PopoverTrigger } from 'gfx-component-lib'
+import {
+  Button,
+  cn,
+  Icon,
+  IconTooltip,
+  Input,
+  IntemediaryToast,
+  IntemediaryToastHeading,
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from 'gfx-component-lib'
 import { useDarkMode } from '@/context'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { useGamma } from '@/context/gamma'
 import { BASE_SLIPPAGE } from '@/pages/FarmV4/constants'
+import { toast } from 'sonner'
 
 type StickyFooterProps = {
   isDeposit: boolean
@@ -33,6 +45,13 @@ const StickyFooter: FC<StickyFooterProps> = ({
   const { slippage, setSlippage, isCustomSlippage } = useGamma()
   const [value, setValue] = useState<number>(slippage)
   const localIsCustomSlippage = isCustomSlippage || !BASE_SLIPPAGE.includes(value)
+  const handleSlippageSave = () =>{
+    setSlippage(value)
+    toast(<IntemediaryToast>
+      <IntemediaryToastHeading stage={'success'}>Settings Saved!</IntemediaryToastHeading>
+      <p className={cn(`pt-1`)}>Swap slippage update to {value}%.</p>
+    </IntemediaryToast>, {id: 'slippage-save'})
+  }
   return (
     <div
       className={`w-full h-max mt-auto p-2.5 flex flex-col gap-2.5  border-t
@@ -116,7 +135,7 @@ const StickyFooter: FC<StickyFooterProps> = ({
               type={'number'}
             />
             <Button fullWidth colorScheme={'blue'} disabled={value == slippage || value <= 0.0}
-                    onClick={() => setSlippage(value)}>
+                    onClick={handleSlippageSave}>
               Save
             </Button>
           </PopoverContent>
