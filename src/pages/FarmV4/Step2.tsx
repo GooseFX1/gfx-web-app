@@ -423,19 +423,12 @@ function TokenSelectionInput({
   const itemCount = !maxTokensReached ? tokenListLength + 1 : tokenListLength
   // Only load 1 page of items at a time.
   // Pass an empty callback to InfiniteLoader in case it asks us to load more than once.
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const loadMoreItems = isLoadingTokenList ? () => {
+    // empty func to prevent re-calls
   } : () => {
     if (isLoadingTokenList || maxTokensReached) return
+    // triggers the update for the tokenListEndpoint
     setPage(page+1)
-    // updateTokenList(
-    //   {
-    //     page: page + 1,
-    //     pageSize: TOKEN_LIST_PAGE_SIZE,
-    //     searchValue
-    //   },
-    //   true
-    // ).then(() => setPage(page + 1))
   }
 
   const isItemLoaded = index => maxTokensReached || index < tokenListLength
@@ -698,110 +691,6 @@ function TokenSelectionInput({
                   </FixedSizeList>
                 )}
               </InfiniteLoader>
-              {/*<ScrollingHydrateContainer*/}
-              {/*  ref={(ref) => setScrollingContainerRef(ref)}*/}
-              {/*  callback={() => {*/}
-              {/*    if (isLoadingTokenList || maxTokensReached) return*/}
-              {/*    updateTokenList(*/}
-              {/*      {*/}
-              {/*        page: page + 1,*/}
-              {/*        pageSize: TOKEN_LIST_PAGE_SIZE,*/}
-              {/*        searchValue*/}
-              {/*      },*/}
-              {/*      false*/}
-              {/*    ).then(() => setPage(page + 1))*/}
-              {/*  }}*/}
-              {/*>*/}
-              {/*  {isLoadingTokenList && !(tokenList.length > 0 || topBalancesWithTokenList.length > 0) ? (*/}
-
-              {/*  ) : tokenList.length > 0 || topBalancesWithTokenList.length > 0 ? (*/}
-              {/*    <WindowingContainer*/}
-              {/*      className={'h-full'}*/}
-              {/*      rootElement={scrollingContainerRef}*/}
-              {/*      items={*/}
-              {/*        searchValue.length > 0 || createPoolType === 'primary' || !publicKey*/}
-              {/*          ? tokenList*/}
-              {/*          : topBalancesWithTokenList*/}
-              {/*      }*/}
-              {/*      render={(curToken: JupToken) => (*/}
-              {/*        <DropdownMenuItem*/}
-              {/*          className={`cursor-pointer p-1.5 border-1 border-transparent flex */}
-              {/*          hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}*/}
-              {/*          onClick={() => {*/}
-              {/*            setToken(curToken)*/}
-              {/*            setSearchValue('')*/}
-              {/*          }}*/}
-              {/*          key={curToken?.address}*/}
-              {/*          disabled={otherToken?.address === curToken?.address}*/}
-              {/*        >*/}
-              {/*          <div className={'flex w-full flex-1'}>*/}
-              {/*            <div className={`flex gap-2`}>*/}
-              {/*              <Icon*/}
-              {/*                className={`rounded-circle h-[24px] w-[24px] border */}
-              {/*                  border-solid dark:border-black-4 border-grey-4`}*/}
-              {/*                src={loadIconImage(curToken?.logoURI, mode)}*/}
-              {/*              />*/}
-              {/*              <div>*/}
-              {/*                <p*/}
-              {/*                  className={`text-b2 font-bold */}
-              {/*                    dark:text-text-darkmode-primary text-text-lightmode-primary`}*/}
-              {/*                >*/}
-              {/*                  {curToken?.symbol}*/}
-              {/*                </p>*/}
-              {/*                <span className={'inline-flex gap-1'}>*/}
-              {/*                  <span className={'max-w-[118px] self-center'}>*/}
-              {/*                    <p*/}
-              {/*                      className={`text-b3 dark:text-text-darkmode-secondary */}
-              {/*                        text-text-lightmode-secondary truncate font-semibold*/}
-              {/*                  `}*/}
-              {/*                    >*/}
-              {/*                      {curToken?.name}*/}
-              {/*                    </p>*/}
-              {/*                  </span>*/}
-              {/*                  <a*/}
-              {/*                    href={`https://solscan.io/account/${curToken?.address}`}*/}
-              {/*                    target="_blank"*/}
-              {/*                    rel="noreferrer"*/}
-              {/*                    className={'ml-auto'}*/}
-              {/*                  >*/}
-              {/*                    <Badge*/}
-              {/*                      variant="default"*/}
-              {/*                      size={'lg'}*/}
-              {/*                      className={'to-brand-secondaryGradient-secondary/50 gap-1 h-[18px]'}*/}
-              {/*                    >*/}
-              {/*                      <h6 className={''}>{truncateAddress(curToken?.address, 3)}</h6>*/}
-              {/*                      <Icon*/}
-              {/*                        src={`/img/assets/arrowcircle-${mode}.svg`}*/}
-              {/*                        className={'!h-[15px] !w-[15px] !min-h-[15px] !min-w-[15px]'}*/}
-              {/*                      />*/}
-              {/*                    </Badge>*/}
-              {/*                  </a>*/}
-              {/*                </span>*/}
-              {/*              </div>*/}
-              {/*            </div>*/}
-              {/*            <div className={'w-full ml-auto flex flex-col gap-1 items-end'}>*/}
-              {/*              <p*/}
-              {/*                className={`text-b2 font-bold dark:text-text-darkmode-primary */}
-              {/*                  text-text-lightmode-primary`}*/}
-              {/*              >*/}
-              {/*                {numberFormatter(balance[curToken?.address].tokenAmount.uiAmount)}*/}
-              {/*              </p>*/}
-              {/*              <p*/}
-              {/*                className={`text-b3 dark:text-text-darkmode-secondary text-text-lightmode-secondary */}
-              {/*                  truncate font-semibold*/}
-              {/*                  `}*/}
-              {/*              >*/}
-              {/*                ${bigNumberFormatter(new BigNumber(balance[curToken?.address].value.toString()))}*/}
-              {/*              </p>*/}
-              {/*            </div>*/}
-              {/*          </div>*/}
-              {/*        </DropdownMenuItem>*/}
-              {/*      )}*/}
-              {/*    />*/}
-              {/*  ) : (*/}
-              {/*    <DropdownMenuItem disabled={true}>No Tokens Found</DropdownMenuItem>*/}
-              {/*  )}*/}
-              {/*</ScrollingHydrateContainer>*/}
             </DropdownMenuContent>
           </DropdownMenu>
         </InputElementLeft>
