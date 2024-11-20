@@ -271,13 +271,16 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       searchValue,
       signal
     )) as GAMMAListTokenResponse | null
+
     setIsLoadingTokenList(false)
     if (!response || !response.success) {
       return
     }
-    setMaxTokensReached(response.data.totalPages <= response.data.currentPage)
-    const currentTokenList = append ? tokenList : []
-    const hasSetOfTokens = new Set(tokenList.map((token) => token.address))
+    setMaxTokensReached(
+      (response.data.totalPages == 0 || response.data.tokens.length == 0)
+      || response.data.totalPages == response.data.currentPage)
+    const currentTokenList = append ? [...tokenList] : []
+    const hasSetOfTokens = new Set(currentTokenList.map((token) => token.address))
     for (const token of response.data.tokens) {
       if (hasSetOfTokens.has(token.address)) {
         continue

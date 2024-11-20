@@ -71,6 +71,8 @@
     "react-loading-skeleton": "^3.0.3",
     "react-router-dom": "^5.2.0",
     "react-slick": "^0.28.1",
+    "react-window": "^1.8.10",
+    "react-window-infinite-loader": "^1.0.9",
     "slick-carousel": "^1.8.1",
     "sonner": "^1.4.41",
     "styled-components": "5.1.1",
