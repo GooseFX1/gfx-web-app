@@ -1,4 +1,14 @@
-import { Dispatch, FC, SetStateAction, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import {
+  CSSProperties,
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState
+} from 'react'
 import {
   Badge,
   Button,
@@ -22,8 +32,6 @@ import { JupToken, POPULAR_TOKENS, TOKEN_LIST_PAGE_SIZE } from './constants'
 //import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
 import Text from '@/components/Text'
-import ScrollingHydrateContainer from '@/components/common/ScrollingHydrateContainer'
-import WindowingContainer from '@/pages/FarmV4/WindowingContainer'
 import { fetchPoolsByMints, fetchTokensByPublicKey } from '@/api/gamma'
 import { GAMMAPool } from '@/types/gamma'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -32,6 +40,8 @@ import SearchBar from '@/components/common/SearchBar'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import BigNumber from 'bignumber.js'
 import Decimal from 'decimal.js-light'
+import InfiniteLoader from 'react-window-infinite-loader'
+import { FixedSizeList } from 'react-window'
 
 const Step2: FC<{
   tokenA: TokenListToken
@@ -51,23 +61,23 @@ const Step2: FC<{
   walletTokenB: string
   setIsCreatePool: Dispatch<SetStateAction<boolean>>
 }> = ({
-  tokenA,
-  setTokenA,
-  tokenB,
-  setTokenB,
-  handleChange,
-  amountTokenA,
-  amountTokenB,
-  // feeTier,
-  // setFeeTier,
-  poolExists,
-  setPoolExists,
-  initialPrice,
-  setInitialPrice,
-  walletTokenA,
-  walletTokenB,
-  setIsCreatePool
-}) => {
+        tokenA,
+        setTokenA,
+        tokenB,
+        setTokenB,
+        handleChange,
+        amountTokenA,
+        amountTokenB,
+        // feeTier,
+        // setFeeTier,
+        poolExists,
+        setPoolExists,
+        initialPrice,
+        setInitialPrice,
+        walletTokenA,
+        walletTokenB,
+        setIsCreatePool
+      }) => {
   const { mode } = useDarkMode()
   const [priceSwitch, setPriceSwitch] = useState(false)
   const [poolExistsText, setPoolExistsText] = useState<string>('')
@@ -255,7 +265,7 @@ const Step2: FC<{
               {!priceSwitch ? `${tokenA?.symbol} / ${tokenB?.symbol}` : `${tokenB?.symbol} / ${tokenA?.symbol}`}
             </span>
           </div>
-          {priceAToB && priceBToA  && <p
+          {priceAToB && priceBToA && <p
             className={`text-text-lightmode-secondary dark:text-text-darkmode-secondary text-h4 font-semibold`}>
             1.0 {aToBRatio ? tokenA?.symbol : tokenB?.symbol}
             <Button
@@ -305,7 +315,7 @@ const Step2: FC<{
           balance[tokenA?.address].tokenAmount.uiAmount <= 0.0 ||
           balance[tokenB?.address].tokenAmount.uiAmount <= 0.0) ? (
           <span className="text-red-1 font-sembold text-regular">
-            {connected ? "You don't have enough tokens in the wallet!" : 'Please connect your wallet to proceed!'}
+            {connected ? 'You don\'t have enough tokens in the wallet!' : 'Please connect your wallet to proceed!'}
           </span>
         ) : tokenA && tokenB && tokenA?.symbol === tokenB?.symbol ? (
           <span className="text-red-1 font-sembold text-regular">
@@ -331,12 +341,12 @@ const Step2: FC<{
 }
 
 function TokenSelectionInput({
-  token,
-  handleChange,
-  amountToken,
-  setToken,
-  otherToken
-}: {
+                               token,
+                               handleChange,
+                               amountToken,
+                               setToken,
+                               otherToken
+                             }: {
   token: JupToken | null
   otherToken: JupToken | null
   handleChange: (e: any, boolean) => void
@@ -347,7 +357,7 @@ function TokenSelectionInput({
     useGamma()
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
-  const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
+  // const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
   const [searchValue, setSearchValue] = useState<string>('')
   const [popularTokens, setPopularTokens] = useState<JupToken[]>([])
   const { balance, topBalances } = useWalletBalance()
@@ -373,7 +383,9 @@ function TokenSelectionInput({
     }
     return data.sort((a, b) => (balance[a.address].value.gt(balance[b.address].value) ? -1 : 1))
   }, [topBalances, tokenList, balance, searchValue])
-
+  const tokenRenderList = searchValue.length > 0 || createPoolType === 'primary' || !publicKey
+    ? tokenList
+    : topBalancesWithTokenList
   useEffect(() => {
     const abortSignal = aborter.addSignal('tokenList')
     // faking search
@@ -407,6 +419,178 @@ function TokenSelectionInput({
       }
     })
   }, [])
+  const tokenListLength = searchValue.trim().length > 0 ? tokenList.length : tokenRenderList.length
+  const itemCount = !maxTokensReached ? tokenListLength + 1 : tokenListLength
+  // Only load 1 page of items at a time.
+  // Pass an empty callback to InfiniteLoader in case it asks us to load more than once.
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const loadMoreItems = isLoadingTokenList ? () => {
+  } : () => {
+    if (isLoadingTokenList || maxTokensReached) return
+    setPage(page+1)
+    // updateTokenList(
+    //   {
+    //     page: page + 1,
+    //     pageSize: TOKEN_LIST_PAGE_SIZE,
+    //     searchValue
+    //   },
+    //   true
+    // ).then(() => setPage(page + 1))
+  }
+
+  const isItemLoaded = index => maxTokensReached || index < tokenListLength
+
+  const Item = ({ index, style }: { index: number, style: CSSProperties }) => {
+    if (!isItemLoaded(index)) {
+      return <div style={style} className={'flex flex-col gap-2'}>
+        <DropdownMenuItem
+          disabled={true}
+          className={`
+                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full h-[42px] gap-2 items-center
+                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
+        >
+          <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
+          <div className={'flex flex-col gap-1'}>
+            <Skeleton className={`w-[80px] h-[20px]`} />
+            <Skeleton className={`w-[80px] h-[20px]`} />
+          </div>
+          <div className={'flex flex-col gap-1 ml-auto'}>
+            <Skeleton className={`w-[80px] h-[20px]`} />
+            <Skeleton className={`w-[80px] h-[20px]`} />
+          </div>
+        </DropdownMenuItem>
+        {tokenList.length == 0 ? <><DropdownMenuItem
+            disabled={true}
+            className={`
+                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full h-[42px] gap-2 items-center
+                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
+          >
+            <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
+            <div className={'flex flex-col gap-1'}>
+              <Skeleton className={`w-[80px] h-[20px]`} />
+              <Skeleton className={`w-[80px] h-[20px]`} />
+            </div>
+            <div className={'flex flex-col gap-1 ml-auto'}>
+              <Skeleton className={`w-[80px] h-[20px]`} />
+              <Skeleton className={`w-[80px] h-[20px]`} />
+            </div>
+          </DropdownMenuItem>
+            <DropdownMenuItem
+              disabled={true}
+              className={`
+                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full h-[42px] gap-2 items-center
+                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
+            >
+              <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
+              <div className={'flex flex-col gap-1'}>
+                <Skeleton className={`w-[80px] h-[20px]`} />
+                <Skeleton className={`w-[80px] h-[20px]`} />
+              </div>
+              <div className={'flex flex-col gap-1 ml-auto'}>
+                <Skeleton className={`w-[80px] h-[20px]`} />
+                <Skeleton className={`w-[80px] h-[20px]`} />
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              disabled={true}
+              className={`
+                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full h-[42px] gap-2 items-center
+                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
+            >
+              <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
+              <div className={'flex flex-col gap-1'}>
+                <Skeleton className={`w-[80px] h-[20px]`} />
+                <Skeleton className={`w-[80px] h-[20px]`} />
+              </div>
+              <div className={'flex flex-col gap-1 ml-auto'}>
+                <Skeleton className={`w-[80px] h-[20px]`} />
+                <Skeleton className={`w-[80px] h-[20px]`} />
+              </div>
+            </DropdownMenuItem>
+          </>
+          :
+          null
+        }
+      </div>
+    }
+
+    const curToken = tokenRenderList[index]
+
+    return <div style={style}>
+      <DropdownMenuItem
+        className={`cursor-pointer p-1.5 border-1 border-transparent flex 
+                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
+        onClick={() => {
+          setToken(curToken)
+          setSearchValue('')
+        }}
+        key={curToken?.address}
+        disabled={otherToken?.address === curToken?.address}
+      >
+        <div className={'flex w-full flex-1'}>
+          <div className={`flex gap-2`}>
+            <Icon
+              className={`rounded-circle h-[24px] w-[24px] border 
+                                border-solid dark:border-black-4 border-grey-4`}
+              src={loadIconImage(curToken?.logoURI, mode)}
+            />
+            <div>
+              <p
+                className={`text-b2 font-bold 
+                                  dark:text-text-darkmode-primary text-text-lightmode-primary`}
+              >
+                {curToken?.symbol}
+              </p>
+              <span className={'inline-flex gap-1'}>
+                                <span className={'max-w-[118px] self-center'}>
+                                  <p
+                                    className={`text-b3 dark:text-text-darkmode-secondary 
+                                      text-text-lightmode-secondary truncate font-semibold
+                                `}
+                                  >
+                                    {curToken?.name}
+                                  </p>
+                                </span>
+                                <a
+                                  href={`https://solscan.io/account/${curToken?.address}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className={'ml-auto'}
+                                >
+                                  <Badge
+                                    variant="default"
+                                    size={'lg'}
+                                    className={'to-brand-secondaryGradient-secondary/50 gap-1 h-[18px]'}
+                                  >
+                                    <h6 className={''}>{truncateAddress(curToken?.address, 3)}</h6>
+                                    <Icon
+                                      src={`/img/assets/arrowcircle-${mode}.svg`}
+                                      className={'!h-[15px] !w-[15px] !min-h-[15px] !min-w-[15px]'}
+                                    />
+                                  </Badge>
+                                </a>
+                              </span>
+            </div>
+          </div>
+          <div className={'w-full ml-auto flex flex-col gap-1 items-end'}>
+            <p
+              className={`text-b2 font-bold dark:text-text-darkmode-primary 
+                                text-text-lightmode-primary`}
+            >
+              {numberFormatter(balance[curToken?.address].tokenAmount.uiAmount)}
+            </p>
+            <p
+              className={`text-b3 dark:text-text-darkmode-secondary text-text-lightmode-secondary 
+                                truncate font-semibold
+                                `}
+            >
+              ${bigNumberFormatter(new BigNumber(balance[curToken?.address].value.toString()))}
+            </p>
+          </div>
+        </div>
+      </DropdownMenuItem>
+    </div>
+  }
 
   return (
     <InputGroup
@@ -444,227 +628,180 @@ function TokenSelectionInput({
               portal={true}
               align={'start'}
             >
-              {createPoolType === 'hyper' && (
-                <SearchBar
-                  groupClassName={'sticky'}
-                  placeholder={'Search by token name symbol or address'}
-                  value={searchValue}
-                  onKeyDown={(e) => e.stopPropagation()}
-                  onChange={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    setSearchValue(e.target.value)
-                  }}
-                  onClear={() => setSearchValue('')}
-                />
-              )}
-              {createPoolType === 'hyper' && (
-                <div className={'border-b border-solid dark:border-black-4 border-grey-4'}>
-                  <h5
-                    className={`my-2 dark:text-text-darkmode-secondary 
+              <SearchBar
+                groupClassName={'sticky'}
+                placeholder={'Search by token name symbol or address'}
+                value={searchValue}
+                onKeyDown={(e) => e.stopPropagation()}
+                onChange={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  setSearchValue(e.target.value)
+                }}
+                onClear={() => setSearchValue('')}
+              />
+              <div className={'border-b border-solid dark:border-black-4 border-grey-4'}>
+                <h5
+                  className={`my-2 dark:text-text-darkmode-secondary 
                                         text-text-lightmode-secondary`}
-                  >
-                    Popular
-                  </h5>
-                  <div className={'flex pb-2 gap-1'}>
-                    {popularTokens.map((token) => (
-                      <Button
-                        className={`border-solid dark:border-black-4 border-grey-4 border 
+                >
+                  Popular
+                </h5>
+                <div className={'flex pb-2 gap-1'}>
+                  {popularTokens.map((token) => (
+                    <Button
+                      className={`border-solid dark:border-black-4 border-grey-4 border 
                           cursor-pointer p-1 flex rounded-[4px]`}
-                        key={token?.address}
-                        onClick={() => {
-                          setToken(token)
-                          setIsDropdownOpen.off()
-                        }}
-                        disabled={otherToken?.address == token?.address}
-                        iconLeft={
-                          <Icon
-                            src={loadIconImage(token?.logoURI, mode)}
-                            size={'sm'}
-                            className={'rounded-circle'}
-                          />
-                        }
-                      >
+                      key={token?.address}
+                      onClick={() => {
+                        setToken(token)
+                        setIsDropdownOpen.off()
+                      }}
+                      disabled={otherToken?.address == token?.address}
+                      iconLeft={
+                        <Icon
+                          src={loadIconImage(token?.logoURI, mode)}
+                          size={'sm'}
+                          className={'rounded-circle'}
+                        />
+                      }
+                    >
                         <span
                           className={`font-bold dark:text-text-darkmode-secondary 
                                         text-text-lightmode-secondary`}
                         >
                           {token?.symbol}
                         </span>
-                      </Button>
-                    ))}
-                  </div>
+                    </Button>
+                  ))}
                 </div>
-              )}
-              <ScrollingHydrateContainer
-                ref={(ref) => setScrollingContainerRef(ref)}
-                callback={() => {
-                  if (isLoadingTokenList || maxTokensReached) return
-                  updateTokenList(
-                    {
-                      page: page + 1,
-                      pageSize: TOKEN_LIST_PAGE_SIZE,
-                      searchValue
-                    },
-                    false
-                  ).then(() => setPage(page + 1))
-                }}
+              </div>
+              {searchValue && tokenList.length == 0 ? <div className={'mb-auto p-2'}>
+                No Tokens Found..
+              </div> : null}
+              <InfiniteLoader
+                isItemLoaded={isItemLoaded}
+                itemCount={itemCount}
+                loadMoreItems={loadMoreItems}
+                threshold={1}
               >
-                {isLoadingTokenList && !(tokenList.length > 0 || topBalancesWithTokenList.length > 0) ? (
-                  <div className={'flex flex-col gap-2'}>
-                    <DropdownMenuItem
-                      disabled={true}
-                      className={`
-                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full h-[42px] gap-2 items-center
-                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
-                    >
-                      <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
-                      <div className={'flex flex-col gap-1'}>
-                        <Skeleton className={`w-[80px] h-[20px]`} />
-                        <Skeleton className={`w-[80px] h-[20px]`} />
-                      </div>
-                      <div className={'flex flex-col gap-1 ml-auto'}>
-                        <Skeleton className={`w-[80px] h-[20px]`} />
-                        <Skeleton className={`w-[80px] h-[20px]`} />
-                      </div>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      disabled={true}
-                      className={`
-                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full h-[42px] gap-2 items-center
-                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
-                    >
-                      <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
-                      <div className={'flex flex-col gap-1'}>
-                        <Skeleton className={`w-[80px] h-[20px]`} />
-                        <Skeleton className={`w-[80px] h-[20px]`} />
-                      </div>
-                      <div className={'flex flex-col gap-1 ml-auto'}>
-                        <Skeleton className={`w-[80px] h-[20px]`} />
-                        <Skeleton className={`w-[80px] h-[20px]`} />
-                      </div>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      disabled={true}
-                      className={`
-                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full h-[42px] gap-2 items-center
-                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
-                    >
-                      <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
-                      <div className={'flex flex-col gap-1'}>
-                        <Skeleton className={`w-[80px] h-[20px]`} />
-                        <Skeleton className={`w-[80px] h-[20px]`} />
-                      </div>
-                      <div className={'flex flex-col gap-1 ml-auto'}>
-                        <Skeleton className={`w-[80px] h-[20px]`} />
-                        <Skeleton className={`w-[80px] h-[20px]`} />
-                      </div>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      disabled={true}
-                      className={`
-                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full h-[42px] gap-2 items-center
-                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
-                    >
-                      <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
-                      <div className={'flex flex-col gap-1'}>
-                        <Skeleton className={`w-[80px] h-[20px]`} />
-                        <Skeleton className={`w-[80px] h-[20px]`} />
-                      </div>
-                      <div className={'flex flex-col gap-1 ml-auto'}>
-                        <Skeleton className={`w-[80px] h-[20px]`} />
-                        <Skeleton className={`w-[80px] h-[20px]`} />
-                      </div>
-                    </DropdownMenuItem>
-                  </div>
-                ) : tokenList.length > 0 || topBalancesWithTokenList.length > 0 ? (
-                  <WindowingContainer
-                    className={'h-full'}
-                    rootElement={scrollingContainerRef}
-                    items={
-                      searchValue.length > 0 || createPoolType === 'primary' || !publicKey
-                        ? tokenList
-                        : topBalancesWithTokenList
-                    }
-                    render={(curToken: JupToken) => (
-                      <DropdownMenuItem
-                        className={`cursor-pointer p-1.5 border-1 border-transparent flex 
-                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
-                        onClick={() => {
-                          setToken(curToken)
-                          setSearchValue('')
-                        }}
-                        key={curToken?.address}
-                        disabled={otherToken?.address === curToken?.address}
-                      >
-                        <div className={'flex w-full flex-1'}>
-                          <div className={`flex gap-2`}>
-                            <Icon
-                              className={`rounded-circle h-[24px] w-[24px] border 
-                                border-solid dark:border-black-4 border-grey-4`}
-                              src={loadIconImage(curToken?.logoURI, mode)}
-                            />
-                            <div>
-                              <p
-                                className={`text-b2 font-bold 
-                                  dark:text-text-darkmode-primary text-text-lightmode-primary`}
-                              >
-                                {curToken?.symbol}
-                              </p>
-                              <span className={'inline-flex gap-1'}>
-                                <span className={'max-w-[118px] self-center'}>
-                                  <p
-                                    className={`text-b3 dark:text-text-darkmode-secondary 
-                                      text-text-lightmode-secondary truncate font-semibold
-                                `}
-                                  >
-                                    {curToken?.name}
-                                  </p>
-                                </span>
-                                <a
-                                  href={`https://solscan.io/account/${curToken?.address}`}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className={'ml-auto'}
-                                >
-                                  <Badge
-                                    variant="default"
-                                    size={'lg'}
-                                    className={'to-brand-secondaryGradient-secondary/50 gap-1 h-[18px]'}
-                                  >
-                                    <h6 className={''}>{truncateAddress(curToken?.address, 3)}</h6>
-                                    <Icon
-                                      src={`/img/assets/arrowcircle-${mode}.svg`}
-                                      className={'!h-[15px] !w-[15px] !min-h-[15px] !min-w-[15px]'}
-                                    />
-                                  </Badge>
-                                </a>
-                              </span>
-                            </div>
-                          </div>
-                          <div className={'w-full ml-auto flex flex-col gap-1 items-end'}>
-                            <p
-                              className={`text-b2 font-bold dark:text-text-darkmode-primary 
-                                text-text-lightmode-primary`}
-                            >
-                              {numberFormatter(balance[curToken?.address].tokenAmount.uiAmount)}
-                            </p>
-                            <p
-                              className={`text-b3 dark:text-text-darkmode-secondary text-text-lightmode-secondary 
-                                truncate font-semibold
-                                `}
-                            >
-                              ${bigNumberFormatter(new BigNumber(balance[curToken?.address].value.toString()))}
-                            </p>
-                          </div>
-                        </div>
-                      </DropdownMenuItem>
-                    )}
-                  />
-                ) : (
-                  <DropdownMenuItem disabled={true}>No Tokens Found</DropdownMenuItem>
+                {({ onItemsRendered, ref }) => (
+                  <FixedSizeList
+                    className={'mt-2'}
+                    itemCount={itemCount}
+                    onItemsRendered={onItemsRendered}
+                    ref={ref}
+                    height={396}
+                    itemSize={58}
+                  >
+                    {Item}
+                  </FixedSizeList>
                 )}
-              </ScrollingHydrateContainer>
+              </InfiniteLoader>
+              {/*<ScrollingHydrateContainer*/}
+              {/*  ref={(ref) => setScrollingContainerRef(ref)}*/}
+              {/*  callback={() => {*/}
+              {/*    if (isLoadingTokenList || maxTokensReached) return*/}
+              {/*    updateTokenList(*/}
+              {/*      {*/}
+              {/*        page: page + 1,*/}
+              {/*        pageSize: TOKEN_LIST_PAGE_SIZE,*/}
+              {/*        searchValue*/}
+              {/*      },*/}
+              {/*      false*/}
+              {/*    ).then(() => setPage(page + 1))*/}
+              {/*  }}*/}
+              {/*>*/}
+              {/*  {isLoadingTokenList && !(tokenList.length > 0 || topBalancesWithTokenList.length > 0) ? (*/}
+
+              {/*  ) : tokenList.length > 0 || topBalancesWithTokenList.length > 0 ? (*/}
+              {/*    <WindowingContainer*/}
+              {/*      className={'h-full'}*/}
+              {/*      rootElement={scrollingContainerRef}*/}
+              {/*      items={*/}
+              {/*        searchValue.length > 0 || createPoolType === 'primary' || !publicKey*/}
+              {/*          ? tokenList*/}
+              {/*          : topBalancesWithTokenList*/}
+              {/*      }*/}
+              {/*      render={(curToken: JupToken) => (*/}
+              {/*        <DropdownMenuItem*/}
+              {/*          className={`cursor-pointer p-1.5 border-1 border-transparent flex */}
+              {/*          hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}*/}
+              {/*          onClick={() => {*/}
+              {/*            setToken(curToken)*/}
+              {/*            setSearchValue('')*/}
+              {/*          }}*/}
+              {/*          key={curToken?.address}*/}
+              {/*          disabled={otherToken?.address === curToken?.address}*/}
+              {/*        >*/}
+              {/*          <div className={'flex w-full flex-1'}>*/}
+              {/*            <div className={`flex gap-2`}>*/}
+              {/*              <Icon*/}
+              {/*                className={`rounded-circle h-[24px] w-[24px] border */}
+              {/*                  border-solid dark:border-black-4 border-grey-4`}*/}
+              {/*                src={loadIconImage(curToken?.logoURI, mode)}*/}
+              {/*              />*/}
+              {/*              <div>*/}
+              {/*                <p*/}
+              {/*                  className={`text-b2 font-bold */}
+              {/*                    dark:text-text-darkmode-primary text-text-lightmode-primary`}*/}
+              {/*                >*/}
+              {/*                  {curToken?.symbol}*/}
+              {/*                </p>*/}
+              {/*                <span className={'inline-flex gap-1'}>*/}
+              {/*                  <span className={'max-w-[118px] self-center'}>*/}
+              {/*                    <p*/}
+              {/*                      className={`text-b3 dark:text-text-darkmode-secondary */}
+              {/*                        text-text-lightmode-secondary truncate font-semibold*/}
+              {/*                  `}*/}
+              {/*                    >*/}
+              {/*                      {curToken?.name}*/}
+              {/*                    </p>*/}
+              {/*                  </span>*/}
+              {/*                  <a*/}
+              {/*                    href={`https://solscan.io/account/${curToken?.address}`}*/}
+              {/*                    target="_blank"*/}
+              {/*                    rel="noreferrer"*/}
+              {/*                    className={'ml-auto'}*/}
+              {/*                  >*/}
+              {/*                    <Badge*/}
+              {/*                      variant="default"*/}
+              {/*                      size={'lg'}*/}
+              {/*                      className={'to-brand-secondaryGradient-secondary/50 gap-1 h-[18px]'}*/}
+              {/*                    >*/}
+              {/*                      <h6 className={''}>{truncateAddress(curToken?.address, 3)}</h6>*/}
+              {/*                      <Icon*/}
+              {/*                        src={`/img/assets/arrowcircle-${mode}.svg`}*/}
+              {/*                        className={'!h-[15px] !w-[15px] !min-h-[15px] !min-w-[15px]'}*/}
+              {/*                      />*/}
+              {/*                    </Badge>*/}
+              {/*                  </a>*/}
+              {/*                </span>*/}
+              {/*              </div>*/}
+              {/*            </div>*/}
+              {/*            <div className={'w-full ml-auto flex flex-col gap-1 items-end'}>*/}
+              {/*              <p*/}
+              {/*                className={`text-b2 font-bold dark:text-text-darkmode-primary */}
+              {/*                  text-text-lightmode-primary`}*/}
+              {/*              >*/}
+              {/*                {numberFormatter(balance[curToken?.address].tokenAmount.uiAmount)}*/}
+              {/*              </p>*/}
+              {/*              <p*/}
+              {/*                className={`text-b3 dark:text-text-darkmode-secondary text-text-lightmode-secondary */}
+              {/*                  truncate font-semibold*/}
+              {/*                  `}*/}
+              {/*              >*/}
+              {/*                ${bigNumberFormatter(new BigNumber(balance[curToken?.address].value.toString()))}*/}
+              {/*              </p>*/}
+              {/*            </div>*/}
+              {/*          </div>*/}
+              {/*        </DropdownMenuItem>*/}
+              {/*      )}*/}
+              {/*    />*/}
+              {/*  ) : (*/}
+              {/*    <DropdownMenuItem disabled={true}>No Tokens Found</DropdownMenuItem>*/}
+              {/*  )}*/}
+              {/*</ScrollingHydrateContainer>*/}
             </DropdownMenuContent>
           </DropdownMenu>
         </InputElementLeft>
@@ -683,3 +820,4 @@ function TokenSelectionInput({
 }
 
 export default Step2
+
