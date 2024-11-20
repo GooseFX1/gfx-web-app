@@ -53,7 +53,7 @@ export const FarmHeader: FC = () => {
       })
     }
     return data
-  }, [userPubKey, range, totalEarnings, computedViewRange])
+  }, [userPubKey, range, totalEarnings, computedViewRange, stats])
 
   const options = useMemo(
     () => [

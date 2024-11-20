@@ -238,12 +238,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         if (config) setGammaConfig(config)
       })
     }
-    fetchAggregateStats().then((stats) => {
-      if (stats) setStats(stats)
+    fetchAggregateStats().then((s) => {
+      if (s) setStats(s)
     })
     const statsInterval = setInterval(() => {
-      fetchAggregateStats().then((stats) => {
-        if (stats) setStats(stats)
+      fetchAggregateStats().then((s) => {
+        if (s) setStats(s)
       })
     }, 60000)
     return () => clearInterval(statsInterval)
@@ -460,8 +460,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         if (userData) {
           setUser(userData)
 
-          fetchPortfolioStats(userData.id).then((stats) => {
-            if (stats) setPortfolioStats(stats)
+          fetchPortfolioStats(userData.id).then((s) => {
+            if (s) setPortfolioStats(s)
           })
         }
       })
