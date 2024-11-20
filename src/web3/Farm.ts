@@ -31,6 +31,7 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token
 import { getAccountsForMeteoraDlmm } from './migration/meteora/dlmm'
 import { getAccountsForOrcaWhirlpool } from './migration/orca/whirlpoolorcaAccounts
 import { getAccountsForRaydiumClmmWithdraw } from './migration/raydium/clmm'
+import { getAccountsForRaydiumCPMMWithdraw } from './migration/raydium/cpmm'
 
 enum TokenType {
   Token0,
@@ -330,64 +331,6 @@ export const lpTokensToTradingTokens = async (
   }
 }
 
-
-const getAccountsForMigrateRaydiumCpSwap = async () => {
-  const raydiumCpSwapProgram = 0
-  const owner = 0
-  const raydiumCpSwapAuthority = 0
-  const raydiumCpSwapPoolState = 0
-  const raydiumCpSwapOwnerLpToken = 0
-  const raydiumCpSwapToken0Account = 0
-  const raydiumCpSwapToken1Account = 0
-  const raydiumCpSwapToken0Vault = 0
-  const raydiumCpSwapToken1Vault = 0
-  const raydiumCpSwapVault0Mint = 0
-  const raydiumCpSwapVault1Mint = 0
-  const raydiumCpSwapLpMint = 0
-  const memoProgram = 0
-  const gammaOwner = 0
-  const gammaAuthority = 0
-  const gammaPoolState = 0
-  const gammaUserPoolLiquidity = 0
-  const gammaToken0Account = 0
-  const gammaToken1Account = 0
-  const gammaToken0Vault = 0
-  const gammaToken1Vault = 0
-  const gammaVault0Mint = 0
-  const gammaVault1Mint = 0
-  const tokenProgram = 0
-  const tokenProgram2022 = 0
-
-  const accountObj = {
-    raydiumCpSwapProgram,
-    owner,
-    raydiumCpSwapAuthority,
-    raydiumCpSwapPoolState,
-    raydiumCpSwapOwnerLpToken,
-    raydiumCpSwapToken0Account,
-    raydiumCpSwapToken1Account,
-    raydiumCpSwapToken0Vault,
-    raydiumCpSwapToken1Vault,
-    raydiumCpSwapVault0Mint,
-    raydiumCpSwapVault1Mint,
-    raydiumCpSwapLpMint,
-    memoProgram,
-    gammaOwner,
-    gammaAuthority,
-    gammaPoolState,
-    gammaUserPoolLiquidity,
-    gammaToken0Account,
-    gammaToken1Account,
-    gammaToken0Vault,
-    gammaToken1Vault,
-    gammaVault0Mint,
-    gammaVault1Mint,
-    tokenProgram,
-    tokenProgram2022
-  }
-
-  return accountObj
-}
 
 //Instruction - 1
 export const deposit = async (
@@ -736,8 +679,8 @@ export const migrateRaydiumClmmToGamma = async (program: Program, tokenA: Public
 }
 
 //Instruction - 7
-export const migrateRaydiumCpSwapToGamma = async (program: Program) => {
-  const raydiumAccounts = await getAccountsForMigrateRaydiumCpSwap()
+export const migrateRaydiumCpSwapToGamma = async (program: Program, tokenA: PublicKey, tokenB: PublicKey, user: PublicKey) => {
+  const raydiumAccounts = await getAccountsForRaydiumCPMMWithdraw(tokenA, tokenB, user)
   const gammaAccounts = await getGammaAccounts(tokenA, tokenB, user, true)
 
   const accounts = {

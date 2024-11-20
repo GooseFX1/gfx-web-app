@@ -81,7 +81,7 @@ const getCpmmObservationStateKey = async (poolId: PublicKey)
     }
 }
 
-const getAccountsForRaydiumCPMMWithdraw = async (inputMint: PublicKey, outputMint: PublicKey, userPubKey: PublicKey) => {
+export const getAccountsForRaydiumCPMMWithdraw = async (inputMint: PublicKey, outputMint: PublicKey, userPubKey: PublicKey) => {
 
     const configIdKey = await getCpmmAmmConfigId(0)
     const authorityKey = await getCpmmAuthorityKey()
