@@ -208,7 +208,7 @@ export const GAMMA_SORT_CONFIG: GAMMASortConfig[] = [
   { id: '5', name: 'Fees: High to Low', direction: 'DESC',  key:'fee'},
   { id: '6', name: 'Fees: Low to High', direction: 'ASC', key: 'fee'},
   { id: '7', name: 'APR: High to Low', direction: 'DESC',  key: 'apr'},
-  { id: '8', name: 'APR: Low to High', direction: 'ASC', key: 'apr'},
+  { id: '8', name: 'APR: Low to High', direction: 'ASC', key: 'apr'}
 ]
 export type GAMMASortConfig = {
   id: string

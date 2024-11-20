@@ -127,12 +127,14 @@ export const perpsNotify = async ({
   //  }, NOTIFICATION_TIMER)
   //  ;(notification as any)['info']()
 }
-export const LoadingToast: FC = () => (
-  <IntemediaryToast>
+export const LoadingToast: FC<{ tentativeTxId?: string }> = ({ tentativeTxId }) => (
+  <IntemediaryToast className={cn(`w-[290px]`)}>
     <IntemediaryToastHeading stage={'loading'}>Loading...</IntemediaryToastHeading>
     <p>Please wait a few moments for the transaction to confirm...</p>
+    {Boolean(tentativeTxId) && <OpenSolScanLink link={`https://solscan.io/tx/${tentativeTxId}`} />}
   </IntemediaryToast>
 )
+
 export const ErrorToast: FC = () => (
   <IntemediaryToast>
     <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
@@ -151,6 +153,11 @@ export const SuccessToast: FC<{ txId: string }> = ({ txId }) => (
     <OpenSolScanLink link={`https://solscan.io/tx/${txId}`} />
   </IntemediaryToast>
 )
+export const SpawnLoaderToast = ({ tentativeTxId, duration = 60000 }: {
+  tentativeTxId?: string,
+  duration: number
+}): string | number =>
+  toast(<LoadingToast tentativeTxId={tentativeTxId} />, { dismissible: true, duration: duration })
 
 export function promiseBuilder<T>(promise: Promise<T>): Promise<T | Error> {
   return new Promise((resolve, reject) => promise.then((res) => resolve(res)).catch((err) => reject(err)))
@@ -163,7 +170,8 @@ export const notifyUsingPromise = async (
   successMessage?: ReactNode,
   errorMessage?: ReactNode,
   transactionLoadingDuration = 60000,
-  transactionDuration = 45000
+  transactionDuration = 45000,
+  id: string | number | undefined = undefined
 ): Promise<boolean> => {
   const config = {
     dismissible: true,
@@ -171,13 +179,17 @@ export const notifyUsingPromise = async (
       if (onDismiss) onDismiss(t)
       toast.dismiss(t.id)
     },
-    duration: transactionDuration
+    duration: transactionDuration,
+    id
   } as ExternalToast
-  config.id = toast(<IntemediaryToast className={cn(`w-[290px]`)}>
+  const localId = toast(<IntemediaryToast className={cn(`w-[290px]`)}>
     <IntemediaryToastHeading stage={'loading'}>Loading...</IntemediaryToastHeading>
     <p>Please wait a few moments for the transaction to confirm...</p>
     {Boolean(tentativeTxId) && <OpenSolScanLink link={`https://solscan.io/tx/${tentativeTxId}`} />}
   </IntemediaryToast>, { ...config, duration: transactionLoadingDuration })
+  if (!id) {
+    config.id = localId
+  }
 
   try {
     const response = await promise as SuccessResponse
@@ -186,7 +198,7 @@ export const notifyUsingPromise = async (
       <p className={cn(`pt-1`)}>{successMessage || 'Congratulations, your transaction was completed!'}</p>
       <OpenSolScanLink link={`https://solscan.io/tx/${response.txid}`} />
     </IntemediaryToast>, config)
-    return true;
+    return true
   } catch (e) {
     if (e.message === '6005') {
       toast(<IntemediaryToast className={cn(`w-[290px]`)}>
