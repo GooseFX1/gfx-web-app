@@ -79,7 +79,7 @@ const getClmmTickArrayKey = async (poolId: PublicKey, tickArrayStartIndex: numbe
     }
 }
 
-const getAccountsForRaydiumClmmWithdraw = async (inputMint: PublicKey, outputMint: PublicKey, userPubKey: PublicKey) => {
+export const getAccountsForRaydiumClmmWithdraw = async (inputMint: PublicKey, outputMint: PublicKey, userPubKey: PublicKey) => {
     const inputTokenAccount: PublicKey =  getAssociatedTokenAddressSync(inputMint, userPubKey)
     const outputTokenAccount: PublicKey = getAssociatedTokenAddressSync(outputMint, userPubKey)
     const ammConfig = await getClmmAmmConfigId(0)
@@ -88,9 +88,10 @@ const getAccountsForRaydiumClmmWithdraw = async (inputMint: PublicKey, outputMin
     const outputVault = await getClmmPoolVaultKey(poolState, outputMint?.toBase58())
     const observationState = await getClmmObservationStateKey(poolState)
     
-    const accountObj = {
-      clmmProgram: toPublicKey(CLMM_PROGRAM_ID),
-      payer: userPubKey,
+    return {
+      raydiumClmmProgram: toPublicKey(CLMM_PROGRAM_ID),
+      raydiumNftOwner: userPubKey,
+      raydiumNftAccount: null,
       ammConfig,
       poolState,
       inputTokenAccount,
@@ -98,11 +99,6 @@ const getAccountsForRaydiumClmmWithdraw = async (inputMint: PublicKey, outputMin
       inputVault,
       outputVault,
       observationState,
-      tokenProgram: TOKEN_PROGRAM_ID,
-      tokenProgram2022: TOKEN_2022_PROGRAM_ID,
-      memoProgram: new PublicKey(MEMO_PROGRAM_ID),
-      inputVaultMint: inputMint,
-      outputVaultMint: outputMint
+      memoProgram: new PublicKey(MEMO_PROGRAM_ID)
     }
-  return accountObj
 }

@@ -54,13 +54,13 @@ export function getOracle(programId: PublicKey, whirlpoolAddress: PublicKey) {
   );
 }
 
-const getAccountsForOrcaWhirlpoolWithdraw = async (
+export const getAccountsForOrcaWhirlpool = async (
+  rpcURL: string,
   inputMint: PublicKey,
   outputMint: PublicKey,
   user: PublicKey
 ) : Promise<Accounts> => {
-
-  const mainnetRpc = createSolanaRpc(mainnet('https://api.mainnet-beta.solana.com'));
+  const mainnetRpc = createSolanaRpc(mainnet(rpcURL));
   const whirlpoolPools = await fetchWhirlpoolsByTokenPair(mainnetRpc, inputMint, outputMint);
   // const whirlpool = await fetchWhirlpool(mainnetRpc, whirlpoolPools[0].address);
   const tokenOwnerAccountA = getAssociatedTokenAddressSync(inputMint, user);
@@ -75,22 +75,22 @@ const getAccountsForOrcaWhirlpoolWithdraw = async (
 
   const accounts: Accounts = {
     whirlpoolProgram: whirlpoolProgramId,
+    whirlpool: whirlpoolPools[0].address,
     tokenProgramA: TOKEN_PROGRAM_ID,
     tokenProgramB: TOKEN_PROGRAM_ID,
     memoProgram: MEMO_PROGRAM_ADDRESS,
-    tokenAuthority: user,
-    whirlpool: whirlpoolPools[0].address,
-    tokenMintA: inputMint,
-    tokenMintB: outputMint,
-    tokenOwnerAccountA: tokenOwnerAccountA,
-    tokenVaultA: tokenVaultA,
-    tokenOwnerAccountB: tokenOwnerAccountB,
-    tokenVaultB: tokenVaultB,
-    tickArray0: tickArray0,
-    tickArray1: tickArray0,
-    tickArray2: tickArray0,
-    oracle: oracle,
+    whirlpoolPosition: inputMint,
+    whirlpoolPositionTokenAccount: outputMint,
+    whirlpoolTokenVaultA: tokenVaultA,
+    whirlpoolTokenVaultB: tokenVaultB,
+    whirlpoolTickArrayLower: tickArray0,
+    whirlpoolTickArrayUpper: tickArray0,
   }
+  //  tokenOwnerAccountA: tokenOwnerAccountA,
+  // tokenOwnerAccountB: tokenOwnerAccountB,
+  // tickArray2: tickArray0,
+  // tokenAuthority: user,
+  // oracle: oracle,
 
   return accounts
 }

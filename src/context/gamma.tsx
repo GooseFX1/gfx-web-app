@@ -432,10 +432,13 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [base58PublicKey])
 
   useEffect(() => {
+    const mintA = new PublicKey(selectedCard?.mintA?.address)
+    const mintB = new PublicKey(selectedCard?.mintB?.address)
+    
     ;(async () => {
       if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
         try {
-          const poolIdKey = await getpoolId(selectedCard)
+          const poolIdKey = await getpoolId(mintA, mintB)
           const gammaPool = await GammaProgram.account.poolState.fetch(poolIdKey)
           setSelectedCardPool(gammaPool)
         } catch (e) {
@@ -460,7 +463,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     ;(async () => {
       if (GammaProgram && publicKey && Object.keys(selectedCard)?.length > 0) {
         try {
-          const poolIdKey = await getpoolId(selectedCard)
+          const poolIdKey = await getpoolId(mintA, mintB)
           const liquidityAccountKey = await getLiquidityPoolKey(poolIdKey, publicKey)
           const liquidityAccount = await GammaProgram?.account?.userPoolLiquidity?.fetch(liquidityAccountKey)
           setSelectedCardLiquidityAcc(liquidityAccount)

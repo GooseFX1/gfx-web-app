@@ -125,11 +125,15 @@ export const DepositWithdrawSlider: FC = () => {
   ])
 
   useEffect(() => {
+    const mintA = new PublicKey(selectedCard?.mintA?.address)
+    const mintB = new PublicKey(selectedCard?.mintB?.address)
+    
     ; (async () => {
       if (Object.keys(selectedCardPool)?.length) {
         try {
           let id = null
-          const poolIdKey = await getpoolId(selectedCard)
+
+          const poolIdKey = await getpoolId(mintA, mintB)
           const liquidityAcc = await getLiquidityPoolKey(poolIdKey, userPublicKey)
           id = connection.onAccountChange(liquidityAcc, async (info) => {
             const decodedAccount = USER_POOL_LIQUIDITY_LAYOUT.decode(info.data)
@@ -150,7 +154,8 @@ export const DepositWithdrawSlider: FC = () => {
           console.log('Error in getting the updated liquidity account on account change', e)
         }
         try {
-          const poolIdKey = await getpoolId(selectedCard)
+
+          const poolIdKey = await getpoolId(mintA, mintB)
           const id = connection.onAccountChange(poolIdKey, async (info) => {
             const decodedAccount = POOL_STATE_LAYOUT.decode(info.data)
             const updatedPoolData = {

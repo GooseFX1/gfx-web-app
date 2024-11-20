@@ -13,8 +13,6 @@ const DEFAULT_BIN_STEP = new BN(10);
 const DEFAULT_BASE_FACTOR = new BN(10000);
 const DEFAULT_BASE_FACTOR_2 = new BN(4000);
 
-const USDC_USDT_POOL = new PublicKey('ARwi1S4DaiTG5DX7S4M4ZsrXqpMD1MrTmbu9ue2tpmEq') // You can get your desired pool address from the API https://dlmm-api.meteora.ag/pair/all
-
 /** private */
 function sortTokenMints(tokenX: PublicKey, tokenY: PublicKey) {
     const [minKey, maxKey] =
@@ -82,7 +80,8 @@ export function getPositionCount(minBinId: BN, maxBinId: BN) {
     return positionCount.add(new BN(1));
 }
   
-const getAccountsForMeteoraDlmmRemoveLiquidity = async (
+export const getAccountsForMeteoraDlmm = async (
+    connection: Connection,
     inputMint: PublicKey, 
     outputMint: PublicKey,
     user: PublicKey,
@@ -95,7 +94,6 @@ const getAccountsForMeteoraDlmmRemoveLiquidity = async (
         DEFAULT_BASE_FACTOR,
         meteoraDlmmProgramId,
     );
-    const connection = new Connection('https://api.mainnet-beta.solana.com')
     const provider = new AnchorProvider(
         connection,
         {} as any,
@@ -139,27 +137,29 @@ const getAccountsForMeteoraDlmmRemoveLiquidity = async (
 
     let position = derivePosition(lbPair, baseKey, DEFAULT_ACTIVE_ID, MAX_BIN_PER_POSITION, meteoraDlmmProgramId);
     let binArrayBitmapExtension = deriveBinArrayBitmapExtension(lbPair, meteoraDlmmProgramId);
-    // let reserveX = deriveReserve(inputMint, lbPair, meteoraDlmmProgramId);
-    // let reserveY = deriveReserve(outputMint, lbPair, meteoraDlmmProgramId);
+    let reserveX = deriveReserve(inputMint, lbPair, meteoraDlmmProgramId);
+    let reserveY = deriveReserve(outputMint, lbPair, meteoraDlmmProgramId);
     let userTokenX = getAssociatedTokenAddress(inputMint, user);
     let userTokenY = getAssociatedTokenAddress(outputMint, user);
     let eventAuthority = deriveEventAuthority(meteoraDlmmProgramId);
-     const accountObj = {
-        position: position,
-        lbPair: lbPair,
-        binArrayBitmapExtension: binArrayBitmapExtension,
-        userTokenX: userTokenX,
-        userTokenY: userTokenY,
-        reserveX: reserveX,
-        reserveY: reserveY,
-        tokenXMint: inputMint,
-        tokenYMint: outputMint,
-        binArrayLower: binArrayLower,
-        binArrayUpper: binArrayUpper,
-        sender: user,
+
+    return {
+        dlmmPosition: position,
+        dlmmLbPair: lbPair,
+        dlmmBinArrayBitmapExtension: binArrayBitmapExtension,
+        dlmmReserveX: reserveX,
+        dlmmReserveY: reserveY,
+        dlmmBinArrayLower: binArrayLower,
+        dlmmBinArrayUpper: binArrayUpper,
+        dlmmProgram: meteoraDlmmProgramId,
+        dlmmEventAuthority: eventAuthority,
         tokenXProgram: TOKEN_PROGRAM_ID,
         tokenYProgram: TOKEN_PROGRAM_ID,
+        gammaOwner: user,
+        tokenXMint: inputMint,
+        tokenYMint: outputMint,
+        sender: user,
+        userTokenX: userTokenX,
+        userTokenY: userTokenY
     }
-
-    return accountObj
 }
