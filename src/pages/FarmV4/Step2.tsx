@@ -594,7 +594,6 @@ function TokenSelectionInput({
               <Button
                 colorScheme={'secondaryGradient'}
                 variant={'outline'}
-                isLoading={false}
                 className="min-w-[115px] h-[35px] rounded-full flex flex-row justify-between"
                 iconLeft={
                   token ? (
@@ -612,6 +611,7 @@ function TokenSelectionInput({
                     size={'sm'}
                   />
                 }
+                disabled={false}
               >
                 {token ? token.symbol : 'Select Token'}
               </Button>
