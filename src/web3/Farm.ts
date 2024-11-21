@@ -541,18 +541,18 @@ export const migrateMeteoraDlmmToGamma = async (
 
   const accounts = {
     ...meteoraDlmmAccounts,
-    gammaOwner: gammaAccounts.gammaOwner,
-    gammaAuthority: gammaAccounts.gammaAuthority,
-    gammaPoolState: gammaAccounts.gammaPoolState,
-    gammaUserPoolLiquidity: gammaAccounts.gammaUserPoolLiquidity,
-    gammaToken0Account: gammaAccounts.gammaToken0Account,
-    gammaToken1Account: gammaAccounts.gammaToken1Account,
-    gammaToken0Vault: gammaAccounts.gammaToken0Vault,
-    gammaToken1Vault: gammaAccounts.gammaToken1Vault,
+    gammaOwner: gammaAccounts.owner,
+    gammaAuthority: gammaAccounts.authority,
+    gammaPoolState: gammaAccounts.poolState,
+    gammaUserPoolLiquidity: gammaAccounts.userPoolLiquidity,
+    gammaToken0Account: gammaAccounts.token0Account,
+    gammaToken1Account: gammaAccounts.token1Account,
+    gammaToken0Vault: gammaAccounts.token0Vault,
+    gammaToken1Vault: gammaAccounts.token1Vault,
     tokenProgram: gammaAccounts.tokenProgram,
     tokenProgram2022: gammaAccounts.tokenProgram2022,
-    gammaVault0Mint: gammaAccounts.gammaVault0Mint,
-    gammaVault1Min: gammaAccounts.gammaVault1Min
+    gammaVault0Mint: gammaAccounts.vault0Mint,
+    gammaVault1Min: gammaAccounts.vault1Mint
   }
 
   const binLiquidityReduction = 0
@@ -595,18 +595,18 @@ export const migrateOrcaWhirlpoolToGamma = async (
     ...orcaAccounts,
     whirlpoolPosition: null,
     whirlpoolPositionTokenAccount: null,
-    gammaOwner: gammaAccounts.gammaOwner,
-    gammaAuthority: gammaAccounts.gammaAuthority,
-    gammaPoolState: gammaAccounts.gammaPoolState,
-    gammaUserPoolLiquidity: gammaAccounts.gammaUserPoolLiquidity,
-    gammaToken0Account: gammaAccounts.gammaToken0Account,
-    gammaToken1Account: gammaAccounts.gammaToken1Account,
-    gammaToken0Vault: gammaAccounts.gammaToken0Vault,
-    gammaToken1Vault: gammaAccounts.gammaToken1Vault,
+    gammaOwner: gammaAccounts.owner,
+    gammaAuthority: gammaAccounts.authority,
+    gammaPoolState: gammaAccounts.poolState,
+    gammaUserPoolLiquidity: gammaAccounts.userPoolLiquidity,
+    gammaToken0Account: gammaAccounts.token0Account,
+    gammaToken1Account: gammaAccounts.token1Account,
+    gammaToken0Vault: gammaAccounts.token0Vault,
+    gammaToken1Vault: gammaAccounts.token1Vault,
     tokenProgram: gammaAccounts.tokenProgram,
     tokenProgram2022: gammaAccounts.tokenProgram2022,
-    gammaVault0Mint: gammaAccounts.gammaVault0Mint,
-    gammaVault1Min: gammaAccounts.gammaVault1Min
+    gammaVault0Mint: gammaAccounts.vault0Mint,
+    gammaVault1Min: gammaAccounts.vault1Mint
   }
 
   const liquidityAmount = 0
@@ -641,18 +641,18 @@ export const migrateRaydiumClmmToGamma = async (program: Program, tokenA: Public
 
   const accounts = {
     ...raydiumCLMMAccounts,
-    gammaOwner: gammaAccounts.gammaOwner,
-    gammaAuthority: gammaAccounts.gammaAuthority,
-    gammaPoolState: gammaAccounts.gammaPoolState,
-    gammaUserPoolLiquidity: gammaAccounts.gammaUserPoolLiquidity,
-    gammaToken0Account: gammaAccounts.gammaToken0Account,
-    gammaToken1Account: gammaAccounts.gammaToken1Account,
-    gammaToken0Vault: gammaAccounts.gammaToken0Vault,
-    gammaToken1Vault: gammaAccounts.gammaToken1Vault,
+    gammaOwner: gammaAccounts.owner,
+    gammaAuthority: gammaAccounts.authority,
+    gammaPoolState: gammaAccounts.poolState,
+    gammaUserPoolLiquidity: gammaAccounts.userPoolLiquidity,
+    gammaToken0Account: gammaAccounts.token0Account,
+    gammaToken1Account: gammaAccounts.token1Account,
+    gammaToken0Vault: gammaAccounts.token0Vault,
+    gammaToken1Vault: gammaAccounts.token1Vault,
     tokenProgram: gammaAccounts.tokenProgram,
     tokenProgram2022: gammaAccounts.tokenProgram2022,
-    gammaVault0Mint: gammaAccounts.gammaVault0Mint,
-    gammaVault1Min: gammaAccounts.gammaVault1Min
+    gammaVault0Mint: gammaAccounts.vault0Mint,
+    gammaVault1Min: gammaAccounts.vault1Mint
   }
 
   const liquidity = 0
@@ -685,18 +685,18 @@ export const migrateRaydiumCpSwapToGamma = async (program: Program, tokenA: Publ
 
   const accounts = {
     ...raydiumAccounts,
-    gammaOwner: gammaAccounts.gammaOwner,
-    gammaAuthority: gammaAccounts.gammaAuthority,
-    gammaPoolState: gammaAccounts.gammaPoolState,
-    gammaUserPoolLiquidity: gammaAccounts.gammaUserPoolLiquidity,
-    gammaToken0Account: gammaAccounts.gammaToken0Account,
-    gammaToken1Account: gammaAccounts.gammaToken1Account,
-    gammaToken0Vault: gammaAccounts.gammaToken0Vault,
-    gammaToken1Vault: gammaAccounts.gammaToken1Vault,
+    gammaOwner: gammaAccounts.owner,
+    gammaAuthority: gammaAccounts.authority,
+    gammaPoolState: gammaAccounts.poolState,
+    gammaUserPoolLiquidity: gammaAccounts.userPoolLiquidity,
+    gammaToken0Account: gammaAccounts.token0Account,
+    gammaToken1Account: gammaAccounts.token1Account,
+    gammaToken0Vault: gammaAccounts.token0Vault,
+    gammaToken1Vault: gammaAccounts.token1Vault,
     tokenProgram: gammaAccounts.tokenProgram,
     tokenProgram2022: gammaAccounts.tokenProgram2022,
-    gammaVault0Mint: gammaAccounts.gammaVault0Mint,
-    gammaVault1Min: gammaAccounts.gammaVault1Min
+    gammaVault0Mint: gammaAccounts.vault0Mint,
+    gammaVault1Min: gammaAccounts.vault1Mint
   }
 
   const lpTokenAmount = 0
