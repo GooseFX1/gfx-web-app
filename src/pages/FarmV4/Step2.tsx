@@ -702,7 +702,7 @@ function TokenSelectionInput({
         onChange={(e) => handleChange(e, true)}
         value={amountToken}
         className={'h-[45px] text-right'}
-        disabled={!token}
+        // disabled={!token}
       />
     </InputGroup>
   )
