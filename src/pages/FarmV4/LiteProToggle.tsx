@@ -58,23 +58,21 @@ export const LiteProToggle = (): ReactElement => {
         <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
           <DialogOverlay />
           <DialogContent
-            className={`flex flex-col gap-0 h-[332px] border-1 border-solid
+            className={`flex flex-col gap-0 h-[273px] border-1 border-solid
         dark:border-border-darkmode-secondary border-border-lightmode-secondary max-sm:rounded-b-none z-[1001]`}
             fullScreen={true}
             placement={'bottom'}
           >
             <DialogHeader className={`px-2 py-3.5 flex items-center`}>
-              <DialogTitle className={'text-center'}>Unlock Pro Features on Desktop!</DialogTitle>
+              <DialogTitle className={'text-center'}>Pro Mode Coming Soon...</DialogTitle>
               <DialogCloseDefault className={'top-1.5 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0'} />
             </DialogHeader>
             <DialogBody className={'flex flex-col p-2'}>
               <div>
                 <img src={`img/assets/pro_features_graphic_${mode}.svg`} alt="pro-icon" className={'w-full'} />
               </div>
-              <p className={'text-center mt-4'}>
+              <p className={'text-center'}>
                 Elevate your experience with Pro mode on desktop with advanced analytics and custom options.
-                <br />
-                Pro version on mobile will be available soon..
               </p>
             </DialogBody>
           </DialogContent>
