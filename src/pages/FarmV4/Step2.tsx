@@ -86,6 +86,7 @@ const Step2: FC<{
   const { connected } = useWallet()
   const { balance } = useWalletBalance()
   const [aToBRatio, setAToBRatio] = useBoolean(true)
+
   useEffect(() => {
     if (+amountTokenA && +amountTokenB) {
       !priceSwitch
@@ -360,6 +361,7 @@ function TokenSelectionInput({
   // const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
   const [searchValue, setSearchValue] = useState<string>('')
   const [popularTokens, setPopularTokens] = useState<JupToken[]>([])
+  const [loadingPopularTokens, setLoadingPopularTokens] = useBoolean(false)
   const { balance, topBalances } = useWalletBalance()
   const { wallet } = useWallet()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
@@ -413,11 +415,12 @@ function TokenSelectionInput({
   }, [searchValue])
 
   useEffect(() => {
+    setLoadingPopularTokens.on()
     fetchTokensByPublicKey([...POPULAR_TOKENS].join(',')).then((res) => {
       if (res.success) {
         setPopularTokens(res.data.tokens)
       }
-    })
+    }).finally(() => setLoadingPopularTokens.off())
   }, [])
   const tokenListLength = searchValue.trim().length > 0 ? tokenList.length : tokenRenderList.length
   const itemCount = !maxTokensReached ? tokenListLength + 1 : tokenListLength
@@ -428,78 +431,19 @@ function TokenSelectionInput({
   } : () => {
     if (isLoadingTokenList || maxTokensReached) return
     // triggers the update for the tokenListEndpoint
-    setPage(page+1)
+    setPage(page + 1)
   }
 
   const isItemLoaded = index => maxTokensReached || index < tokenListLength
 
   const Item = ({ index, style }: { index: number, style: CSSProperties }) => {
     if (!isItemLoaded(index)) {
-      return <div style={style} className={'flex flex-col gap-2'}>
-        <DropdownMenuItem
-          disabled={true}
-          className={`
-                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full h-[42px] gap-2 items-center
-                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
-        >
-          <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
-          <div className={'flex flex-col gap-1'}>
-            <Skeleton className={`w-[80px] h-[20px]`} />
-            <Skeleton className={`w-[80px] h-[20px]`} />
-          </div>
-          <div className={'flex flex-col gap-1 ml-auto'}>
-            <Skeleton className={`w-[80px] h-[20px]`} />
-            <Skeleton className={`w-[80px] h-[20px]`} />
-          </div>
-        </DropdownMenuItem>
-        {tokenList.length == 0 ? <><DropdownMenuItem
-            disabled={true}
-            className={`
-                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full h-[42px] gap-2 items-center
-                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
-          >
-            <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
-            <div className={'flex flex-col gap-1'}>
-              <Skeleton className={`w-[80px] h-[20px]`} />
-              <Skeleton className={`w-[80px] h-[20px]`} />
-            </div>
-            <div className={'flex flex-col gap-1 ml-auto'}>
-              <Skeleton className={`w-[80px] h-[20px]`} />
-              <Skeleton className={`w-[80px] h-[20px]`} />
-            </div>
-          </DropdownMenuItem>
-            <DropdownMenuItem
-              disabled={true}
-              className={`
-                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full h-[42px] gap-2 items-center
-                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
-            >
-              <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
-              <div className={'flex flex-col gap-1'}>
-                <Skeleton className={`w-[80px] h-[20px]`} />
-                <Skeleton className={`w-[80px] h-[20px]`} />
-              </div>
-              <div className={'flex flex-col gap-1 ml-auto'}>
-                <Skeleton className={`w-[80px] h-[20px]`} />
-                <Skeleton className={`w-[80px] h-[20px]`} />
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              disabled={true}
-              className={`
-                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full h-[42px] gap-2 items-center
-                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
-            >
-              <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
-              <div className={'flex flex-col gap-1'}>
-                <Skeleton className={`w-[80px] h-[20px]`} />
-                <Skeleton className={`w-[80px] h-[20px]`} />
-              </div>
-              <div className={'flex flex-col gap-1 ml-auto'}>
-                <Skeleton className={`w-[80px] h-[20px]`} />
-                <Skeleton className={`w-[80px] h-[20px]`} />
-              </div>
-            </DropdownMenuItem>
+      return <div style={style} className={`flex flex-col gap-2`}>
+        <TokenListSkeleton />
+        {tokenList.length == 0 ? <>
+            <TokenListSkeleton />
+            <TokenListSkeleton />
+            <TokenListSkeleton />
           </>
           :
           null
@@ -640,33 +584,41 @@ function TokenSelectionInput({
                 >
                   Popular
                 </h5>
-                <div className={'flex pb-2 gap-1'}>
-                  {popularTokens.map((token) => (
-                    <Button
-                      className={`border-solid dark:border-black-4 border-grey-4 border 
-                          cursor-pointer p-1 flex rounded-[4px]`}
-                      key={token?.address}
-                      onClick={() => {
-                        setToken(token)
-                        setIsDropdownOpen.off()
-                      }}
-                      disabled={otherToken?.address == token?.address}
-                      iconLeft={
-                        <Icon
-                          src={loadIconImage(token?.logoURI, mode)}
-                          size={'sm'}
-                          className={'rounded-circle'}
-                        />
-                      }
-                    >
+                <div className={'flex pb-2 gap-3'}>
+                  {loadingPopularTokens ?
+                    <>
+                      <Skeleton className={'h-[35px] w-[80px]'} />
+                      <Skeleton className={'h-[35px] w-[80px]'} />
+                      <Skeleton className={'h-[35px] w-[80px]'} />
+                      <Skeleton className={'h-[35px] w-[80px]'} />
+                    </>
+                    :
+                    popularTokens.map((token) => (
+                      <Button
+                        className={`border-solid dark:border-black-4 border-grey-4 border 
+                          cursor-pointer p-1 flex rounded-[4px] min-w-[60px]`}
+                        key={token?.address}
+                        onClick={() => {
+                          setToken(token)
+                          setIsDropdownOpen.off()
+                        }}
+                        disabled={otherToken?.address == token?.address}
+                        iconLeft={
+                          <Icon
+                            src={loadIconImage(token?.logoURI, mode)}
+                            size={'sm'}
+                            className={'rounded-circle'}
+                          />
+                        }
+                      >
                         <span
                           className={`font-bold dark:text-text-darkmode-secondary 
                                         text-text-lightmode-secondary`}
                         >
                           {token?.symbol}
                         </span>
-                    </Button>
-                  ))}
+                      </Button>
+                    ))}
                 </div>
               </div>
               {searchValue && tokenList.length == 0 ? <div className={'mb-auto p-2'}>
@@ -710,3 +662,21 @@ function TokenSelectionInput({
 
 export default Step2
 
+function TokenListSkeleton() {
+  return <DropdownMenuItem
+    disabled={false}
+    className={`
+                cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full gap-3 items-center
+                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
+  >
+    <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
+    <div className={'flex flex-col gap-1'}>
+      <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
+      <Skeleton className={`w-[88px] h-[18px] rounded-[2px]`} />
+    </div>
+    <div className={'flex flex-col gap-1 ml-auto'}>
+      <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
+      <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
+    </div>
+  </DropdownMenuItem>
+}
