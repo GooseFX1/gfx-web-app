@@ -494,7 +494,9 @@ export const createPool = async (
     const createPoolIX: TransactionInstruction = await program.instruction.initialize(
         new BN(amountTokenABN),
         new BN(amountTokenBBN),
-        new BN(Math.floor(Date.now() / 1000)), {
+        new BN(Math.floor(Date.now() / 1000)),
+        0,
+        0, {
         accounts: createPoolAcc
     })
     let createPoolTxn: Transaction
