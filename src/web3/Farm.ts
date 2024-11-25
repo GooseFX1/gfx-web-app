@@ -495,8 +495,8 @@ export const createPool = async (
         new BN(amountTokenABN),
         new BN(amountTokenBBN),
         new BN(Math.floor(Date.now() / 1000)),
-        0,
-        0, {
+        new BN(0),
+        new BN(0), {
         accounts: createPoolAcc
     })
     let createPoolTxn: Transaction
