@@ -38,7 +38,7 @@ enum TokenType {
   Token1
 }
 
-const getPoolVaultKey = async (poolIdKey: PublicKey, mintAddress: string): Promise<undefined | PublicKey> => {
+export const getPoolVaultKey = async (poolIdKey: PublicKey, mintAddress: string): Promise<undefined | PublicKey> => {
   try {
     const getPoolVaultKey: [PublicKey, number] = await PublicKey.findProgramAddress(
       [Buffer.from(POOL_VAULT_SEED_PREFIX), poolIdKey?.toBuffer(), new PublicKey(mintAddress).toBuffer()],
@@ -50,7 +50,7 @@ const getPoolVaultKey = async (poolIdKey: PublicKey, mintAddress: string): Promi
   }
 }
 
-const getAuthorityKey = async (): Promise<undefined | PublicKey> => {
+export const getAuthorityKey = async (): Promise<undefined | PublicKey> => {
   try {
     const getAuthorityKey: [PublicKey, number] = await PublicKey.findProgramAddress(
       [Buffer.from(AUTHORITY_PREFIX)],
@@ -76,14 +76,15 @@ export const getLiquidityPoolKey = async (
     return undefined
   }
 }
-const u16ToBytes = (num: number): Uint8Array => {
+
+export const u16ToBytes = (num: number): Uint8Array => {
   const arr = new ArrayBuffer(2)
   const view = new DataView(arr)
   view.setUint16(0, num, false)
   return new Uint8Array(arr)
 }
 
-const getAmmConfigId = async (index: number): Promise<undefined | PublicKey> => {
+export const getAmmConfigId = async (index: number): Promise<undefined | PublicKey> => {
   try {
     const ammConfigId: [PublicKey, number] = await PublicKey.findProgramAddress(
       [Buffer.from(AMM_CONFIG), u16ToBytes(index)],
@@ -95,7 +96,7 @@ const getAmmConfigId = async (index: number): Promise<undefined | PublicKey> => 
   }
 }
 
-const getPoolIdKey = async (
+export const getPoolIdKey = async (
   ammConfigId: PublicKey,
   mintA: PublicKey,
   mintB: PublicKey
@@ -111,7 +112,7 @@ const getPoolIdKey = async (
   }
 }
 
-const getObservationStateKey = async (poolId: PublicKey): Promise<undefined | PublicKey> => {
+export const getObservationStateKey = async (poolId: PublicKey): Promise<undefined | PublicKey> => {
   try {
     const observationStateKey: [PublicKey, number] = await PublicKey.findProgramAddress(
       [Buffer.from(OBSERVATION_PREFIX), poolId?.toBuffer()],

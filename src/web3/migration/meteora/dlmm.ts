@@ -1,12 +1,16 @@
-import { IDL as DLMM_IDL } from "./dlmm_idl";
-import { Connection, PublicKey, TransactionInstruction } from "@solana/web3.js";
+import { IDL as DLMM_IDL, LbClmm} from "./dlmm_idl";
+import { Connection, PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
 import { MAX_BIN_ARRAY_SIZE, MAX_BIN_PER_POSITION, METEORA_DLMM_PROGRAM_ID } from "../constants";
-import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from "solanaspltoken049";
-import { AnchorProvider, BN} from "anchor301";
-import { Program } from "anchor0290";
+import { getAssociatedTokenAddress, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "solanaspltoken049";
+import { AnchorProvider, BN, IdlTypes} from "anchor301";
+import { Idl, Program } from "anchor0290";
 import DLMM, { deriveBinArray, derivePosition, getPriceOfBinByBinId, getTokenDecimals } from "@meteora-ag/dlmm";
 import Decimal from "decimal.js";
-import { getTokenDecimal } from "@/web3/ssl";
+import { getAuthorityKey, getpoolId, getPoolVaultKey } from "@/web3/Farm";
+import { getLiquidityPoolKey } from "@/web3/Farm";
+import { bs58 } from "anchor301/dist/cjs/utils/bytes";
+
+export type BinLiquidityReduction = IdlTypes<LbClmm>["BinLiquidityReduction"];
 
 const DEFAULT_ACTIVE_ID = new BN(5660);
 const DEFAULT_BIN_STEP = new BN(10);
@@ -104,6 +108,25 @@ export const getAccountsForMeteoraDlmm = async (
         meteoraDlmmProgramId,
         provider
     );
+    const [positions, positionsV2] = await Promise.all([
+        program.account.position.all([
+          {
+            memcmp: {
+              bytes: bs58.encode(user.toBuffer()),
+              offset: 8 + 32,
+            },
+          },
+        ]),
+        program.account.positionV2.all([
+          {
+            memcmp: {
+              bytes: bs58.encode(user.toBuffer()),
+              offset: 8 + 32,
+            },
+          },
+        ]),
+      ]);
+  
     const { reserveX, reserveY, tokenXMint, tokenYMint, oracle, baseKey, binStep, activeId } = await program.account.lbPair.fetch(lbPair);
     let tokenXDecimals = await getTokenDecimals(connection, inputMint);
     let tokenYDecimals = await getTokenDecimals(connection, outputMint);
@@ -133,15 +156,23 @@ export const getAccountsForMeteoraDlmm = async (
     // This amount will be deposited to the last bin without compression
     const positionCount = getPositionCount(minBinId, maxBinId.sub(new BN(1)));
 
-    const binArrayLower = deriveBinArray(lbPair, , meteoraDlmmProgramId);
+    const binArrayLower = deriveBinArray(lbPair, binIdToBinArrayIndex(minBinId), meteoraDlmmProgramId);
+    const binArrayUpper = deriveBinArray(lbPair, binIdToBinArrayIndex(maxBinId), meteoraDlmmProgramId);
 
-    let position = derivePosition(lbPair, baseKey, DEFAULT_ACTIVE_ID, MAX_BIN_PER_POSITION, meteoraDlmmProgramId);
-    let binArrayBitmapExtension = deriveBinArrayBitmapExtension(lbPair, meteoraDlmmProgramId);
-    let reserveX = deriveReserve(inputMint, lbPair, meteoraDlmmProgramId);
-    let reserveY = deriveReserve(outputMint, lbPair, meteoraDlmmProgramId);
-    let userTokenX = getAssociatedTokenAddress(inputMint, user);
-    let userTokenY = getAssociatedTokenAddress(outputMint, user);
-    let eventAuthority = deriveEventAuthority(meteoraDlmmProgramId);
+    const position = derivePosition(lbPair, baseKey, DEFAULT_ACTIVE_ID, MAX_BIN_PER_POSITION, meteoraDlmmProgramId);
+    const binArrayBitmapExtension = deriveBinArrayBitmapExtension(lbPair, meteoraDlmmProgramId);
+    // let reserveX = deriveReserve(inputMint, lbPair, meteoraDlmmProgramId);
+    // let reserveY = deriveReserve(outputMint, lbPair, meteoraDlmmProgramId);
+    const eventAuthority = deriveEventAuthority(meteoraDlmmProgramId);
+
+
+    const poolIdKey = await getpoolId(inputMint, outputMint)
+    const poolVaultKeyA = await getPoolVaultKey(poolIdKey, inputMint?.toBase58())
+    const poolVaultKeyB = await getPoolVaultKey(poolIdKey, outputMint?.toBase58())
+    const authorityKey = await getAuthorityKey()
+    const liquidityAccountKey = await getLiquidityPoolKey(poolIdKey, user)
+    const tokenAccountAKey = await getAssociatedTokenAddress(inputMint, user)
+    const tokenAccountBKey = await getAssociatedTokenAddress(outputMint, user)
 
     return {
         dlmmPosition: position,
@@ -156,10 +187,39 @@ export const getAccountsForMeteoraDlmm = async (
         tokenXProgram: TOKEN_PROGRAM_ID,
         tokenYProgram: TOKEN_PROGRAM_ID,
         gammaOwner: user,
-        tokenXMint: inputMint,
-        tokenYMint: outputMint,
-        sender: user,
-        userTokenX: userTokenX,
-        userTokenY: userTokenY
+        gammaAuthority: authorityKey,
+        gammaPoolState: poolIdKey,
+        gammaUserPoolLiquidity: liquidityAccountKey,
+        gammaToken0Account: tokenAccountAKey,
+        gammaToken1Account: tokenAccountBKey,
+        gammaToken0Vault: poolVaultKeyA,
+        gammaToken1Vault: poolVaultKeyB,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        tokenProgram22: TOKEN_2022_PROGRAM_ID,
+        gammaVault0Mint: inputMint,
+        gammaVault1Mint: outputMint,
     }
+}
+
+export const migrateMeteoraDlmmToGammaIx = async (
+    connection: Connection,
+    inputMint: PublicKey,
+    outputMint: PublicKey,
+    user: PublicKey,
+    program: Program<Idl>
+): Promise<TransactionInstruction> => {
+    let accounts = getAccountsForMeteoraDlmm(
+        connection,
+        inputMint,
+        outputMint,
+        user,
+    )
+    let binLiquidityReduction = BinLiq
+    let ix : TransactionInstruction = await program.methods.migrateMeteoraDlmmToGamma({
+        binLiquidityReduction,
+        maximumToken0Amount,
+        maximumToken1Amount,
+        accounts,
+    })
+    return ix
 }
