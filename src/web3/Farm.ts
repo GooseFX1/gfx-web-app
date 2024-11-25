@@ -135,7 +135,7 @@ const createLiquidityAccountIX = async (
         userPoolLiquidity: liquidityAccountKey,
         systemProgram: SYSTEM
     }
-    const createLiquidityIX: TransactionInstruction = await program.instruction.initUserPoolLiquidity({
+    const createLiquidityIX: TransactionInstruction = await program.instruction.initUserPoolLiquidity(null, {
         accounts: createLiquidityInstructionAccount
     })
     //console.log('createLiquidityIX', createLiquidityIX, userPublicKey?.toBase58())
