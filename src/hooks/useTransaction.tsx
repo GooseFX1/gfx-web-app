@@ -56,7 +56,7 @@ function useTransaction(): useTransactionReturn {
       const txn = txnIn instanceof TransactionBuilder ?
         await txnIn
           .setPriorityFee(priorityFromLevel)
-          ._getTransaction(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0), connection) :
+          ._getTransaction(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0)) :
         txnIn
       console.log('signing txn', txn)
       const id = SpawnLoaderToast({ duration: connectionData?.transactionDuration ?? 60000 })

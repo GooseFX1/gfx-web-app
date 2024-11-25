@@ -1,6 +1,5 @@
 import {
   ComputeBudgetProgram,
-  Connection,
   PublicKey,
   Transaction,
   TransactionInstruction,
@@ -70,7 +69,6 @@ class TransactionBuilder {
     walletPublicKey: PublicKey,
     recentBlockhash: string,
     useVersionedTransaction: boolean,
-    connection: Connection
   ): Promise<VersionedTransaction | Transaction> {
     if (this._usePriorityFee) {
       const ix = ComputeBudgetProgram.setComputeUnitPrice({
@@ -78,20 +76,21 @@ class TransactionBuilder {
       })
 
       this._instructions.unshift(ix)
-      let computeUnits = 1.4e6
-      const message = new TransactionMessage({
-        instructions: [ComputeBudgetProgram.setComputeUnitLimit({ units: computeUnits }), ...this._instructions],
-        payerKey: walletPublicKey,
-        recentBlockhash: recentBlockhash
-      }).compileToV0Message()
+      // let computeUnits = 1.4e6
+      // const message = new TransactionMessage({
+      //   instructions: [ComputeBudgetProgram.setComputeUnitLimit({ units: computeUnits }), ...this._instructions],
+      //   payerKey: walletPublicKey,
+      //   recentBlockhash: recentBlockhash
+      // }).compileToV0Message()
 
-      const simTx = new VersionedTransaction(message)
-      const simRes = await connection.simulateTransaction(simTx, {
-        sigVerify: false
-      })
-      computeUnits = simRes.value.unitsConsumed
-      console.log('Assuming comsumption of', computeUnits, 'compute units')
-      this._instructions.unshift(ComputeBudgetProgram.setComputeUnitLimit({ units: computeUnits }))
+      //const simTx = new VersionedTransaction(message)
+      // const simRes = await connection.simulateTransaction(simTx, {
+      //   sigVerify: false
+      // })
+      //computeUnits = simRes.value.unitsConsumed
+      // console.log("SIMULATED CU", computeUnits)
+      // console.log('Assuming comsumption of', computeUnits, 'compute units')
+      // this._instructions.unshift(ComputeBudgetProgram.setComputeUnitLimit({ units: computeUnits }))
     }
 
     if (useVersionedTransaction) {
@@ -107,8 +106,8 @@ class TransactionBuilder {
   }
 
   async _getTransactionWithoutPriorityFee(walletPublicKey: PublicKey,
-                                          recentBlockhash: string,
-                                          useVersionedTransaction: boolean) {
+    recentBlockhash: string,
+    useVersionedTransaction: boolean) {
     if (useVersionedTransaction) {
       const message = new TransactionMessage({
         instructions: this._instructions,
