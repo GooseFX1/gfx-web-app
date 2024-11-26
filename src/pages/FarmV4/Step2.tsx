@@ -1,16 +1,5 @@
+import { Dispatch, FC, SetStateAction, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import {
-  CSSProperties,
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useState
-} from 'react'
-import {
-  Badge,
   Button,
   cn,
   Container,
@@ -35,13 +24,11 @@ import Text from '@/components/Text'
 import { fetchPoolsByMints, fetchTokensByPublicKey } from '@/api/gamma'
 import { GAMMAPool } from '@/types/gamma'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { aborter, bigNumberFormatter, loadIconImage, numberFormatter, truncateAddress } from '@/utils'
+import { aborter, loadIconImage } from '@/utils'
 import SearchBar from '@/components/common/SearchBar'
 import { useWalletBalance } from '@/context/walletBalanceContext'
-import BigNumber from 'bignumber.js'
 import Decimal from 'decimal.js-light'
-import InfiniteLoader from 'react-window-infinite-loader'
-import { FixedSizeList } from 'react-window'
+import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
 
 const Step2: FC<{
   tokenA: TokenListToken
@@ -354,7 +341,7 @@ function TokenSelectionInput({
   amountToken: string
   setToken: Dispatch<SetStateAction<JupToken>>
 }) {
-  const { tokenList, isLoadingTokenList, updateTokenList, page, setPage, maxTokensReached, createPoolType } =
+  const { isLoadingTokenList, tokenList, updateTokenList, setPage, createPoolType, topBalancesWithTokenList } =
     useGamma()
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
@@ -362,29 +349,10 @@ function TokenSelectionInput({
   const [searchValue, setSearchValue] = useState<string>('')
   const [popularTokens, setPopularTokens] = useState<JupToken[]>([])
   const [loadingPopularTokens, setLoadingPopularTokens] = useBoolean(false)
-  const { balance, topBalances } = useWalletBalance()
   const { wallet } = useWallet()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
-  const topBalancesWithTokenList: JupToken[] = useMemo(() => {
-    const data = []
-    const hasTokenSet = new Set()
-    for (const tokenBalance of topBalances) {
-      if (!hasTokenSet.has(tokenBalance.mint)) {
-        hasTokenSet.add(tokenBalance.mint)
-        data.push({
-          ...tokenBalance,
-          address: tokenBalance.mint
-        })
-      }
-    }
-    for (const token of tokenList) {
-      if (!hasTokenSet.has(token.address)) {
-        data.push(token)
-      }
-    }
-    return data.sort((a, b) => (balance[a.address].value.gt(balance[b.address].value) ? -1 : 1))
-  }, [topBalances, tokenList, balance, searchValue])
+
   const tokenRenderList = searchValue.length > 0 || createPoolType === 'primary' || !publicKey
     ? tokenList
     : topBalancesWithTokenList
@@ -422,112 +390,6 @@ function TokenSelectionInput({
       }
     }).finally(() => setLoadingPopularTokens.off())
   }, [])
-  const tokenListLength = searchValue.trim().length > 0 ? tokenList.length : tokenRenderList.length
-  const itemCount = !maxTokensReached ? tokenListLength + 1 : tokenListLength
-  // Only load 1 page of items at a time.
-  // Pass an empty callback to InfiniteLoader in case it asks us to load more than once.
-  const loadMoreItems = isLoadingTokenList ? () => {
-    // empty func to prevent re-calls
-  } : () => {
-    if (isLoadingTokenList || maxTokensReached) return
-    // triggers the update for the tokenListEndpoint
-    setPage(page + 1)
-  }
-
-  const isItemLoaded = index => maxTokensReached || index < tokenListLength
-
-  const Item = ({ index, style }: { index: number, style: CSSProperties }) => {
-    if (!isItemLoaded(index)) {
-      return <div style={style} className={`flex flex-col gap-2`}>
-        <TokenListSkeleton />
-        {tokenList.length == 0 ? <>
-            <TokenListSkeleton />
-            <TokenListSkeleton />
-            <TokenListSkeleton />
-          </>
-          :
-          null
-        }
-      </div>
-    }
-
-    const curToken = tokenRenderList[index]
-
-    return <div style={style}>
-      <DropdownMenuItem
-        className={`cursor-pointer p-1.5 border-1 border-transparent flex 
-                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
-        onClick={() => {
-          setToken(curToken)
-          setSearchValue('')
-        }}
-        key={curToken?.address}
-        disabled={otherToken?.address === curToken?.address}
-      >
-        <div className={'flex w-full flex-1'}>
-          <div className={`flex gap-2`}>
-            <Icon
-              className={`rounded-circle h-[24px] w-[24px] border 
-                                border-solid dark:border-black-4 border-grey-4`}
-              src={loadIconImage(curToken?.logoURI, mode)}
-            />
-            <div>
-              <p
-                className={`text-b2 font-bold 
-                                  dark:text-text-darkmode-primary text-text-lightmode-primary`}
-              >
-                {curToken?.symbol}
-              </p>
-              <span className={'inline-flex gap-1'}>
-                                <span className={'max-w-[118px] self-center'}>
-                                  <p
-                                    className={`text-b3 dark:text-text-darkmode-secondary 
-                                      text-text-lightmode-secondary truncate font-semibold
-                                `}
-                                  >
-                                    {curToken?.name}
-                                  </p>
-                                </span>
-                                <a
-                                  href={`https://solscan.io/account/${curToken?.address}`}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className={'ml-auto'}
-                                >
-                                  <Badge
-                                    variant="default"
-                                    size={'lg'}
-                                    className={'to-brand-secondaryGradient-secondary/50 gap-1 h-[18px]'}
-                                  >
-                                    <h6 className={''}>{truncateAddress(curToken?.address, 3)}</h6>
-                                    <Icon
-                                      src={`/img/assets/arrowcircle-${mode}.svg`}
-                                      className={'!h-[15px] !w-[15px] !min-h-[15px] !min-w-[15px]'}
-                                    />
-                                  </Badge>
-                                </a>
-                              </span>
-            </div>
-          </div>
-          <div className={'w-full ml-auto flex flex-col gap-1 items-end'}>
-            <p
-              className={`text-b2 font-bold dark:text-text-darkmode-primary 
-                                text-text-lightmode-primary`}
-            >
-              {numberFormatter(balance[curToken?.address].tokenAmount.uiAmount)}
-            </p>
-            <p
-              className={`text-b3 dark:text-text-darkmode-secondary text-text-lightmode-secondary 
-                                truncate font-semibold
-                                `}
-            >
-              ${bigNumberFormatter(new BigNumber(balance[curToken?.address].value.toString()))}
-            </p>
-          </div>
-        </div>
-      </DropdownMenuItem>
-    </div>
-  }
 
   return (
     <InputGroup
@@ -576,6 +438,11 @@ function TokenSelectionInput({
                   setSearchValue(e.target.value)
                 }}
                 onClear={() => setSearchValue('')}
+                additionalInputElementRight={isLoadingTokenList ? <Icon
+                  src={`/img/assets/refresh_${mode}.svg`}
+                  className={'animate-spin'}
+                  size={'sm'}
+                /> : null}
               />
               <div className={'border-b border-solid dark:border-black-4 border-grey-4'}>
                 <h5
@@ -602,7 +469,7 @@ function TokenSelectionInput({
                           setToken(token)
                           setIsDropdownOpen.off()
                         }}
-                        disabled={otherToken?.address == token?.address}
+                        disabled={otherToken?.address == token?.address || isLoadingTokenList}
                         iconLeft={
                           <Icon
                             src={loadIconImage(token?.logoURI, mode)}
@@ -624,25 +491,13 @@ function TokenSelectionInput({
               {searchValue && tokenList.length == 0 ? <div className={'mb-auto p-2'}>
                 No Tokens Found..
               </div> : null}
-              <InfiniteLoader
-                isItemLoaded={isItemLoaded}
-                itemCount={itemCount}
-                loadMoreItems={loadMoreItems}
-                threshold={1}
-              >
-                {({ onItemsRendered, ref }) => (
-                  <FixedSizeList
-                    className={'mt-2'}
-                    itemCount={itemCount}
-                    onItemsRendered={onItemsRendered}
-                    ref={ref}
-                    height={396}
-                    itemSize={58}
-                  >
-                    {Item}
-                  </FixedSizeList>
-                )}
-              </InfiniteLoader>
+              <InfiniteTokenList useRenderListLength={searchValue.trim().length > 0} tokenRenderList={tokenRenderList}
+                                 onTokenSelect={(token) => {
+                                   setToken(token)
+                                   setSearchValue('')
+                                 }}
+                                 RenderAs={DropdownMenuItem}
+                                 checkDisabled={(t) => (t?.address == otherToken?.address) || isLoadingTokenList} />
             </DropdownMenuContent>
           </DropdownMenu>
         </InputElementLeft>
@@ -662,7 +517,7 @@ function TokenSelectionInput({
 
 export default Step2
 
-function TokenListSkeleton() {
+export function TokenListSkeleton() {
   return <DropdownMenuItem
     disabled={false}
     className={`

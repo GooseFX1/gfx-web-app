@@ -3,34 +3,56 @@ import React, { InputHTMLAttributes } from 'react'
 import { useDarkMode } from '@/context'
 import useBoolean from '@/hooks/useBoolean'
 
-type SearchBarProps =  {
+type SearchBarProps = {
   onClear?: () => void
   value?: string | number
-  groupClassName?: string
+  groupClassName?: string,
+  additionalInputElementLeft?: JSX.Element
+  additionalInputElementRight?: JSX.Element
 } & InputHTMLAttributes<HTMLInputElement>
-const SearchBar = ({ onClear, value, groupClassName, className, onChange , ...rest }: SearchBarProps): JSX.Element => {
+const SearchBar = ({
+                     onClear,
+                     value,
+                     groupClassName,
+                     className,
+                     onChange,
+                     additionalInputElementLeft,
+                     additionalInputElementRight,
+                     ...rest
+                   }: SearchBarProps): JSX.Element => {
   const { mode } = useDarkMode()
   const [focus, setFocus] = useBoolean(false)
+  const showRight = (typeof value == 'string' && value.trim().length > 0) || +value > 0
   return (
     <InputGroup
       className={cn('min-w-[200px] w-full', groupClassName)}
       leftItem={
-        <InputElementLeft>
+        <InputElementLeft className={'flex gap-1.25'}>
           <Icon size={'sm'} src={`/img/assets/searchbar_${mode}${focus ? '_active' : ''}.svg`} alt="search-icon" />
+          {additionalInputElementLeft}
         </InputElementLeft>
       }
       rightItem={
-        <InputElementRight
-          onClick={onClear}
-          show={(typeof value == 'string' && value.trim().length > 0) || +value > 0}
-        >
-          <Icon
-            size={'sm'}
-            src={`/img/assets/search_farm_${mode}.svg`}
-            alt="search-icon"
-            className={'cursor-pointer'}
-          />
-        </InputElementRight>
+        showRight ?
+          <InputElementRight
+            className={'flex gap-1.25'}
+            onClick={onClear}
+            show={showRight}
+          >
+            {additionalInputElementRight}
+            <Icon
+              size={'sm'}
+              src={`/img/assets/search_farm_${mode}.svg`}
+              alt="search-icon"
+              className={'cursor-pointer'}
+            />
+          </InputElementRight> :
+          <InputElementRight
+            className={'flex gap-1.25'}
+            onClick={onClear}
+          >
+            {additionalInputElementRight}
+          </InputElementRight>
       }
     >
       <Input
