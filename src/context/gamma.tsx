@@ -38,6 +38,7 @@ import {
   BASE_SLIPPAGE,
   GAMMA_SORT_CONFIG,
   GAMMA_SORT_CONFIG_MAP,
+  JupToken,
   ModeOfOperation,
   Pool,
   POOL_LIST_PAGE_SIZE,
@@ -127,7 +128,8 @@ interface GAMMADataModel {
   viewRange: ViewRange
   setViewRange: Dispatch<SetStateAction<ViewRange>>
   computedViewRange: '24H' | '7D' | '30D'
-  handlePoolSort: (id: string) => void
+  handlePoolSort: (id: string) => void,
+  topBalancesWithTokenList: JupToken[]
 }
 
 export type TokenListToken = {
@@ -146,7 +148,7 @@ export type TokenListToken = {
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { userCache, connection, updateUserCache } = useConnectionConfig()
-  const { base58PublicKey, publicKey } = useWalletBalance()
+  const { base58PublicKey, publicKey, balance, topBalances } = useWalletBalance()
   const [gammaConfig, setGammaConfig] = useState<GAMMAConfig | null>(null)
   const [pools, setPools] = useState<GAMMAPool[]>([])
   const [user, setUser] = useState<GAMMAUser | null>(null)
@@ -569,6 +571,26 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setPoolPage(1)
   }
   const computedViewRange = viewRange == 0 ? '24H' : viewRange == 1 ? '7D' : '30D'
+
+  const topBalancesWithTokenList: JupToken[] = useMemo(() => {
+    const data = []
+    const hasTokenSet = new Set()
+    for (const tokenBalance of topBalances) {
+      if (!hasTokenSet.has(tokenBalance.mint)) {
+        hasTokenSet.add(tokenBalance.mint)
+        data.push({
+          ...tokenBalance,
+          address: tokenBalance.mint
+        })
+      }
+    }
+    for (const token of tokenList) {
+      if (!hasTokenSet.has(token.address)) {
+        data.push(token)
+      }
+    }
+    return data.sort((a, b) => (balance[a.address].value.gt(balance[b.address].value) ? -1 : 1))
+  }, [topBalances, tokenList, balance])
   return (
     <GAMMAContext.Provider
       value={{
@@ -626,7 +648,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setViewRange,
         viewRange,
         computedViewRange,
-        handlePoolSort
+        handlePoolSort,
+        topBalancesWithTokenList
       }}
     >
       {children}
