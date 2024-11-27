@@ -7,8 +7,8 @@ type SearchBarProps = {
   onClear?: () => void
   value?: string | number
   groupClassName?: string,
-  additionalInputElementLeft?: JSX.Element
-  additionalInputElementRight?: JSX.Element
+  additionalInputElementLeft?: JSX.Element | JSX.Element[]
+  additionalInputElementRight?: JSX.Element | JSX.Element[]
 } & InputHTMLAttributes<HTMLInputElement>
 const SearchBar = ({
                      onClear,

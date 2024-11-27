@@ -1,4 +1,14 @@
-import { Dispatch, FC, SetStateAction, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import {
+  Dispatch,
+  ElementType,
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState
+} from 'react'
 import {
   Button,
   Badge,
@@ -18,11 +28,11 @@ import {
   TooltipTrigger
 } from 'gfx-component-lib'
 import { TokenListToken, useDarkMode, useGamma } from '../../context'
-import { JupToken, POPULAR_TOKENS, TOKEN_LIST_PAGE_SIZE } from './constants'
+import { JupToken, POOL_LIST_PAGE_SIZE, POPULAR_TOKENS, TOKEN_LIST_PAGE_SIZE } from './constants'
 //import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
 import Text from '@/components/Text'
-import { fetchPoolsByMints, fetchTokensByPublicKey } from '@/api/gamma'
+import { fetchAndConcatAllPoolsByMints, fetchTokensByPublicKey } from '@/api/gamma'
 import { GAMMAPool } from '@/types/gamma'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { aborter, loadIconImage } from '@/utils'
@@ -112,7 +122,10 @@ const Step2: FC<{
   useLayoutEffect(() => {
     if (!tokenA || !tokenB) return
     const fetchPools = async () => {
-      const response = await fetchPoolsByMints(tokenA?.address, tokenB?.address)
+      const response = await fetchAndConcatAllPoolsByMints({
+        mintA: tokenA?.address, mintB: tokenB?.address,
+        page: 1, pageSize: POOL_LIST_PAGE_SIZE
+      })
       console.log('here', response)
       if (
         !response ||
@@ -555,23 +568,21 @@ function TokenSelectionInput({
 
 export default Step2
 
-export function TokenListSkeleton() {
-  return (
-    <DropdownMenuItem
-      disabled={false}
-      className={`
+export function TokenListSkeleton({ RenderAs }: { RenderAs: ElementType }) {
+  return <RenderAs
+    disabled={false}
+    className={`
                 cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full gap-3 items-center
                         hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
-    >
-      <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
-      <div className={'flex flex-col gap-1'}>
-        <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
-        <Skeleton className={`w-[88px] h-[18px] rounded-[2px]`} />
-      </div>
-      <div className={'flex flex-col gap-1 ml-auto'}>
-        <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
-        <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
-      </div>
-    </DropdownMenuItem>
-  )
+  >
+    <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
+    <div className={'flex flex-col gap-1'}>
+      <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
+      <Skeleton className={`w-[88px] h-[18px] rounded-[2px]`} />
+    </div>
+    <div className={'flex flex-col gap-1 ml-auto'}>
+      <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
+      <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
+    </div>
+  </RenderAs>
 }

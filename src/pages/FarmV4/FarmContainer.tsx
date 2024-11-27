@@ -1,9 +1,22 @@
-import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
+import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { useConnectionConfig, useDarkMode, useGamma, useRewardToggle } from '../../context'
-import { GAMMA_SORT_CONFIG, POOL_TYPE } from './constants'
+import { GAMMA_SORT_CONFIG, POOL_TYPE, TOKEN_LIST_PAGE_SIZE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Badge, Button, cn, Dialog, DialogBody, DialogContent, DialogOverlay, Icon, Switch } from 'gfx-component-lib'
+import {
+  Badge,
+  Button,
+  cn,
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogOverlay,
+  Icon,
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  Switch
+} from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import SearchBar from '@/components/common/SearchBar'
 import useBoolean from '@/hooks/useBoolean'
@@ -11,6 +24,8 @@ import FarmItems from './FarmItems'
 import Portfolio from './Portfolio'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import FarmSort from '@/pages/FarmV4/FarmSort'
+import { aborter, loadIconImage } from '@/utils'
+import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
 
 export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
@@ -20,25 +35,34 @@ export const FarmContainer: FC = () => {
     currentPoolType,
     openDepositWithdrawSlider,
     setCurrentPoolType,
-    searchTokens,
-    setSearchTokens,
     showCreatedPools,
     setShowCreatedPools,
     currentSort,
     showDeposited,
     setShowDeposited,
     filteredPools,
-    handlePoolSort
+    handlePoolSort,
+    selectedTokens,
+    removeSelectedToken,
+    addSelectedToken,
+    hasSelectedToken,
+    isLoadingTokenList,
+    topBalancesWithTokenList,
+    tokenList,
+    createPoolType,
+    updateTokenList,
+    setPage
   } = useGamma()
-  const { wallet } = useWallet()
+  const { wallet, publicKey } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
+  const [focusOnSearch, setFocusOnSearch] = useBoolean(false)
   const { isPortfolio } = useRewardToggle()
-
+  const [tokenListSearchValue, setTokenListSearchValue] = useState('')
   const pubKey: PublicKey | null = useMemo(
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
     [wallet?.adapter?.publicKey]
   )
-
+  const searchBarRef = React.useRef<HTMLDivElement>(null)
   useLayoutEffect(() => {
     if (openDepositWithdrawSlider) {
       document.body.style.overflow = 'hidden'
@@ -97,8 +121,39 @@ export const FarmContainer: FC = () => {
     },
     [showCreatedPools, userCache]
   )
-
-
+  useEffect(() => {
+    console.log('searching', tokenListSearchValue)
+    const abortSignal = aborter.addSignal('tokenList-main-page-search')
+    // faking search
+    if (tokenListSearchValue.trim().length == 0) {
+      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE, signal: abortSignal, createPool: false }).then(() =>
+        setPage(1)
+      )
+      return
+    }
+    const timeout = setTimeout(async () => {
+      console.log('seraching', tokenListSearchValue)
+      await updateTokenList(
+        {
+          page: 1,
+          pageSize: TOKEN_LIST_PAGE_SIZE,
+          searchValue: tokenListSearchValue,
+          signal: abortSignal,
+          createPool: false
+        },
+        false
+      )
+    }, 233)
+    return () => {
+      clearTimeout(timeout)
+      aborter.abortSignal('tokenList')
+    }
+  }, [tokenListSearchValue, currentPoolType])
+  console.log({ addSelectedToken, removeSelectedToken })
+  const isExpandedSearchOpen = tokenListSearchValue.length > 0
+  const tokenRenderList = tokenListSearchValue.length > 0 || createPoolType === 'primary' || !publicKey
+    ? tokenList
+    : topBalancesWithTokenList
   return (
     <div className={'flex flex-col gap-3.75'}>
       {!isPortfolio ? (
@@ -127,13 +182,71 @@ export const FarmContainer: FC = () => {
                 // }
               ]}
             />
-            <div className="flex items-center w-full justify-between">
-              <SearchBar
-                onChange={(e) => setSearchTokens(e?.target?.value)}
-                onClear={() => setSearchTokens('')}
-                value={searchTokens}
-                className={'!max-w-full flex-1 bg-white dark:bg-black-2'}
-              />
+            <div className="flex items-center w-full justify-between relative">
+              <Popover open={isExpandedSearchOpen || focusOnSearch}>
+                <PopoverAnchor className={'w-full max-w-[600px] mx-auto'}
+                               ref={searchBarRef}
+                >
+                  <SearchBar
+                    onChange={(e) => setTokenListSearchValue(e?.target?.value)}
+                    onClear={() => setTokenListSearchValue('')}
+                    value={tokenListSearchValue}
+                    className={'!max-w-full flex-1 bg-white dark:bg-black-2'}
+                    onFocusCapture={setFocusOnSearch.on}
+                    onBlurCapture={setFocusOnSearch.off}
+                    additionalInputElementLeft={
+                      <div className={'inline-flex gap-2'}>
+                        {selectedTokens.map((token) => (
+                          <Badge variant="default" size={'lg'}
+                                 className={'to-brand-secondaryGradient-secondary/50 py-[2.5px] gap-1 before:z-0'}>
+                            <Icon size={'sm'} src={loadIconImage(token.logoURI, mode)}
+                                  className={'rounded-full'}
+                                  onClick={() => removeSelectedToken(token)} />
+                            <h5 className={'text-text-white'}>{token.symbol}</h5>
+                            <Icon className={'!w-[11px] !h-[11px] !min-w-[11px] !min-h-[11px] z-10 cursor-pointer'}
+                                  src={`/img/assets/close-${mode}.svg`}
+                                  onClick={() => {
+                                    removeSelectedToken(token)
+                                    console.log('remove token', { token })
+                                  }} />
+                          </Badge>
+                        ))}</div>}
+                  />
+                </PopoverAnchor>
+                <PopoverContent onOpenAutoFocus={(e) => e.preventDefault()}
+                                style={{
+                                  width: `${searchBarRef.current?.clientWidth ?? 600}px`
+                                }}
+                >
+                  {tokenListSearchValue && tokenRenderList.length == 0 ? <div className={'mb-auto p-2'}>
+                    No Tokens Found..
+                  </div> : null}
+                  {!tokenListSearchValue && focusOnSearch ? <div className={'mb-auto p-2'}>
+                    Search for token or paste mint address
+                  </div> : null}
+                  {tokenListSearchValue && <InfiniteTokenList
+                    useRenderListLength={tokenListSearchValue.trim().length > 0}
+                    tokenRenderList={tokenRenderList}
+                    onTokenSelect={(t) => {
+                      setTokenListSearchValue('')
+                      addSelectedToken(t)
+                    }}
+                    checkDisabled={(t) => hasSelectedToken(t)
+                      || isLoadingTokenList ||
+                      selectedTokens.length == 2}
+                    RenderAs={({ children, className, ...props }) => <Button
+                      {...props}
+                      fullWidth
+                      variant={''}
+                      className={cn(`p-1.5 text-start rounded-[3px] h-auto
+                       hover:bg-background-lightmode-primary hover:dark:bg-background-darkmode-primary
+                      `, className)}
+                    >
+                      {children}
+                    </Button>}
+                  />}
+                </PopoverContent>
+              </Popover>
               <div className="flex justify-between items-center">
                 {breakpoint.isMobile ? (
                   <div>
