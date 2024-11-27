@@ -155,7 +155,7 @@ export function InfiniteTokenList({
         itemCount={itemCount}
         onItemsRendered={onItemsRendered}
         ref={ref}
-        height={clamp(tokenListLength * 58, 58, 396)}
+        height={clamp(tokenListLength * 58, 0, 396)}
         itemSize={58}
       >
         {Item}
