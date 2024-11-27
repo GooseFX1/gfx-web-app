@@ -11,7 +11,7 @@ import {
 } from 'react'
 import { getFarmTokenPrices } from '../api/SSL'
 import { Program, Provider } from '@project-serum/anchor'
-import { Program as coralProgram, AnchorProvider } from "@coral-xyz/anchor"
+import { Program as coralProgram, AnchorProvider } from "anchor301"
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
 import { getStakingAccountKey, SSL_PROGRAM_ID } from '../web3'
 import { useConnectionConfig } from './settings'
@@ -103,7 +103,6 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
     () =>
       new coralProgram(
         GammaJson as any,
-        GAMMA_PROGRAM_ID,
         new AnchorProvider(connection, wal as WalletContextState, { commitment: 'finalized' })
       ),
     [connection]

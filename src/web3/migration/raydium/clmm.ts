@@ -79,26 +79,52 @@ const getClmmTickArrayKey = async (poolId: PublicKey, tickArrayStartIndex: numbe
     }
 }
 
-export const getAccountsForRaydiumClmmWithdraw = async (inputMint: PublicKey, outputMint: PublicKey, userPubKey: PublicKey) => {
-    const inputTokenAccount: PublicKey =  getAssociatedTokenAddressSync(inputMint, userPubKey)
-    const outputTokenAccount: PublicKey = getAssociatedTokenAddressSync(outputMint, userPubKey)
-    const ammConfig = await getClmmAmmConfigId(0)
+
+export const getAccountsForRaydiumClmmWithdraw = async (
+    inputMint: PublicKey, 
+    outputMint: PublicKey, 
+    userPubKey: PublicKey
+) => {
+    const ammConfig = await getClmmAmmConfigId(0) // TODO:MIGRATION check the index of amm config for raydium CLMM pools
     const poolState = await getClmmPoolIdKey(ammConfig, inputMint, outputMint)
     const inputVault = await getClmmPoolVaultKey(poolState, inputMint?.toBase58())
     const outputVault = await getClmmPoolVaultKey(poolState, outputMint?.toBase58())
-    const observationState = await getClmmObservationStateKey(poolState)
     
     return {
       raydiumClmmProgram: toPublicKey(CLMM_PROGRAM_ID),
-      raydiumNftOwner: userPubKey,
-      raydiumNftAccount: null,
-      ammConfig,
-      poolState,
-      inputTokenAccount,
-      outputTokenAccount,
-      inputVault,
-      outputVault,
-      observationState,
+      raydiumClmmNftOwner: userPubKey,
+      raydiumClmmNftAccount: null, // TODO:MIGRATION 
+      raydiumClmmPersonalPosition: null, // TODO:MIGRATION 
+      raydiumClmmPoolState: poolState,
+      raydiumClmmProtocolPosition: null, // TODO:MIGRATION 
+      raydiumClmmTokenVault0: inputVault,
+      raydiumClmmTokenVault1: outputVault,
+      raydiumClmmTickArrayLower: null, // TODO:MIGRATION 
+      raydiumClmmTickArrayUpper: null, // TODO:MIGRATION 
+    }
+}
+
+export const getAccountsForRaydiumClmmWithdrawV2 = async (
+    inputMint: PublicKey, 
+    outputMint: PublicKey, 
+    userPubKey: PublicKey
+) => {
+    const ammConfig = await getClmmAmmConfigId(0) // TODO:MIGRATION check the index of amm config for raydium CLMM pools
+    const poolState = await getClmmPoolIdKey(ammConfig, inputMint, outputMint)
+    const inputVault = await getClmmPoolVaultKey(poolState, inputMint?.toBase58())
+    const outputVault = await getClmmPoolVaultKey(poolState, outputMint?.toBase58())
+    
+    return {
+      raydiumClmmProgram: toPublicKey(CLMM_PROGRAM_ID),
+      raydiumClmmNftOwner: userPubKey,
+      raydiumClmmNftAccount: null, // TODO:MIGRATION 
+      raydiumClmmPersonalPosition: null, // TODO:MIGRATION 
+      raydiumClmmPoolState: poolState,
+      raydiumClmmProtocolPosition: null, // TODO:MIGRATION 
+      raydiumClmmTokenVault0: inputVault,
+      raydiumClmmTokenVault1: outputVault,
+      raydiumClmmTickArrayLower: null, // TODO:MIGRATION 
+      raydiumClmmTickArrayUpper: null, // TODO:MIGRATION 
       memoProgram: new PublicKey(MEMO_PROGRAM_ID)
     }
 }

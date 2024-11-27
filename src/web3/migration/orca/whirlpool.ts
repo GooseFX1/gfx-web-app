@@ -54,30 +54,27 @@ export function getOracle(programId: PublicKey, whirlpoolAddress: PublicKey) {
   );
 }
 
-export const getAccountsForOrcaWhirlpool = async (
+
+export const getAccountsForOrcaWhirlpoolV2 = async (
   rpcURL: string,
+  startTick: number,
   inputMint: PublicKey,
   outputMint: PublicKey,
-  user: PublicKey
+  tokenProgramInputMint: PublicKey = TOKEN_PROGRAM_ID,
+  tokenProgramOutputMint: PublicKey = TOKEN_PROGRAM_ID,
 ) : Promise<Accounts> => {
   const mainnetRpc = createSolanaRpc(mainnet(rpcURL));
   const whirlpoolPools = await fetchWhirlpoolsByTokenPair(mainnetRpc, inputMint, outputMint);
-  // const whirlpool = await fetchWhirlpool(mainnetRpc, whirlpoolPools[0].address);
-  const tokenOwnerAccountA = getAssociatedTokenAddressSync(inputMint, user);
-  const tokenOwnerAccountB = getAssociatedTokenAddressSync(outputMint, user);
-  const tokenVaultA = getAssociatedTokenAddressSync(inputMint, whirlpoolPools[0].address, true);
+  const tokenVaultA = getAssociatedTokenAddressSync(inputMint, whirlpoolPools[0].address, true); //TODO:MIGRATION check if 0th index is the actual pool
   const tokenVaultB = getAssociatedTokenAddressSync(outputMint, whirlpoolPools[0].address, true);
   let whirlpoolProgramId = new PublicKey(ORCA_WHIRLPOOL_PROGRAM_ID);
-  // let whirlpoolPdaAddress = getWhirlpool(whirlpoolProgramId,);
-  let startTick = 0;
   let tickArray0 = getTickArray(whirlpoolProgramId, whirlpoolPools[0].address, startTick)[0];
-  let oracle = getOracle(whirlpoolProgramId, whirlpoolPools[0].address)[0];
 
   const accounts: Accounts = {
     whirlpoolProgram: whirlpoolProgramId,
     whirlpool: whirlpoolPools[0].address,
-    tokenProgramA: TOKEN_PROGRAM_ID,
-    tokenProgramB: TOKEN_PROGRAM_ID,
+    tokenProgramA: tokenProgramInputMint,
+    tokenProgramB: tokenProgramOutputMint,
     memoProgram: MEMO_PROGRAM_ADDRESS,
     whirlpoolPosition: inputMint,
     whirlpoolPositionTokenAccount: outputMint,
@@ -86,11 +83,33 @@ export const getAccountsForOrcaWhirlpool = async (
     whirlpoolTickArrayLower: tickArray0,
     whirlpoolTickArrayUpper: tickArray0,
   }
-  //  tokenOwnerAccountA: tokenOwnerAccountA,
-  // tokenOwnerAccountB: tokenOwnerAccountB,
-  // tickArray2: tickArray0,
-  // tokenAuthority: user,
-  // oracle: oracle,
+
+  return accounts
+}
+
+export const getAccountsForOrcaWhirlpool = async (
+  rpcURL: string,
+  startTick: number,
+  inputMint: PublicKey,
+  outputMint: PublicKey,
+) : Promise<Accounts> => {
+  const mainnetRpc = createSolanaRpc(mainnet(rpcURL));
+  const whirlpoolPools = await fetchWhirlpoolsByTokenPair(mainnetRpc, inputMint, outputMint);
+  const tokenVaultA = getAssociatedTokenAddressSync(inputMint, whirlpoolPools[0].address, true); //TODO:MIGRATION check if 0th index is the actual pool
+  const tokenVaultB = getAssociatedTokenAddressSync(outputMint, whirlpoolPools[0].address, true);
+  let whirlpoolProgramId = new PublicKey(ORCA_WHIRLPOOL_PROGRAM_ID);
+  let tickArray0 = getTickArray(whirlpoolProgramId, whirlpoolPools[0].address, startTick)[0];
+
+  const accounts: Accounts = {
+    whirlpoolProgram: whirlpoolProgramId,
+    whirlpool: whirlpoolPools[0].address,
+    whirlpoolPosition: inputMint,
+    whirlpoolPositionTokenAccount: outputMint,
+    whirlpoolTokenVaultA: tokenVaultA,
+    whirlpoolTokenVaultB: tokenVaultB,
+    whirlpoolTickArrayLower: tickArray0,
+    whirlpoolTickArrayUpper: tickArray0,
+  }
 
   return accounts
 }

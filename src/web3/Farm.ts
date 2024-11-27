@@ -7,7 +7,6 @@ import {
   NATIVE_MINT,
   createCloseAccountInstruction
 } from '@solana/spl-token-v2'
-import { Idl, Program } from '@project-serum/anchor'
 import { Transaction } from '@solana/web3.js'
 import BN from 'bn.js'
 import {
@@ -27,13 +26,20 @@ import {
 } from './ids'
 import { convertToNativeValue, withdrawBigStringFarm } from '@/utils'
 import { JupToken } from '@/pages/FarmV4/constants'
-import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token
+import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { getAccountsForMeteoraDlmm } from './migration/meteora/dlmm'
-import { getAccountsForOrcaWhirlpool } from './migration/orca/whirlpoolorcaAccounts
-import { getAccountsForRaydiumClmmWithdraw } from './migration/raydium/clmm'
+import { getAccountsForOrcaWhirlpool, getAccountsForOrcaWhirlpoolV2 } from './migration/orca/whirlpool'
+import { getAccountsForRaydiumClmmWithdraw, getAccountsForRaydiumClmmWithdrawV2 } from './migration/raydium/clmm'
 import { getAccountsForRaydiumCPMMWithdraw } from './migration/raydium/cpmm'
+import { IdlTypes } from "anchor0290";
+import { Idl, Program } from "anchor301";
+import { LbClmm } from './migration/meteora/dlmm_idl'
+import { Gamma } from './migration/gamma_types'
 
-enum TokenType {
+export type BinLiquidityReduction = IdlTypes<LbClmm>["BinLiquidityReduction"];
+export type RemainingAccountsInfo = IdlTypes<Gamma>["RemainingAccountsInfo"];
+
+export enum TokenType {
   Token0,
   Token1
 }
@@ -143,9 +149,9 @@ const createLiquidityAccountIX = async (
     userPoolLiquidity: liquidityAccountKey,
     systemProgram: SYSTEM
   }
-  const createLiquidityIX: TransactionInstruction = await program.instruction.initUserPoolLiquidity({
+  const createLiquidityIX: TransactionInstruction = await program.methods.initUserPoolLiquidity({
     accounts: createLiquidityInstructionAccount
-  })
+  }).instruction()
   //console.log('createLiquidityIX', createLiquidityIX, userPublicKey?.toBase58())
   return createLiquidityIX
 }
@@ -218,17 +224,17 @@ const getAccountsForCreatePool = async (token0: PublicKey, token1: PublicKey, us
     token1Program: TOKEN_PROGRAM_ID,
     associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
     systemProgram: SYSTEM,
-    rent: SYS_VAR_RENT
+    rent: SYS_VAR_RENT,
   }
 
   return accountObj
 }
 
-export const await calculateOtherTokenAndLPAmount = async (
+export const calculateOtherTokenAndLPAmount = async (
   givenTokenAmount: string,
   tokenType: TokenType,
   poolState: any,
-  connection: Connection
+  connection: Connection,
 ): Promise<{ lpTokenAmount: BN; otherTokenAmountInString: string }> => {
   try {
     if (!givenTokenAmount || +givenTokenAmount <= 0) {
@@ -333,7 +339,7 @@ export const lpTokensToTradingTokens = async (
 }
 
 
-//Instruction - 1
+//Instruction - 8
 export const deposit = async (
   userSourceDepositAmount: string,
   userTargetDepositAmount: string,
@@ -347,7 +353,6 @@ export const deposit = async (
   const mintA = new PublicKey(selectedCard?.mintA?.address)
   const mintB = new PublicKey(selectedCard?.mintB?.address)
   const depositAccounts = await getGammaAccounts(mintA, mintB, userPublicKey, true)
-  const depositInstructionAccount = { ...depositAccounts }
   const liqAccData = await connection.getAccountInfo(depositAccounts?.userPoolLiquidity)
   let liquidityAccIX = undefined
   if (!liqAccData) {
@@ -365,14 +370,13 @@ export const deposit = async (
   const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.mintA?.decimals)
   const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.mintB?.decimals)
   //console.log('user deposits of native value', token0Amount, token1Amount, lpAmount?.toNumber())
-  const depositIX: TransactionInstruction = await program.instruction.deposit(
+  const depositIX: TransactionInstruction = await program.methods.deposit(
     lpAmount,
     new BN(token0Amount),
     new BN(token1Amount),
-    {
-      accounts: depositInstructionAccount
-    }
   )
+  .accountsStrict(depositAccounts)
+  .instruction()
   let depositAmountTX: Transaction
   if (selectedCard?.mintA?.symbol === 'SOL') {
     depositAmountTX = await wrapSolToken(userPublicKey, connection, userSourceDepositAmount)
@@ -400,7 +404,7 @@ export const deposit = async (
   return depositAmountTX
 }
 
-//Instruction - 2
+//Instruction - 9
 export const withdraw = async (
   userSourceWithdrawAmount: string,
   userTargetWithdrawAmount: string,
@@ -412,7 +416,9 @@ export const withdraw = async (
   connection: Connection
 ): Promise<Transaction> => {
   //console.log('user withdraws', userSourceWithdrawAmount, userTargetWithdrawAmount)
-  const withdrawAccounts = await getGammaAccounts(selectedCard, userPublicKey, false)
+  const mintA = new PublicKey(selectedCard?.mintA?.address)
+  const mintB = new PublicKey(selectedCard?.mintB?.address)
+  const withdrawAccounts = await getGammaAccounts(mintA, mintB, userPublicKey, false)
   const withdrawInstructionAccount = { ...withdrawAccounts }
   const token0SlippageAmount = handleSlippageCalculation(userSourceWithdrawAmount, slippage, false)
   const token1SlippageAmount = handleSlippageCalculation(userTargetWithdrawAmount, slippage, false)
@@ -439,14 +445,14 @@ export const withdraw = async (
   )
   if (createTokenB) withdrawAmountTX.add(createTokenB)
 
-  const withdrawIX: TransactionInstruction = await program.instruction.withdraw(
+  const withdrawIX: TransactionInstruction = await program.methods.withdraw(
     lpAmount,
     new BN(token0Amount),
     new BN(token1Amount),
     {
       accounts: withdrawInstructionAccount
     }
-  )
+  ).instruction()
   withdrawAmountTX.add(withdrawIX)
 
   if (selectedCard?.mintA?.symbol === 'SOL') {
@@ -465,14 +471,14 @@ export const withdraw = async (
   return withdrawAmountTX
 }
 
-//Instruction - 3
+//Instruction - 6
 export const createPool = async (
   tokenA: JupToken,
   tokenB: JupToken,
   amountTokenA: string,
   amountTokenB: string,
   userPubKey: PublicKey,
-  program: Program,
+  program: Program<Idl>,
   connection: Connection
 ) => {
   let token0 = new PublicKey(tokenA?.address)
@@ -500,14 +506,14 @@ export const createPool = async (
   const createPoolAcc = { ...accsForCreatePool }
   const amountTokenABN = convertToNativeValue(amountToken0, decimalsToken0)
   const amountTokenBBN = convertToNativeValue(amountToken1, decimalsToken1)
-  const createPoolIX: TransactionInstruction = await program.instruction.initialize(
+  const createPoolIX: TransactionInstruction = await program.methods.initialize(
     new BN(amountTokenABN),
     new BN(amountTokenBBN),
     new BN(Math.floor(Date.now() / 1000)),
     {
       accounts: createPoolAcc
     }
-  )
+  ).instruction()
   let createPoolTxn: Transaction
   if (token0Symbol === 'SOL') createPoolTxn = await wrapSolToken(userPubKey, connection, amountToken0)
   else if (token1Symbol === 'SOL') createPoolTxn = await wrapSolToken(userPubKey, connection, amountToken1)
@@ -528,14 +534,19 @@ export const createPool = async (
   return createPoolTxn
 }
 
-//Instruction - 4
+//Instruction - 12
 export const migrateMeteoraDlmmToGamma = async (
   connection: Connection,
-  program: Program,
-  user: PublicKey
+  program: any, //Program<Idl>,
+  user: PublicKey,
+  userSourceDepositAmount: string,
+  userTargetDepositAmount: string,
   inputMint: PublicKey,
   outputMint: PublicKey,
   tokenAmount: string,
+  slippage: number,
+  selectedCard: any,
+  binLiquidityReduction: BinLiquidityReduction,
 ) => {
   const meteoraDlmmAccounts = await getAccountsForMeteoraDlmm(connection, inputMint, outputMint, user)
   const gammaAccounts = await getGammaAccounts(inputMint, outputMint, user, true)
@@ -553,49 +564,60 @@ export const migrateMeteoraDlmmToGamma = async (
     tokenProgram: gammaAccounts.tokenProgram,
     tokenProgram2022: gammaAccounts.tokenProgram2022,
     gammaVault0Mint: gammaAccounts.vault0Mint,
-    gammaVault1Min: gammaAccounts.vault1Mint
+    gammaVault1Mint: gammaAccounts.vault1Mint,
   }
-
-  const binLiquidityReduction = 0
+  let poolStateAccount = program.account.poolState.fetch(gammaAccounts.poolState);
   const { lpTokenAmount } = await calculateOtherTokenAndLPAmount(
     tokenAmount, 
-    0, 
-    gammaAccounts.gammaPoolState, 
+    TokenType.Token0, //TODO:
+    poolStateAccount, 
     connection
   )
-  const maximumToken0Amount = 0
-  const maximumToken1Amount = 0
-
-  const migrateMeteoraDlmmToGammaIX: TransactionInstruction = await program.instruction.migrateMeteoraDlmmToGamma(
+  
+  const token0SlippageAmount = handleSlippageCalculation(userSourceDepositAmount, slippage, true)
+  const token1SlippageAmount = handleSlippageCalculation(userTargetDepositAmount, slippage, true)
+  const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.mintA?.decimals)
+  const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.mintB?.decimals)
+  
+  const migrateMeteoraDlmmToGammaIX: TransactionInstruction = await program.methods.migrateMeteoraDlmmToGamma(
     binLiquidityReduction,
     lpTokenAmount,
-    maximumToken0Amount,
-    maximumToken1Amount,
-    { accounts }
+    new BN(token0Amount),
+    new BN(token1Amount),
   )
+  .accountsStrict(accounts)
+  .instruction()
   
   const migrateMeteoraDlmmToGammaTxn: Transaction = new Transaction()
   migrateMeteoraDlmmToGammaTxn.add(migrateMeteoraDlmmToGammaIX)
   return migrateMeteoraDlmmToGammaTxn
 }
 
-//Instruction - 5
-export const migrateOrcaWhirlpoolToGamma = async (
+//Instruction - 13
+export const migrateOrcaWhirlpoolToGammaV2 = async (
   program: Program,
   rpcURL: string,
-  tokenA: PublicKey,
-  tokenB: PublicKey,
+  inputMint: PublicKey,
+  outputMint: PublicKey,
+  tokenProgramInputMint: PublicKey = TOKEN_PROGRAM_ID,
+  tokenProgramOutputMint: PublicKey = TOKEN_PROGRAM_ID,
   user: PublicKey
 ) => {
-  const orcaAccounts = await getAccountsForOrcaWhirlpool(rpcURL,tokenA, tokenB, user)
+  const startTick = 0; //TODO:MIGRATION
+  const orcaAccounts = await getAccountsForOrcaWhirlpoolV2(
+    rpcURL,
+    startTick,
+    inputMint,
+    outputMint,
+    tokenProgramInputMint,
+    tokenProgramOutputMint,
+  )
   const gammaAccounts = await getGammaAccounts(inputMint, outputMint, user, true)
 
   // TODO: get whirlpoolPosition and whirlpoolPositionTokenAccount
 
   const accounts = {
     ...orcaAccounts,
-    whirlpoolPosition: null,
-    whirlpoolPositionTokenAccount: null,
     gammaOwner: gammaAccounts.owner,
     gammaAuthority: gammaAccounts.authority,
     gammaPoolState: gammaAccounts.poolState,
@@ -607,36 +629,93 @@ export const migrateOrcaWhirlpoolToGamma = async (
     tokenProgram: gammaAccounts.tokenProgram,
     tokenProgram2022: gammaAccounts.tokenProgram2022,
     gammaVault0Mint: gammaAccounts.vault0Mint,
-    gammaVault1Min: gammaAccounts.vault1Mint
+    gammaVault1Mint: gammaAccounts.vault1Mint,
   }
 
-  const liquidityAmount = 0
-  const tokenMinA = 0
-  const tokenMinB = 0
-  const remainingAccounts = 0
-  const lpTokenAmount = 0
-  const maximumToken0Amount = 0
-  const maximumToken1Amount = 0
+  const liquidityAmount = new BN(0) //TODO:MIGARTION
+  const tokenMinA = new BN(0) //TODO:MIGARTION
+  const tokenMinB = new BN(0) //TODO:MIGARTION
+  const remainingAccounts = new BN(0)  //TODO:MIGARTION remove this and use below with proper structs
+  // const remainingAccounts: RemainingAccountsInfo = {}  //TODO:MIGARTION
+  const maximumToken0Amount = new BN(0) //TODO:MIGARTION
+  const maximumToken1Amount = new BN(0) //TODO:MIGARTION
 
   const migrateOrcaWhirlpoolToGammaIX: TransactionInstruction =
-    await program.instruction.migrateOrcaWhirlpoolToGammaV2(
+    await program.methods.migrateOrcaWhirlpoolToGammaV2(
       liquidityAmount,
       tokenMinA,
       tokenMinB,
       remainingAccounts,
-      lpTokenAmount,
       maximumToken0Amount,
       maximumToken1Amount,
-      { accounts }
     )
+    .accountsStrict(accounts)
+    .instruction()
   
   const migrateOrcaWhirlpoolToGammaTxn: Transaction = new Transaction()
   migrateOrcaWhirlpoolToGammaTxn.add(migrateOrcaWhirlpoolToGammaIX)
   return migrateOrcaWhirlpoolToGammaTxn
 }
 
-//Instruction - 6
-export const migrateRaydiumClmmToGamma = async (program: Program, tokenA: PublicKey, tokenB: PublicKey, user: PublicKey) => {
+//Instruction - 14
+export const migrateOrcaWhirlpoolToGamma = async (
+  program: Program,
+  rpcURL: string,
+  inputMint: PublicKey,
+  outputMint: PublicKey,
+  user: PublicKey
+) => {
+  const startTick = 0; //TODO:MIGRATION 
+  const orcaAccounts = await getAccountsForOrcaWhirlpool(rpcURL, startTick, inputMint, outputMint)
+  const gammaAccounts = await getGammaAccounts(inputMint, outputMint, user, true)
+
+  // TODO: get whirlpoolPosition and whirlpoolPositionTokenAccount
+
+  const accounts = {
+    ...orcaAccounts,
+    gammaOwner: gammaAccounts.owner,
+    gammaAuthority: gammaAccounts.authority,
+    gammaPoolState: gammaAccounts.poolState,
+    gammaUserPoolLiquidity: gammaAccounts.userPoolLiquidity,
+    gammaToken0Account: gammaAccounts.token0Account,
+    gammaToken1Account: gammaAccounts.token1Account,
+    gammaToken0Vault: gammaAccounts.token0Vault,
+    gammaToken1Vault: gammaAccounts.token1Vault,
+    tokenProgram: gammaAccounts.tokenProgram,
+    tokenProgram2022: gammaAccounts.tokenProgram2022,
+    gammaVault0Mint: gammaAccounts.vault0Mint,
+    gammaVault1Mint: gammaAccounts.vault1Mint,
+  }
+
+  const liquidityAmount = new BN(0) //TODO:MIGARTION
+  const tokenMinA = new BN(0) //TODO:MIGARTION
+  const tokenMinB = new BN(0) //TODO:MIGARTION
+  const maximumToken0Amount = new BN(0) //TODO:MIGARTION
+  const maximumToken1Amount = new BN(0) //TODO:MIGARTION
+
+  const migrateOrcaWhirlpoolToGammaIX: TransactionInstruction =
+    await program.methods.migrateOrcaWhirlpoolToGamma(
+      liquidityAmount,
+      tokenMinA,
+      tokenMinB,
+      maximumToken0Amount,
+      maximumToken1Amount,
+    )
+    .accountsStrict(accounts)
+    .instruction()
+  
+  const migrateOrcaWhirlpoolToGammaTxn: Transaction = new Transaction()
+  migrateOrcaWhirlpoolToGammaTxn.add(migrateOrcaWhirlpoolToGammaIX)
+  return migrateOrcaWhirlpoolToGammaTxn
+}
+
+//Instruction - 15
+export const migrateRaydiumClmmToGamma = async (
+  program: Program, 
+  tokenA: PublicKey, 
+  tokenB: PublicKey,
+  user: PublicKey,
+) => {
   const raydiumCLMMAccounts = await getAccountsForRaydiumClmmWithdraw(tokenA, tokenB, user)
   const gammaAccounts = await getGammaAccounts(tokenA, tokenB, user, true)
 
@@ -656,23 +735,70 @@ export const migrateRaydiumClmmToGamma = async (program: Program, tokenA: Public
     gammaVault1Min: gammaAccounts.vault1Mint
   }
 
-  const liquidity = 0
-  const amount0Min = 0
-  const amount1Min = 0
-  const lpTokenAmount = 0
-  const maximumToken0Amount = 0
-  const maximumToken1Amount = 0
+  const liquidity = new BN(0) //TODO:MIGRATION
+  const amount0Min = new BN(0) //TODO:MIGRATION
+  const amount1Min = new BN(0) //TODO:MIGRATION
+  const maximumToken0Amount = new BN(0) //TODO:MIGRATION
+  const maximumToken1Amount = new BN(0) //TODO:MIGRATION
 
   const migrateRaydiumClmmToGammaIX: TransactionInstruction =
-    await program.instruction.migrateRaydiumClmmToGamma(
+    await program.methods.migrateRaydiumClmmToGammaV2(
       liquidity,
       amount0Min,
       amount1Min,
-      lpTokenAmount,
       maximumToken0Amount,
       maximumToken1Amount,
-      { accounts }
     )
+    .accountsStrict(accounts)
+    .instruction()
+
+  const migrateRaydiumClmmToGammaTxn: Transaction = new Transaction()
+  migrateRaydiumClmmToGammaTxn.add(migrateRaydiumClmmToGammaIX)
+  return migrateRaydiumClmmToGammaTxn
+}
+
+//Instruction - 16
+export const migrateRaydiumClmmToGammaV2 = async (
+  program: Program, 
+  tokenA: PublicKey, 
+  tokenB: PublicKey, 
+  user: PublicKey
+) => {
+  const raydiumCLMMAccounts = await getAccountsForRaydiumClmmWithdrawV2(tokenA, tokenB, user)
+  const gammaAccounts = await getGammaAccounts(tokenA, tokenB, user, true)
+
+  const accounts = {
+    ...raydiumCLMMAccounts,
+    gammaOwner: gammaAccounts.owner,
+    gammaAuthority: gammaAccounts.authority,
+    gammaPoolState: gammaAccounts.poolState,
+    gammaUserPoolLiquidity: gammaAccounts.userPoolLiquidity,
+    gammaToken0Account: gammaAccounts.token0Account,
+    gammaToken1Account: gammaAccounts.token1Account,
+    gammaToken0Vault: gammaAccounts.token0Vault,
+    gammaToken1Vault: gammaAccounts.token1Vault,
+    tokenProgram: gammaAccounts.tokenProgram,
+    tokenProgram2022: gammaAccounts.tokenProgram2022,
+    gammaVault0Mint: gammaAccounts.vault0Mint,
+    gammaVault1Min: gammaAccounts.vault1Mint
+  }
+
+  const liquidity = new BN(0) //TODO:MIGRATION
+  const amount0Min = new BN(0) //TODO:MIGRATION
+  const amount1Min = new BN(0) //TODO:MIGRATION
+  const maximumToken0Amount = new BN(0) //TODO:MIGRATION
+  const maximumToken1Amount = new BN(0) //TODO:MIGRATION
+
+  const migrateRaydiumClmmToGammaIX: TransactionInstruction =
+    await program.methods.migrateRaydiumClmmToGammaV2(
+      liquidity,
+      amount0Min,
+      amount1Min,
+      maximumToken0Amount,
+      maximumToken1Amount,
+    )
+    .accountsStrict(accounts)
+    .instruction()
 
   const migrateRaydiumClmmToGammaTxn: Transaction = new Transaction()
   migrateRaydiumClmmToGammaTxn.add(migrateRaydiumClmmToGammaIX)
@@ -705,14 +831,14 @@ export const migrateRaydiumCpSwapToGamma = async (program: Program, tokenA: Publ
   const minimumToken1Amount = 0
   const maximumToken0Amount = 0
   const maximumToken1Amount = 0
-  const migrateRaydiumCpSwapIX: TransactionInstruction = await program.instruction.migrateRaydiumCpSwap(
+  const migrateRaydiumCpSwapIX: TransactionInstruction = await program.methods.migrateRaydiumCpSwap(
      lpTokenAmount,
      minimumToken0Amount,
      minimumToken1Amount,
      maximumToken0Amount,
      maximumToken1Amount,
     { accounts }
-  )
+  ).instruction()
 
   const migrateRaydiumCpSwapTxn: Transaction = new Transaction()
   migrateRaydiumCpSwapTxn.add(migrateRaydiumCpSwapIX)

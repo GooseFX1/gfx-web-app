@@ -32,6 +32,7 @@ import { bigNumberFormatter } from '@/utils'
 import { blob, publicKey as pbk, struct, u128, u32, u64, u8 } from '@/utils/marshmallow'
 import useBoolean from '@/hooks/useBoolean'
 import LottieConfetti from '@/pages/FarmV4/LottieConfetti'
+import { PublicKey } from '@solana/web3.js'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()

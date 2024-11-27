@@ -447,6 +447,8 @@
         "* `init_amount_0` - the initial amount_0 to deposit",
         "* `init_amount_1` - the initial amount_1 to deposit",
         "* `open_time` - the timestamp allowed for swap",
+        "* `max_trade_fee_rate` - The maximum trade fee that can be charged on swaps",
+        "* `volatility_factor` - The volatility factor of the pool to determine the trade fee",
         ""
       ],
       "accounts": [
@@ -607,6 +609,14 @@
         {
           "name": "openTime",
           "type": "u64"
+        },
+        {
+          "name": "maxTradeFeeRate",
+          "type": "u64"
+        },
+        {
+          "name": "volatilityFactor",
+          "type": "u64"
         }
       ]
     },
@@ -637,7 +647,14 @@
           ]
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "partner",
+          "type": {
+            "option": "string"
+          }
+        }
+      ]
     },
     {
       "name": "deposit",
@@ -1520,21 +1537,6 @@
           "isSigner": false
         },
         {
-          "name": "tokenProgramA",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgramB",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "memoProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
           "name": "whirlpoolPosition",
           "isMut": true,
           "isSigner": false
@@ -1800,22 +1802,6 @@
           ]
         },
         {
-          "name": "gammaVault0Mint",
-          "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "The mint of token_0 vault"
-          ]
-        },
-        {
-          "name": "gammaVault1Mint",
-          "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "The mint of token_1 vault"
-          ]
-        },
-        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false,
@@ -1829,6 +1815,22 @@
           "isSigner": false,
           "docs": [
             "Token program 2022"
+          ]
+        },
+        {
+          "name": "gammaVault0Mint",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The mint of token_0 vault"
+          ]
+        },
+        {
+          "name": "gammaVault1Mint",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The mint of token_1 vault"
           ]
         }
       ],
@@ -1977,22 +1979,6 @@
           ]
         },
         {
-          "name": "gammaVault0Mint",
-          "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "The mint of token_0 vault"
-          ]
-        },
-        {
-          "name": "gammaVault1Mint",
-          "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "The mint of token_1 vault"
-          ]
-        },
-        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false,
@@ -2006,6 +1992,22 @@
           "isSigner": false,
           "docs": [
             "Token program 2022"
+          ]
+        },
+        {
+          "name": "gammaVault0Mint",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The mint of token_0 vault"
+          ]
+        },
+        {
+          "name": "gammaVault1Mint",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The mint of token_1 vault"
           ]
         }
       ],
@@ -2570,6 +2572,25 @@
             "type": "u64"
           },
           {
+            "name": "maxTradeFeeRate",
+            "type": "u64"
+          },
+          {
+            "name": "volatilityFactor",
+            "type": "u64"
+          },
+          {
+            "name": "partners",
+            "type": {
+              "array": [
+                {
+                  "defined": "PartnerInfo"
+                },
+                1
+              ]
+            }
+          },
+          {
             "name": "padding",
             "docs": [
               "padding"
@@ -2577,7 +2598,7 @@
             "type": {
               "array": [
                 "u64",
-                22
+                16
               ]
             }
           }
@@ -2618,8 +2639,21 @@
             "type": "u128"
           },
           {
-            "name": "referrer",
-            "type": "publicKey"
+            "name": "partner",
+            "type": {
+              "option": {
+                "defined": "PartnerType"
+              }
+            }
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u8",
+                23
+              ]
+            }
           }
         ]
       }
@@ -2670,6 +2704,41 @@
               "The cumulative of token1 price during the duration time, Q32.32, the remaining 64 bit for overflow"
             ],
             "type": "u128"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PartnerInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "partnerId",
+            "type": "u64"
+          },
+          {
+            "name": "lpTokenLinkedWithPartner",
+            "type": "u64"
+          },
+          {
+            "name": "cumulativeFeeTotalTimesTvlShareToken0",
+            "type": "u64"
+          },
+          {
+            "name": "cumulativeFeeTotalTimesTvlShareToken1",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PartnerType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "AssetDash"
           }
         ]
       }
