@@ -980,3 +980,8 @@ body.dark {
 img[src='/img/assets/fallback-token-dark.svg'], img[src='/img/assets/fallback-token-lite.svg'] {
   border-radius: 0px;
 }
+.infinite-token-list {
+  @media (max-width: 768px) {
+    max-height: 232px; // 58 * 4 as each item is 58px tall this will allow 4 items to be shown
+  }
+}

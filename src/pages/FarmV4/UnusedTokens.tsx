@@ -7,12 +7,14 @@ import { commafy, loadIconImage, numberFormatter } from '@/utils'
 import { fetchTokensByPublicKey } from '@/api/gamma'
 import { GAMMAListTokenResponse } from '@/types/gamma'
 
-const ExplorePools: FC<{tokenMint: string}> = ({tokenMint}) => {
+const ExplorePools: FC<{ tokenMint: string }> = ({ tokenMint }) => {
   const { setIsPortfolio } = useRewardToggle()
-  const { setCurrentPoolType, addSelectedToken } = useGamma()
+  const { setCurrentPoolType, addSelectedToken, clearAllSelectedTokens } = useGamma()
   const chooseToken = async () => {
-    const response  = (await fetchTokensByPublicKey(
-    tokenMint
+    clearAllSelectedTokens()
+
+    const response = (await fetchTokensByPublicKey(
+      tokenMint
     )) as GAMMAListTokenResponse | null
     if (!response || !response.success || response.data?.tokens?.length == 0) {
       return
@@ -81,7 +83,7 @@ const UnusedTokens: FC = () => {
                 (~${numberFormatter(balance.value.toNumber())})
               </span>
             </div>
-            <ExplorePools tokenMint={balance.mint}/>
+            <ExplorePools tokenMint={balance.mint} />
           </div>
         ))}
       </div>

@@ -122,24 +122,21 @@ export const FarmContainer: FC = () => {
     [showCreatedPools, userCache]
   )
   useEffect(() => {
-    console.log('searching', tokenListSearchValue)
     const abortSignal = aborter.addSignal('tokenList-main-page-search')
     // faking search
     if (tokenListSearchValue.trim().length == 0) {
-      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE, signal: abortSignal, createPool: false }).then(() =>
+      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE, signal: abortSignal }).then(() =>
         setPage(1)
       )
       return
     }
     const timeout = setTimeout(async () => {
-      console.log('seraching', tokenListSearchValue)
       await updateTokenList(
         {
           page: 1,
           pageSize: TOKEN_LIST_PAGE_SIZE,
           searchValue: tokenListSearchValue,
-          signal: abortSignal,
-          createPool: false
+          signal: abortSignal
         },
         false
       )
@@ -149,7 +146,6 @@ export const FarmContainer: FC = () => {
       aborter.abortSignal('tokenList')
     }
   }, [tokenListSearchValue, currentPoolType])
-  console.log({ addSelectedToken, removeSelectedToken })
   const isExpandedSearchOpen = tokenListSearchValue.length > 0
   const tokenRenderList = tokenListSearchValue.length > 0 || createPoolType === 'primary' || !publicKey
     ? tokenList
@@ -198,6 +194,7 @@ export const FarmContainer: FC = () => {
                       <div className={'inline-flex gap-2'}>
                         {selectedTokens.map((token) => (
                           <Badge variant="default" size={'lg'}
+                                 key={`main-search-${token.symbol}`}
                                  className={'to-brand-secondaryGradient-secondary/50 py-[2.5px] gap-1 before:z-0'}>
                             <Icon size={'sm'} src={loadIconImage(token.logoURI, mode)}
                                   className={'rounded-full'}
@@ -207,7 +204,6 @@ export const FarmContainer: FC = () => {
                                   src={`/img/assets/close-${mode}.svg`}
                                   onClick={() => {
                                     removeSelectedToken(token)
-                                    console.log('remove token', { token })
                                   }} />
                           </Badge>
                         ))}</div>}
@@ -218,6 +214,9 @@ export const FarmContainer: FC = () => {
                                 style={{
                                   width: `${searchBarRef.current?.clientWidth ?? 600}px`
                                 }}
+                                align={'center'}
+                                side={'bottom'}
+                                avoidCollisions={false}
                 >
                   {tokenListSearchValue && tokenRenderList.length == 0 ? <div className={'mb-auto p-2'}>
                     No Tokens Found..
@@ -258,7 +257,7 @@ export const FarmContainer: FC = () => {
                         className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
                         onClick={() => (isSortFilterOpen ? setIsSortFilterOpen.off() : setIsSortFilterOpen.on())}
                       />
-                      {(currentSort !== '1' || showCreatedPools) ? <img
+                      {(currentSort !== '1' || showCreatedPools || showDeposited) ? <img
                         className={`absolute top-0.5 left-0 border-1 border-solid w-2.5 h-2.5
                         border-background-lightmode-primary dark:border-background-darkmode-primary rounded-full`}
                         src={'/img/assets/red-notification-circle.svg'}
@@ -267,31 +266,50 @@ export const FarmContainer: FC = () => {
                     <Dialog open={isSortFilterOpen} onOpenChange={setIsSortFilterOpen.set}>
                       <DialogOverlay />
                       <DialogContent
-                        className={`flex flex-col gap-0 max-h-[500px] h-full border-1 border-solid z-[1001] 
-                          overflow-hidden dark:border-border-darkmode-secondary 
+                        className={`flex flex-col gap-0 max-h-[500px] border-1 border-solid z-[1001] 
+                          overflow-hidden dark:border-border-darkmode-secondary h-auto py-3 px-2.5
                           border-border-lightmode-secondary max-sm:rounded-b-none`}
                         placement={'bottom'}
                       >
                         <DialogBody className={'flex-col flex-[1 0] p-2 overflow-auto pb-0'}>
                           <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
-                          <div className="flex items-center justify-between ">
+                          <div className={'flex flex-col gap-3'}>
+                            <div className="flex items-center justify-between ">
                             <span
                               className="h-full text-regular text-left dark:text-grey-2 text-grey-1
                                               font-semibold"
                             >
                             Show created pools
                             </span>
-                            <Switch
-                              variant={'default'}
-                              size={'sm'}
-                              colorScheme={'primary'}
-                              checked={showCreatedPools}
-                              onClick={handleFilterByCreated}
-                            />
+                              <Switch
+                                variant={'default'}
+                                size={'sm'}
+                                colorScheme={'primary'}
+                                checked={showCreatedPools}
+                                onClick={handleFilterByCreated}
+                              />
+                            </div>
+                            {pubKey != null && (
+                              <div className="flex items-center justify-between">
+                              <span
+                                className="h-full text-regular text-left dark:text-grey-2 text-grey-1
+                                              font-semibold"
+                              >
+                                Show Deposited
+                              </span>
+                                <Switch
+                                  variant={'default'}
+                                  size={'sm'}
+                                  colorScheme={'primary'}
+                                  checked={showDeposited}
+                                  onClick={handleShowDepositedToggle}
+                                />
+                              </div>
+                            )}
                           </div>
                           <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
 
-                          <div className={'grid grid-cols-1 gap-3'}>
+                          <div className={'grid grid-cols-2 gap-3'}>
                             {GAMMA_SORT_CONFIG.map((s) => (
                               <label className={`flex items-center`} key={s.id}>
                                 <Badge
@@ -307,6 +325,7 @@ export const FarmContainer: FC = () => {
                                       before:from-white
                                       from-from-white
                                       to-from-white
+                                      justify-start p-1.25
                                       `,
                                     `w-full h-[35px]`
                                   )}
@@ -319,7 +338,7 @@ export const FarmContainer: FC = () => {
                                     onChange={() => handlePoolSort(s.id)}
                                     className={'hidden'}
                                   />
-                                  <span className="m-0 text-regular font-bold pl-2">{s.name}</span>
+                                  <span className="m-0 text-regular font-bold">{s.name}</span>
                                 </Badge>
                               </label>
                             ))}
@@ -331,26 +350,6 @@ export const FarmContainer: FC = () => {
                 ) : (
                   <FarmSort isOpen={isSortFilterOpen} setIsOpen={setIsSortFilterOpen.set} />
                 )}
-
-                <div className={'flex flex-row ml-auto gap-3.75'}>
-                  {pubKey != null && (
-                    <div className="flex items-center mr-2">
-                      <Switch
-                        variant={'default'}
-                        size={'sm'}
-                        colorScheme={'primary'}
-                        checked={showDeposited}
-                        onClick={handleShowDepositedToggle}
-                      />
-                      <div
-                        className="h-full text-tiny text-left dark:text-grey-2 text-grey-1 
-                        font-semibold ml-2 leading-1 py-1"
-                      >
-                        Show <br /> Deposited
-                      </div>
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
           </div>

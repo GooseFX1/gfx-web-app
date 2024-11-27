@@ -90,7 +90,6 @@ interface GAMMADataModel {
     pageSize: number
     searchValue?: string,
     signal?: AbortSignal
-    createPool?: boolean
   }, append?: boolean) => Promise<void>
   maxTokensReached: boolean
   sendingTransaction: boolean
@@ -138,6 +137,7 @@ interface GAMMADataModel {
   addSelectedToken: (token: JupToken) => void
   removeSelectedToken: (token: JupToken) => void
   hasSelectedToken: (token: JupToken) => boolean
+  clearAllSelectedTokens: () => void
 }
 
 export type TokenListToken = {
@@ -209,10 +209,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     choices: selectedTokens,
     addChoice: addSelectedToken,
     removeChoice: removeSelectedToken,
-    hasChoice: hasSelectedToken
+    hasChoice: hasSelectedToken,
+    clearAllChoices: clearAllSelectedTokens
   } = useMultiSelect<JupToken, string>({
     uniqueValueSelector: (token) => token.address
   })
+
   const handlePoolSort = useCallback(
     (id: string) => {
       // persists current sort in local storage
@@ -282,21 +284,23 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       page,
       pageSize,
       searchValue = '',
-      signal,
-      createPool = true
+      signal
     }: {
       page: number
       pageSize: number
       searchValue?: string,
       signal?: AbortSignal
-      createPool?: boolean
     }, append = true) => {
-    console.log({ page, pageSize, searchValue, createPoolType })
-    // initial loads prevent fetching
-    if (createPool && createPoolType.trim().length == 0) return
+
     setIsLoadingTokenList(true)
-    const tokenType = createPool ? createPoolType.toLowerCase() === 'primary' ? 'primary' : 'all'
-      : currentPoolType.type.toLowerCase() == 'primary' ? 'primary' : 'all'
+    let tokenType = ''
+
+    if (createPoolType.trim().length !== 0) {
+      tokenType = createPoolType.trim().toLowerCase() === 'primary' ? 'primary' : 'all'
+    } else {
+      tokenType = currentPoolType.type.toLowerCase() === 'primary' ? 'primary' : 'all'
+    }
+
     const response = (await fetchTokenList(
       page,
       pageSize,
@@ -331,7 +335,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       pageSize,
       poolType = 'all',
       searchTokens = '',
-      signal,
+      signal
     }: {
       page: number
       pageSize: number
@@ -416,7 +420,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE }, false)
     }
   }, [createPoolType])
-  //console.log({ tokenList })
+
   useEffect(() => {
     setPoolPage(1)
     // same page
@@ -438,7 +442,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           page: 1,
           pageSize: POOL_LIST_PAGE_SIZE,
           poolType: currentPoolType.type,
-          signal: aborter.addSignal('update-gamma-pools'),
+          signal: aborter.addSignal('update-gamma-pools')
         },
         false
       )
@@ -537,17 +541,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
     })()
   }, [GammaProgram, selectedCard])
-
-  // console.log("POOL INIT",
-  //   selectedCardPool,
-  //   selectedCardPool?.lpSupply?.toNumber(),
-  //   selectedCardPool?.token0Vault?.toBase58(),
-  //   selectedCardPool?.token1Vault?.toBase58(),
-  //   selectedCardPool?.protocolFeesToken0?.toNumber(),
-  //   selectedCardPool?.protocolFeesToken1?.toNumber(),
-  //   selectedCardPool?.fundFeesToken0?.toNumber(),
-  //   selectedCardPool?.fundFeesToken1?.toNumber()
-  // )
 
   useEffect(() => {
     ;(async () => {
@@ -701,7 +694,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         selectedTokens,
         addSelectedToken,
         removeSelectedToken,
-        hasSelectedToken
+        hasSelectedToken,
+        clearAllSelectedTokens
       }}
     >
       {children}

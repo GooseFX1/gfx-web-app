@@ -2,7 +2,7 @@ import InfiniteLoader from 'react-window-infinite-loader'
 import { FixedSizeList } from 'react-window'
 import { CSSProperties, ElementType, useEffect, useRef } from 'react'
 import { Badge, Icon } from 'gfx-component-lib'
-import { bigNumberFormatter, loadIconImage, numberFormatter, truncateAddress } from '@/utils'
+import { bigNumberFormatter, clamp, loadIconImage, numberFormatter, truncateAddress } from '@/utils'
 import BigNumber from 'bignumber.js'
 import { TokenListSkeleton } from '@/pages/FarmV4/Step2'
 import { JupToken } from './constants'
@@ -151,11 +151,11 @@ export function InfiniteTokenList({
   >
     {({ onItemsRendered, ref }) => (
       <FixedSizeList
-        className={'mt-2'}
+        className={'mt-2 infinite-token-list'}
         itemCount={itemCount}
         onItemsRendered={onItemsRendered}
         ref={ref}
-        height={396}
+        height={clamp(tokenListLength * 58, 58, 396)}
         itemSize={58}
       >
         {Item}
