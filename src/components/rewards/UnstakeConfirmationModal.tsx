@@ -14,6 +14,7 @@ import {
   DialogOverlay
 } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
+
 interface UnstakeConfirmationModalProps {
   isOpen: boolean
   onClose: () => void
@@ -72,7 +73,7 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
           font-semibold  mx-auto
           `}
               >
-                Once the cooldown starts, the process cannot be undone. You will need to restake your GOFX
+                Once the 7 day cooldown starts, the process cannot be undone. You will need to restake your GOFX
               </p>
               <div
                 className={`flex items-center justify-between text-[15px] dark:text-grey-2 text-black-4
@@ -93,7 +94,7 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
                 className={'dark:text-white text-text-blue'}
                 disabled={!(totalStaked >= amount)}
               >
-                Yes, Continue With Cooldown
+                Yes, Continue With 7D Cooldown
               </Button>
             </div>
           </div>
@@ -105,7 +106,7 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
           >
             By selecting “Yes” you agree to&nbsp;
             <a
-              href={'https://docs.goosefx.io/'}
+              href={'https://docs.goosefx.io/tutorials/how-to-stake-unstake-gofx'}
               target={'_blank'}
               rel="noopener noreferrer"
               className={`underline dark:text-white text-blue-1 font-semibold`}
