@@ -214,6 +214,7 @@ export const FarmContainer: FC = () => {
                   />
                 </PopoverAnchor>
                 <PopoverContent onOpenAutoFocus={(e) => e.preventDefault()}
+                                onMouseDown={(e) => e.preventDefault()}
                                 style={{
                                   width: `${searchBarRef.current?.clientWidth ?? 600}px`
                                 }}
