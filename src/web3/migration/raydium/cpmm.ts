@@ -9,6 +9,7 @@ import {
 } from "../constants"
 import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from "solanaspltoken049";
 import { toPublicKey } from "@/web3/ids";
+import { MEMO_PROGRAM_ID } from "@raydium-io/raydium-sdk-v2";
 
 
 const u16ToBytes = (num: number): Uint8Array => {
@@ -88,25 +89,25 @@ export const getAccountsForRaydiumCPMMWithdraw = async (inputMint: PublicKey, ou
     const userInputAta = await getAssociatedTokenAddress(inputMint, userPubKey)
     const userOutputAta = await getAssociatedTokenAddress(outputMint, userPubKey)
     const poolIdKey = await getCpmmPoolIdKey(configIdKey, inputMint, outputMint)
-    const observationStateKey = await getCpmmObservationStateKey(poolIdKey)
     const poolVaultInputMint = await getCpmmPoolVaultKey(poolIdKey, inputMint?.toBase58())
     const poolVaultOutputMint = await getCpmmPoolVaultKey(poolIdKey, outputMint?.toBase58())
 
     const accountObj = {
-        cpSwapProgram: toPublicKey(RAYDIUM_CPMM_PROGRAM_ID),
-        payer: userPubKey,
-        authority: authorityKey,
-        ammConfig: configIdKey,
-        poolState: poolIdKey,
+        raydiumCpSwapProgram: toPublicKey(RAYDIUM_CPMM_PROGRAM_ID),
+        owner: userPubKey,
+        raydiumCpSwapAuthority: authorityKey,
+        raydiumCpSwapPoolState: poolIdKey,
+        raydiumCpSwapOwnerLpToken: null, // TODO:MIGRATION 
+        raydiumCpSwapToken0Vault: poolVaultInputMint,
+        raydiumCpSwapToken1Vault: poolVaultOutputMint,
         inputTokenAccount: userInputAta,
         outputTokenAccount: userOutputAta,
-        inputVault: poolVaultInputMint,
-        outputVault: poolVaultOutputMint,
         inputTokenProgram: TOKEN_PROGRAM_ID,
         outputTokenProgram: TOKEN_PROGRAM_ID,
-        inputTokenMint: inputMint,
-        outputTokenMint: outputMint,
-        observationState: observationStateKey,
+        raydiumCpSwapVault0Mint: inputMint,
+        raydiumCpSwapVault1Mint: outputMint,
+        raydiumCpSwapLpMint: null, //TODO:MIGRATION
+        memoProgram: MEMO_PROGRAM_ID,
     }
 
     return accountObj

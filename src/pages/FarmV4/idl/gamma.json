@@ -2183,22 +2183,6 @@
           ]
         },
         {
-          "name": "gammaVault0Mint",
-          "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "The mint of token_0 vault"
-          ]
-        },
-        {
-          "name": "gammaVault1Mint",
-          "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "The mint of token_1 vault"
-          ]
-        },
-        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false,
@@ -2212,6 +2196,22 @@
           "isSigner": false,
           "docs": [
             "Token program 2022"
+          ]
+        },
+        {
+          "name": "gammaVault0Mint",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The mint of token_0 vault"
+          ]
+        },
+        {
+          "name": "gammaVault1Mint",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The mint of token_1 vault"
           ]
         }
       ],

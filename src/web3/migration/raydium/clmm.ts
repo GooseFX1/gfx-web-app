@@ -125,6 +125,6 @@ export const getAccountsForRaydiumClmmWithdrawV2 = async (
       raydiumClmmTokenVault1: outputVault,
       raydiumClmmTickArrayLower: null, // TODO:MIGRATION 
       raydiumClmmTickArrayUpper: null, // TODO:MIGRATION 
-      memoProgram: new PublicKey(MEMO_PROGRAM_ID)
+      memoProgram: MEMO_PROGRAM_ID
     }
 }

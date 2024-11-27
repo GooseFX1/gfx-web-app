@@ -149,9 +149,9 @@ const createLiquidityAccountIX = async (
     userPoolLiquidity: liquidityAccountKey,
     systemProgram: SYSTEM
   }
-  const createLiquidityIX: TransactionInstruction = await program.methods.initUserPoolLiquidity({
-    accounts: createLiquidityInstructionAccount
-  }).instruction()
+  const createLiquidityIX: TransactionInstruction = await program.methods.initUserPoolLiquidity()
+  .accountsStrict(createLiquidityInstructionAccount)
+  .instruction()
   //console.log('createLiquidityIX', createLiquidityIX, userPublicKey?.toBase58())
   return createLiquidityIX
 }
@@ -449,10 +449,9 @@ export const withdraw = async (
     lpAmount,
     new BN(token0Amount),
     new BN(token1Amount),
-    {
-      accounts: withdrawInstructionAccount
-    }
-  ).instruction()
+  )
+  .accountsStrict(withdrawAccounts)
+  .instruction()
   withdrawAmountTX.add(withdrawIX)
 
   if (selectedCard?.mintA?.symbol === 'SOL') {
@@ -503,17 +502,15 @@ export const createPool = async (
     token1Symbol = tokenA?.symbol
   }
   const accsForCreatePool = await getAccountsForCreatePool(token0, token1, userPubKey)
-  const createPoolAcc = { ...accsForCreatePool }
   const amountTokenABN = convertToNativeValue(amountToken0, decimalsToken0)
   const amountTokenBBN = convertToNativeValue(amountToken1, decimalsToken1)
   const createPoolIX: TransactionInstruction = await program.methods.initialize(
     new BN(amountTokenABN),
     new BN(amountTokenBBN),
     new BN(Math.floor(Date.now() / 1000)),
-    {
-      accounts: createPoolAcc
-    }
-  ).instruction()
+  )
+  .accountsStrict(accsForCreatePool)
+  .instruction()
   let createPoolTxn: Transaction
   if (token0Symbol === 'SOL') createPoolTxn = await wrapSolToken(userPubKey, connection, amountToken0)
   else if (token1Symbol === 'SOL') createPoolTxn = await wrapSolToken(userPubKey, connection, amountToken1)
@@ -732,7 +729,7 @@ export const migrateRaydiumClmmToGamma = async (
     tokenProgram: gammaAccounts.tokenProgram,
     tokenProgram2022: gammaAccounts.tokenProgram2022,
     gammaVault0Mint: gammaAccounts.vault0Mint,
-    gammaVault1Min: gammaAccounts.vault1Mint
+    gammaVault1Mint: gammaAccounts.vault1Mint,
   }
 
   const liquidity = new BN(0) //TODO:MIGRATION
@@ -742,7 +739,7 @@ export const migrateRaydiumClmmToGamma = async (
   const maximumToken1Amount = new BN(0) //TODO:MIGRATION
 
   const migrateRaydiumClmmToGammaIX: TransactionInstruction =
-    await program.methods.migrateRaydiumClmmToGammaV2(
+    await program.methods.migrateRaydiumClmmToGamma(
       liquidity,
       amount0Min,
       amount1Min,
@@ -780,7 +777,7 @@ export const migrateRaydiumClmmToGammaV2 = async (
     tokenProgram: gammaAccounts.tokenProgram,
     tokenProgram2022: gammaAccounts.tokenProgram2022,
     gammaVault0Mint: gammaAccounts.vault0Mint,
-    gammaVault1Min: gammaAccounts.vault1Mint
+    gammaVault1Mint: gammaAccounts.vault1Mint
   }
 
   const liquidity = new BN(0) //TODO:MIGRATION
@@ -805,7 +802,7 @@ export const migrateRaydiumClmmToGammaV2 = async (
   return migrateRaydiumClmmToGammaTxn
 }
 
-//Instruction - 7
+//Instruction - 17
 export const migrateRaydiumCpSwapToGamma = async (program: Program, tokenA: PublicKey, tokenB: PublicKey, user: PublicKey) => {
   const raydiumAccounts = await getAccountsForRaydiumCPMMWithdraw(tokenA, tokenB, user)
   const gammaAccounts = await getGammaAccounts(tokenA, tokenB, user, true)
@@ -823,22 +820,23 @@ export const migrateRaydiumCpSwapToGamma = async (program: Program, tokenA: Publ
     tokenProgram: gammaAccounts.tokenProgram,
     tokenProgram2022: gammaAccounts.tokenProgram2022,
     gammaVault0Mint: gammaAccounts.vault0Mint,
-    gammaVault1Min: gammaAccounts.vault1Mint
+    gammaVault1Mint: gammaAccounts.vault1Mint,
   }
 
-  const lpTokenAmount = 0
-  const minimumToken0Amount = 0
-  const minimumToken1Amount = 0
-  const maximumToken0Amount = 0
-  const maximumToken1Amount = 0
+  const lpTokenAmountWithdraw = new BN(0) //TODO:MIGRATION
+  const minimumToken0Amount = new BN(0) //TODO:MIGRATION
+  const minimumToken1Amount = new BN(0) //TODO:MIGRATION
+  const maximumToken0Amount = new BN(0) //TODO:MIGRATION
+  const maximumToken1Amount = new BN(0) //TODO:MIGRATION
   const migrateRaydiumCpSwapIX: TransactionInstruction = await program.methods.migrateRaydiumCpSwap(
-     lpTokenAmount,
-     minimumToken0Amount,
-     minimumToken1Amount,
-     maximumToken0Amount,
-     maximumToken1Amount,
-    { accounts }
-  ).instruction()
+    lpTokenAmountWithdraw,
+    minimumToken0Amount,
+    minimumToken1Amount,
+    maximumToken0Amount,
+    maximumToken1Amount,
+  )
+  .accountsStrict(accounts)
+  .instruction()
 
   const migrateRaydiumCpSwapTxn: Transaction = new Transaction()
   migrateRaydiumCpSwapTxn.add(migrateRaydiumCpSwapIX)
