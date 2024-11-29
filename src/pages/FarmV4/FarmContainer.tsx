@@ -190,6 +190,7 @@ export const FarmContainer: FC = () => {
                     className={'!max-w-full flex-1 bg-white dark:bg-black-2'}
                     onFocusCapture={setFocusOnSearch.on}
                     onBlurCapture={setFocusOnSearch.off}
+                    isLoading={tokenListSearchValue.trim().length>0&&isLoadingTokenList}
                     additionalInputElementLeft={
                       <div className={'inline-flex gap-2'}>
                         {selectedTokens.map((token) => (
@@ -218,10 +219,14 @@ export const FarmContainer: FC = () => {
                                 side={'bottom'}
                                 avoidCollisions={false}
                 >
-                  {tokenListSearchValue && tokenRenderList.length == 0 ? <div className={'mb-auto p-2'}>
+                  {tokenListSearchValue && tokenRenderList.length == 0 ? <div className={`mb-auto p-2
+                  text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
+                  `}>
                     No Tokens Found..
                   </div> : null}
-                  {!tokenListSearchValue && focusOnSearch ? <div className={'mb-auto p-2'}>
+                  {!tokenListSearchValue && focusOnSearch ? <div className={`mb-auto p-2
+                  text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
+                  `}>
                     Search for token or paste mint address
                   </div> : null}
                   {tokenListSearchValue && <InfiniteTokenList

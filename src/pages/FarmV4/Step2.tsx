@@ -490,6 +490,7 @@ function TokenSelectionInput({
                     <Icon src={`/img/assets/refresh_${mode}.svg`} className={'animate-spin'} size={'sm'} />
                   ) : null
                 }
+                isLoading={isLoadingTokenList}
               />
               <div className={'border-b border-solid dark:border-black-4 border-grey-4'}>
                 <h5
