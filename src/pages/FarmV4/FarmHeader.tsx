@@ -46,12 +46,12 @@ export const FarmHeader: FC = () => {
         tooltip: ''
       }
     ]
-    if (userPubKey) {
-      data.unshift({
-        name: 'Total Earned', value: totalEarnings.toString(),
-        tooltip: ''
-      })
-    }
+    // if (userPubKey) {
+    //   data.unshift({
+    //     name: 'Total Earned', value: totalEarnings.toString(),
+    //     tooltip: ''
+    //   })
+    // }
     return data
   }, [userPubKey, range, totalEarnings, computedViewRange, stats])
 

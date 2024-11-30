@@ -313,20 +313,32 @@ export const lpTokensToTradingTokens = async (
         let tokenAmount0: BN
         let tokenAmount1: BN
 
-        if(lpTokenSupply.eq(new BN(0))) {
+        if (lpTokenSupply.eq(new BN(0))) {
             tokenAmount0 = new BN(0)
             tokenAmount1 = new BN(0)
         } else {
             tokenAmount0 = lpTokenAmount.mul(swapTokenAmount0).div(lpTokenSupply)
             tokenAmount1 = lpTokenAmount.mul(swapTokenAmount1).div(lpTokenSupply)
         }
-        
+
         return { tokenAmount0, tokenAmount1 }
 
     } catch (e) {
         console.log('Error while fetching token amounts for withdrawing', e)
         return { tokenAmount0: new BN(0), tokenAmount1: new BN(0) }
     }
+}
+
+export const getMaxSolDepositAmount = async (userSourceDepositAmount: number, connection: Connection) => {
+    const priorityFees = 0.0008 //average priority fees for gamma instructions on turbo level
+    const baseFees = 0.000005 //base fees for one signer
+    const buffer = 0.0005 //buffer for network congestion
+    const rentExemptBalance = await connection.getMinimumBalanceForRentExemption(0) / 1000000000 //rent
+    const liquidityAccCreationFee = 0.00217152 //liquidity account creation fees
+    const eligibleSolToDeposit = +userSourceDepositAmount -
+        (priorityFees + baseFees + buffer + rentExemptBalance + liquidityAccCreationFee)
+
+    return eligibleSolToDeposit?.toString()
 }
 
 //Instruction - 1
@@ -338,7 +350,8 @@ export const deposit = async (
     selectedCard: any,
     userPublicKey: PublicKey,
     program: Program<Idl>,
-    connection: Connection
+    connection: Connection,
+    isSolMaxDeposit?: boolean
 ): Promise<Transaction> => {
     const depositAccounts = await getAccountsForDepositWithdraw(selectedCard, userPublicKey, true)
     const depositInstructionAccount = { ...depositAccounts }
@@ -352,9 +365,13 @@ export const deposit = async (
             program
         )
     }
-    //console.log('user deposits', userSourceDepositAmount, userTargetDepositAmount)
-    const token0SlippageAmount = handleSlippageCalculation(userSourceDepositAmount, slippage, true)
-    const token1SlippageAmount = handleSlippageCalculation(userTargetDepositAmount, slippage, true)
+    const userSourceAmount = selectedCard?.mintA?.symbol === 'SOL' && isSolMaxDeposit ?
+        await getMaxSolDepositAmount(+userSourceDepositAmount, connection) : userSourceDepositAmount
+    const userTargetAmount = selectedCard?.mintB?.symbol === 'SOL' && isSolMaxDeposit ?
+        await getMaxSolDepositAmount(+userTargetDepositAmount, connection) : userTargetDepositAmount
+    //console.log('user deposits', userSourceAmount, userTargetAmount)
+    const token0SlippageAmount = handleSlippageCalculation(userSourceAmount, slippage, true)
+    const token1SlippageAmount = handleSlippageCalculation(userTargetAmount, slippage, true)
     //console.log('user deposits with slippage', token0SlippageAmount, token1SlippageAmount)
     const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.mintA?.decimals)
     const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.mintB?.decimals)
@@ -366,13 +383,13 @@ export const deposit = async (
         accounts: depositInstructionAccount
     })
     let depositAmountTX: Transaction
-    const slippageRatio = slippage/100;
+    const slippageRatio = slippage / 100
     if (selectedCard?.mintA?.symbol === 'SOL') {
-        const depAmount = new Decimal(userSourceDepositAmount).mul(1+slippageRatio).toString()
+        const depAmount = new Decimal(userSourceAmount).mul(1 + slippageRatio).toString()
         depositAmountTX = await wrapSolToken(userPublicKey, connection, depAmount)
     }
     else if (selectedCard?.mintB?.symbol === 'SOL') {
-        const depAmount = new Decimal(userTargetDepositAmount).mul(1+slippageRatio).toString()
+        const depAmount = new Decimal(userTargetAmount).mul(1 + slippageRatio).toString()
         depositAmountTX = await wrapSolToken(userPublicKey, connection, depAmount)
     }
     else depositAmountTX = new Transaction()

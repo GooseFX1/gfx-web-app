@@ -68,7 +68,7 @@ class TransactionBuilder {
   async _getTransaction(
     walletPublicKey: PublicKey,
     recentBlockhash: string,
-    useVersionedTransaction: boolean,
+    useVersionedTransaction: boolean
   ): Promise<VersionedTransaction | Transaction> {
     if (this._usePriorityFee) {
       const ix = ComputeBudgetProgram.setComputeUnitPrice({
@@ -76,7 +76,8 @@ class TransactionBuilder {
       })
 
       this._instructions.unshift(ix)
-      // let computeUnits = 1.4e6
+      const computeUnits = 100_000
+      this._instructions.unshift(ComputeBudgetProgram.setComputeUnitLimit({ units: computeUnits }))
       // const message = new TransactionMessage({
       //   instructions: [ComputeBudgetProgram.setComputeUnitLimit({ units: computeUnits }), ...this._instructions],
       //   payerKey: walletPublicKey,
@@ -90,7 +91,6 @@ class TransactionBuilder {
       //computeUnits = simRes.value.unitsConsumed
       // console.log("SIMULATED CU", computeUnits)
       // console.log('Assuming comsumption of', computeUnits, 'compute units')
-      // this._instructions.unshift(ComputeBudgetProgram.setComputeUnitLimit({ units: computeUnits }))
     }
 
     if (useVersionedTransaction) {
