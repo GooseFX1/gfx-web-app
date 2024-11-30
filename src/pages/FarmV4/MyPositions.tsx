@@ -8,9 +8,10 @@ import { noPoolsFound } from '@/pages/FarmV4/FarmItems'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { FarmRowLoader } from '@/pages/FarmV4/FarmRow'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 const renderPosition = (p: GAMMAPoolWithUserLiquidity) => {
-  const liq = p.userLpPosition  
+  const liq = p.userLpPosition
   if (!liq) return 0.0
   return numberFormatter(liq.totalValue, 2)
 }
@@ -34,6 +35,7 @@ const MyPositions: FC = () => {
   } = useGamma()
   const { isTablet, isDesktop, isMobile } = useBreakPoint()
   const { mode } = useDarkMode()
+  const { base58PublicKey } = useWalletBalance()
 
   const positions = useMemo(() => filteredPools.filter((pool) => pool.userLpPosition), [filteredPools])
 
@@ -86,12 +88,16 @@ const MyPositions: FC = () => {
               />
               <div
                 className="font-poppins text-regular font-semibold
-                                    dark:text-grey-8 text-black-4"
+                                    dark:text-grey-8 text-black-4 mr-5"
               >
                 {pool.mintA.symbol} - {pool.mintB.symbol}
               </div>
+              {pool.poolCreator == base58PublicKey && (
+                <Badge size="sm" variant="default">
+                  Owner
+                </Badge>
+              )}
             </div>
-
             {/* position */}
             <div
               className="flex items-center justify-center text-regular
@@ -179,18 +185,18 @@ const MyPositions: FC = () => {
     </div>
   )
 }
-const MyPositionItems: FC = () =>{
-  const {isLoadingPools} = useGamma()
+const MyPositionItems: FC = () => {
+  const { isLoadingPools } = useGamma()
 
   if (isLoadingPools) {
     return <div className={'flex flex-col gap-[15px] mt-[15px]'}>
-      <FarmRowLoader/>
-      <FarmRowLoader/>
-      <FarmRowLoader/>
-      <FarmRowLoader/>
+      <FarmRowLoader />
+      <FarmRowLoader />
+      <FarmRowLoader />
+      <FarmRowLoader />
     </div>
   }
 
-  return <MyPositions/>
+  return <MyPositions />
 }
 export default MyPositionItems
