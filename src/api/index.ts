@@ -14,16 +14,42 @@ const DOMAIN = () => {
   return `${sub}goosefx.io`
 }
 
+const createAxiosInstance = (config: unknown) => {
+  const axiosInstance = axios.create(config)
+
+  let abortController
+
+  axiosInstance.interceptors.request.use(
+    (config) => {
+      // Cancel the previous request if it exists
+      if (abortController) {
+        abortController.abort('Operation canceled due to new request.')
+      }
+
+      // Create a new AbortController for the current request
+      abortController = new AbortController()
+      config.signal = abortController.signal // Attach the signal to the request config
+
+      return config
+    },
+    (error) => {
+      return Promise.reject(error)
+    }
+  )
+
+  return axiosInstance
+}
+
 const agent = new https.Agent({
   maxSockets: 100
 })
 
-const axiosObject = axios.create({
+const axiosObject = createAxiosInstance({
   httpsAgent: agent
 })
 
 const apiClient = (base: string) =>
-  axios.create({
+  createAxiosInstance({
     baseURL: `https://${base}.${DOMAIN()}`,
     responseType: 'json',
     headers: {
@@ -32,7 +58,7 @@ const apiClient = (base: string) =>
   })
 
 export const httpClient = (base: string) =>
-  axios.create({
+  createAxiosInstance({
     baseURL: `https://${base}.goosefx.io`,
     responseType: 'json',
     headers: {
@@ -41,7 +67,7 @@ export const httpClient = (base: string) =>
   })
 
 export const customClient = (url: string) => {
-  return axios.create({
+  return createAxiosInstance({
     baseURL: url,
     responseType: 'json',
     headers: {
