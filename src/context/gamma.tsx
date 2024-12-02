@@ -83,12 +83,19 @@ interface GAMMADataModel {
   setPage: Dispatch<SetStateAction<number>>
   tokenList: TokenListToken[]
   isLoadingTokenList: boolean
-  updateTokenList: ({ page, pageSize, searchValue }: {
-    page: number
-    pageSize: number
-    searchValue?: string,
-    signal?: AbortSignal
-  }, append?: boolean) => Promise<void>
+  updateTokenList: (
+    {
+      page,
+      pageSize,
+      searchValue
+    }: {
+      page: number
+      pageSize: number
+      searchValue?: string
+      signal?: AbortSignal
+    },
+    append?: boolean
+  ) => Promise<void>
   maxTokensReached: boolean
   sendingTransaction: boolean
   setSendingTransaction: Dispatch<SetStateAction<boolean>>
@@ -128,8 +135,9 @@ interface GAMMADataModel {
   viewRange: ViewRange
   setViewRange: Dispatch<SetStateAction<ViewRange>>
   computedViewRange: '24H' | '7D' | '30D'
-  handlePoolSort: (id: string) => void,
+  handlePoolSort: (id: string) => void
   topBalancesWithTokenList: JupToken[]
+  calculatePoolType: Record<string, string>
 }
 
 export type TokenListToken = {
@@ -176,6 +184,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [poolsHasMoreData, setPoolsHasMoreData] = useState(true)
   const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
   const [selectedCardLiquidityAcc, setSelectedCardLiquidityAcc] = useState<any>({})
+  const [calculatePoolType, setCalculatePoolType] = useState<Set<string>>(new Set())
   const [stats, setStats] = useState<GAMMAStats>({
     tvl: '0',
     stats24h: {
@@ -248,6 +257,15 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         if (s) setStats(s)
       })
     }, 60000)
+
+    // fetch primary tokens for type calculation on create pool
+    fetchTokenList(1, 100, 'primary').then((t) => {
+      if (t.success) {
+        const primaryTokensMap = new Set(t.data.tokens.map((token) => token.address))
+        setCalculatePoolType(primaryTokensMap)
+      }
+    })
+
     return () => clearInterval(statsInterval)
   }, [])
 
@@ -263,13 +281,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       searchValue?: string,
       signal?: AbortSignal
     }, append = true) => {
-    // initial loads prevent fetching
-    if (createPoolType.trim().length == 0) return
+    // initial loads prevent fetching    
     setIsLoadingTokenList(true)
     const response = (await fetchTokenList(
       page,
       pageSize,
-      createPoolType.toLowerCase() === 'primary' ? 'primary' : 'all',
+      'all',
       searchValue,
       signal
     )) as GAMMAListTokenResponse | null
@@ -397,7 +414,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         },
         false
       )
-    }, 233)
+    }, 500)
 
     return () => {
       aborter.abortSignal('update-gamma-pools')
@@ -649,7 +666,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         viewRange,
         computedViewRange,
         handlePoolSort,
-        topBalancesWithTokenList
+        topBalancesWithTokenList,
+        calculatePoolType
       }}
     >
       {children}

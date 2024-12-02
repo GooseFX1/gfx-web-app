@@ -3,7 +3,6 @@ import 'styled-components/macro'
 import Slider from 'react-slick'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '@/layouts'
-import Step1 from './Step1'
 import Step2 from './Step2'
 import Step3 from './Step3'
 import {
@@ -25,6 +24,7 @@ import useTransaction from '@/hooks/useTransaction'
 import { notifyUsingPromiseForCreatePool } from '@/utils/perpsNotifications'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { INTERVALS } from '@/utils/time'
+import { POOL_TYPE } from '@/pages/FarmV4/constants'
 
 export const CreatePool: FC<{
   isCreatePool: boolean
@@ -41,22 +41,29 @@ export const CreatePool: FC<{
   const { connected, wallet } = useWallet()
   const [poolExists, setPoolExists] = useBoolean(false)
   const [initialPrice, setInitialPrice] = useState<string>('')
+  const [poolType, setPoolType] = useState<string | null>(null)
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
   const {
     sendingTransaction,
     setSendingTransaction,
-    createPoolType,
-    setCreatePoolType,
     setIsConfettiVisible,
-    forceCronAndUpdateLocalData
+    forceCronAndUpdateLocalData,
+    calculatePoolType
   } = useGamma()
   const { balance } = useWalletBalance()
 
   const walletTokenA = balance[tokenA?.address].tokenAmount.uiAmountString
   const walletTokenB = balance[tokenB?.address].tokenAmount.uiAmountString
   const { connection } = useConnectionConfig()
+
+  useMemo(() => {
+    if (tokenA && tokenB) {
+      const isPrimary = calculatePoolType.has(tokenA.address) && calculatePoolType.has(tokenB.address)
+      setPoolType(isPrimary ? POOL_TYPE.primary.name : POOL_TYPE.hyper.name)
+    }
+  }, [tokenA, tokenB])
 
   const settings = {
     dots: false,
@@ -81,7 +88,7 @@ export const CreatePool: FC<{
   }
 
   const next = async () => {
-    if (currentSlide !== 2) slider?.current?.slickNext()
+    if (currentSlide !== 1) slider?.current?.slickNext()
     else {
       try {
         const txBuilder = createTransactionBuilder()
@@ -124,23 +131,16 @@ export const CreatePool: FC<{
   const prev = () => {
     slider?.current?.slickPrev()
     if (currentSlide == 1) {
-      setTokenA(null)
-      setTokenB(null)
-      setAmountTokenA('')
-      setAmountTokenB('')
       setPoolExists.off()
     }
   }
 
   const checkButtonStatus = useMemo(() => {
-    if (currentSlide !== 1) return false
-    else {
-      if (!tokenA || !tokenB || !+amountTokenA || !+amountTokenB) return true
-      if ((+amountTokenA && +amountTokenB) &&
-        (+amountTokenA > +walletTokenA) || (+amountTokenB > +walletTokenB)) return true
-      if (tokenA?.symbol === tokenB?.symbol) return true
-      if (poolExists) return true
-    }
+    if (!tokenA || !tokenB || !+amountTokenA || !+amountTokenB) return true
+    if ((+amountTokenA && +amountTokenB) &&
+      (+amountTokenA > +walletTokenA) || (+amountTokenB > +walletTokenB)) return true
+    if (tokenA?.symbol === tokenB?.symbol) return true
+    if (poolExists) return true
   }, [currentSlide, tokenA, tokenB, amountTokenA, amountTokenB, walletTokenA, walletTokenB])
 
   return (
@@ -148,7 +148,7 @@ export const CreatePool: FC<{
       onOpenChange={(b) => {
         setIsCreatePool(b)
         if (!b) {
-          setCreatePoolType('')
+          setPoolType(null)
           setTokenA(null)
           setTokenB(null)
           setAmountTokenA('')
@@ -165,15 +165,21 @@ export const CreatePool: FC<{
         size={'lg'}
       >
         <DialogHeader className={`relative`}>
+          <img
+            src="img/assets/question-icn.svg"
+            alt="primary"
+            height={24}
+            width={24}
+            onClick={() => window.open('https://docs.goosefx.io/features/farm')}
+            className="absolute top-[14px] right-[45px] cursor-pointer z-[1000]"
+          />
+
           <DialogCloseDefault
             className={'top-2 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 z-[1000]'}
           />
         </DialogHeader>
         <DialogBody className={'flex-col flex-[1 0] overflow-auto pb-0'}>
           <Slider ref={slider} {...settings}>
-            <div className="slide">
-              <Step1 slider={slider} setIsCreatePool={setIsCreatePool} setLocalPoolType={setCreatePoolType} />
-            </div>
             <div className="slide">
               <Step2
                 tokenA={tokenA}
@@ -192,6 +198,7 @@ export const CreatePool: FC<{
                 walletTokenA={walletTokenA}
                 walletTokenB={walletTokenB}
                 setIsCreatePool={setIsCreatePool}
+                poolType={poolType}
               />
             </div>
             <div className="slide">
@@ -200,42 +207,41 @@ export const CreatePool: FC<{
                 tokenB={tokenB}
                 amountTokenA={amountTokenA}
                 amountTokenB={amountTokenB}
-                localPoolType={createPoolType}
+                poolType={poolType}
                 initialPrice={initialPrice}
               />
             </div>
           </Slider>
-          {currentSlide != 0 && (
-            <div
-              className={`flex justify-between border-t-1 solid
+
+          <div
+            className={`flex justify-between border-t-1 solid flex-end
                  border-border-lightmode-secondary dark:border-border-darkmode-secondary 
                  p-2.5 items-center`}
-            >
-              {currentSlide > 0 && (
-                <Button
-                  variant={'link'}
-                  className={`prev-btn font-bold dark:text-white text-blue-1 text-regular cursor-pointer `}
-                  colorScheme={'white'}
-                  disabled={currentSlide == 0}
-                  onClick={prev}
-                >
-                  Back
-                </Button>
-              )}
-              {connected ? (
-                <Button
-                  colorScheme={'blue'}
-                  className={'w-[157px] font-bold next-btn'}
-                  disabled={checkButtonStatus || sendingTransaction}
-                  onClick={next}
-                >
-                  {currentSlide === 1 ? 'Next' : 'Create & Deposit'}
-                </Button>
-              ) : (
-                <Connect />
-              )}
-            </div>
-          )}
+          >
+            {currentSlide > 0 && (
+              <Button
+                variant={'link'}
+                className={`prev-btn font-bold dark:text-white text-blue-1 text-regular cursor-pointer `}
+                colorScheme={'white'}
+                disabled={currentSlide == 0}
+                onClick={prev}
+              >
+                Back
+              </Button>
+            )}
+            {connected ? (
+              <Button
+                colorScheme={'blue'}
+                className={'w-[157px] font-bold next-btn ml-auto'}
+                disabled={checkButtonStatus || sendingTransaction}
+                onClick={next}
+              >
+                {currentSlide === 0 ? 'Next' : 'Create & Deposit'}
+              </Button>
+            ) : (
+              <Connect />
+            )}
+          </div>
         </DialogBody>
       </DialogContent>
     </Dialog>
