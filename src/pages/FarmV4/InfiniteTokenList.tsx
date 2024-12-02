@@ -55,16 +55,16 @@ export function InfiniteTokenList({
       return <div style={style} className={`flex flex-col gap-2`}>
         <TokenListSkeleton RenderAs={RenderAs} />
         {tokenList.length == 0 ? <>
-            <TokenListSkeleton RenderAs={RenderAs}/>
-            <TokenListSkeleton RenderAs={RenderAs}/>
-            <TokenListSkeleton RenderAs={RenderAs}/>
+            <TokenListSkeleton RenderAs={RenderAs} />
+            <TokenListSkeleton RenderAs={RenderAs} />
+            <TokenListSkeleton RenderAs={RenderAs} />
           </>
           :
           null
         }
       </div>
     }
-    
+
     const curToken = tokenRenderList[index]
     // this className on RenderAs is cursed binding - it is the render but also gets propagated to the RenderAs function
     // if a Button is used e.g FarmContainer
@@ -155,7 +155,7 @@ export function InfiniteTokenList({
         itemCount={itemCount}
         onItemsRendered={onItemsRendered}
         ref={ref}
-        height={clamp(tokenListLength * 58, 0, 396)}
+        height={clamp(tokenListLength * 58, isLoadingTokenList ? 58 * 5: 0, 396)}
         itemSize={58}
       >
         {Item}
