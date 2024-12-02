@@ -44,7 +44,7 @@ const agent = new https.Agent({
   maxSockets: 100
 })
 
-const axiosObject = createAxiosInstance({
+const axiosObject = axios.create({
   httpsAgent: agent
 })
 
