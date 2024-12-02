@@ -10,8 +10,8 @@ import {
   useState
 } from 'react'
 import {
-  Button,
   Badge,
+  Button,
   cn,
   Container,
   DropdownMenu,
@@ -485,11 +485,6 @@ function TokenSelectionInput({
                   setSearchValue(e.target.value)
                 }}
                 onClear={() => setSearchValue('')}
-                additionalInputElementRight={
-                  isLoadingTokenList ? (
-                    <Icon src={`/img/assets/refresh_${mode}.svg`} className={'animate-spin'} size={'sm'} />
-                  ) : null
-                }
                 isLoading={isLoadingTokenList}
               />
               <div className={'border-b border-solid dark:border-black-4 border-grey-4'}>
