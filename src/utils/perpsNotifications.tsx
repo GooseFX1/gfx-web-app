@@ -213,6 +213,19 @@ export const notifyUsingPromise = async (
       </IntemediaryToast>, config)
       return false
     }
+    if (e.message === '1') {
+      toast(<IntemediaryToast className={cn(`w-[290px]`)}>
+        <IntemediaryToastHeading stage={'error'}>Insuffiecient Sol!</IntemediaryToastHeading>
+        <p>
+          {errorMessage ?? `The transaction could not go through as you don't have suffiecint SOL in your wallet. 
+          Please add more sol and try again!`}
+        </p>
+        <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
+          Contact Us
+        </OpenToastLink>
+      </IntemediaryToast>, config)
+      return false
+    }
     toast(<IntemediaryToast className={cn(`w-[290px]`)}>
       <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
       <p>Sorry, a problem occurred, please try again. If the issue persists contact support.</p>
@@ -319,6 +332,19 @@ export const notifyUsingPromiseForCreatePool = async (promise: Promise<unknown>)
     </IntemediaryToast>, config)
     return true
   } catch (e) {
+    if (e.message === '1') {
+      toast(<IntemediaryToast className={cn(`w-[290px]`)}>
+        <IntemediaryToastHeading stage={'error'}>Insuffiecient Sol!</IntemediaryToastHeading>
+        <p>
+          {`The transaction could not go through as you don't have suffiecint SOL in your wallet. 
+          Please add more sol and try again!`}
+        </p>
+        <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
+          Contact Us
+        </OpenToastLink>
+      </IntemediaryToast>, config)
+      return false
+    }
     toast(<IntemediaryToast className={cn(`w-[290px]`)}>
       <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
       <p>Sorry, a problem occurred, please try again. If the issue persists contact support.</p>

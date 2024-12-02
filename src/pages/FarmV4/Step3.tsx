@@ -99,30 +99,38 @@ const Step3: FC<{
                 </span>
                 <span className="text-regular font-semibold dark:text-grey-8 text-black-4">$652.42</span>
             </div> */}
-        <div className="flex justify-between mb-3">
-          <Tooltip>
-            <TooltipTrigger className={`text-regular font-semibold text-yellow-2 underline !decoration-dotted`}>
-              Pool Fee Rate
-            </TooltipTrigger>
-            <TooltipContent className={'z-[1001]'}>This is the fee in bps % we charge per swap</TooltipContent>
-          </Tooltip>
-          <span className="text-regular font-semibold text-yellow-2">0.2%</span>
-        </div>
-        <div className="flex justify-between mb-3">
-          <Tooltip>
-            <TooltipTrigger className="text-regular font-semibold text-yellow-2 underline !decoration-dotted">
-              Pool Creation Fee
-            </TooltipTrigger>
-            <TooltipContent className={'z-[1001]'}>
-              This fee is the SOL required to create the pool on the blockchain network, it is not a fee to our
-              protocol.
-            </TooltipContent>
-          </Tooltip>
-          <span className="text-regular font-semibold text-yellow-2">~0.2 SOL</span>
-        </div>
-      </div>
-    </>
-  )
+                <div className="flex justify-between mb-3">
+                    <Tooltip>
+                        <TooltipTrigger
+                            className={`text-regular font-semibold text-yellow-2 underline !decoration-dotted`}>
+                            Pool Fee Rate
+                        </TooltipTrigger>
+                        <TooltipContent className={'z-[1001]'}>
+                            This is the fee in bps % we charge per swap
+                        </TooltipContent>
+                    </Tooltip>
+                    <span className="text-regular font-semibold text-yellow-2">0.2%</span>
+                </div>
+                <div className="flex justify-between mb-4">
+                    <Tooltip>
+                        <TooltipTrigger
+                            className="text-regular font-semibold text-yellow-2 underline !decoration-dotted">
+                            Pool Creation Fee
+                        </TooltipTrigger>
+                        <TooltipContent className={'z-[1001]'}>
+                            This fee is the SOL required to create the pool on the blockchain network,
+                            it is not a fee to our protocol.
+                        </TooltipContent>
+                    </Tooltip>
+                    <span className="text-regular font-semibold text-yellow-2">~0.1 SOL</span>
+                </div>
+                <div className="text-regular font-semibold text-yellow-2">
+                    Note: If you have less than 0.1 SOL, the transaction will fail. 
+                    Please ensure that you have more than 0.1 SOL to create a new pool.
+                </div>
+            </div>
+        </>
+    )
 }
 
 export default Step3
