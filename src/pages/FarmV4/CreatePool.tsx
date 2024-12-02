@@ -170,7 +170,8 @@ export const CreatePool: FC<{
             alt="primary"
             height={24}
             width={24}
-            onClick={() => window.open('https://docs.goosefx.io/features/farm')}
+            onClick={() => 
+              window.open('https://docs.goosefx.io/goosefx-amm/gamma-for-pool-creators/how-to-create-a-new-pool')}
             className="absolute top-[14px] right-[45px] cursor-pointer z-[1000]"
           />
 
