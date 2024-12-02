@@ -258,13 +258,15 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
     }, 60000)
 
+    if (calculatePoolType.size == 0) {
     // fetch primary tokens for type calculation on create pool
-    fetchTokenList(1, 100, 'primary').then((t) => {
+    fetchTokenList(1, 200, 'primary').then((t) => {
       if (t.success) {
         const primaryTokensMap = new Set(t.data.tokens.map((token) => token.address))
-        setCalculatePoolType(primaryTokensMap)
-      }
-    })
+          setCalculatePoolType(primaryTokensMap)
+        }
+      })
+    }
 
     return () => clearInterval(statsInterval)
   }, [])
