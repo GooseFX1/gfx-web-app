@@ -325,6 +325,8 @@ export const DepositWithdrawSlider: FC = () => {
       }
       setIsUserTyping(false)
     }
+
+    setIsUserTyping(false)
   }
 
   const actionButtonText = useMemo(() => {
