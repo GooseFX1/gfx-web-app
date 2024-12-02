@@ -86,6 +86,9 @@ function useTransaction(): useTransactionReturn {
               if ((res?.value?.err as any).InstructionError[1]?.Custom == 6005) {
                 throw new Error('6005')
               }
+              if ((res?.value?.err as any).InstructionError[1]?.Custom == 1) {
+                throw new Error('1')
+              }
               console.log('Transaction failed', res.value.err)
               throw new Error('Transaction failed')
             }
@@ -97,6 +100,9 @@ function useTransaction(): useTransactionReturn {
             console.log('[ERROR] Transaction failed', err?.message)
             if (err?.message == 6005) {
               throw new Error('6005')
+            }
+            if (err?.message == 1) {
+              throw new Error('1')
             }
             throw new Error('Transaction failed', err)
           })
