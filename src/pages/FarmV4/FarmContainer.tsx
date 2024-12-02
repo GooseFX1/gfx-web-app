@@ -196,12 +196,16 @@ export const FarmContainer: FC = () => {
                         {selectedTokens.map((token) => (
                           <Badge variant="default" size={'lg'}
                                  key={`main-search-${token.symbol}`}
-                                 className={'to-brand-secondaryGradient-secondary/50 py-[2.5px] gap-1 before:z-0'}>
+                                 className={`
+                                 from-brand-secondaryGradient-primary/30
+                                 to-brand-secondaryGradient-secondary/30 py-[2.5px] gap-1 before:z-0 
+                                 `}>
                             <Icon size={'sm'} src={loadIconImage(token.logoURI, mode)}
                                   className={'rounded-full'}
                                   onClick={() => removeSelectedToken(token)} />
-                            <h5 className={'text-text-white'}>{token.symbol}</h5>
-                            <Icon className={'!w-[11px] !h-[11px] !min-w-[11px] !min-h-[11px] z-10 cursor-pointer'}
+                            <h5 className={'text-text-lightmode-primary dark:text-text-white'}>{token.symbol}</h5>
+                            <Icon className={`!w-[11px] !h-[11px] !min-w-[11px] !min-h-[11px] z-0 cursor-pointer 
+                            `}
                                   src={`/img/assets/close-${mode}.svg`}
                                   onClick={() => {
                                     removeSelectedToken(token)
