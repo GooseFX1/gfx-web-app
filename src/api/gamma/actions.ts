@@ -55,13 +55,34 @@ const fetchAllPools = async (
   }
 }
 const fetchPoolsByMints = async (
-  mintA: string,
-  mintB: string
+  {
+    mintA,
+    mintB,
+    page,
+    pageSize,
+    signal,
+    poolType,
+    sortOrder,
+    sortKey
+  }: {
+    mintA: string,
+    mintB?: string,
+    page: number,
+    pageSize: number
+    signal?: AbortSignal
+    poolType: 'all' | 'hyper' | 'primary',
+    sortOrder: 'asc' | 'desc',
+    sortKey: string
+  }
 ): Promise<GAMMAPoolsResponse | null> => {
+  const mintQuery = `mint1=${mintA}${mintB ? `&mint2=${mintB}` : ''}`
+  const pageQuery= `page=${page}&pageSize=${pageSize}`
+  const sortQuery = `poolType=${poolType}&sortOrder=${sortOrder}&sortBy=${sortKey}`
   try {
     const response = await httpClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS +
-      `?mint1=${mintA}&mint2=${mintB}&page=1&pageSize=200`
+      `?${mintQuery}&${pageQuery}&${sortQuery}`,
+      { signal }
     )
     return response.data
   } catch (error) {
@@ -69,7 +90,45 @@ const fetchPoolsByMints = async (
     return null
   }
 }
+export const fetchAndConcatAllPoolsByMints = async ({
+                                                      mintA,
+                                                      mintB,
+                                                      page,
+                                                      pageSize
+                                                    }: {
+  mintA: string,
+  mintB?: string
+  page: number
+  pageSize: number
+}, currentResponse?: GAMMAPoolsResponse) => {
+  const mintQuery = `mint1=${mintA}${mintB ? `&mint2=${mintB}` : ''}`
 
+  try {
+    const response = await httpClient(GAMMA_API_BASE).get(
+      GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS +
+      `?${mintQuery}&page=${page}&pageSize=${pageSize}`
+    ) as GAMMAPoolsResponse
+    if (!response.success) {
+      throw new Error('Error fetching pools by mints')
+    }
+    if (currentResponse) {
+      currentResponse.data.pools = currentResponse.data.pools.concat(response.data.pools)
+    }
+    if (response.data.totalPages > response.data.currentPage) {
+      return fetchAndConcatAllPoolsByMints({
+        mintA,
+        mintB,
+        page: response.data.currentPage + 1,
+        pageSize
+      }, currentResponse ?? response)
+    }
+    // incase of no prev response
+    return currentResponse?.data ?? response.data
+  } catch (error) {
+    console.error('Error fetching gamma pools:', error)
+    return null
+  }
+}
 const fetchUser = async (publicKey: string): Promise<GAMMAUser | null> => {
   console.log(publicKey)
   try {
@@ -172,7 +231,7 @@ const fetchTokensByPublicKey = async (tokens: string): Promise<GAMMAListTokenRes
 const forceCronUpdate = async () => {
   try {
     await httpClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.FORCE_CRON)
-    return true;
+    return true
   } catch (e) {
     console.log('Error forcing cron update', e)
     return false

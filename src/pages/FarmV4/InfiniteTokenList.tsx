@@ -2,7 +2,7 @@ import InfiniteLoader from 'react-window-infinite-loader'
 import { FixedSizeList } from 'react-window'
 import { CSSProperties, ElementType, useEffect, useRef } from 'react'
 import { Badge, Icon } from 'gfx-component-lib'
-import { bigNumberFormatter, loadIconImage, numberFormatter, truncateAddress } from '@/utils'
+import { bigNumberFormatter, clamp, loadIconImage, numberFormatter, truncateAddress } from '@/utils'
 import BigNumber from 'bignumber.js'
 import { TokenListSkeleton } from '@/pages/FarmV4/Step2'
 import { JupToken } from './constants'
@@ -53,11 +53,11 @@ export function InfiniteTokenList({
   const Item = ({ index, style }: { index: number, style: CSSProperties }) => {
     if (!isItemLoaded(index)) {
       return <div style={style} className={`flex flex-col gap-2`}>
-        <TokenListSkeleton />
+        <TokenListSkeleton RenderAs={RenderAs} />
         {tokenList.length == 0 ? <>
-            <TokenListSkeleton />
-            <TokenListSkeleton />
-            <TokenListSkeleton />
+            <TokenListSkeleton RenderAs={RenderAs} />
+            <TokenListSkeleton RenderAs={RenderAs} />
+            <TokenListSkeleton RenderAs={RenderAs} />
           </>
           :
           null
@@ -66,11 +66,13 @@ export function InfiniteTokenList({
     }
 
     const curToken = tokenRenderList[index]
-
+    // this className on RenderAs is cursed binding - it is the render but also gets propagated to the RenderAs function
+    // if a Button is used e.g FarmContainer
     return <div style={style}>
       <RenderAs
         className={`cursor-pointer p-1.5 border-1 border-transparent flex 
-                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
+                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary
+                        `}
         onClick={() => onTokenSelect(curToken)}
         key={curToken?.address}
         disabled={checkDisabled(curToken)}
@@ -78,7 +80,7 @@ export function InfiniteTokenList({
         <div className={'flex w-full flex-1'}>
           <div className={`flex gap-2`}>
             <Icon
-              className={`rounded-circle h-[24px] w-[24px] border 
+              className={`rounded-circle h-[24px] w-[24px] border my-auto
                                 border-solid dark:border-black-4 border-grey-4`}
               src={loadIconImage(curToken?.logoURI, mode)}
             />
@@ -90,10 +92,11 @@ export function InfiniteTokenList({
                 {curToken?.symbol}
               </p>
               <span className={'inline-flex gap-1'}>
-                                <span className={'max-w-[118px] self-center'}>
+                                <span className={'inline-flex max-w-[118px] self-center'}>
                                   <p
                                     className={`text-b3 dark:text-text-darkmode-secondary 
                                       text-text-lightmode-secondary truncate font-semibold
+                                      my-auto
                                 `}
                                   >
                                     {curToken?.name}
@@ -148,11 +151,11 @@ export function InfiniteTokenList({
   >
     {({ onItemsRendered, ref }) => (
       <FixedSizeList
-        className={'mt-2'}
+        className={'mt-2 infinite-token-list'}
         itemCount={itemCount}
         onItemsRendered={onItemsRendered}
         ref={ref}
-        height={396}
+        height={clamp(tokenListLength * 58, isLoadingTokenList ? 58 * 5: 0, 396)}
         itemSize={58}
       >
         {Item}

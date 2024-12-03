@@ -3,15 +3,32 @@ import { Icon, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib
 import { FC } from 'react'
 import { POOL_TYPE } from './constants'
 import { useWalletBalance } from '@/context/walletBalanceContext'
-import { numberFormatter, commafy, loadIconImage } from '@/utils'
+import { commafy, loadIconImage, numberFormatter } from '@/utils'
+import { fetchTokensByPublicKey } from '@/api/gamma'
+import { GAMMAListTokenResponse } from '@/types/gamma'
 
-const ExplorePools: FC = () => {
+const ExplorePools: FC<{ tokenMint: string }> = ({ tokenMint }) => {
   const { setIsPortfolio } = useRewardToggle()
-  const { setCurrentPoolType } = useGamma()
+  const { setCurrentPoolType, addSelectedToken, clearAllSelectedTokens } = useGamma()
+  const chooseToken = async () => {
+    clearAllSelectedTokens()
 
+    const response = (await fetchTokensByPublicKey(
+      tokenMint
+    )) as GAMMAListTokenResponse | null
+    if (!response || !response.success || response.data?.tokens?.length == 0) {
+      return
+    }
+    for (const token of response.data.tokens) {
+      if (token.address === tokenMint) {
+        addSelectedToken(token)
+      }
+    }
+  }
   return (
     <div
-      onClick={() => {
+      onClick={async () => {
+        await chooseToken()
         setIsPortfolio.off()
         setCurrentPoolType(POOL_TYPE?.primary)
       }}
@@ -66,7 +83,7 @@ const UnusedTokens: FC = () => {
                 (~${numberFormatter(balance.value.toNumber())})
               </span>
             </div>
-            <ExplorePools />
+            <ExplorePools tokenMint={balance.mint} />
           </div>
         ))}
       </div>

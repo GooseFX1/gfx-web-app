@@ -7,8 +7,9 @@ type SearchBarProps = {
   onClear?: () => void
   value?: string | number
   groupClassName?: string,
-  additionalInputElementLeft?: JSX.Element
-  additionalInputElementRight?: JSX.Element
+  additionalInputElementLeft?: JSX.Element | JSX.Element[]
+  additionalInputElementRight?: JSX.Element | JSX.Element[]
+  isLoading?: boolean
 } & InputHTMLAttributes<HTMLInputElement>
 const SearchBar = ({
                      onClear,
@@ -18,6 +19,8 @@ const SearchBar = ({
                      onChange,
                      additionalInputElementLeft,
                      additionalInputElementRight,
+                     isLoading = false,
+                     disabled,
                      ...rest
                    }: SearchBarProps): JSX.Element => {
   const { mode } = useDarkMode()
@@ -40,6 +43,11 @@ const SearchBar = ({
             show={showRight}
           >
             {additionalInputElementRight}
+            {isLoading && <Icon
+              src={`/img/assets/refresh_${mode}.svg`}
+              className={'animate-spin'}
+              size={'sm'}
+            />}
             <Icon
               size={'sm'}
               src={`/img/assets/search_farm_${mode}.svg`}
@@ -51,11 +59,16 @@ const SearchBar = ({
             className={'flex gap-1.25'}
             onClick={onClear}
           >
-            {additionalInputElementRight}
+            {isLoading && <Icon
+              src={`/img/assets/refresh_${mode}.svg`}
+              className={'animate-spin'}
+              size={'sm'}
+            />}
           </InputElementRight>
       }
     >
       <Input
+        disabled={disabled}
         {...rest}
         value={value}
         className={cn('min-w-[200px] w-full', className)}

@@ -1,7 +1,17 @@
-import { Dispatch, FC, SetStateAction, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import {
-  Button,
+  Dispatch,
+  ElementType,
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState
+} from 'react'
+import {
   Badge,
+  Button,
   cn,
   Container,
   DropdownMenu,
@@ -18,11 +28,11 @@ import {
   TooltipTrigger
 } from 'gfx-component-lib'
 import { TokenListToken, useDarkMode, useGamma } from '../../context'
-import { JupToken, POPULAR_TOKENS, TOKEN_LIST_PAGE_SIZE } from './constants'
+import { JupToken, POOL_LIST_PAGE_SIZE, POPULAR_TOKENS, TOKEN_LIST_PAGE_SIZE } from './constants'
 //import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
 import Text from '@/components/Text'
-import { fetchPoolsByMints, fetchTokensByPublicKey } from '@/api/gamma'
+import { fetchAndConcatAllPoolsByMints, fetchTokensByPublicKey } from '@/api/gamma'
 import { GAMMAPool } from '@/types/gamma'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { aborter, loadIconImage } from '@/utils'
@@ -93,13 +103,19 @@ const Step2: FC<{
     setIsCreatePool(false)
     setOpenDepositWithdrawSlider(true)
   }, [tokenA, tokenB, existingPool, setSelectedCard])
-  const { priceAToB, priceBToA } = useMemo(() => {
+  const { priceAToB, priceBToA, priceError } = useMemo(() => {
     if (!tokenA || !tokenB)
       return {
         priceAToB: '',
         priceBToA: ''
       }
-
+    if (new Decimal(tokenA.price).isZero() || new Decimal(tokenB.price).isZero()) {
+      return {
+        priceAToB: '0.00',
+        priceBToA: '0.00',
+        priceError: `Price Data Unavailable`
+      }
+    }
     const priceAToB = new Decimal(tokenA.price).div(tokenB.price).toFixed(tokenA.decimals)
     const priceBToA = new Decimal(tokenB.price).div(tokenA.price).toFixed(tokenB.decimals)
 
@@ -112,7 +128,10 @@ const Step2: FC<{
   useLayoutEffect(() => {
     if (!tokenA || !tokenB) return
     const fetchPools = async () => {
-      const response = await fetchPoolsByMints(tokenA?.address, tokenB?.address)
+      const response = await fetchAndConcatAllPoolsByMints({
+        mintA: tokenA?.address, mintB: tokenB?.address,
+        page: 1, pageSize: POOL_LIST_PAGE_SIZE
+      })
       console.log('here', response)
       if (
         !response ||
@@ -253,6 +272,7 @@ const Step2: FC<{
             </span>
           </div>
           {priceAToB && priceBToA && (
+            <div className={'inline-flex justify-between items-center w-full'}>
             <p className={`text-text-lightmode-secondary dark:text-text-darkmode-secondary text-h4 font-semibold`}>
               1.0 {aToBRatio ? tokenA?.symbol : tokenB?.symbol}
               <Button
@@ -264,7 +284,15 @@ const Step2: FC<{
               </Button>
               {aToBRatio ? priceAToB : priceBToA} {aToBRatio ? tokenB?.symbol : tokenA?.symbol}
             </p>
+              {priceError && (
+                <span className={cn(`text-regular font-bold dark:text-text-red
+                text-text-red underline `)}>
+                    {priceError}
+                  </span>
+              )}
+            </div>
           )}
+
         </div>
         <div className="flex flex-row justify-between items-center">
           <Tooltip>
@@ -279,7 +307,8 @@ const Step2: FC<{
           </Tooltip>
 
           {poolType ? (
-            <Badge size={'lg'} className={'py-1.75 pl-1.75 pr-3'}>
+            <Badge size={'lg'} className={`py-1.75 pl-1.75 pr-3 from-brand-secondaryGradient-primary/30
+                                 to-brand-secondaryGradient-secondary/30`}>
               <img
                 src={`/img/assets/farm_${poolType.toLowerCase()}.svg`}
                 alt={poolType}
@@ -472,11 +501,7 @@ function TokenSelectionInput({
                   setSearchValue(e.target.value)
                 }}
                 onClear={() => setSearchValue('')}
-                additionalInputElementRight={
-                  isLoadingTokenList ? (
-                    <Icon src={`/img/assets/refresh_${mode}.svg`} className={'animate-spin'} size={'sm'} />
-                  ) : null
-                }
+                isLoading={isLoadingTokenList}
               />
               <div className={'border-b border-solid dark:border-black-4 border-grey-4'}>
                 <h5
@@ -555,23 +580,21 @@ function TokenSelectionInput({
 
 export default Step2
 
-export function TokenListSkeleton() {
-  return (
-    <DropdownMenuItem
-      disabled={false}
-      className={`
+export function TokenListSkeleton({ RenderAs }: { RenderAs: ElementType }) {
+  return <RenderAs
+    disabled={false}
+    className={`
                 cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full gap-3 items-center
                         hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
-    >
-      <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
-      <div className={'flex flex-col gap-1'}>
-        <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
-        <Skeleton className={`w-[88px] h-[18px] rounded-[2px]`} />
-      </div>
-      <div className={'flex flex-col gap-1 ml-auto'}>
-        <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
-        <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
-      </div>
-    </DropdownMenuItem>
-  )
+  >
+    <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
+    <div className={'flex flex-col gap-1'}>
+      <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
+      <Skeleton className={`w-[88px] h-[18px] rounded-[2px]`} />
+    </div>
+    <div className={'flex flex-col gap-1 ml-auto'}>
+      <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
+      <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
+    </div>
+  </RenderAs>
 }

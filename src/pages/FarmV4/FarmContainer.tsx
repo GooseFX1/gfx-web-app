@@ -1,9 +1,22 @@
-import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
+import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { useConnectionConfig, useDarkMode, useGamma, useRewardToggle } from '../../context'
-import { GAMMA_SORT_CONFIG, POOL_TYPE } from './constants'
+import { GAMMA_SORT_CONFIG, POOL_TYPE, TOKEN_LIST_PAGE_SIZE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Badge, Button, cn, Dialog, DialogBody, DialogContent, DialogOverlay, Icon, Switch } from 'gfx-component-lib'
+import {
+  Badge,
+  Button,
+  cn,
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogOverlay,
+  Icon,
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  Switch
+} from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import SearchBar from '@/components/common/SearchBar'
 import useBoolean from '@/hooks/useBoolean'
@@ -11,6 +24,8 @@ import FarmItems from './FarmItems'
 import Portfolio from './Portfolio'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import FarmSort from '@/pages/FarmV4/FarmSort'
+import { aborter, loadIconImage } from '@/utils'
+import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
 
 export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
@@ -20,25 +35,34 @@ export const FarmContainer: FC = () => {
     currentPoolType,
     openDepositWithdrawSlider,
     setCurrentPoolType,
-    searchTokens,
-    setSearchTokens,
     showCreatedPools,
     setShowCreatedPools,
     currentSort,
     showDeposited,
     setShowDeposited,
     filteredPools,
-    handlePoolSort
+    handlePoolSort,
+    selectedTokens,
+    removeSelectedToken,
+    addSelectedToken,
+    hasSelectedToken,
+    isLoadingTokenList,
+    topBalancesWithTokenList,
+    tokenList,
+    createPoolType,
+    updateTokenList,
+    setPage
   } = useGamma()
-  const { wallet } = useWallet()
+  const { wallet, publicKey } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
+  const [focusOnSearch, setFocusOnSearch] = useBoolean(false)
   const { isPortfolio } = useRewardToggle()
-
+  const [tokenListSearchValue, setTokenListSearchValue] = useState('')
   const pubKey: PublicKey | null = useMemo(
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
     [wallet?.adapter?.publicKey]
   )
-
+  const searchBarRef = React.useRef<HTMLDivElement>(null)
   useLayoutEffect(() => {
     if (openDepositWithdrawSlider) {
       document.body.style.overflow = 'hidden'
@@ -97,8 +121,35 @@ export const FarmContainer: FC = () => {
     },
     [showCreatedPools, userCache]
   )
-
-
+  useEffect(() => {
+    const abortSignal = aborter.addSignal('tokenList-main-page-search')
+    // faking search
+    if (tokenListSearchValue.trim().length == 0) {
+      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE, signal: abortSignal }).then(() =>
+        setPage(1)
+      )
+      return
+    }
+    const timeout = setTimeout(async () => {
+      await updateTokenList(
+        {
+          page: 1,
+          pageSize: TOKEN_LIST_PAGE_SIZE,
+          searchValue: tokenListSearchValue,
+          signal: abortSignal
+        },
+        false
+      )
+    }, 233)
+    return () => {
+      clearTimeout(timeout)
+      aborter.abortSignal('tokenList')
+    }
+  }, [tokenListSearchValue, currentPoolType])
+  const isExpandedSearchOpen = tokenListSearchValue.length > 0
+  const tokenRenderList = tokenListSearchValue.length > 0 || createPoolType === 'primary' || !publicKey
+    ? tokenList
+    : topBalancesWithTokenList
   return (
     <div className={'flex flex-col gap-3.75'}>
       {!isPortfolio ? (
@@ -127,13 +178,84 @@ export const FarmContainer: FC = () => {
                 // }
               ]}
             />
-            <div className="flex items-center w-full justify-between">
-              <SearchBar
-                onChange={(e) => setSearchTokens(e?.target?.value)}
-                onClear={() => setSearchTokens('')}
-                value={searchTokens}
-                className={'!max-w-full flex-1 bg-white dark:bg-black-2'}
-              />
+            <div className="flex items-center w-full justify-between relative">
+              <Popover open={isExpandedSearchOpen || focusOnSearch}>
+                <PopoverAnchor className={'w-full max-w-[600px] mx-auto'}
+                               ref={searchBarRef}
+                >
+                  <SearchBar
+                    onChange={(e) => setTokenListSearchValue(e?.target?.value)}
+                    onClear={() => setTokenListSearchValue('')}
+                    value={tokenListSearchValue}
+                    className={'!max-w-full flex-1 bg-white dark:bg-black-2'}
+                    onFocusCapture={setFocusOnSearch.on}
+                    onBlurCapture={setFocusOnSearch.off}
+                    isLoading={tokenListSearchValue.trim().length>0&&isLoadingTokenList}
+                    additionalInputElementLeft={
+                      <div className={'inline-flex gap-2'}>
+                        {selectedTokens.map((token) => (
+                          <Badge variant="default" size={'lg'}
+                                 key={`main-search-${token.symbol}`}
+                                 className={`
+                                 from-brand-secondaryGradient-primary/30
+                                 to-brand-secondaryGradient-secondary/30 py-[2.5px] gap-1 before:z-0 
+                                 `}>
+                            <Icon size={'sm'} src={loadIconImage(token.logoURI, mode)}
+                                  className={'rounded-full'}
+                                  onClick={() => removeSelectedToken(token)} />
+                            <h5 className={'text-text-lightmode-primary dark:text-text-white'}>{token.symbol}</h5>
+                            <Icon className={`!w-[11px] !h-[11px] !min-w-[11px] !min-h-[11px] z-0 cursor-pointer 
+                            `}
+                                  src={`/img/assets/close-${mode}.svg`}
+                                  onClick={() => {
+                                    removeSelectedToken(token)
+                                  }} />
+                          </Badge>
+                        ))}</div>}
+                  />
+                </PopoverAnchor>
+                <PopoverContent onOpenAutoFocus={(e) => e.preventDefault()}
+                                onMouseDown={(e) => e.preventDefault()}
+                                style={{
+                                  width: `${searchBarRef.current?.clientWidth ?? 600}px`
+                                }}
+                                align={'center'}
+                                side={'bottom'}
+                                avoidCollisions={false}
+                >
+                  {tokenListSearchValue && tokenRenderList.length == 0 ? <div className={`mb-auto p-2
+                  text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
+                  `}>
+                    No Tokens Found..
+                  </div> : null}
+                  {!tokenListSearchValue && focusOnSearch ? <div className={`mb-auto p-2
+                  text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
+                  `}>
+                    Search for token or paste mint address
+                  </div> : null}
+                  {tokenListSearchValue && <InfiniteTokenList
+                    useRenderListLength={tokenListSearchValue.trim().length > 0}
+                    tokenRenderList={tokenRenderList}
+                    onTokenSelect={(t) => {
+                      setTokenListSearchValue('')
+                      addSelectedToken(t)
+                    }}
+                    checkDisabled={(t) => hasSelectedToken(t)
+                      || isLoadingTokenList ||
+                      selectedTokens.length == 2}
+                    RenderAs={({ children, className, ...props }) => <Button
+                      {...props}
+                      fullWidth
+                      variant={''}
+                      className={cn(`p-1.5 text-start rounded-[3px] h-auto
+                       hover:bg-background-lightmode-primary hover:dark:bg-background-darkmode-primary
+                      `, className)}
+                    >
+                      {children}
+                    </Button>}
+                  />}
+                </PopoverContent>
+              </Popover>
               <div className="flex justify-between items-center">
                 {breakpoint.isMobile ? (
                   <div>
@@ -144,7 +266,7 @@ export const FarmContainer: FC = () => {
                         className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
                         onClick={() => (isSortFilterOpen ? setIsSortFilterOpen.off() : setIsSortFilterOpen.on())}
                       />
-                      {(currentSort !== '1' || showCreatedPools) ? <img
+                      {(currentSort !== '1' || showCreatedPools || showDeposited) ? <img
                         className={`absolute top-0.5 left-0 border-1 border-solid w-2.5 h-2.5
                         border-background-lightmode-primary dark:border-background-darkmode-primary rounded-full`}
                         src={'/img/assets/red-notification-circle.svg'}
@@ -153,31 +275,50 @@ export const FarmContainer: FC = () => {
                     <Dialog open={isSortFilterOpen} onOpenChange={setIsSortFilterOpen.set}>
                       <DialogOverlay />
                       <DialogContent
-                        className={`flex flex-col gap-0 max-h-[500px] h-full border-1 border-solid z-[1001] 
-                          overflow-hidden dark:border-border-darkmode-secondary 
+                        className={`flex flex-col gap-0 max-h-[500px] border-1 border-solid z-[1001] 
+                          overflow-hidden dark:border-border-darkmode-secondary h-auto py-3 px-2.5
                           border-border-lightmode-secondary max-sm:rounded-b-none`}
                         placement={'bottom'}
                       >
                         <DialogBody className={'flex-col flex-[1 0] p-2 overflow-auto pb-0'}>
                           <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
-                          <div className="flex items-center justify-between ">
+                          <div className={'flex flex-col gap-3'}>
+                            <div className="flex items-center justify-between ">
                             <span
                               className="h-full text-regular text-left dark:text-grey-2 text-grey-1
                                               font-semibold"
                             >
                             Show created pools
                             </span>
-                            <Switch
-                              variant={'default'}
-                              size={'sm'}
-                              colorScheme={'primary'}
-                              checked={showCreatedPools}
-                              onClick={handleFilterByCreated}
-                            />
+                              <Switch
+                                variant={'default'}
+                                size={'sm'}
+                                colorScheme={'primary'}
+                                checked={showCreatedPools}
+                                onClick={handleFilterByCreated}
+                              />
+                            </div>
+                            {pubKey != null && (
+                              <div className="flex items-center justify-between">
+                              <span
+                                className="h-full text-regular text-left dark:text-grey-2 text-grey-1
+                                              font-semibold"
+                              >
+                                Show Deposited
+                              </span>
+                                <Switch
+                                  variant={'default'}
+                                  size={'sm'}
+                                  colorScheme={'primary'}
+                                  checked={showDeposited}
+                                  onClick={handleShowDepositedToggle}
+                                />
+                              </div>
+                            )}
                           </div>
                           <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
 
-                          <div className={'grid grid-cols-1 gap-3'}>
+                          <div className={'grid grid-cols-2 gap-3'}>
                             {GAMMA_SORT_CONFIG.map((s) => (
                               <label className={`flex items-center`} key={s.id}>
                                 <Badge
@@ -193,6 +334,7 @@ export const FarmContainer: FC = () => {
                                       before:from-white
                                       from-from-white
                                       to-from-white
+                                      justify-start p-1.25
                                       `,
                                     `w-full h-[35px]`
                                   )}
@@ -205,7 +347,7 @@ export const FarmContainer: FC = () => {
                                     onChange={() => handlePoolSort(s.id)}
                                     className={'hidden'}
                                   />
-                                  <span className="m-0 text-regular font-bold pl-2">{s.name}</span>
+                                  <span className="m-0 text-regular font-bold">{s.name}</span>
                                 </Badge>
                               </label>
                             ))}
@@ -217,26 +359,6 @@ export const FarmContainer: FC = () => {
                 ) : (
                   <FarmSort isOpen={isSortFilterOpen} setIsOpen={setIsSortFilterOpen.set} />
                 )}
-
-                <div className={'flex flex-row ml-auto gap-3.75'}>
-                  {pubKey != null && (
-                    <div className="flex items-center mr-2">
-                      <Switch
-                        variant={'default'}
-                        size={'sm'}
-                        colorScheme={'primary'}
-                        checked={showDeposited}
-                        onClick={handleShowDepositedToggle}
-                      />
-                      <div
-                        className="h-full text-tiny text-left dark:text-grey-2 text-grey-1 
-                        font-semibold ml-2 leading-1 py-1"
-                      >
-                        Show <br /> Deposited
-                      </div>
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
           </div>
