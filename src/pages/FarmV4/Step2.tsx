@@ -103,13 +103,19 @@ const Step2: FC<{
     setIsCreatePool(false)
     setOpenDepositWithdrawSlider(true)
   }, [tokenA, tokenB, existingPool, setSelectedCard])
-  const { priceAToB, priceBToA } = useMemo(() => {
+  const { priceAToB, priceBToA, priceError } = useMemo(() => {
     if (!tokenA || !tokenB)
       return {
         priceAToB: '',
         priceBToA: ''
       }
-
+    if (new Decimal(tokenA.price).isZero() || new Decimal(tokenB.price).isZero()) {
+      return {
+        priceAToB: '0.00',
+        priceBToA: '0.00',
+        priceError: `Price Data Unavailable`
+      }
+    }
     const priceAToB = new Decimal(tokenA.price).div(tokenB.price).toFixed(tokenA.decimals)
     const priceBToA = new Decimal(tokenB.price).div(tokenA.price).toFixed(tokenB.decimals)
 
@@ -266,6 +272,7 @@ const Step2: FC<{
             </span>
           </div>
           {priceAToB && priceBToA && (
+            <div className={'inline-flex justify-between items-center w-full'}>
             <p className={`text-text-lightmode-secondary dark:text-text-darkmode-secondary text-h4 font-semibold`}>
               1.0 {aToBRatio ? tokenA?.symbol : tokenB?.symbol}
               <Button
@@ -277,7 +284,15 @@ const Step2: FC<{
               </Button>
               {aToBRatio ? priceAToB : priceBToA} {aToBRatio ? tokenB?.symbol : tokenA?.symbol}
             </p>
+              {priceError && (
+                <span className={cn(`text-regular font-bold dark:text-text-red
+                text-text-red underline `)}>
+                    {priceError}
+                  </span>
+              )}
+            </div>
           )}
+
         </div>
         <div className="flex flex-row justify-between items-center">
           <Tooltip>
