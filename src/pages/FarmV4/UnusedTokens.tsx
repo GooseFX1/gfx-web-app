@@ -3,9 +3,9 @@ import { Icon, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib
 import { FC } from 'react'
 import { POOL_TYPE } from './constants'
 import { useWalletBalance } from '@/context/walletBalanceContext'
-import { commafy, loadIconImage, numberFormatter } from '@/utils'
 import { fetchTokensByPublicKey } from '@/api/gamma'
 import { GAMMAListTokenResponse } from '@/types/gamma'
+import { commafy, loadIconImage, numberFormatter } from '@/utils'
 
 const ExplorePools: FC<{ tokenMint: string }> = ({ tokenMint }) => {
   const { setIsPortfolio } = useRewardToggle()
@@ -65,9 +65,9 @@ const UnusedTokens: FC = () => {
       <div className="font-poppins text-[28px] font-semibold text-black-4 dark:text-grey-8 mb-3.75">
         ${commafy(parseFloat(walletValue), 2)}
       </div>
-      <div className={`overflow-scroll`}>
+      <div className={`overflow-auto h-full flex flex-col gap-3`}>
         {topBalances.slice(0, 5).map((balance) => (
-          <div className="flex flex-row justify-between items-center mb-3" key={balance.symbol}>
+          <div className="flex flex-row justify-between items-center" key={balance.symbol}>
             <div className="flex flex-row items-center">
               <Icon
                 src={loadIconImage(balance.logoURI, mode)}

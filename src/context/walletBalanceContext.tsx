@@ -63,7 +63,14 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
 
   const topBalances: UserTokenAccounts[] = useMemo(() => {
     const values = Object.values(balance)
-    return values.filter((v) => v.value.gt(0)).sort((a, b) => (a.value.gte(b.value) ? -1 : 1))
+    const seenSet = new Set()
+    return values.filter((v) => v.value.gt(0)).filter((v) => {
+      if (seenSet.has(v.mint)) {
+        return false
+      }
+      seenSet.add(v.mint)
+      return true
+    }).sort((a, b) => (a.value.gte(b.value) ? -1 : 1))
   }, [balance])
 
   const tokens = tokenAccounts.map((account) => ({
@@ -83,8 +90,8 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         console.log('updating balance for - sol', uiAmount)
         return
       }
-      const decodedAccount = AccountLayout.decode(accountInfo.data);
-      const uiAmount = new Decimal(decodedAccount.amount.toString()).div(10 ** account.decimals).toNumber();
+      const decodedAccount = AccountLayout.decode(accountInfo.data)
+      const uiAmount = new Decimal(decodedAccount.amount.toString()).div(10 ** account.decimals).toNumber()
       const amount: TokenAmount = {
         amount: decodedAccount.amount.toString(),
         decimals: account.decimals,
@@ -142,13 +149,14 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       {
         memcmp: {
           offset: 32, // location of our query in the account (bytes)
-          bytes: publicKey.toBase58() // our search criteria, a base58 encoded string
+          bytes: publicKey.toBase58() // our search criteria, a base58 encoded string,
         }
       }
     ]
 
     const accounts = await connection.getParsedProgramAccounts(TOKEN_PROGRAM_ID, {
-      filters: filters
+      filters: filters,
+      commitment: 'processed'
     })
     const tokenAccounts = {}
     const tokenInfo = {}
@@ -204,7 +212,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         currentWalletValue = currentWalletValue.add(value)
       }
     }
-    console.log('tokenAccounts', tokenAccounts)
+
     setTokenAccounts(Object.values(tokenAccounts))
     setBalance(tokenAccounts)
     setWalletValue(currentWalletValue.toFixed(2))
@@ -276,7 +284,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       value={{
         balance: balanceProxy,
         topBalances,
-        publicKey: publicKey,
+        publicKey: publicKey || null,
         base58PublicKey,
         createTokenAccountInstruction,
         createTokenAccountInstructions,
