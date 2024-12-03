@@ -221,7 +221,7 @@ export const GAMMA_SORT_CONFIG_MAP: Map<string, GAMMASortConfig> =
 export type PoolSortId = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8'
 export const BASE_SLIPPAGE = [0.1, 0.5, 1.0]
 export const TOKEN_LIST_PAGE_SIZE = 50
-export const POOL_LIST_PAGE_SIZE = 200
+export const POOL_LIST_PAGE_SIZE = 16
 export const POPULAR_TOKENS = new Set([
   'So11111111111111111111111111111111111111112',
   'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
