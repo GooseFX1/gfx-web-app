@@ -3,7 +3,7 @@ import { Badge, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-li
 import { GAMMAPool } from '@/types/gamma'
 import { numberFormatter } from '@/utils'
 import BigNumber from 'bignumber.js'
-import { fetchTokenList } from '@/api/gamma'
+import { fetchTokensByPublicKey } from '@/api/gamma'
 
 export const PoolStats: FC<{ pool: GAMMAPool; updatedPoolState: any }> = ({
   pool,
@@ -32,19 +32,16 @@ export const PoolStats: FC<{ pool: GAMMAPool; updatedPoolState: any }> = ({
       )
         return
       setFees('Loading')
-      const tokenAData = await fetchTokenList(1, 1, undefined, pool.mintA.address)
-      const tokenBData = await fetchTokenList(1, 1, undefined, pool.mintB.address)
+      const tokenListData = await fetchTokensByPublicKey(`${pool.mintA.address},${pool.mintB.address}`)
 
       if (
-        !tokenAData.success ||
-        !tokenAData.data.tokens?.[0] ||
-        !tokenBData.success ||
-        !tokenBData.data.tokens?.[0]
+        !tokenListData.success ||
+        tokenListData.data.tokens?.length !== 2
       )
         return
 
-      const tokenA = tokenAData.data.tokens[0]
-      const tokenB = tokenBData.data.tokens[0]
+      const tokenA = tokenListData.data.tokens[0]
+      const tokenB = tokenListData.data.tokens[1]
 
       const tokenAfee = new BigNumber(updatedPoolState.comulativeTradeFeesToken0)
         .div(10**pool.mintA.decimals)
