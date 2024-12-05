@@ -56,6 +56,7 @@ import BN from 'bn.js'
 import { BlockheightBasedTransactionConfirmationStrategy } from '@solana/web3.js'
 import usePrevious from '@/hooks/usePrevious'
 import useMultiSelect from '@/hooks/useMultiSelect'
+import useFirstRender from '@/hooks/useFirstRender'
 
 type ViewRange = 0 | 1 | 2
 
@@ -139,6 +140,7 @@ interface GAMMADataModel {
   removeSelectedToken: (token: JupToken) => void
   hasSelectedToken: (token: JupToken) => boolean
   clearAllSelectedTokens: () => void
+  setTokenList: Dispatch<SetStateAction<TokenListToken[]>>
 }
 
 export type TokenListToken = {
@@ -216,6 +218,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   } = useMultiSelect<JupToken, string>({
     uniqueValueSelector: (token) => token.address
   })
+  const isFirstRender = useFirstRender()
 
   const handlePoolSort = useCallback(
     (id: string) => {
@@ -236,7 +239,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     },
     [setCurrentSort, userCache]
   )
-  //const [connectionId, setConnectionId] = useState<string>()
+  useEffect(() => {
+    if (!publicKey) {
+      setTokenList([])
+      setPage(1)
+    }
+  }, [publicKey])
   useEffect(() => {
     if (!isProMode && prevIsProMode !== isProMode) {
       // reset based on mode
@@ -249,10 +257,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [isProMode, viewRange, currentSort, prevIsProMode])
   useEffect(() => {
-    // first render only
-    if (tokenList.length == 0) {
-      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE }, false)
-    }
     if (pools.length == 0) {
       updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type })
     }
@@ -413,11 +417,15 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   useEffect(() => {
+    if (isFirstRender) return;
+    console.log('pageTrigger')
     //update token on next pagination
     updateTokenList({ page, pageSize: TOKEN_LIST_PAGE_SIZE })
   }, [page])
 
   useEffect(() => {
+    if (isFirstRender) return;
+    console.log('createPoolTrigger')
     // on create pool request new data
     // will trigger above useEffect
     setTokenList([])
@@ -428,6 +436,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [createPoolType])
 
   useEffect(() => {
+    if (isFirstRender) return;
+
     setPoolPage(1)
     // same page
     if (poolPage == 1) {
@@ -435,6 +445,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [currentPoolType])
   useEffect(() => {
+    if (isFirstRender) return;
     updatePools({ page: poolPage, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type })
   }, [sortConfig, viewRange])
 
@@ -702,7 +713,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         addSelectedToken,
         removeSelectedToken,
         hasSelectedToken,
-        clearAllSelectedTokens
+        clearAllSelectedTokens,
+        setTokenList
       }}
     >
       {children}

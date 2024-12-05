@@ -40,6 +40,7 @@ import SearchBar from '@/components/common/SearchBar'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import Decimal from 'decimal.js-light'
 import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
+import useFirstRender from '@/hooks/useFirstRender'
 
 const Step2: FC<{
   tokenA: TokenListToken
@@ -60,24 +61,24 @@ const Step2: FC<{
   setIsCreatePool: Dispatch<SetStateAction<boolean>>
   poolType: string | null
 }> = ({
-  tokenA,
-  setTokenA,
-  tokenB,
-  setTokenB,
-  handleChange,
-  amountTokenA,
-  amountTokenB,
-  // feeTier,
-  // setFeeTier,
-  poolExists,
-  setPoolExists,
-  initialPrice,
-  setInitialPrice,
-  walletTokenA,
-  walletTokenB,
-  setIsCreatePool,
-  poolType
-}) => {
+        tokenA,
+        setTokenA,
+        tokenB,
+        setTokenB,
+        handleChange,
+        amountTokenA,
+        amountTokenB,
+        // feeTier,
+        // setFeeTier,
+        poolExists,
+        setPoolExists,
+        initialPrice,
+        setInitialPrice,
+        walletTokenA,
+        walletTokenB,
+        setIsCreatePool,
+        poolType
+      }) => {
   const { mode } = useDarkMode()
   const [priceSwitch, setPriceSwitch] = useState(false)
   const [poolExistsText, setPoolExistsText] = useState<string>('')
@@ -273,17 +274,17 @@ const Step2: FC<{
           </div>
           {priceAToB && priceBToA && (
             <div className={'inline-flex justify-between items-center w-full'}>
-            <p className={`text-text-lightmode-secondary dark:text-text-darkmode-secondary text-h4 font-semibold`}>
-              1.0 {aToBRatio ? tokenA?.symbol : tokenB?.symbol}
-              <Button
-                className={`cursor-pointer text-blue-1 dark:text-white text-[20px] font-bold p-1 h-max`}
-                variant={'link'}
-                onClick={setAToBRatio.toggle}
-              >
-                ≈
-              </Button>
-              {aToBRatio ? priceAToB : priceBToA} {aToBRatio ? tokenB?.symbol : tokenA?.symbol}
-            </p>
+              <p className={`text-text-lightmode-secondary dark:text-text-darkmode-secondary text-h4 font-semibold`}>
+                1.0 {aToBRatio ? tokenA?.symbol : tokenB?.symbol}
+                <Button
+                  className={`cursor-pointer text-blue-1 dark:text-white text-[20px] font-bold p-1 h-max`}
+                  variant={'link'}
+                  onClick={setAToBRatio.toggle}
+                >
+                  ≈
+                </Button>
+                {aToBRatio ? priceAToB : priceBToA} {aToBRatio ? tokenB?.symbol : tokenA?.symbol}
+              </p>
               {priceError && (
                 <span className={cn(`text-regular font-bold dark:text-text-red
                 text-text-red underline `)}>
@@ -367,7 +368,7 @@ const Step2: FC<{
           balance[tokenA?.address].tokenAmount.uiAmount <= 0.0 ||
           balance[tokenB?.address].tokenAmount.uiAmount <= 0.0) ? (
           <span className="text-red-1 font-sembold text-regular">
-            {connected ? "You don't have enough tokens in the wallet!" : 'Please connect your wallet to proceed!'}
+            {connected ? 'You don\'t have enough tokens in the wallet!' : 'Please connect your wallet to proceed!'}
           </span>
         ) : tokenA && tokenB && tokenA?.symbol === tokenB?.symbol ? (
           <span className="text-red-1 font-sembold text-regular">
@@ -393,55 +394,57 @@ const Step2: FC<{
 }
 
 function TokenSelectionInput({
-  token,
-  handleChange,
-  amountToken,
-  setToken,
-  otherToken
-}: {
+                               token,
+                               handleChange,
+                               amountToken,
+                               setToken,
+                               otherToken
+                             }: {
   token: JupToken | null
   otherToken: JupToken | null
   handleChange: (e: any, boolean) => void
   amountToken: string
   setToken: Dispatch<SetStateAction<JupToken>>
 }) {
-  const { isLoadingTokenList, tokenList, updateTokenList, setPage, topBalancesWithTokenList } = useGamma()
+  const { isLoadingTokenList, tokenList, updateTokenList, setPage, topBalancesWithTokenList, setTokenList } = useGamma()
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
   // const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
   const [searchValue, setSearchValue] = useState<string>('')
   const [popularTokens, setPopularTokens] = useState<JupToken[]>([])
   const [loadingPopularTokens, setLoadingPopularTokens] = useBoolean(false)
-  const { wallet } = useWallet()
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
-
+  const { publicKey } = useWalletBalance()
+  const isFirstRender = useFirstRender()
   const tokenRenderList = searchValue.length > 0 || !publicKey ? tokenList : topBalancesWithTokenList
 
   useEffect(() => {
-    const abortSignal = aborter.addSignal('tokenList')
+    if (isFirstRender) return;
+    console.log('step2 trigger')
+    const abortSignal = aborter.addSignal('tokenList-step2')
     // faking search
     if (searchValue.trim().length == 0) {
-      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE, signal: abortSignal }, false).then(() =>
-        setPage(1)
-      )
+      if (publicKey) {
+        updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE, signal: abortSignal }, false).then(() =>
+          setPage(1)
+        )
+      } else {
+        setTokenList([])
+      }
       return
     }
-    const timeout = setTimeout(async () => {
-      updateTokenList(
-        {
-          page: 1,
-          pageSize: TOKEN_LIST_PAGE_SIZE,
-          searchValue,
-          signal: abortSignal
-        },
-        false
-      )
-    }, 500)
+    updateTokenList(
+      {
+        page: 1,
+        pageSize: TOKEN_LIST_PAGE_SIZE,
+        searchValue,
+        signal: abortSignal
+      },
+      false
+    )
     return () => {
-      clearTimeout(timeout)
-      aborter.abortSignal('tokenList')
+      aborter.abortSignal('tokenList-step2')
     }
-  }, [searchValue])
+  }, [searchValue, publicKey])
 
   useEffect(() => {
     setLoadingPopularTokens.on()
@@ -486,7 +489,9 @@ function TokenSelectionInput({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className={'flex flex-col mt-1 z-[1001] h-[396px] w-[464px] max-sm:w-[338px] relative pb-0'}
+              className={cn(`flex flex-col mt-1 z-[1001] h-auto max-h-[396px] w-[464px] max-sm:w-[338px] relative pb-0`,
+                (!publicKey && !searchValue.trim().length) && 'pb-2'
+                )}
               portal={true}
               align={'start'}
             >
@@ -503,7 +508,8 @@ function TokenSelectionInput({
                 onClear={() => setSearchValue('')}
                 isLoading={isLoadingTokenList}
               />
-              <div className={'border-b border-solid dark:border-black-4 border-grey-4'}>
+              <div className={cn(`border-b border-solid dark:border-black-4 border-grey-4`,
+                ((!publicKey && !searchValue.trim().length) && 'border-none'))}>
                 <h5
                   className={`my-2 dark:text-text-darkmode-secondary 
                                         text-text-lightmode-secondary`}
@@ -548,10 +554,10 @@ function TokenSelectionInput({
                   )}
                 </div>
               </div>
-              {searchValue && tokenList.length == 0 ? (
+              {searchValue && tokenRenderList.length == 0 && !isLoadingTokenList ? (
                 <div className={'mb-auto p-2'}>No Tokens Found..</div>
               ) : null}
-              <InfiniteTokenList
+              {tokenRenderList.length > 0 ? <InfiniteTokenList
                 useRenderListLength={searchValue.trim().length > 0}
                 tokenRenderList={tokenRenderList}
                 onTokenSelect={(token) => {
@@ -560,7 +566,7 @@ function TokenSelectionInput({
                 }}
                 RenderAs={DropdownMenuItem}
                 checkDisabled={(t) => t?.address == otherToken?.address || isLoadingTokenList}
-              />
+              /> : null}
             </DropdownMenuContent>
           </DropdownMenu>
         </InputElementLeft>

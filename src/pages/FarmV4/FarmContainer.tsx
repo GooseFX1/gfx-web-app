@@ -26,6 +26,7 @@ import useBreakPoint from '../../hooks/useBreakPoint'
 import FarmSort from '@/pages/FarmV4/FarmSort'
 import { aborter, loadIconImage } from '@/utils'
 import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
+import useFirstRender from '@/hooks/useFirstRender'
 
 export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
@@ -63,6 +64,7 @@ export const FarmContainer: FC = () => {
     [wallet?.adapter?.publicKey]
   )
   const searchBarRef = React.useRef<HTMLDivElement>(null)
+  const isFirstRender = useFirstRender()
   useLayoutEffect(() => {
     if (openDepositWithdrawSlider) {
       document.body.style.overflow = 'hidden'
@@ -122,6 +124,8 @@ export const FarmContainer: FC = () => {
     [showCreatedPools, userCache]
   )
   useEffect(() => {
+    if (isFirstRender) return
+    console.log('farmTrigger')
     const abortSignal = aborter.addSignal('tokenList-main-page-search')
     // faking search
     if (tokenListSearchValue.trim().length == 0) {
