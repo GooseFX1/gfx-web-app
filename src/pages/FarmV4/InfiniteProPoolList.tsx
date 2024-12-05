@@ -6,20 +6,15 @@ import { POOL_LIST_PAGE_SIZE } from './constants'
 import { FarmRowLoader } from './FarmRow'
 import { CSSProperties } from 'styled-components'
 
-type WindowContainerProps<T> = {
-  rootElement?: HTMLElement
+type InfiniteProPoolListProps<T> = {
   render: (item: T, index: number) => JSX.Element
-  itemClassName?: string
   itemPadding?: number
 } & HTMLAttributes<HTMLDivElement>
 
-const WindowingContainer: FC<WindowContainerProps<unknown>> = ({
+const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
   render,
-  className,
   itemPadding: ITEM_PADDING = 8,
-  ...rest
 }): JSX.Element => {
-  const ref = useRef<HTMLDivElement>(null)
   const {
     filteredPools: items,
     currentSort,
@@ -75,7 +70,6 @@ const WindowingContainer: FC<WindowContainerProps<unknown>> = ({
   const windowHeight = Math.min(10, totalPoolCount) * 60
 
   return (
-    <div className={className} ref={ref} {...rest}>
       <InfiniteLoader isItemLoaded={isItemLoaded} itemCount={itemCount} loadMoreItems={loadMoreItems}>
         {({ onItemsRendered, ref }) => (
           <FixedSizeList
@@ -90,8 +84,7 @@ const WindowingContainer: FC<WindowContainerProps<unknown>> = ({
           </FixedSizeList>
         )}
       </InfiniteLoader>
-    </div>
   )
 }
 
-export default WindowingContainer
+export default InfiniteProPoolList

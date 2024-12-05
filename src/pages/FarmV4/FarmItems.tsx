@@ -1,10 +1,11 @@
 import { FC, useMemo } from 'react'
 import NoResultsFound from './NoResultsFound'
 import { useGamma, useRewardToggle } from '@/context'
-import { POOL_TYPE } from '@/pages/FarmV4/constants'
 import FarmItemsMigrate from '@/pages/FarmV4/FarmItemsMigrate'
 import FarmItemsLite from '@/pages/FarmV4/FarmItemsLite'
 import FarmItemsPro from '@/pages/FarmV4/FarmItemsPro'
+import { Button } from 'gfx-component-lib'
+import { POOL_LIST_PAGE_SIZE, POOL_TYPE } from '@/pages/FarmV4/constants'
 
 export const noPoolsFound = {
   title: 'Oops, no pools found',
@@ -28,6 +29,9 @@ const FarmItems: FC<{
     currentPoolType,
     searchTokens,
     showDeposited,
+    updatePools,
+    poolPage,
+    poolsHasMoreData
   } = useGamma()
   const { isProMode } = useRewardToggle()
   const isSearchActive = useMemo(() => searchTokens.length > 0, [searchTokens])
@@ -113,6 +117,21 @@ const FarmItems: FC<{
         openPositionImages={openPositionImages}
         openPositionsAcrossPrograms={openPositionsAcrossPrograms}
       />
+      }
+      {!isProMode && ((!(numberOfTokensDeposited === 0 && showDeposited) || filteredPools.length !== 0) && 
+      currentPoolType.type != 'migrate') && poolsHasMoreData &&
+        <Button
+          className="cursor-pointer rounded-full border-[1.5px] border-solid border-purple-5
+            dark:bg-black-1 dark:text-white bg-grey-5 mx-auto font-bold text-regular text-black-4"
+          variant={'primary'}
+          onClick={() => updatePools({
+            page: poolPage + 1,
+            pageSize: POOL_LIST_PAGE_SIZE,
+            poolType: currentPoolType.type
+          })}
+        >
+          Load More
+        </Button>
       }
     </div>
   )
