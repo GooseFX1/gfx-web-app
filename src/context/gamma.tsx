@@ -181,7 +181,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
   const [tokenList, setTokenList] = useState<TokenListToken[]>([])
   const [page, setPage] = useState(1)
-  const [isLoadingTokenList, setIsLoadingTokenList] = useState(false)
+  const [isLoadingTokenList, setIsLoadingTokenList] = useBoolean(false)
   const [isLoadingPools, setIsLoadingPools] = useBoolean(false)
   const [poolPage, setPoolPage] = useState(1)
   const [totalPoolCount, setTotalPoolCount] = useState(0);
@@ -291,16 +291,19 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     {
       page,
       pageSize,
-      searchValue = '',
-      signal
+      searchValue = ''
     }: {
       page: number
       pageSize: number
-      searchValue?: string,
-      signal?: AbortSignal
+      searchValue?: string
     }, append = true) => {
+    setIsLoadingTokenList.on()
+    const abortToken = 'tokenList-gamma' as const
+    if (aborter.getSignal(abortToken)) {
+      aborter.abortSignal(abortToken)
+    }
+    const signal = aborter.addSignal(abortToken)
 
-    setIsLoadingTokenList(true)
     let tokenType = ''
 
     if (createPoolType.trim().length !== 0) {
@@ -316,8 +319,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       searchValue,
       signal
     )) as GAMMAListTokenResponse | null
-
-    setIsLoadingTokenList(false)
+    if (!response.success && response.data == null) {
+      return
+    }
+    setIsLoadingTokenList.off()
     if (!response || !response.success) {
       return
     }
@@ -721,7 +726,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         handlePoolSort,
         topBalancesWithTokenList,
         calculatePoolType,
-        topBalancesWithTokenList,
         selectedTokens,
         addSelectedToken,
         removeSelectedToken,

@@ -35,7 +35,7 @@ import Text from '@/components/Text'
 import { fetchAndConcatAllPoolsByMints, fetchTokensByPublicKey } from '@/api/gamma'
 import { GAMMAPool } from '@/types/gamma'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { aborter, loadIconImage } from '@/utils'
+import { loadIconImage } from '@/utils'
 import SearchBar from '@/components/common/SearchBar'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import Decimal from 'decimal.js-light'
@@ -420,11 +420,9 @@ function TokenSelectionInput({
   useEffect(() => {
     if (isFirstRender) return;
     console.log('step2 trigger')
-    const abortSignal = aborter.addSignal('tokenList-step2')
-    // faking search
     if (searchValue.trim().length == 0) {
       if (publicKey) {
-        updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE, signal: abortSignal }, false).then(() =>
+        updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE }, false).then(() =>
           setPage(1)
         )
       } else {
@@ -437,13 +435,9 @@ function TokenSelectionInput({
         page: 1,
         pageSize: TOKEN_LIST_PAGE_SIZE,
         searchValue,
-        signal: abortSignal
       },
       false
     )
-    return () => {
-      aborter.abortSignal('tokenList-step2')
-    }
   }, [searchValue, publicKey])
 
   useEffect(() => {

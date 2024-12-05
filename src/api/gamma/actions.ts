@@ -1,4 +1,4 @@
-import { httpClient } from '../index'
+import { CANCELED_STATUS_CODE, httpClient } from '../index'
 import { GAMMA_API_BASE, GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
 import {
   GAMMAConfig,
@@ -178,6 +178,12 @@ const fetchTokenList = async (
         signal: signal
       }
     )
+    if (response.status === CANCELED_STATUS_CODE) {
+      return {
+        success: false,
+        data: null
+      }
+    }
     return await response.data
   } catch (error) {
     console.log('Error fetching token list', error)

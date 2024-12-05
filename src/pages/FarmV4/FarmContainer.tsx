@@ -129,25 +129,22 @@ export const FarmContainer: FC = () => {
     const abortSignal = aborter.addSignal('tokenList-main-page-search')
     // faking search
     if (tokenListSearchValue.trim().length == 0) {
-      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE, signal: abortSignal }).then(() =>
+      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE}).then(() =>
         setPage(1)
       )
       return
     }
-    const timeout = setTimeout(async () => {
-      await updateTokenList(
-        {
-          page: 1,
-          pageSize: TOKEN_LIST_PAGE_SIZE,
-          searchValue: tokenListSearchValue,
-          signal: abortSignal
-        },
-        false
-      )
-    }, 233)
+    updateTokenList(
+      {
+        page: 1,
+        pageSize: TOKEN_LIST_PAGE_SIZE,
+        searchValue: tokenListSearchValue,
+      },
+      false
+    )
     return () => {
-      clearTimeout(timeout)
-      aborter.abortSignal('tokenList')
+      aborter.abortSignal('tokenList-main-page-search')
+      console.log('unmount', { aborter, abortSignal })
     }
   }, [tokenListSearchValue, currentPoolType])
   const isExpandedSearchOpen = tokenListSearchValue.length > 0
@@ -227,7 +224,8 @@ export const FarmContainer: FC = () => {
                                 side={'bottom'}
                                 avoidCollisions={false}
                 >
-                  {tokenListSearchValue && tokenRenderList.length == 0 ? <div className={`mb-auto p-2
+                  {tokenListSearchValue && tokenRenderList.length == 0 && !isLoadingTokenList ?
+                    <div className={`mb-auto p-2
                   text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
                   `}>
                     No Tokens Found..
