@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { useConnectionConfig, useDarkMode, useGamma, useRewardToggle } from '../../context'
+import { tokenListAbortTokenGamma, useConnectionConfig, useDarkMode, useGamma, useRewardToggle } from '../../context'
 import { GAMMA_SORT_CONFIG, POOL_TYPE, TOKEN_LIST_PAGE_SIZE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
@@ -52,7 +52,7 @@ export const FarmContainer: FC = () => {
     tokenList,
     createPoolType,
     updateTokenList,
-    setPage
+    setTokenList
   } = useGamma()
   const { wallet, publicKey } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
@@ -126,12 +126,10 @@ export const FarmContainer: FC = () => {
   useEffect(() => {
     if (isFirstRender) return
     console.log('farmTrigger')
-    const abortSignal = aborter.addSignal('tokenList-main-page-search')
     // faking search
     if (tokenListSearchValue.trim().length == 0) {
-      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE}).then(() =>
-        setPage(1)
-      )
+      aborter.abortSignal(tokenListAbortTokenGamma)
+      setTokenList([])
       return
     }
     updateTokenList(
@@ -142,10 +140,7 @@ export const FarmContainer: FC = () => {
       },
       false
     )
-    return () => {
-      aborter.abortSignal('tokenList-main-page-search')
-      console.log('unmount', { aborter, abortSignal })
-    }
+
   }, [tokenListSearchValue, currentPoolType])
   const isExpandedSearchOpen = tokenListSearchValue.length > 0
   const tokenRenderList = tokenListSearchValue.length > 0 || createPoolType === 'primary' || !publicKey

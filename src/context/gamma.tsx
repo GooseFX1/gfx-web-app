@@ -155,6 +155,7 @@ export type TokenListToken = {
   mint_authority: string | null
   price: number
 }
+export const tokenListAbortTokenGamma = 'tokenList-gamma' as const
 
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -298,11 +299,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       searchValue?: string
     }, append = true) => {
     setIsLoadingTokenList.on()
-    const abortToken = 'tokenList-gamma' as const
-    if (aborter.getSignal(abortToken)) {
-      aborter.abortSignal(abortToken)
+    if (aborter.getSignal(tokenListAbortTokenGamma)) {
+      aborter.abortSignal(tokenListAbortTokenGamma)
     }
-    const signal = aborter.addSignal(abortToken)
+    const signal = aborter.addSignal(tokenListAbortTokenGamma)
 
     let tokenType = ''
 

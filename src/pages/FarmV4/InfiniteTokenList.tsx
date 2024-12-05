@@ -51,17 +51,16 @@ export function InfiniteTokenList({
   const isItemLoaded = index => maxTokensReached || index < tokenListLength
 
   const Item = ({ index, style }: { index: number, style: CSSProperties }) => {
-    if (!isItemLoaded(index)) {
+    if (!isItemLoaded(index)||isLoadingTokenList) {
+      if (index > 0) return null
       return <div style={style} className={`flex flex-col gap-2`}>
         <TokenListSkeleton RenderAs={RenderAs} />
-        {tokenList.length == 0 ? <>
-            <TokenListSkeleton RenderAs={RenderAs} />
-            <TokenListSkeleton RenderAs={RenderAs} />
-            <TokenListSkeleton RenderAs={RenderAs} />
-          </>
-          :
-          null
-        }
+        <TokenListSkeleton RenderAs={RenderAs} />
+        <TokenListSkeleton RenderAs={RenderAs} />
+        <TokenListSkeleton RenderAs={RenderAs} />
+        <TokenListSkeleton RenderAs={RenderAs} />
+        <TokenListSkeleton RenderAs={RenderAs} />
+        <TokenListSkeleton RenderAs={RenderAs} />
       </div>
     }
 
@@ -155,7 +154,7 @@ export function InfiniteTokenList({
         itemCount={itemCount}
         onItemsRendered={onItemsRendered}
         ref={ref}
-        height={clamp(tokenListLength * 58, isLoadingTokenList ? 58 * 5: 0, 396)}
+        height={clamp(tokenListLength * 58, isLoadingTokenList ? 58 * 5 : 0, 396)}
         itemSize={58}
       >
         {Item}
