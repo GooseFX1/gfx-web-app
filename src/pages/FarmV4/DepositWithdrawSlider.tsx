@@ -18,20 +18,21 @@ import useTransaction from '@/hooks/useTransaction'
 import {
   calculateOtherTokenAndLPAmount,
   deposit,
+  getAmmConfigId,
   getLiquidityPoolKey,
   getpoolId,
   lpTokensToTradingTokens,
-  withdraw,
-  getMaxSolDepositAmount
+  withdraw
 } from '@/web3/Farm'
 import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
 import { withdrawBigStringFarm } from '@/utils/misc'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { bigNumberFormatter } from '@/utils'
-import { blob, publicKey as pbk, struct, u128, u32, u64, u8 } from '@/utils/marshmallow'
+import { blob, publicKey as pbk, struct, u128, u64, u8 } from '@/utils/marshmallow'
 import useBoolean from '@/hooks/useBoolean'
 import LottieConfetti from '@/pages/FarmV4/LottieConfetti'
+import { u16 } from '@solana/buffer-layout'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
@@ -72,62 +73,62 @@ export const DepositWithdrawSlider: FC = () => {
   const [updatedPoolState, setUpdatedPoolState] = useState<any>({})
   const [withdrawableBalanceA, setWithdrawableBalanceA] = useState<BN>(new BN(0))
   const [withdrawableBalanceB, setWithdrawableBalanceB] = useState<BN>(new BN(0))
-  const [isUserTyping, setIsUserTyping] = useState<boolean>(false)
-  const [isSolMaxDeposit, setIsSolMaxDeposit] = useState<boolean>(false)
 
   const POOL_STATE_LAYOUT = struct([
-    blob(8, "discriminator"),
-    pbk("amm_config"),
-    pbk("pool_creator"),
-    pbk("token_0_vault"),
-    pbk("token_1_vault"),
-    blob(32, "_padding1"),
-    pbk("token_0_mint"),
-    pbk("token_1_mint"),
-    pbk("token_0_program"),
-    pbk("token_1_program"),
-    pbk("observation_key"),
-    u8("auth_bump"),
-    u8("status"),
-    u8("_padding2"),
-    u8("mint_0_decimals"),
-    u8("mint_1_decimals"),
-    u64("lp_supply"),
-    u64("protocol_fees_token_0"),
-    u64("protocol_fees_token_1"),
-    u64("fund_fees_token_0"),
-    u64("fund_fees_token_1"),
-    u64("open_time"),
-    u64("recent_epoch"),
-    u128("cumulative_trade_fees_token_0"),
-    u128("cumulative_trade_fees_token_1"),
-    u128("cumulative_volume_token_0"),
-    u128("cumulative_volume_token_1"),
-    u32("filter_period"),
-    u32("decay_period"),
-    u32("reduction_factor"),
-    u32("variable_fee_control"),
-    u64("volatility_v2_base_fee"),
-    u64("volatility_v2_max_fee"),
-    u64("volatility_v2_volatility_factor"),
-    u64("volatility_v2_imbalance_factor"),
-    blob(17 * 8, "padding")
-  ]);
+    blob(8, 'discriminator'),
+    pbk('amm_config'),
+    pbk('pool_creator'),
+    pbk('token_0_vault'),
+    pbk('token_1_vault'),
+    blob(32, '_padding1'),
+    pbk('token_0_mint'),
+    pbk('token_1_mint'),
+    pbk('token_0_program'),
+    pbk('token_1_program'),
+    pbk('observation_key'),
+    u8('auth_bump'),
+    u8('status'),
+    u8('_padding2'),
+    u8('mint_0_decimals'),
+    u8('mint_1_decimals'),
+    u64('lp_supply'),
+    u64('protocol_fees_token_0'),
+    u64('protocol_fees_token_1'),
+    u64('fund_fees_token_0'),
+    u64('fund_fees_token_1'),
+    u64('open_time'),
+    u64('recent_epoch'),
+    u128('cumulative_trade_fees_token_0'),
+    u128('cumulative_trade_fees_token_1'),
+    u128('cumulative_volume_token_0'),
+    u128('cumulative_volume_token_1'),
+    u64('latest_dynamic_fee_rate'),
+    u64('max_trade_fee_rate'),
+    u64('volatility_factor')
+  ])
 
   const USER_POOL_LIQUIDITY_LAYOUT = struct([
-    blob(8, "discriminator"),
-    pbk("user"),
-    pbk("pool_state"),
-    u128("token_0_deposited"),
-    u128("token_1_deposited"),
-    u128("token_0_withdrawn"),
-    u128("token_1_withdrawn"),
-    u128("lp_tokens_owned"),
-    pbk("referrer")
+    blob(8, 'discriminator'),
+    pbk('user'),
+    pbk('pool_state'),
+    u128('token_0_deposited'),
+    u128('token_1_deposited'),
+    u128('token_0_withdrawn'),
+    u128('token_1_withdrawn'),
+    u128('lp_tokens_owned'),
+    pbk('referrer')
+  ])
+
+  const AMM_CONFIG_LAYOUT = struct([
+    blob(8, 'discriminator'),
+    u8('bump'),
+    u8('disable_create_pool'),
+    u16('index'),
+    u64('trade_fee_rate')
   ])
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       if (Object.keys(selectedCardPool)?.length) {
         try {
           let id = null
@@ -160,6 +161,9 @@ export const DepositWithdrawSlider: FC = () => {
               lpSupply: decodedAccount.lp_supply,
               protocolFeesToken0: decodedAccount.protocol_fees_token_0,
               protocolFeesToken1: decodedAccount.protocol_fees_token_1,
+              comulativeTradeFeesToken0: decodedAccount.cumulative_trade_fees_token_0,
+              comulativeTradeFeesToken1: decodedAccount.cumulative_trade_fees_token_1,
+              latestDynamicFeeRate: decodedAccount.latest_dynamic_fee_rate,
               fundFeesToken0: decodedAccount.fund_fees_token_0,
               fundFeesToken1: decodedAccount.fund_fees_token_1,
               token0Vault: decodedAccount.token_0_vault,
@@ -177,12 +181,52 @@ export const DepositWithdrawSlider: FC = () => {
     })()
   }, [selectedCardLiquidityAcc, updatedPoolState, selectedCardPool])
 
-  useEffect(() => {
-    ; (async () => {
+
+  useEffect(()=>{
+    (async () => {
       try {
-        if (Object.keys(selectedCardLiquidityAcc)?.length > 0
-          && Object.keys(selectedCardPool)?.length > 0
-        ) {
+        const poolIdKey = await getpoolId(selectedCard)
+        const accountInfo = await connection.getAccountInfo(poolIdKey)
+          const decodedAccount = POOL_STATE_LAYOUT.decode(accountInfo.data)
+          const updatedPoolData = {
+            ...selectedCardPool,
+            lpSupply: decodedAccount.lp_supply,
+            protocolFeesToken0: decodedAccount.protocol_fees_token_0,
+            protocolFeesToken1: decodedAccount.protocol_fees_token_1,
+            comulativeTradeFeesToken0: decodedAccount.cumulative_trade_fees_token_0,
+            comulativeTradeFeesToken1: decodedAccount.cumulative_trade_fees_token_1,
+            latestDynamicFeeRate: decodedAccount.latest_dynamic_fee_rate,
+            fundFeesToken0: decodedAccount.fund_fees_token_0,
+            fundFeesToken1: decodedAccount.fund_fees_token_1,
+            token0Vault: decodedAccount.token_0_vault,
+            token1Vault: decodedAccount.token_1_vault,
+            mint0Decimals: selectedCardPool?.mint0Decimals,
+            mint1Decimals: selectedCardPool?.mint1Decimals
+          }
+          setUpdatedPoolState(updatedPoolData)
+      } catch (e) {
+        console.log('Error in getting the pool state account', e)
+      }
+
+      try {
+        const configKey = await getAmmConfigId(0)
+        const accountInfo = await connection.getAccountInfo(configKey)
+          const decodedAccount = AMM_CONFIG_LAYOUT.decode(accountInfo.data)
+          const updatedPoolData = {
+            ...selectedCardPool,
+            trade_fee_rate: decodedAccount.trade_fee_rate
+          }
+          setUpdatedPoolState(updatedPoolData)
+      } catch (e) {
+        console.log('Error in getting the config account info', e)
+      }
+    })()
+  }, [selectedCardPool]);
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        if (Object.keys(selectedCardLiquidityAcc)?.length > 0 && Object.keys(selectedCardPool)?.length > 0) {
           const { tokenAmount0, tokenAmount1 } = await lpTokensToTradingTokens(
             selectedCardLiquidityAcc?.lpTokensOwned,
             Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
@@ -201,7 +245,7 @@ export const DepositWithdrawSlider: FC = () => {
     })()
   }, [selectedCardLiquidityAcc, selectedCardPool, updatedPoolState])
 
-  // console.log('selectedCardLiquidityAcc', 
+  // console.log('selectedCardLiquidityAcc',
   //   selectedCardLiquidityAcc?.lpTokensOwned?.toNumber(),
   //   selectedCardLiquidityAcc?.token0Deposited?.toNumber(),
   //   selectedCardLiquidityAcc?.token0Withdrawn?.toNumber(),
@@ -229,9 +273,12 @@ export const DepositWithdrawSlider: FC = () => {
   //   updatedPoolState?.fundFeesToken1?.toNumber()
   // )
 
+  //eslint-disable-next-line
   useEffect(() => {
-    if (!openDepositWithdrawSlider) handleClose()
-  }, [openDepositWithdrawSlider])
+    return () => {
+      handleClose()
+    }
+  }, [])
 
   useEffect(() => {
     if (selectedCard && userPublicKey) {
@@ -254,8 +301,6 @@ export const DepositWithdrawSlider: FC = () => {
   }
 
   const handleInputChange = async (input: string, sourceToken: boolean) => {
-    setIsUserTyping(true)
-    setIsSolMaxDeposit(false)
     if (input === '') {
       if (isDeposit) {
         setUserSourceDepositAmount('')
@@ -264,7 +309,6 @@ export const DepositWithdrawSlider: FC = () => {
         setUserSourceWithdrawAmount('')
         setUserTargetWithdrawAmount('')
       }
-      setIsUserTyping(false)
       return
     }
 
@@ -323,62 +367,107 @@ export const DepositWithdrawSlider: FC = () => {
           }
         }
       }
-      setIsUserTyping(false)
     }
-
-    setIsUserTyping(false)
   }
 
   const actionButtonText = useMemo(() => {
-    if (isDeposit && (!userSourceTokenBal && !userTargetTokenBal)) return `Insufficient Tokens`
+    if (isDeposit && !userSourceTokenBal && !userTargetTokenBal) return `Insufficient Tokens`
     else if (isDeposit && !userSourceTokenBal) return `Insufficient ${selectedCard?.mintA?.symbol}`
     else if (isDeposit && !userTargetTokenBal) return `Insufficient ${selectedCard?.mintB?.symbol}`
-    else if (isDeposit &&
-      (+userSourceDepositAmount > userSourceTokenBal || +userTargetDepositAmount > userTargetTokenBal))
+    else if (
+      isDeposit &&
+      (+userSourceDepositAmount > userSourceTokenBal || +userTargetDepositAmount > userTargetTokenBal)
+    )
       return `Insufficient funds!`
-    else if (isDeposit && (!userSourceDepositAmount || new BigNumber(userSourceDepositAmount)?.isZero()
-      || !userTargetDepositAmount || new BigNumber(userTargetDepositAmount)?.isZero())) return `Enter Amounts`
-    else if (!isDeposit && (!userSourceWithdrawAmount || new BigNumber(userSourceWithdrawAmount)?.isZero()
-      || !userTargetWithdrawAmount || new BigNumber(userTargetWithdrawAmount)?.isZero())) return `Enter Amounts`
-    else if (!isDeposit &&
-      (new BigNumber(userSourceWithdrawAmount)?.
-        isGreaterThan(new BigNumber(withdrawBigStringFarm(withdrawableBalanceA?.toString(),
-          selectedCardPool?.mint0Decimals))) ||
-        new BigNumber(userTargetWithdrawAmount)?.
-          isGreaterThan(new BigNumber(withdrawBigStringFarm(withdrawableBalanceB?.toString(),
-            selectedCardPool?.mint1Decimals)))))
+    else if (
+      isDeposit &&
+      (!userSourceDepositAmount ||
+        new BigNumber(userSourceDepositAmount)?.isZero() ||
+        !userTargetDepositAmount ||
+        new BigNumber(userTargetDepositAmount)?.isZero())
+    )
+      return `Enter Amounts`
+    else if (
+      !isDeposit &&
+      (!userSourceWithdrawAmount ||
+        new BigNumber(userSourceWithdrawAmount)?.isZero() ||
+        !userTargetWithdrawAmount ||
+        new BigNumber(userTargetWithdrawAmount)?.isZero())
+    )
+      return `Enter Amounts`
+    else if (
+      !isDeposit &&
+      (new BigNumber(userSourceWithdrawAmount)?.isGreaterThan(
+        new BigNumber(withdrawBigStringFarm(withdrawableBalanceA?.toString(), selectedCardPool?.mint0Decimals))
+      ) ||
+        new BigNumber(userTargetWithdrawAmount)?.isGreaterThan(
+          new BigNumber(withdrawBigStringFarm(withdrawableBalanceB?.toString(), selectedCardPool?.mint1Decimals))
+        ))
+    )
       return `Insufficient funds!`
     else if (isDeposit) return `Deposit`
     else return `Withdraw`
-  }, [selectedCard, userSourceTokenBal, userTargetTokenBal, userTargetWithdrawAmount,
-    userSourceDepositAmount, userTargetDepositAmount, isDeposit, userSourceWithdrawAmount, selectedCardLiquidityAcc
+  }, [
+    selectedCard,
+    userSourceTokenBal,
+    userTargetTokenBal,
+    userTargetWithdrawAmount,
+    userSourceDepositAmount,
+    userTargetDepositAmount,
+    isDeposit,
+    userSourceWithdrawAmount,
+    selectedCardLiquidityAcc
   ])
 
   const isActionButtonDisabled = useMemo(() => {
     if (isDeposit && (!userSourceTokenBal || !userTargetTokenBal)) return true
-    else if (isDeposit && (!userSourceDepositAmount || new BigNumber(userSourceDepositAmount)?.isZero()
-      || !userTargetDepositAmount || new BigNumber(userTargetDepositAmount)?.isZero())) return true
-    else if (!isDeposit && (!userSourceWithdrawAmount || new BigNumber(userSourceWithdrawAmount)?.isZero()
-      || !userTargetWithdrawAmount || new BigNumber(userTargetWithdrawAmount)?.isZero())) return true
-    else if (isDeposit &&
-      (+userSourceDepositAmount > userSourceTokenBal || +userTargetDepositAmount > userTargetTokenBal))
+    else if (
+      isDeposit &&
+      (!userSourceDepositAmount ||
+        new BigNumber(userSourceDepositAmount)?.isZero() ||
+        !userTargetDepositAmount ||
+        new BigNumber(userTargetDepositAmount)?.isZero())
+    )
       return true
-    else if (!isDeposit &&
-      (new BigNumber(userSourceWithdrawAmount)?.
-        isGreaterThan(new BigNumber(withdrawBigStringFarm(withdrawableBalanceA?.toString(),
-          selectedCardPool?.mint0Decimals))) ||
-        new BigNumber(userTargetWithdrawAmount)?.
-          isGreaterThan(new BigNumber(withdrawBigStringFarm(withdrawableBalanceB?.toString(),
-            selectedCardPool?.mint1Decimals)))))
+    else if (
+      !isDeposit &&
+      (!userSourceWithdrawAmount ||
+        new BigNumber(userSourceWithdrawAmount)?.isZero() ||
+        !userTargetWithdrawAmount ||
+        new BigNumber(userTargetWithdrawAmount)?.isZero())
+    )
       return true
-  }, [userSourceTokenBal, userTargetTokenBal, userTargetWithdrawAmount, userSourceDepositAmount,
-    userTargetDepositAmount, isDeposit, userSourceWithdrawAmount, selectedCardLiquidityAcc,
-    withdrawableBalanceA, withdrawableBalanceB, selectedCardPool])
+    else if (
+      isDeposit &&
+      (+userSourceDepositAmount > userSourceTokenBal || +userTargetDepositAmount > userTargetTokenBal)
+    )
+      return true
+    else if (
+      !isDeposit &&
+      (new BigNumber(userSourceWithdrawAmount)?.isGreaterThan(
+        new BigNumber(withdrawBigStringFarm(withdrawableBalanceA?.toString(), selectedCardPool?.mint0Decimals))
+      ) ||
+        new BigNumber(userTargetWithdrawAmount)?.isGreaterThan(
+          new BigNumber(withdrawBigStringFarm(withdrawableBalanceB?.toString(), selectedCardPool?.mint1Decimals))
+        ))
+    )
+      return true
+  }, [
+    userSourceTokenBal,
+    userTargetTokenBal,
+    userTargetWithdrawAmount,
+    userSourceDepositAmount,
+    userTargetDepositAmount,
+    isDeposit,
+    userSourceWithdrawAmount,
+    selectedCardLiquidityAcc,
+    withdrawableBalanceA,
+    withdrawableBalanceB,
+    selectedCardPool
+  ])
 
   const handleHalf = useCallback(
     async (sourceToken: boolean) => {
-      setIsUserTyping(true)
-      setIsSolMaxDeposit(false)
       if (isDeposit) {
         if (sourceToken) {
           setUserSourceDepositAmount(userSourceTokenBal ? (userSourceTokenBal / 2)?.toString() : '')
@@ -407,62 +496,80 @@ export const DepositWithdrawSlider: FC = () => {
         }
       } else {
         setTransactionLPAmount(selectedCardLiquidityAcc?.lpTokensOwned?.div(new BN(2)))
-        setUserSourceWithdrawAmount(withdrawBigStringFarm(withdrawableBalanceA?.div(new BN(2))?.toString(),
-          selectedCardPool?.mint0Decimals))
-        setUserTargetWithdrawAmount(withdrawBigStringFarm(withdrawableBalanceB?.div(new BN(2))?.toString(),
-          selectedCardPool?.mint1Decimals))
+        setUserSourceWithdrawAmount(
+          withdrawBigStringFarm(withdrawableBalanceA?.div(new BN(2))?.toString(), selectedCardPool?.mint0Decimals)
+        )
+        setUserTargetWithdrawAmount(
+          withdrawBigStringFarm(withdrawableBalanceB?.div(new BN(2))?.toString(), selectedCardPool?.mint1Decimals)
+        )
       }
-      setIsUserTyping(false)
     },
-    [modeOfOperation, userSourceTokenBal, userTargetTokenBal, selectedCardPool, updatedPoolState,
-      selectedCardLiquidityAcc, withdrawableBalanceA, withdrawableBalanceB]
+    [
+      modeOfOperation,
+      userSourceTokenBal,
+      userTargetTokenBal,
+      selectedCardPool,
+      updatedPoolState,
+      selectedCardLiquidityAcc,
+      withdrawableBalanceA,
+      withdrawableBalanceB
+    ]
   )
 
-  const handleMax = async (sourceToken: boolean) => {
-    setIsUserTyping(true)
-    if (isDeposit) {
-      if (sourceToken) {
-        selectedCard?.mintA?.symbol === 'SOL' ? setIsSolMaxDeposit(true) : setIsSolMaxDeposit(false)
-        setUserSourceDepositAmount(userSourceTokenBal ? userSourceTokenBal?.toString() : '')
-        if (Object.keys(selectedCardPool)?.length) {
-          const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
-            selectedCard?.mintA?.symbol === 'SOL' ? await getMaxSolDepositAmount(userSourceTokenBal, connection)
-              : userSourceTokenBal?.toString(),
-            0,
-            Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
-            connection
-          )
-          setTransactionLPAmount(lpTokenAmount)
-          setUserTargetDepositAmount(otherTokenAmountInString)
+  const handleMax = useCallback(
+    async (sourceToken: boolean) => {
+      if (isDeposit) {
+        if (sourceToken) {
+          setUserSourceDepositAmount(userSourceTokenBal ? userSourceTokenBal?.toString() : '')
+          if (Object.keys(selectedCardPool)?.length) {
+            const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
+              userSourceTokenBal?.toString(),
+              0,
+              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
+              connection
+            )
+            setTransactionLPAmount(lpTokenAmount)
+            setUserTargetDepositAmount(otherTokenAmountInString)
+          }
+        } else {
+          setUserTargetDepositAmount(userTargetTokenBal ? userTargetTokenBal?.toString() : '')
+          if (Object.keys(selectedCardPool)?.length) {
+            const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
+              userTargetTokenBal?.toString(),
+              1,
+              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
+              connection
+            )
+            setTransactionLPAmount(lpTokenAmount)
+            setUserSourceDepositAmount(otherTokenAmountInString)
+          }
         }
       } else {
-        selectedCard?.mintB?.symbol === 'SOL' ? setIsSolMaxDeposit(true) : setIsSolMaxDeposit(false)
-        setUserTargetDepositAmount(userTargetTokenBal ? userTargetTokenBal?.toString() : '')
-        if (Object.keys(selectedCardPool)?.length) {
-          const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
-            selectedCard?.mintB?.symbol === 'SOL' ? await getMaxSolDepositAmount(userTargetTokenBal, connection)
-              : userTargetTokenBal?.toString(),
-            1,
-            Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
-            connection
-          )
-          setTransactionLPAmount(lpTokenAmount)
-          setUserSourceDepositAmount(otherTokenAmountInString)
-        }
+        setTransactionLPAmount(selectedCardLiquidityAcc?.lpTokensOwned)
+        setUserSourceWithdrawAmount(
+          withdrawBigStringFarm(withdrawableBalanceA.toString(), selectedCardPool?.mint0Decimals)
+        )
+        setUserTargetWithdrawAmount(
+          withdrawBigStringFarm(withdrawableBalanceB.toString(), selectedCardPool?.mint1Decimals)
+        )
       }
-    } else {
-      setTransactionLPAmount(selectedCardLiquidityAcc?.lpTokensOwned)
-      setUserSourceWithdrawAmount(withdrawBigStringFarm(withdrawableBalanceA.toString(),
-        selectedCardPool?.mint0Decimals))
-      setUserTargetWithdrawAmount(withdrawBigStringFarm(withdrawableBalanceB.toString(),
-        selectedCardPool?.mint1Decimals))
-    }
-    setIsUserTyping(false)
-  }
+    },
+    [
+      modeOfOperation,
+      userSourceTokenBal,
+      userTargetTokenBal,
+      selectedCardPool,
+      updatedPoolState,
+      selectedCardLiquidityAcc,
+      withdrawableBalanceA,
+      withdrawableBalanceB
+    ]
+  )
 
   const handleDeposit = async () => {
     try {
       const txBuilder = createTransactionBuilder()
+      //liveBalanceTracking(connection, userPublicKey, selectedCard)
       const tx = await deposit(
         userSourceDepositAmount,
         userTargetDepositAmount,
@@ -471,16 +578,19 @@ export const DepositWithdrawSlider: FC = () => {
         selectedCard,
         userPublicKey,
         GammaProgram,
-        connection,
-        isSolMaxDeposit
+        connection
       )
       txBuilder.add(tx)
       setSendingTransaction(true)
       const poolMessage = `(${selectedCard?.mintA?.symbol}-${selectedCard?.mintB?.symbol}) pool.`
       // eslint-disable-next-line max-len
-      const sourceAmount = `${bigNumberFormatter(new BigNumber(isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount))} ${selectedCard?.mintA?.symbol}`
+      const sourceAmount = `${bigNumberFormatter(
+        new BigNumber(isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount)
+      )} ${selectedCard?.mintA?.symbol}`
       // eslint-disable-next-line max-len
-      const targetAmount = `${bigNumberFormatter(new BigNumber(isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount))} ${selectedCard?.mintB?.symbol}`
+      const targetAmount = `${bigNumberFormatter(
+        new BigNumber(isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount)
+      )} ${selectedCard?.mintB?.symbol}`
       const type = isDeposit ? 'deposited' : 'withdrew'
       const direction = isDeposit ? 'into' : 'from'
       const { success, txSig } = await sendTransaction(txBuilder, {
@@ -512,6 +622,7 @@ export const DepositWithdrawSlider: FC = () => {
   const handleWithdraw = async () => {
     try {
       const txBuilder = createTransactionBuilder()
+      //liveBalanceTracking(connection, userPublicKey, selectedCard)
       const tx = await withdraw(
         userSourceWithdrawAmount,
         userTargetWithdrawAmount,
@@ -536,7 +647,7 @@ export const DepositWithdrawSlider: FC = () => {
         setUserSourceWithdrawAmount('')
         setUserTargetWithdrawAmount('')
         setActionType('')
-        await forceCronAndUpdateLocalData(txSig);
+        await forceCronAndUpdateLocalData(txSig)
         // setOpenDepositWithdrawSlider(false)
         // setSelectedCardLiquidityAcc({})
         // setModeOfOperation(ModeOfOperation.DEPOSIT)
@@ -639,8 +750,9 @@ export const DepositWithdrawSlider: FC = () => {
                   new BigNumber(balance[selectedCard?.mintA?.address]?.price)
                     .multipliedBy(userSourceWithdrawAmount)
                     .plus(
-                      new BigNumber(balance[selectedCard?.mintB?.address]?.price)
-                        .multipliedBy(userTargetWithdrawAmount)
+                      new BigNumber(balance[selectedCard?.mintB?.address]?.price).multipliedBy(
+                        userTargetWithdrawAmount
+                      )
                     ),
                   4
                 )}`
@@ -660,6 +772,7 @@ export const DepositWithdrawSlider: FC = () => {
             <DepositWithdrawAccordion
               withdrawableBalanceA={withdrawableBalanceA}
               withdrawableBalanceB={withdrawableBalanceB}
+              updatedPoolState={updatedPoolState}
             />
             <DepositWithdrawLabel text={'1. Enter Amounts'} />
             <TokenRow
@@ -694,14 +807,16 @@ export const DepositWithdrawSlider: FC = () => {
             />
             <ReviewConfirm
               tokenAActionValue={isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount}
-              tokenBActionValue={isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount} />
+              tokenBActionValue={isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount}
+              updatedPoolState={updatedPoolState}
+            />
             {/*{isDeposit && userPublicKey && (userSourceTokenBal === 0 || userTargetTokenBal === 0) && <SwapNow />}*/}
           </div>
         </DialogBody>
         <DialogFooter>
           <StickyFooter
             disableActionButton={isActionButtonDisabled}
-            isLoading={sendingTransaction || isUserTyping}
+            isLoading={sendingTransaction}
             onActionClick={isDeposit ? handleDeposit : handleProcessStart('withdraw')}
             isDeposit={isDeposit}
             // canClaim={true || isClaim}

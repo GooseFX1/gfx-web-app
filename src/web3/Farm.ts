@@ -76,7 +76,7 @@ const u16ToBytes = (num: number): Uint8Array => {
     return new Uint8Array(arr);
 }
 
-const getAmmConfigId = async (index: number): Promise<undefined | PublicKey> => {
+export const getAmmConfigId = async (index: number): Promise<undefined | PublicKey> => {
     try {
         const ammConfigId: [PublicKey, number] = await PublicKey.findProgramAddress(
             [Buffer.from(AMM_CONFIG), u16ToBytes(index)],

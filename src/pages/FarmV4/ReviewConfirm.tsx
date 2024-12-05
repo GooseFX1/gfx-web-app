@@ -9,7 +9,8 @@ import BigNumber from 'bignumber.js'
 export const ReviewConfirm: FC<{
   tokenAActionValue: string
   tokenBActionValue: string
-}> = ({ tokenAActionValue, tokenBActionValue }): ReactElement => {
+  updatedPoolState: any
+}> = ({ tokenAActionValue, tokenBActionValue, updatedPoolState }): ReactElement => {
   const { selectedCard } = useGamma()
   const { balance } = useWalletBalance()
 
@@ -49,7 +50,8 @@ export const ReviewConfirm: FC<{
           </Tooltip>
 
           <span className="!font-regular font-semibold dark:text-grey-8 text-black-4">
-            {bigNumberFormatter(new BigNumber(selectedCard?.config?.protocolFeeRate || 0.00).div(100e3), 2)}%
+            {(new BigNumber(updatedPoolState?.latestDynamicFeeRate || 0.00).div(10**4).toNumber()
+              || new BigNumber(updatedPoolState?.trade_fee_rate || 0.00).div(10**4).toNumber()).toFixed(2)}%
           </span>
         </div>
         <div className="flex justify-between mb-2">
