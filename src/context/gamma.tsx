@@ -83,6 +83,7 @@ interface GAMMADataModel {
   setModeOfOperation: Dispatch<SetStateAction<string>>
   page: number
   setPage: Dispatch<SetStateAction<number>>
+  totalPoolCount: number,
   tokenList: TokenListToken[]
   isLoadingTokenList: boolean
   updateTokenList: ({ page, pageSize, searchValue }: {
@@ -181,6 +182,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isLoadingTokenList, setIsLoadingTokenList] = useState(false)
   const [isLoadingPools, setIsLoadingPools] = useBoolean(false)
   const [poolPage, setPoolPage] = useState(1)
+  const [totalPoolCount, setTotalPoolCount] = useState(0);
   const [poolsHasMoreData, setPoolsHasMoreData] = useState(true)
   const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
   const [selectedCardLiquidityAcc, setSelectedCardLiquidityAcc] = useState<any>({})
@@ -381,6 +383,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       .then((poolsData: GAMMAPoolsResponse) => {
         if (poolsData && poolsData.success) {
           setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
+          setPoolPage(poolsData.data.currentPage);
+          setTotalPoolCount(poolsData.data.totalItems);
           const existingPools = append ? pools : []
           const existingPoolsMap = new Map(
             existingPools.map((pool) => [`${pool.mintA.address}_${pool.mintB.address}`, pool])
@@ -405,7 +409,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           setPools(updatedPools)
         }
       })
-      .finally(() => setTimeout(() => setIsLoadingPools.off(), 2000))
+      .finally(() => setIsLoadingPools.off())
   }
 
   useEffect(() => {
@@ -432,7 +436,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [currentPoolType])
   useEffect(() => {
     updatePools({ page: poolPage, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type })
-  }, [poolPage, sortConfig, viewRange])
+  }, [sortConfig, viewRange])
 
   useEffect(() => {
 
@@ -673,6 +677,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isLoadingPools,
         poolPage,
         setPoolPage,
+        totalPoolCount,
         isSearchActive,
         filteredPools,
         updatePools,

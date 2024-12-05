@@ -1,32 +1,21 @@
 import { FC } from 'react'
 import FarmItemsProSort from '@/pages/FarmV4/FarmItemsProSort'
-import FarmRow, { FarmRowLoader } from '@/pages/FarmV4/FarmRow'
+import FarmRow from '@/pages/FarmV4/FarmRow'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
-import WindowingContainer from '@/pages/FarmV4/WindowingContainer'
-import { useGamma } from '@/context'
+import InfiniteProPoolList from '@/pages/FarmV4/InfiniteProPoolList'
 
-const FarmItemsPro: FC = () => {
-  const { filteredPools, isLoadingPools } = useGamma()
-  return (
-    <>
-      <FarmItemsProSort />
-      <div>
-        {isLoadingPools ? <div className={'flex flex-col gap-[15px] mt-[15px]'}>
-          <FarmRowLoader />
-          <FarmRowLoader />
-          <FarmRowLoader />
-          <FarmRowLoader />
-        </div> : <WindowingContainer
-          itemPadding={15}
-          items={filteredPools}
-          render={(pool: GAMMAPoolWithUserLiquidity, i) => (
-            <FarmRow pool={pool} key={`${pool?.mintA.name}-${pool?.mintB.name}-${i}`} />
-          )}
-        />}
-      </div>
-    </>
-  )
-}
-
+const FarmItemsPro: FC = () => (
+  <>
+    <FarmItemsProSort />
+    <div>
+      <InfiniteProPoolList
+        itemPadding={15}
+        render={(pool: GAMMAPoolWithUserLiquidity, i) => (
+          <FarmRow pool={pool} key={`${pool?.mintA.name}-${pool?.mintB.name}-${i}`} />
+        )}
+      />
+    </div>
+  </>
+)
 
 export default FarmItemsPro
