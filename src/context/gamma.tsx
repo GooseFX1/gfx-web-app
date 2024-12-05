@@ -275,10 +275,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }, 60000)
 
     if (calculatePoolType.size == 0) {
-    // fetch primary tokens for type calculation on create pool
-    fetchTokenList(1, 200, 'primary').then((t) => {
-      if (t.success) {
-        const primaryTokensMap = new Set(t.data.tokens.map((token) => token.address))
+      // fetch primary tokens for type calculation on create pool
+      fetchTokenList(1, 200, 'primary').then((t) => {
+        if (t.success) {
+          const primaryTokensMap = new Set(t.data.tokens.map((token) => token.address))
           setCalculatePoolType(primaryTokensMap)
         }
       })
@@ -417,14 +417,14 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   useEffect(() => {
-    if (isFirstRender) return;
+    if (isFirstRender) return
     console.log('pageTrigger')
     //update token on next pagination
     updateTokenList({ page, pageSize: TOKEN_LIST_PAGE_SIZE })
   }, [page])
 
   useEffect(() => {
-    if (isFirstRender) return;
+    if (isFirstRender) return
     console.log('createPoolTrigger')
     // on create pool request new data
     // will trigger above useEffect
@@ -436,7 +436,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [createPoolType])
 
   useEffect(() => {
-    if (isFirstRender) return;
+    if (isFirstRender) return
 
     setPoolPage(1)
     // same page
@@ -445,7 +445,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [currentPoolType])
   useEffect(() => {
-    if (isFirstRender) return;
+    if (isFirstRender) return
     updatePools({ page: poolPage, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type })
   }, [sortConfig, viewRange])
 
@@ -576,6 +576,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const { filteredPools } = useMemo(() => {
     const userLpPositions = new Map(lpPositions.map((lp) => [lp.poolStatePublicKey, lp]))
+    const mintA = selectedTokens[0]?.address
+    const mintB = selectedTokens[1]?.address
     const newPools = pools
       .map((pool) => {
         const userLpPosition = userLpPositions.get(pool.id)
@@ -594,9 +596,20 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           return pool.hasDeposit && show
         }
         return show
+      }).sort((a, b) => {
+        if (mintA && mintB) { // don't have both so keep current sort
+          if ((a.mintA.address === mintA && a.mintB.address === mintB) ||
+            (a.mintB.address === mintA && a.mintA.address === mintB)) {
+            return -1
+          } else if ((b.mintA.address === mintA && b.mintB.address === mintB) ||
+            (b.mintB.address === mintA && b.mintA.address === mintB)) {
+            return 1
+          }
+        }
+        return 0
       })
     return { filteredPools: newPools }
-  }, [pools, lpPositions, showDeposited, base58PublicKey, showCreatedPools])
+  }, [pools, lpPositions, showDeposited, base58PublicKey, showCreatedPools, selectedTokens])
 
   useEffect(() => {
     if (!base58PublicKey || filteredPools.length == 0 || !selectedCard?.id) return

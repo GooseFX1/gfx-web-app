@@ -27,7 +27,8 @@ function UseMultiSelect<T, U>({
     addChoice,
     clearAllChoices,
     removeChoice,
-    hasChoice
+    hasChoice,
+    choiceSet: set
   }
 }
 
