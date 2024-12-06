@@ -167,7 +167,7 @@ const fetchLpPositions = async (userId: string): Promise<UserPortfolioLPPosition
 const fetchTokenList = async (
   page: number,
   pageSize: number,
-  poolType: string,
+  poolType?: string,
   searchValue?: string,
   signal?: AbortSignal
 ): Promise<GAMMAListTokenResponse | null> => {
