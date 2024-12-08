@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { useConnectionConfig, useDarkMode, useGamma, useRewardToggle } from '../../context'
+import { tokenListAbortTokenGamma, useConnectionConfig, useDarkMode, useGamma, useRewardToggle } from '../../context'
 import { GAMMA_SORT_CONFIG, POOL_TYPE, TOKEN_LIST_PAGE_SIZE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
@@ -26,6 +26,7 @@ import useBreakPoint from '../../hooks/useBreakPoint'
 import FarmSort from '@/pages/FarmV4/FarmSort'
 import { aborter, loadIconImage } from '@/utils'
 import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
+import useFirstRender from '@/hooks/useFirstRender'
 
 export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
@@ -51,7 +52,7 @@ export const FarmContainer: FC = () => {
     tokenList,
     createPoolType,
     updateTokenList,
-    setPage
+    setTokenList
   } = useGamma()
   const { wallet, publicKey } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
@@ -63,6 +64,7 @@ export const FarmContainer: FC = () => {
     [wallet?.adapter?.publicKey]
   )
   const searchBarRef = React.useRef<HTMLDivElement>(null)
+  const isFirstRender = useFirstRender()
   useLayoutEffect(() => {
     if (openDepositWithdrawSlider) {
       document.body.style.overflow = 'hidden'
@@ -122,29 +124,23 @@ export const FarmContainer: FC = () => {
     [showCreatedPools, userCache]
   )
   useEffect(() => {
-    const abortSignal = aborter.addSignal('tokenList-main-page-search')
+    if (isFirstRender) return
+    console.log('farmTrigger')
     // faking search
     if (tokenListSearchValue.trim().length == 0) {
-      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE, signal: abortSignal }).then(() =>
-        setPage(1)
-      )
+      aborter.abortSignal(tokenListAbortTokenGamma)
+      setTokenList([])
       return
     }
-    const timeout = setTimeout(async () => {
-      await updateTokenList(
-        {
-          page: 1,
-          pageSize: TOKEN_LIST_PAGE_SIZE,
-          searchValue: tokenListSearchValue,
-          signal: abortSignal
-        },
-        false
-      )
-    }, 233)
-    return () => {
-      clearTimeout(timeout)
-      aborter.abortSignal('tokenList')
-    }
+    updateTokenList(
+      {
+        page: 1,
+        pageSize: TOKEN_LIST_PAGE_SIZE,
+        searchValue: tokenListSearchValue,
+      },
+      false
+    )
+
   }, [tokenListSearchValue, currentPoolType])
   const isExpandedSearchOpen = tokenListSearchValue.length > 0
   const tokenRenderList = tokenListSearchValue.length > 0 || createPoolType === 'primary' || !publicKey
@@ -223,7 +219,8 @@ export const FarmContainer: FC = () => {
                                 side={'bottom'}
                                 avoidCollisions={false}
                 >
-                  {tokenListSearchValue && tokenRenderList.length == 0 ? <div className={`mb-auto p-2
+                  {tokenListSearchValue && tokenRenderList.length == 0 && !isLoadingTokenList ?
+                    <div className={`mb-auto p-2
                   text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
                   `}>
                     No Tokens Found..

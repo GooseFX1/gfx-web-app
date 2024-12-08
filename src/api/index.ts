@@ -1,7 +1,5 @@
-import { ANALYTICS_ENDPOINTS, ANALYTICS_BASE } from './analytics/constants'
 import axios from 'axios'
 import * as https from 'node:https'
-import { INTERVALS } from '@/utils/time'
 
 const DOMAIN = () => {
   const sub =
@@ -13,29 +11,22 @@ const DOMAIN = () => {
 
   return `${sub}goosefx.io`
 }
-
+export const CANCELED_STATUS_CODE = 499
 const createAxiosInstance = (config: unknown) => {
   const axiosInstance = axios.create(config)
 
-  let abortController
-
-  axiosInstance.interceptors.request.use(
-    (config) => {
-      // Cancel the previous request if it exists
-      if (abortController) {
-        abortController.abort('Operation canceled due to new request.')
-      }
-
-      // Create a new AbortController for the current request
-      abortController = new AbortController()
-      config.signal = abortController.signal // Attach the signal to the request config
-
-      return config
+  axiosInstance.interceptors.response.use(
+    (response) => {
+      return response
     },
     (error) => {
-      return Promise.reject(error)
+      if (error.code === "ERR_CANCELED") {
+        // aborted in useEffect cleanup
+        return Promise.resolve({status: CANCELED_STATUS_CODE})
+      }
+      return Promise.reject((error.response && error.response.data) || 'Error')
     }
-  )
+  );
 
   return axiosInstance
 }

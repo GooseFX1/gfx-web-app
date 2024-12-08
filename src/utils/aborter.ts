@@ -22,6 +22,7 @@ class Aborter {
   addSignal = (key: string): AbortSignal => {
     if (this.signals.has(key)) {
       this.signals.get(key).abort()
+      console.warn('KEY ALREADY EXISTS - REFRESHING', key)
     }
     const controller = new AbortController()
     this.signals.set(key, controller)
