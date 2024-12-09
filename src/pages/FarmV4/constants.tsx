@@ -229,3 +229,4 @@ export const POPULAR_TOKENS = new Set([
   'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
   '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'
 ])
+export const PASSWORD_BETA_ACCESS = 'goosegang'

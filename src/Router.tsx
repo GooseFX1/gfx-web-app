@@ -23,6 +23,7 @@ import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
 import { Toaster } from 'gfx-component-lib'
 import { RewardsProvider } from '@/context/rewardsContext'
 import { MarketProductGroupProvider } from './context/market_product_group'
+import { PasswordProvider } from './context/passwordProtectionProvider'
 
 const Bridge = lazy(() => import('./pages/Bridge'))
 const GenericNotFound = lazy(() => import('./pages/InvalidUrl'))
@@ -122,12 +123,14 @@ export const Router: FC = () => {
                             </PriceFeedFarmProvider>
                           </Route>
                           <Route exact path={['/gamma']}>
-                            <PriceFeedFarmProvider>
-                              <GammaProvider>
-                                {/*<JupWidget />*/}
-                                <FarmV4 />
-                              </GammaProvider>
-                            </PriceFeedFarmProvider>
+                            <PasswordProvider>
+                              <PriceFeedFarmProvider>
+                                <GammaProvider>
+                                  {/*<JupWidget />*/}
+                                  <FarmV4 />
+                                </GammaProvider>
+                              </PriceFeedFarmProvider>
+                            </PasswordProvider>
                           </Route>
                           <Route exact path="/analytics">
                             <AnalyticsWrapper />
