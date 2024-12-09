@@ -3,6 +3,8 @@ import React, { useState, FormEvent } from 'react'
 import passwordProtectionLight from '@/animations/passwordProtectionLight.json'
 import passwordProtectionDark from '@/animations/passwordProtectionDark.json'
 import { useDarkMode } from '@/context'
+import { Button } from 'gfx-component-lib'
+import { PASSWORD_BETA_ACCESS } from '@/pages/FarmV4/constants'
 
 type PasswordScreenProps = {
   onSubmit: (password: string) => void
@@ -39,19 +41,21 @@ export const PasswordProtectionPage: React.FC<PasswordScreenProps> = ({ onSubmit
         <input
           type="password"
           value={password}
-          placeholder="Enter password"
+          placeholder="Enter beta code"
           className="w-full px-4 py-2 mb-4 text-purple-4 dark:text-grey-1
         bg-white dark:bg-black-2 border border-grey-4 dark:border-black-4
-          rounded-lg focus:outline-none focus:border-purple-500"
+          rounded-[4px] focus:outline-none focus:border-purple-500"
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button
+        <Button
           type="submit"
-          className="w-full py-2 bg-[#ECE3F4] dark:bg-black-2 text-purple-4 dark:text-grey-1 
-          hover:bg-purple-5 hover:text-white dark:hover:bg-gray-700 rounded-full font-bold"
+          variant={'primary'}
+          className="w-full"
+          colorScheme={'blue'}
+          disabled={password.length !== PASSWORD_BETA_ACCESS.length}
         >
           Submit
-        </button>
+        </Button>
       </form>
     </div>
   )

@@ -11,6 +11,8 @@ type PasswordProviderProps = {
   children: ReactNode
 }
 
+const PW_KEY = 'gfx-beta-access'
+
 const PasswordContext = createContext<PasswordContextType | undefined>(undefined)
 
 export const PasswordProvider: React.FC<PasswordProviderProps> = ({ children }) => {
@@ -18,10 +20,10 @@ export const PasswordProvider: React.FC<PasswordProviderProps> = ({ children }) 
 
   const handlePasswordSubmit = (inputPassword: string) => {
     if (inputPassword === PASSWORD_BETA_ACCESS) {
-      sessionStorage.setItem('password', PASSWORD_BETA_ACCESS)
+      localStorage.setItem(PW_KEY, PASSWORD_BETA_ACCESS)
       setHasAccess(true)
     } else {
-      toast.error('Incorrect Password')
+      toast.error('Incorrect Beta Code')
     }
   }
 
@@ -32,7 +34,7 @@ export const PasswordProvider: React.FC<PasswordProviderProps> = ({ children }) 
   return <PasswordContext.Provider value={{ isAuthenticated: hasAccess }}>{children}</PasswordContext.Provider>
 }
 
-export const isAuthenticated = (): boolean => sessionStorage.getItem('password') === PASSWORD_BETA_ACCESS
+export const isAuthenticated = (): boolean => localStorage.getItem(PW_KEY) === PASSWORD_BETA_ACCESS
 
 export const usePassword = (): PasswordContextType => {
   const context = useContext(PasswordContext)
