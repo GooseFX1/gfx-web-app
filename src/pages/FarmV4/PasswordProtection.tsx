@@ -1,8 +1,8 @@
 import Lottie from 'lottie-react'
 import React, { useState, FormEvent } from 'react'
-// import passwordProtectionLight from '@/animations/passwordProtectionLight.json'
-// import passwordProtectionDark from '@/animations/passwordProtectionDark.json'
-import CreatePoolConfetti from '@/animations/createPoolConfetti.json'
+import passwordProtectionLight from '@/animations/passwordProtectionLight.json'
+import passwordProtectionDark from '@/animations/passwordProtectionDark.json'
+import { useDarkMode } from '@/context'
 
 type PasswordScreenProps = {
   onSubmit: (password: string) => void
@@ -10,6 +10,7 @@ type PasswordScreenProps = {
 
 export const PasswordProtectionPage: React.FC<PasswordScreenProps> = ({ onSubmit }) => {
   const [password, setPassword] = useState<string>('')
+  const { isDarkMode } = useDarkMode()
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -18,7 +19,10 @@ export const PasswordProtectionPage: React.FC<PasswordScreenProps> = ({ onSubmit
 
   return (
     <div className="flex flex-col items-center justify-center px-4 py-20">
-      <Lottie animationData={CreatePoolConfetti} className="w-32 h-32 mb-8" />
+      <Lottie
+        animationData={isDarkMode ? passwordProtectionDark : passwordProtectionLight}
+        className="w-56 h-56 mb-6"
+      />
 
       <h1 className="text-center text-[28px] mb-6 dark:text-grey-8 text-black-4">GAMMA is in Beta</h1>
 
