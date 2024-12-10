@@ -6,6 +6,8 @@ import { useDarkMode } from '@/context'
 import { Button } from 'gfx-component-lib'
 import { PASSWORD_BETA_ACCESS } from '@/pages/FarmV4/constants'
 import { SOCIAL_MEDIAS } from '@/constants'
+import { navigateToCurried } from '@/utils/requests'
+
 type PasswordScreenProps = {
   onSubmit: (password: string) => void
 }
@@ -31,14 +33,15 @@ export const PasswordProtectionPage: React.FC<PasswordScreenProps> = ({ onSubmit
 
       <p className="text-[18px] text-center text-grey-1 dark:text-grey-2 max-w-2xl mb-6">
         Join the Goose Gang community,{' '}
-        <a
-          className="font-bold text-regular dark:text-white text-blue-1 underline hover:underline"
-          href={SOCIAL_MEDIAS.twitter}
-          target="_blank"
-          rel="noopener noreferrer"
+        <Button
+          variant={'link'}
+          onClick={navigateToCurried(SOCIAL_MEDIAS.twitter, '_blank')}
+          className={
+            'px-0 dark:text-text-darkmode-primary text-text-blue hover:opacity-75'
+          }
         >
           send us a message on X
-        </a>{' '}
+        </Button>{' '}
         for beta access to GAMMA, our new dynamic fee AMM. We'd love to hear your feedback.
       </p>
 
