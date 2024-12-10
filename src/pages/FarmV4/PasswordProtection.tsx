@@ -24,6 +24,7 @@ export const PasswordProtectionPage: React.FC<PasswordScreenProps> = ({ onSubmit
       <Lottie
         animationData={isDarkMode ? passwordProtectionDark : passwordProtectionLight}
         className="w-56 h-56 mb-6"
+        loop={true}
       />
 
       <h1 className="text-center text-[28px] mb-6 dark:text-grey-8 text-black-4">GAMMA is in Beta</h1>
