@@ -6,7 +6,7 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
   discord: 'https://discord.gg/cDEPXpY26q',
   medium: 'https://medium.com/goosefx',
   telegram: 'https://www.t.me/goosefx',
-  twitter: 'https://www.twitter.com/GooseFX1'
+  twitter: 'https://x.com/GooseFX1'
 } as const
 
 export const APP_DEFAULT_ROUTE = '/gamma'

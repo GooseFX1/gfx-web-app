@@ -5,7 +5,7 @@ import passwordProtectionDark from '@/animations/passwordProtectionDark.json'
 import { useDarkMode } from '@/context'
 import { Button } from 'gfx-component-lib'
 import { PASSWORD_BETA_ACCESS } from '@/pages/FarmV4/constants'
-
+import { SOCIAL_MEDIAS } from '@/constants'
 type PasswordScreenProps = {
   onSubmit: (password: string) => void
 }
@@ -30,8 +30,16 @@ export const PasswordProtectionPage: React.FC<PasswordScreenProps> = ({ onSubmit
       <h1 className="text-center text-[28px] mb-6 dark:text-grey-8 text-black-4">GAMMA is in Beta</h1>
 
       <p className="text-[18px] text-center text-grey-1 dark:text-grey-2 max-w-2xl mb-6">
-        Join the Goose Gang community, send us a message on X for beta access to GAMMA, our new dynamic fee AMM.
-        We'd love to hear your feedback.
+        Join the Goose Gang community,{' '}
+        <a
+          className="font-bold text-regular dark:text-white text-blue-1 underline hover:underline"
+          href={SOCIAL_MEDIAS.twitter}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          send us a message on X
+        </a>{' '}
+        for beta access to GAMMA, our new dynamic fee AMM. We'd love to hear your feedback.
       </p>
 
       <p className="text-center text-purple-4 dark:text-grey-1 mb-6">
