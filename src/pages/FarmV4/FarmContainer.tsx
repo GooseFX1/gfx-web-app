@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { tokenListAbortTokenGamma, useConnectionConfig, useDarkMode, useGamma, useRewardToggle } from '../../context'
+import { tokenListAbortTokenGamma, useConnectionConfig, useDarkMode, useGamma } from '../../context'
 import { GAMMA_SORT_CONFIG, POOL_TYPE, TOKEN_LIST_PAGE_SIZE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
@@ -53,12 +53,12 @@ export const FarmContainer: FC = () => {
     tokenList,
     createPoolType,
     updateTokenList,
-    setTokenList
+    setTokenList,
+    isPortfolio
   } = useGamma()
   const { wallet, publicKey } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
   const [focusOnSearch, setFocusOnSearch] = useBoolean(false)
-  const { isPortfolio } = useRewardToggle()
   const [tokenListSearchValue, setTokenListSearchValue] = useState('')
   const pubKey: PublicKey | null = useMemo(
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
@@ -185,23 +185,23 @@ export const FarmContainer: FC = () => {
             />
             <div className="flex items-center w-full justify-between relative">
               <Popover open={isExpandedSearchOpen || focusOnSearch}>
-                <PopoverAnchor className={'w-full max-w-[600px] mx-auto'}
-                               ref={searchBarRef}
+                <PopoverAnchor className={'w-[550px] mr-auto'}
+                  ref={searchBarRef}
                 >
                   <SearchBar
                     onChange={(e) => setTokenListSearchValue(e?.target?.value)}
                     onClear={() => setTokenListSearchValue('')}
                     value={tokenListSearchValue}
-                    className={'!max-w-full flex-1 bg-white dark:bg-black-2'}
+                    className={'flex-1 bg-white dark:bg-black-2'}
                     onFocusCapture={setFocusOnSearch.on}
                     onBlurCapture={setFocusOnSearch.off}
-                    isLoading={tokenListSearchValue.trim().length>0&&isLoadingTokenList}
+                    isLoading={tokenListSearchValue.trim().length > 0 && isLoadingTokenList}
                     additionalInputElementLeft={
                       <div className={'inline-flex gap-2'}>
                         {selectedTokens.map((token) => (
                           <Badge variant="default" size={'lg'}
-                                 key={`main-search-${token.symbol}`}
-                                 className={`
+                            key={`main-search-${token.symbol}`}
+                            className={`
                                  from-brand-secondaryGradient-primary/30
                                  to-brand-secondaryGradient-secondary/30 py-[2.5px] gap-1 before:z-0 
                                  `}>
@@ -220,20 +220,20 @@ export const FarmContainer: FC = () => {
                   />
                 </PopoverAnchor>
                 <PopoverContent onOpenAutoFocus={(e) => e.preventDefault()}
-                                onMouseDown={(e) => e.preventDefault()}
-                                style={{
-                                  width: `${searchBarRef.current?.clientWidth ?? 600}px`
-                                }}
-                                align={'center'}
-                                side={'bottom'}
-                                avoidCollisions={false}
+                  onMouseDown={(e) => e.preventDefault()}
+                  style={{
+                    width: `${searchBarRef.current?.clientWidth ?? 600}px`
+                  }}
+                  align={'center'}
+                  side={'bottom'}
+                  avoidCollisions={false}
                 >
                   {tokenListSearchValue && tokenRenderList.length == 0 && !isLoadingTokenList ?
                     <div className={`mb-auto p-2
                   text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
                   `}>
-                    No Tokens Found..
-                  </div> : null}
+                      No Tokens Found..
+                    </div> : null}
                   {!tokenListSearchValue && focusOnSearch ? <div className={`mb-auto p-2
                   text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
                   `}>
@@ -290,12 +290,12 @@ export const FarmContainer: FC = () => {
                           <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
                           <div className={'flex flex-col gap-3'}>
                             <div className="flex items-center justify-between ">
-                            <span
-                              className="h-full text-regular text-left dark:text-grey-2 text-grey-1
+                              <span
+                                className="h-full text-regular text-left dark:text-grey-2 text-grey-1
                                               font-semibold"
-                            >
-                            Show created pools
-                            </span>
+                              >
+                                Show created pools
+                              </span>
                               <Switch
                                 variant={'default'}
                                 size={'sm'}
@@ -306,12 +306,12 @@ export const FarmContainer: FC = () => {
                             </div>
                             {pubKey != null && (
                               <div className="flex items-center justify-between">
-                              <span
-                                className="h-full text-regular text-left dark:text-grey-2 text-grey-1
+                                <span
+                                  className="h-full text-regular text-left dark:text-grey-2 text-grey-1
                                               font-semibold"
-                              >
-                                Show Deposited
-                              </span>
+                                >
+                                  Show Deposited
+                                </span>
                                 <Switch
                                   variant={'default'}
                                   size={'sm'}

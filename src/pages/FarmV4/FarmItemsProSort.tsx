@@ -44,7 +44,7 @@ const FarmItemsProSort: FC = () => {
   return (
     <div
       className={cn(
-        `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_0.5fr] border-b-1 border-solid
+        `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr_0.5fr] border-b-1 border-solid
         border-border-lightmode-secondary dark:border-border-darkmode-secondary h-10 px-2 items-center`,
         isMobile && `grid-cols-[1.5fr_0.5fr]`,
         isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
@@ -56,6 +56,12 @@ const FarmItemsProSort: FC = () => {
         onClick={() => handlePoolSort(currentSort === '1' ? '2' : '1')}
         invert={currentSort == '1'}
       />
+      {isDesktop &&
+        <FarmRowItem 
+          title={'Fee Tier'}
+          canSort={false} 
+        />
+      }
       {(isTablet || isDesktop) && (
         <FarmRowItem
           title={`${computedViewRange} Volume`}
@@ -66,8 +72,10 @@ const FarmItemsProSort: FC = () => {
       )}
       {isDesktop &&
         <FarmRowItem title={`${computedViewRange} Fees`}
-                     onClick={() => handlePoolSort(currentSort === '5' ? '6' : '5')}
-                     invert={currentSort == '5'} />}
+          onClick={() => handlePoolSort(currentSort === '5' ? '6' : '5')}
+          invert={currentSort == '5'} 
+        />
+      }
       {(isTablet || isDesktop) && (
         <FarmRowItem
           title={`${computedViewRange} APR`}
@@ -76,6 +84,12 @@ const FarmItemsProSort: FC = () => {
           invert={currentSort == '7'}
         />
       )}
+      {isDesktop &&
+        <FarmRowItem 
+          title={'Actions'}
+          canSort={false} 
+        />
+      }
     </div>
   )
 }

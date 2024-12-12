@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react'
-import { Badge, cn, Skeleton } from 'gfx-component-lib'
+import { Badge, Button, cn, Icon, Skeleton } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import useBreakpoint from '../../hooks/useBreakPoint'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
@@ -51,11 +51,10 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
     [pool.stats, viewRange]
   )
 
-
   return (
     <div
       className={cn(
-        `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_0.5fr] dark:bg-black-2 px-2.5 cursor-pointer
+        `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr_0.5fr] dark:bg-black-2 px-2.5 cursor-pointer
       h-15 border border-solid dark:border-black-4 border-grey-4 bg-white rounded-tiny py-3.75`,
         isMobile && `grid-cols-[1.5fr_0.5fr]`,
         isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
@@ -103,6 +102,17 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
       <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
         {formattedTVL}
       </div>
+      {isDesktop && (
+        <div className='flex flex-row justify-center items-center'>
+          <div
+            className="border border-solid dark:border-black-4 flex items-center w-[39px]
+                font-poppins text-tiny font-semibold dark:text-grey-8 text-black-4 justify-center
+                border-grey-1 bg-grey-5 dark:bg-black-2 rounded-[2.5px] h-[23px] p-2"
+          >
+            {numberFormatter(0.2)}%
+          </div>
+        </div>
+      )}
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
           {formattedVolume}
@@ -118,6 +128,20 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
           <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
             <span className={'font-poppins font-semibold my-0.5'}>{formattedAPR}%</span>
           </Badge>
+        </div>
+      )}
+      {(isTablet || isDesktop) && (
+        <div className="flex items-center justify-center">
+          <Button
+            className={cn(`cursor-pointer bg-blue-1 text-white h-[30px]`, pool.hasDeposit && 'w-[30px] h-[30px]')}
+            variant={'secondary'}
+            onClick={() => {
+              setSelectedCard(pool)
+              setOpenDepositWithdrawSlider(true)
+            }}
+          >
+            {!pool.hasDeposit ? 'Deposit' : '+'}
+          </Button>
         </div>
       )}
     </div>

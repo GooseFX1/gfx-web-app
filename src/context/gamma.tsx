@@ -46,7 +46,7 @@ import {
   POOL_TYPE,
   TOKEN_LIST_PAGE_SIZE
 } from '@/pages/FarmV4/constants'
-import { usePriceFeedFarm, useRewardToggle } from '.'
+import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
 import { getLiquidityPoolKey, getpoolId } from '@/web3/Farm'
 import useBoolean from '@/hooks/useBoolean'
@@ -139,6 +139,10 @@ interface GAMMADataModel {
   hasSelectedToken: (token: JupToken) => boolean
   clearAllSelectedTokens: () => void
   setTokenList: Dispatch<SetStateAction<TokenListToken[]>>
+  isPortfolio: boolean
+  setIsPortfolio: { toggle: () => void; on: () => void; off: () => void; set: (value: boolean) => void }
+  isCardMode: boolean
+  setIsCardMode: { toggle: () => void; on: () => void; off: () => void; set: (value: boolean) => void }
 }
 
 export type TokenListToken = {
@@ -222,8 +226,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [createPoolType, setCreatePoolType] = useState<string>('')
   const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
   const [viewRange, setViewRange] = useState<ViewRange>(0)
-  const { isProMode, isPortfolio } = useRewardToggle()
-  const prevIsProMode = usePrevious(isProMode)
+  const [isPortfolio, setIsPortfolio] = useBoolean(false)
+  const [isCardMode, setIsCardMode] = useBoolean(userCache.gamma.viewMode === 'card')
+  const prevIsCardMode = usePrevious(isCardMode)
   const {
     choices: selectedTokens,
     addChoice: addSelectedToken,
@@ -261,7 +266,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [publicKey])
   useEffect(() => {
-    if (!isProMode && prevIsProMode !== isProMode) {
+    if (!isCardMode && prevIsCardMode !== isCardMode) {
       // reset based on mode
       if (viewRange != 0) {
         setViewRange(0)
@@ -270,7 +275,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setCurrentSort('1')
       }
     }
-  }, [isProMode, viewRange, currentSort, prevIsProMode])
+  }, [isCardMode, viewRange, currentSort, prevIsCardMode])
   useEffect(() => {
     if (pools.length == 0) {
       updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE })
@@ -735,7 +740,11 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         removeSelectedToken,
         hasSelectedToken,
         clearAllSelectedTokens,
-        setTokenList
+        setTokenList,
+        isPortfolio,
+        setIsPortfolio,
+        isCardMode,
+        setIsCardMode
       }}
     >
       {children}

@@ -1,9 +1,9 @@
 import { FC, useMemo, useState } from 'react'
-import { useDarkMode, useGamma, useRewardToggle } from '../../context'
+import { useGamma } from '../../context'
 import { bigNumberFormatter, truncateBigNumber } from '../../utils'
 import { POOL_TYPE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Button, cn, Container, ContainerTitle, Icon, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
+import { Button, cn, Container, ContainerTitle, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { DepositWithdrawSlider } from '../FarmV4/DepositWithdrawSlider'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
@@ -12,12 +12,17 @@ import { CreatePool } from './CreatePool'
 import BigNumber from 'bignumber.js'
 
 export const FarmHeader: FC = () => {
-  const { setCurrentPoolType, stats, viewRange: range, computedViewRange, setViewRange: setRange } = useGamma()
+  const { stats, 
+    viewRange: range, 
+    computedViewRange, 
+    setViewRange: setRange, 
+    setIsPortfolio, 
+    isPortfolio, 
+    setCurrentPoolType 
+  } = useGamma()
   const { wallet } = useWallet()
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
   const { isMobile } = useBreakPoint()
-  const { isProMode, isPortfolio, setIsPortfolio } = useRewardToggle()
-  const { mode } = useDarkMode()
   const [isCreatePool, setIsCreatePool] = useState<boolean>(false)
 
   const totalEarnings = useMemo(() => {
@@ -85,42 +90,40 @@ export const FarmHeader: FC = () => {
         <DocsBanner />
       </div>
       <div className="relative mb-3.75 max-sm:px-2.5 px-5">
-        <div className="flex flex-row items-center mb-1.5">
+        {/* <div className="flex flex-row items-center mb-1.5">
           <Icon
-            src={`img/assets/${isProMode ? `pro_${mode}` : `lite_${mode}`}.svg`}
+            src={`img/assets/${isCardMode ? `pro_${mode}` : `lite_${mode}`}.svg`}
             size="sm"
             className="mr-1.5"
           ></Icon>
-          <h4 className="text-tiny font-semibold dark:text-grey-8 text-black-4">{isProMode ? 'PRO' : 'LITE'}</h4>
+          <h4 className="text-tiny font-semibold dark:text-grey-8 text-black-4">{isCardMode ? 'PRO' : 'LITE'}</h4>
+        </div> */}
+        <div className="flex flex-row items-center mb-1.5">
+          <RadioOptionGroup
+            defaultValue={'Pools'}
+            value={isPortfolio ? 'Portfolio' : 'Pools'}
+            className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-3 min-md:mr-2 items-center'}
+            optionClassName={`min-md:w-[85px]`}
+            options={[
+              {
+                value: 'Pools',
+                label: 'Pools',
+                onClick: () => {
+                  setCurrentPoolType(POOL_TYPE.primary)
+                  setIsPortfolio.off()
+                }
+              },
+              {
+                value: 'Portfolio',
+                label: 'Portfolio',
+                onClick: () => {
+                  setCurrentPoolType(POOL_TYPE.all)
+                  setIsPortfolio.on()
+                }
+              }
+            ]}
+          />
         </div>
-        {isProMode && (
-          <div className="flex flex-row items-center mb-1.5">
-            <h4
-              className={cn(
-                `cursor-pointer mr-2 text-average font-semibold dark:text-grey-1 text-grey-9 
-                 ${!isPortfolio && `dark:!text-white !underline !text-blue-1`}`
-              )}
-              onClick={() => {
-                setIsPortfolio.off()
-                setCurrentPoolType(POOL_TYPE?.primary)
-              }}
-            >
-              Pools
-            </h4>
-            <h4
-              className={cn(
-                `cursor-pointer mr-2 text-average font-semibold dark:text-grey-1 text-grey-9 
-                ${isPortfolio && `!underline !text-blue-1 dark:!text-white`}`
-              )}
-              onClick={() => {
-                setIsPortfolio.on()
-                setCurrentPoolType(POOL_TYPE?.all)
-              }}
-            >
-              Portfolio
-            </h4>
-          </div>
-        )}
         <div className="mb-1.5 dark:text-grey-2 text-grey-1 text-regular font-semibold">
           {!isPortfolio
             ? 'Provide liquidity and earn fees'
@@ -130,10 +133,10 @@ export const FarmHeader: FC = () => {
           className="pr-2 cursor-pointer absolute right-5 max-sm:right-[8px] top-0"
           colorScheme={'blue'}
           variant={'secondary'}
-          iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
+          //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
           onClick={() => setIsCreatePool(true)}
         >
-          Create Pool
+          New Pool
         </Button>
       </div>
 
@@ -142,15 +145,13 @@ export const FarmHeader: FC = () => {
           className={`flex flex-row relative items-center no-scrollbar gap-2.5 
           overflow-x-scroll pl-5 max-sm:pl-2.5 pr-0`}
         >
-          {isProMode && (
-            <RadioOptionGroup
+          <RadioOptionGroup
               optionSize={isMobile ? 'xl' : 'sm'}
               defaultValue={'24h'}
               orientation={'vertical'}
               className={'gap-0'}
               options={options}
-            />
-          )}
+          />
           <div className="flex flex-row gap-2.5 self-stretch">
             {infoCards?.map((card) => (
               <Container
@@ -178,7 +179,7 @@ export const FarmHeader: FC = () => {
                 <h2>$ {card.value}</h2>
               </Container>
             ))}
-            {isProMode && (
+            {/* {isCardMode && (
               <div className="flex flex-col justify-around">
                 <div className="text-lg font-semibold font-poppins dark:text-grey-8 text-black-4">
                   More metrics?
@@ -193,7 +194,7 @@ export const FarmHeader: FC = () => {
                   Go to Portfolio
                 </div>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       )}
