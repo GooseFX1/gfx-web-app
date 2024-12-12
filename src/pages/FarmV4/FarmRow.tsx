@@ -105,9 +105,9 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
       {isDesktop && (
         <div className='flex flex-row justify-center items-center'>
           <div
-            className="border border-solid dark:border-black-4 flex items-center w-[39px]
+            className="border border-solid dark:border-black-4 flex items-center w-[50px]
                 font-poppins text-tiny font-semibold dark:text-grey-8 text-black-4 justify-center
-                border-grey-1 bg-grey-5 dark:bg-black-2 rounded-[2.5px] h-[23px] p-2"
+                border-grey-1 bg-grey-5 dark:bg-black-2 rounded-[2.5px] h-[30px] p-2"
           >
             {numberFormatter(0.2)}%
           </div>
