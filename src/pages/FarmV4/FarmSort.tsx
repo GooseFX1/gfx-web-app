@@ -21,7 +21,15 @@ function FarmSort({ isOpen, setIsOpen }: {
   setIsOpen: (isOpen: boolean) => void
 }) {
   const { userCache, updateUserCache } = useConnectionConfig()
-  const { showCreatedPools, setShowCreatedPools, currentSort, handlePoolSort } = useGamma()
+  const { showCreatedPools, 
+    setShowCreatedPools, 
+    currentSort, 
+    handlePoolSort, 
+    isCardMode, 
+    setIsCardMode,
+    setShowDeposited,
+    showDeposited
+  } = useGamma()
   const { mode } = useDarkMode()
 
   const handleFilterByCreated = useCallback(
@@ -40,6 +48,21 @@ function FarmSort({ isOpen, setIsOpen }: {
     [showCreatedPools, userCache]
   )
 
+  const handleToggle = () => { setIsCardMode.toggle() }
+
+  const handleShowDepositedToggle = () => {
+    setShowDeposited((prev) => {
+      updateUserCache({
+        gamma: {
+          ...userCache.gamma,
+          showDepositedFilter: !prev
+        }
+      })
+
+      return !prev
+    })
+  }
+
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
@@ -53,20 +76,44 @@ function FarmSort({ isOpen, setIsOpen }: {
             className={`absolute top-0.5 left-0 border-1 border-solid w-2.5 h-2.5
                         border-background-lightmode-primary dark:border-background-darkmode-primary rounded-full`}
             src={'/img/assets/red-notification-circle.svg'}
-          />:null}
+          /> : null}
         </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent portal={false} align={'end'}>
         <>
           <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
-          <div className="flex items-center justify-between ">
-          <span
-            className="h-full text-regular text-left dark:text-grey-2 text-grey-1
+          <div className="flex items-center justify-between mb-2">
+            <span className="h-full text-regular text-left dark:text-grey-2 text-grey-1 font-semibold mr-3">
+              Layout
+            </span>
+            <Switch
+              variant={'default'}
+              size={'sm'}
+              colorScheme={'primary'}
+              checked={isCardMode}
+              onClick={handleToggle}
+            />
+          </div>
+          <div className="flex items-center justify-between mb-2">
+            <span className="h-full text-regular text-left dark:text-grey-2 text-grey-1 font-semibold mr-3">
+              Show Deposited pools
+            </span>
+            <Switch
+              variant={'default'}
+              size={'sm'}
+              colorScheme={'primary'}
+              checked={showDeposited}
+              onClick={handleShowDepositedToggle}
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <span
+              className="h-full text-regular text-left dark:text-grey-2 text-grey-1
                         font-semibold mr-3"
-          >
-          Show created pools
-          </span>
+            >
+              Show created pools
+            </span>
             <Switch
               variant={'default'}
               size={'sm'}

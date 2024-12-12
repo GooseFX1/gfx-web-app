@@ -11,7 +11,7 @@ type UserGAMMAConfig = {
   showCreatedFilter: boolean
   docsBanner: boolean
   currentSort: string
-  viewMode: 'lite' | 'pro';
+  viewMode: 'row' | 'card';
 }
 type UserSWAPConfig = {
   slippage: number

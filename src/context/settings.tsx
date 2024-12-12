@@ -119,7 +119,7 @@ function newCache(): USER_CONFIG_CACHE {
       showCreatedFilter: false,
       docsBanner: true,
       currentSort: '1',
-      viewMode: 'lite'
+      viewMode: 'row'
     },
     hasSignedTC: false,
     endpointName: DEFAULT_ENDPOINT_NAME,
