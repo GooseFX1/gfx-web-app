@@ -3,7 +3,7 @@ import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
 import PageLoader from '../../components/common/PageLoader'
 import useWindowSize from '../../utils/useWindowSize'
-import { Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
+import { cn, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 
 const Bridge: FC = () => {
   const { mode } = useDarkMode()
@@ -93,18 +93,25 @@ const Bridge: FC = () => {
   return (
     <div className={`[&_*.debridge-widget-iframe]:mx-auto [&_*.debridge-widget-iframe]:my-0`}>
       {isLoading && <PageLoader />}
-      <div className="w-[600px] m-auto relative">
-        <div className="absolute left-[18px] top-[14px]">
+      <div className="w-full m-auto relative">
+        <div className="absolute right-[18px] top-[14px]">
           <Tooltip>
             <TooltipTrigger asChild>
               <div
-                className="border border-solid border-grey-1 w-[178px] max-sm:w-[160px] h-8 rounded-[100px]
-              cursor-pointer py-0.5 pl-2.5 pr-1 flex flex-row items-center 
-              justify-between bg-grey-5 dark:bg-black-1 max-sm:right-0"
+                className={cn(
+                  `rounded-[100px]
+                  cursor-pointer py-0.5 flex flex-row items-center 
+                  justify-between bg-grey-5 dark:bg-black-1 max-sm:right-0`,
+                  breakpoint.isDesktop
+                    ? 'w-[178px] max-sm:w-[160px] pl-2.5 pr-1 h-8 border border-solid border-grey-1'
+                    : 'w-auto p-0'
+                )}
               >
-                <span className="mr-[5px] font-bold text-regular dark:text-grey-5 text-black-4 max-sm:text-tiny">
-                  Bridge Wallet FAQ
-                </span>
+                {breakpoint.isDesktop && (
+                  <span className="mr-[5px] font-bold text-regular dark:text-grey-5 text-black-4 max-sm:text-tiny">
+                    Bridge Wallet FAQ
+                  </span>
+                )}
                 <img className="h-6" src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />
               </div>
             </TooltipTrigger>

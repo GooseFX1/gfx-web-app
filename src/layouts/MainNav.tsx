@@ -141,7 +141,7 @@ const MobileNav: FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const history = useHistory()
 
-  const isLeaderboardOpen = pathname.includes('leaderboard')
+  const isMoreOpen = pathname.includes('bridge')
 
   if (breakpoint.isLaptop || breakpoint.isDesktop) return null
   return (
@@ -201,36 +201,18 @@ const MobileNav: FC = () => {
             </ListItem>
 
             <Accordion type={'single'} collapsible variant={'unset'}>
-              <AccordionItem value={'leaderboard'} variant={'unset'}>
-                <AccordionTrigger variant={'primary'} isSelected={isLeaderboardOpen} className={'text-h3  px-1.25'}>
+              <AccordionItem value={'bridge'} variant={'unset'}>
+                <AccordionTrigger variant={'primary'} isSelected={isMoreOpen} className={'text-h3  px-1.25'}>
                   <span className={'inline-flex items-center font-poppins font-inherit text-inherit'}>
                     <img
                       className="h-[35px]"
-                      src={`/img/mainnav/more-${mode}${isLeaderboardOpen ? '-active' : ''}.svg`}
+                      src={`/img/mainnav/more-${mode}${isMoreOpen ? '-active' : ''}.svg`}
                       alt="dark"
                     />
                     &nbsp;More
                   </span>
                 </AccordionTrigger>
                 <AccordionContent variant={'unset'} className={'flex flex-col gap-1.5 pt-2.5'}>
-                  <MobileAccordionContent
-                    title={'Trade'}
-                    description={'Trade perps on the fastest and most liquid DEX with 10x leverage.'}
-                    onClick={() => {
-                      setIsOpen.off()
-                      history.push('/trade')
-                    }}
-                    isActive={pathname.includes('trade')}
-                  />
-                  <MobileAccordionContent
-                    title={'Account'}
-                    description={'View your deposits, trade history, funding and more.'}
-                    onClick={() => {
-                      setIsOpen.off()
-                      history.push('/account')
-                    }}
-                    isActive={pathname.includes('account')}
-                  />
                   <MobileAccordionContent
                     title={'Bridge'}
                     description={'Bridge your assets to and from other chains'}
@@ -239,15 +221,6 @@ const MobileNav: FC = () => {
                       history.push('/bridge')
                     }}
                     isActive={pathname.includes('bridge')}
-                  />
-                  <MobileAccordionContent
-                    title={'Leaderboard'}
-                    description={'Trade smart and be among the top to win exciting rewards!'}
-                    onClick={() => {
-                      setIsOpen.off()
-                      history.push('/leaderboard')
-                    }}
-                    isActive={pathname.includes('leaderboard')}
                   />
                   <MobileAccordionContent
                     title={'Blog'}
@@ -293,7 +266,7 @@ const DesktopNav: FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const history = useHistory()
   const { pathname } = useLocation()
-  const [isLeaderboardOpen, setIsLeaderBoardOpen] = useBoolean(false)
+  const [isMoreOpen, setIsMoreOpen] = useBoolean(false)
 
   const { mode } = useDarkMode()
   if (breakpoint.isMobile || breakpoint.isTablet) return null
@@ -331,25 +304,25 @@ const DesktopNav: FC = () => {
         SSL
       </Button>
 
-      <DropdownMenu onOpenChange={setIsLeaderBoardOpen.toggle}>
+      <DropdownMenu onOpenChange={setIsMoreOpen.toggle}>
         <DropdownMenuTrigger asChild={true}>
           <Button
             variant={'ghost'}
             className={cn(
               `tracking-wider p-0 flex-col text-center justify-center items-center text-h6 [&>span]:inline-flex gap-0`,
-              pathname.includes('leaderboard') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+              pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
             )}
           >
             <span className={`inline-flex justify-center items-center`}>
               <img
                 className="w-[26px] h-[26px] mb-0.5"
-                src={`/img/mainnav/more-${mode}${pathname.includes('leaderboard') ? '-active' : ''}.svg`}
+                src={`/img/mainnav/more-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
                 alt="dark"
               />
               <CircularArrow
                 cssStyle={tw`w-[12px] h-[12px]`}
-                invert={isLeaderboardOpen}
-                css={[pathname.includes('leaderboard') || isLeaderboardOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
+                invert={isMoreOpen}
+                css={[pathname.includes('bridge') || isMoreOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
               />
             </span>
             More
@@ -357,39 +330,12 @@ const DesktopNav: FC = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent portal={false} className={'mt-3 w-[300px]'}>
           <DropdownMenuItem
-            onClick={() => history.push('/trade')}
-            isActive={pathname.includes('trade')}
-          >
-            <div>
-              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Trade</h4>
-              <p className={'text-b3'}>Trade perps on the fastest and most liquid DEX with 10x leverage</p>
-            </div>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => history.push('/account')}
-            isActive={pathname.includes('account')}
-          >
-            <div>
-              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Account</h4>
-              <p className={'text-b3'}>View your deposits, trade history, funding, and more</p>
-            </div>
-          </DropdownMenuItem>
-          <DropdownMenuItem
             onClick={() => history.push('/bridge')}
             isActive={pathname.includes('bridge')}
           >
             <div>
               <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Bridge</h4>
               <p className={'text-b3'}>Bridge your assets to and from other chains</p>
-            </div>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => history.push('/leaderboard')}
-            isActive={pathname.includes('leaderboard')}
-          >
-            <div>
-              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Leaderboard</h4>
-              <p className={'text-b3'}>See how you rank against other traders and earn rewards</p>
             </div>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={navigateToCurried(NAV_LINKS.blog, '_blank')}>
