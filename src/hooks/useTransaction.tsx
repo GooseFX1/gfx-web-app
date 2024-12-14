@@ -21,7 +21,8 @@ type useTransactionReturn = {
   sendTransaction: (
     txn: Transaction | TransactionBuilder,
     connectionData?: SendTxnOptions,
-    notify?: (promise: Promise<unknown>) => Promise<boolean>
+    notify?: (promise: Promise<unknown>) => Promise<boolean>,
+    isCreatePoolInx?: boolean
   ) => Promise<{ success: boolean; txSig: string }>
 }
 const baseSet = new Set()
@@ -38,7 +39,10 @@ function useTransaction(): useTransactionReturn {
   const supportedTransactionTypes = useMemo(() =>
     wallet?.adapter?.supportedTransactionVersions ?? baseSet, [wallet])
   const sendTransaction =
-    async (txnIn: Transaction | TransactionBuilder, connectionData?: SendTxnOptions, notify = notifyUsingPromise) => {
+    async (txnIn: Transaction | TransactionBuilder, 
+      connectionData?: SendTxnOptions, 
+      notify = notifyUsingPromise, 
+      isCreatePoolInx?: boolean) => {
       console.log('STARTING SEND TXN')
       const connection = connectionData?.connection ?? originalConnection
       const options: SendTransactionOptions = {
@@ -56,7 +60,7 @@ function useTransaction(): useTransactionReturn {
       const txn = txnIn instanceof TransactionBuilder ?
         await txnIn
           .setPriorityFee(priorityFromLevel)
-          ._getTransaction(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0)) :
+          ._getTransaction(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0), isCreatePoolInx) :
         txnIn
       console.log('signing txn', txn)
       const id = SpawnLoaderToast({ duration: connectionData?.transactionDuration ?? 60000 })

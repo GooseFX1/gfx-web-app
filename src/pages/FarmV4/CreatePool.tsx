@@ -101,7 +101,9 @@ export const CreatePool: FC<{
         } = await sendTransaction(
           txBuilder,
           { transactionDuration: INTERVALS.MINUTE * 5 },
-          notifyUsingPromiseForCreatePool)
+          notifyUsingPromiseForCreatePool,
+          true
+        )
         setSendingTransaction(false)
 
         if (!success) {
