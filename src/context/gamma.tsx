@@ -134,7 +134,7 @@ interface GAMMADataModel {
   computedViewRange: '24H' | '7D' | '30D'
   handlePoolSort: (id: string) => void
   topBalancesWithTokenList: JupToken[]
-  calculatePoolType: Record<string, string>
+  calculatePoolType: Set<string>
   selectedTokens: JupToken[]
   addSelectedToken: (token: JupToken) => void
   removeSelectedToken: (token: JupToken) => void
@@ -185,7 +185,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isLoadingTokenList, setIsLoadingTokenList] = useBoolean(false)
   const [isLoadingPools, setIsLoadingPools] = useBoolean(false)
   const [poolPage, setPoolPage] = useState(1)
-  const [totalPoolCount, setTotalPoolCount] = useState(0);
+  const [totalPoolCount, setTotalPoolCount] = useState(0)
   const [poolsHasMoreData, setPoolsHasMoreData] = useState(true)
   const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
   const [selectedCardLiquidityAcc, setSelectedCardLiquidityAcc] = useState<any>({})
@@ -377,23 +377,31 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           sortKey: key,
           page: page,
           pageSize: POOL_LIST_PAGE_SIZE,
-          signal: signal
+          signal: signal,
+          userPublicKey: base58PublicKey,
+          showDeposited,
+          showCreated: showCreatedPools
         }
       )
       : fetchAllPools(
-        page,
-        pageSize,
-        poolType,
-        sortConfig.direction.toLowerCase() as 'desc' | 'asc',
-        key,
-        searchTokens,
-        signal
+        {
+          page,
+          pageSize,
+          poolType,
+          sortOrder: sortConfig.direction.toLowerCase() as 'desc' | 'asc',
+          sortKey: key,
+          searchTokens,
+          abortSignal: signal,
+          userPublicKey: base58PublicKey,
+          showDeposited,
+          showCreated: showCreatedPools
+        }
       ))
       .then((poolsData: GAMMAPoolsResponse) => {
         if (poolsData && poolsData.success) {
           setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
-          setPoolPage(poolsData.data.currentPage);
-          setTotalPoolCount(poolsData.data.totalItems);
+          setPoolPage(poolsData.data.currentPage)
+          setTotalPoolCount(poolsData.data.totalItems)
           const existingPools = append ? pools : []
           const existingPoolsMap = new Map(
             existingPools.map((pool) => [`${pool.mintA.address}_${pool.mintB.address}`, pool])
@@ -448,7 +456,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (poolPage == 1) {
       updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type }, false)
     }
-  }, [currentPoolType])
+  }, [currentPoolType, showDeposited, showCreatedPools])
   useEffect(() => {
     if (isFirstRender) return
     updatePools({ page: poolPage, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type })

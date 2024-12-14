@@ -27,6 +27,7 @@ import FarmSort from '@/pages/FarmV4/FarmSort'
 import { aborter, loadIconImage } from '@/utils'
 import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
 import useFirstRender from '@/hooks/useFirstRender'
+import useDebounce from '@/hooks/useDebounce'
 
 export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
@@ -59,6 +60,7 @@ export const FarmContainer: FC = () => {
   const [focusOnSearch, setFocusOnSearch] = useBoolean(false)
   const { isPortfolio } = useRewardToggle()
   const [tokenListSearchValue, setTokenListSearchValue] = useState('')
+  const {debounce, abortDebounce} = useDebounce()
   const pubKey: PublicKey | null = useMemo(
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
     [wallet?.adapter?.publicKey]
@@ -132,15 +134,17 @@ export const FarmContainer: FC = () => {
       setTokenList([])
       return
     }
-    updateTokenList(
+    debounce(()=>updateTokenList(
       {
         page: 1,
         pageSize: TOKEN_LIST_PAGE_SIZE,
         searchValue: tokenListSearchValue,
       },
       false
-    )
-
+    ), 250)
+    return () => {
+      abortDebounce()
+    }
   }, [tokenListSearchValue, currentPoolType])
   const isExpandedSearchOpen = tokenListSearchValue.length > 0
   const tokenRenderList = tokenListSearchValue.length > 0 || createPoolType === 'primary' || !publicKey
