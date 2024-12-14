@@ -120,8 +120,9 @@ const Bridge: FC = () => {
               The bridge module requires a wallet connection for the source chain separate from the the GooseFX
               dApp. The destiation address for your funds must be pasted below
             </TooltipContent>
-          </Tooltip>
-        </div>
+            </Tooltip>
+          </div>
+        )}
       </div>
       <div id="debridgeWidget" ref={deBridgeRef} />
     </div>
