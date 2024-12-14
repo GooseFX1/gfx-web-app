@@ -23,7 +23,7 @@ import Decimal from 'decimal.js-light'
 
 const NATIVE_MINT = new PublicKey('So11111111111111111111111111111111111111112')
 
-interface UserTokenAccounts {
+export interface UserTokenAccounts {
   symbol: string
   name: string
   logoURI: string
@@ -33,6 +33,7 @@ interface UserTokenAccounts {
   tokenAmount: TokenAmount
   value: Decimal
   price: number
+  tokenType: 'spl-token' | 'native' | 'spl-token-2022'
 }
 
 type Balance = Record<string, UserTokenAccounts>
@@ -147,7 +148,6 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         programId: TOKEN_2022_PROGRAM_ID
       }) as any)?.value || []
 
-    console.log('TOKENS', { standardTokens, token2022 })
     const accounts = [...standardTokens, ...token2022]
     const tokenAccounts = {}
     const tokenInfo = {}
@@ -157,6 +157,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       addresses += data.parsed.info.mint + ','
       tokenInfo[data.parsed.info.mint] = data.parsed.info
       tokenInfo[data.parsed.info.mint].pda = account.pubkey
+      tokenInfo[data.parsed.info.mint].tokenType = data.program
     })
 
     addresses = addresses.slice(0, -1)
@@ -181,7 +182,8 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         uiAmount: solUIAmount
       },
       price: 0.0,
-      value: new Decimal(0.0)
+      value: new Decimal(0.0),
+      tokenType: 'native'
     }
     tokenAccounts[NATIVE_MINT.toBase58()] = sol
     tokenAccounts[publicKey.toBase58()] = sol
