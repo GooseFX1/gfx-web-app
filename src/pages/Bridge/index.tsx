@@ -94,7 +94,7 @@ const Bridge: FC = () => {
     <div className={`[&_*.debridge-widget-iframe]:mx-auto [&_*.debridge-widget-iframe]:my-0`}>
       {isLoading && <PageLoader />}
       <div className="w-full m-auto relative">
-        <div className="absolute right-[18px] top-[14px]">
+        <div className="absolute right-[15px] top-[14px]">
           <Tooltip>
             <TooltipTrigger asChild>
               <div
