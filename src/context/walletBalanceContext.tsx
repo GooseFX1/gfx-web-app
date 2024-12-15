@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
   AccountInfo,
-  GetProgramAccountsFilter,
   ParsedAccountData,
   PublicKey,
   TokenAmount,
@@ -12,7 +11,10 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from '@/context/settings'
 import { useSolSubMulti } from '@/hooks/useSolSubActivity'
 import { SubType } from '@/hooks/useSolSub'
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
+// It exists :/
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
 import { AccountLayout, confirmTransaction } from '@/web3'
 import { toast } from 'sonner'
@@ -21,7 +23,7 @@ import Decimal from 'decimal.js-light'
 
 const NATIVE_MINT = new PublicKey('So11111111111111111111111111111111111111112')
 
-interface UserTokenAccounts {
+export interface UserTokenAccounts {
   symbol: string
   name: string
   logoURI: string
@@ -31,6 +33,7 @@ interface UserTokenAccounts {
   tokenAmount: TokenAmount
   value: Decimal
   price: number
+  tokenType: 'spl-token' | 'native' | 'spl-token-2022'
 }
 
 type Balance = Record<string, UserTokenAccounts>
@@ -83,8 +86,8 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         console.log('updating balance for - sol', uiAmount)
         return
       }
-      const decodedAccount = AccountLayout.decode(accountInfo.data);
-      const uiAmount = new Decimal(decodedAccount.amount.toString()).div(10 ** account.decimals).toNumber();
+      const decodedAccount = AccountLayout.decode(accountInfo.data)
+      const uiAmount = new Decimal(decodedAccount.amount.toString()).div(10 ** account.decimals).toNumber()
       const amount: TokenAmount = {
         amount: decodedAccount.amount.toString(),
         decimals: account.decimals,
@@ -135,21 +138,17 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   async function getTokenAccounts() {
     if (!publicKey) return
 
-    const filters: GetProgramAccountsFilter[] = [
-      {
-        dataSize: 165 // size of account (bytes)
-      },
-      {
-        memcmp: {
-          offset: 32, // location of our query in the account (bytes)
-          bytes: publicKey.toBase58() // our search criteria, a base58 encoded string
-        }
-      }
-    ]
+    const standardTokens: { pubkey: PublicKey, account: AccountInfo<ParsedAccountData> }[] =
+      (await connection.getParsedTokenAccountsByOwner(publicKey, {
+        programId: TOKEN_PROGRAM_ID
+      }) as any)?.value || []
 
-    const accounts = await connection.getParsedProgramAccounts(TOKEN_PROGRAM_ID, {
-      filters: filters
-    })
+    const token2022: { pubkey: PublicKey, account: AccountInfo<ParsedAccountData> }[] =
+      (await connection.getParsedTokenAccountsByOwner(publicKey, {
+        programId: TOKEN_2022_PROGRAM_ID
+      }) as any)?.value || []
+
+    const accounts = [...standardTokens, ...token2022]
     const tokenAccounts = {}
     const tokenInfo = {}
     let addresses = NATIVE_MINT.toBase58() + ','
@@ -158,6 +157,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       addresses += data.parsed.info.mint + ','
       tokenInfo[data.parsed.info.mint] = data.parsed.info
       tokenInfo[data.parsed.info.mint].pda = account.pubkey
+      tokenInfo[data.parsed.info.mint].tokenType = data.program
     })
 
     addresses = addresses.slice(0, -1)
@@ -182,7 +182,8 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         uiAmount: solUIAmount
       },
       price: 0.0,
-      value: new Decimal(0.0)
+      value: new Decimal(0.0),
+      tokenType: 'native'
     }
     tokenAccounts[NATIVE_MINT.toBase58()] = sol
     tokenAccounts[publicKey.toBase58()] = sol
@@ -204,7 +205,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         currentWalletValue = currentWalletValue.add(value)
       }
     }
-    console.log('tokenAccounts', tokenAccounts)
+    console.log('tokenAccounts', { tokenAccounts, tokenListResponse })
     setTokenAccounts(Object.values(tokenAccounts))
     setBalance(tokenAccounts)
     setWalletValue(currentWalletValue.toFixed(2))
