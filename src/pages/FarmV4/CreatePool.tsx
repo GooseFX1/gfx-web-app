@@ -56,6 +56,9 @@ export const CreatePool: FC<{
 
   const walletTokenA = balance[tokenA?.address].tokenAmount.uiAmountString
   const walletTokenB = balance[tokenB?.address].tokenAmount.uiAmountString
+  const tokenAType = balance[tokenA?.address].tokenType
+  const tokenBType = balance[tokenB?.address].tokenType
+
   const { connection } = useConnectionConfig()
 
   useMemo(() => {
@@ -92,7 +95,17 @@ export const CreatePool: FC<{
     else {
       try {
         const txBuilder = createTransactionBuilder()
-        const tx = await createPool(tokenA, tokenB, amountTokenA, amountTokenB, userPublicKey, GammaProgram, connection)
+        const tx = await createPool(
+          tokenA, 
+          tokenB, 
+          amountTokenA, 
+          amountTokenB, 
+          userPublicKey, 
+          GammaProgram, 
+          connection, 
+          tokenAType, 
+          tokenBType
+        )
         txBuilder.add(tx)
         setSendingTransaction(true)
         const {

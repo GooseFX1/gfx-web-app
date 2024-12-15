@@ -142,7 +142,13 @@ const createLiquidityAccountIX = async (
     return createLiquidityIX
 }
 
-const getAccountsForDepositWithdraw = async (selectedCard: any, userPublicKey: PublicKey, isDeposit: boolean) => {
+const getAccountsForDepositWithdraw = async (
+    selectedCard: any, 
+    userPublicKey: PublicKey, 
+    isDeposit: boolean,
+    userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
+    userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | ''
+) => {
 
     const poolIdKey = await getpoolId(selectedCard)
     const mintA = new PublicKey(selectedCard?.mintA?.address)
@@ -151,8 +157,18 @@ const getAccountsForDepositWithdraw = async (selectedCard: any, userPublicKey: P
     const poolVaultKeyB = await getPoolVaultKey(poolIdKey, selectedCard?.mintB?.address)
     const authorityKey = await getAuthorityKey()
     const liquidityAccountKey = await getLiquidityPoolKey(poolIdKey, userPublicKey)
-    const tokenAccountAKey = await getAssociatedTokenAddress(mintA, userPublicKey)
-    const tokenAccountBKey = await getAssociatedTokenAddress(mintB, userPublicKey)
+    const tokenAccountAKey = await getAssociatedTokenAddress(
+        mintA, 
+        userPublicKey,
+        null,
+        userSourceTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+    )
+    const tokenAccountBKey = await getAssociatedTokenAddress(
+        mintB, 
+        userPublicKey,
+        null,
+        userTargetTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+    )
 
     const accountObj = {
         owner: userPublicKey,
@@ -182,12 +198,28 @@ const handleSlippageCalculation = (amount: string, slippage: number, isDeposit: 
     return slippageAmount?.toString()
 }
 
-const getAccountsForCreatePool = async (token0: PublicKey, token1: PublicKey, userPubKey: PublicKey) => {
-
+const getAccountsForCreatePool = async (
+        token0: PublicKey,
+        token1: PublicKey,
+        userPubKey: PublicKey,
+        token0Type: 'spl-token' | 'native' | 'spl-token-2022',
+        token1Type: 'spl-token' | 'native' | 'spl-token-2022'
+    ) => {
+    console.log(token0Type, token1Type)
     const configIdKey = await getAmmConfigId(0)
     const authorityKey = await getAuthorityKey()
-    const token0ata = await getAssociatedTokenAddress(token0, userPubKey)
-    const token1ata = await getAssociatedTokenAddress(token1, userPubKey)
+    const token0ata = await getAssociatedTokenAddress(
+        token0, 
+        userPubKey, 
+        null, 
+        token0Type === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+    )
+    const token1ata = await getAssociatedTokenAddress(
+        token1, 
+        userPubKey, 
+        null, 
+        token1Type === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+    )
     const poolIdKey = await getPoolIdKey(configIdKey, token0, token1)
     const observationStateKey = await getObservationStateKey(poolIdKey)
     const poolVaultKeyA = await getPoolVaultKey(poolIdKey, token0?.toBase58())
@@ -210,8 +242,8 @@ const getAccountsForCreatePool = async (token0: PublicKey, token1: PublicKey, us
         createPoolFee: poolFeeAcc,
         observationState: observationStateKey,
         tokenProgram: TOKEN_PROGRAM_ID,
-        token0Program: TOKEN_PROGRAM_ID,
-        token1Program: TOKEN_PROGRAM_ID,
+        token0Program: token0Type === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID,
+        token1Program: token1Type === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
         systemProgram: SYSTEM,
         rent: SYS_VAR_RENT
@@ -351,9 +383,17 @@ export const deposit = async (
     userPublicKey: PublicKey,
     program: Program<Idl>,
     connection: Connection,
+    userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
+    userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
     isSolMaxDeposit?: boolean
 ): Promise<Transaction> => {
-    const depositAccounts = await getAccountsForDepositWithdraw(selectedCard, userPublicKey, true)
+    const depositAccounts = await getAccountsForDepositWithdraw(
+        selectedCard, 
+        userPublicKey, 
+        true, 
+        userSourceTokenType, 
+        userTargetTokenType
+    )
     const depositInstructionAccount = { ...depositAccounts }
     const liqAccData = await connection.getAccountInfo(depositAccounts?.userPoolLiquidity)
     let liquidityAccIX = undefined
@@ -423,10 +463,18 @@ export const withdraw = async (
     selectedCard: any,
     userPublicKey: PublicKey,
     program: Program<Idl>,
-    connection: Connection
+    connection: Connection,
+    userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
+    userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
 ): Promise<Transaction> => {
     //console.log('user withdraws', userSourceWithdrawAmount, userTargetWithdrawAmount)
-    const withdrawAccounts = await getAccountsForDepositWithdraw(selectedCard, userPublicKey, false)
+    const withdrawAccounts = await getAccountsForDepositWithdraw(
+        selectedCard, 
+        userPublicKey, 
+        false, 
+        userSourceTokenType,
+        userTargetTokenType
+    )
     const withdrawInstructionAccount = { ...withdrawAccounts }
     const token0SlippageAmount = handleSlippageCalculation(userSourceWithdrawAmount, slippage, false)
     const token1SlippageAmount = handleSlippageCalculation(userTargetWithdrawAmount, slippage, false)
@@ -435,14 +483,25 @@ export const withdraw = async (
     //console.log('user withdraws of native value', token0Amount, token1Amount, lpAmount?.toNumber())
     const withdrawAmountTX = new Transaction()
 
-    const mintAata = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintA?.address), userPublicKey)
+    const mintAata = await getAssociatedTokenAddress(
+        new PublicKey(
+            selectedCard?.mintA?.address), 
+            userPublicKey,
+            null,
+            userSourceTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+        )
     const createTokenA = await checkIfTokenAccExists(new PublicKey(selectedCard?.mintA?.address),
         userPublicKey,
         connection,
         mintAata)
     if (createTokenA) withdrawAmountTX.add(createTokenA)
 
-    const mintBata = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintB?.address), userPublicKey)
+    const mintBata = await getAssociatedTokenAddress(
+        new PublicKey(selectedCard?.mintB?.address), 
+        userPublicKey,
+        null,
+        userTargetTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+    )
     const createTokenB = await checkIfTokenAccExists(new PublicKey(selectedCard?.mintB?.address),
         userPublicKey,
         connection,
@@ -481,7 +540,9 @@ export const createPool = async (
     amountTokenB: string,
     userPubKey: PublicKey,
     program: Program,
-    connection: Connection
+    connection: Connection,
+    tokenAType: 'spl-token' | 'native' | 'spl-token-2022',
+    tokenBType: 'spl-token' | 'native' | 'spl-token-2022'
 ) => {
     let token0 = new PublicKey(tokenA?.address)
     let token1 = new PublicKey(tokenB?.address)
@@ -491,6 +552,8 @@ export const createPool = async (
     let decimalsToken1 = tokenB?.decimals
     let token0Symbol = tokenA?.symbol
     let token1Symbol = tokenB?.symbol
+    let token0Type = tokenAType
+    let token1Type = tokenBType
 
     const compare = new PublicKey(tokenA?.address)?.toBuffer()?.compare(new PublicKey(tokenB?.address)?.toBuffer())
 
@@ -503,8 +566,10 @@ export const createPool = async (
         decimalsToken1 = tokenA?.decimals
         token0Symbol = tokenB?.symbol
         token1Symbol = tokenA?.symbol
+        token0Type = tokenBType
+        token1Type = tokenAType
     }
-    const accsForCreatePool = await getAccountsForCreatePool(token0, token1, userPubKey)
+    const accsForCreatePool = await getAccountsForCreatePool(token0, token1, userPubKey, token0Type, token1Type)
     const createPoolAcc = { ...accsForCreatePool }
     const amountTokenABN = convertToNativeValue(amountToken0, decimalsToken0)
     const amountTokenBBN = convertToNativeValue(amountToken1, decimalsToken1)
