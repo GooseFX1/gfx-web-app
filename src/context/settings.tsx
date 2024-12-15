@@ -48,6 +48,7 @@ const countries = [
 const banned_countries = countries.map((c) => c.code)
 
 export const DEFAULT_SLIPPAGE = 0.005
+export const DEFAULT_ENDPOINT_NAME = 'Helius'
 export type EndPointName = 'Custom' | 'QuickNode' | 'Helius'
 
 export type RPC = {
@@ -76,7 +77,7 @@ const CUSTOM_RPC: RPC = {
   network: WalletAdapterNetwork.Mainnet
 }
 export const RPCs = {
-  QuickNode: APP_RPC,
+  // QuickNode: HELIUS_RPC,
   Helius: HELIUS_RPC,
   Custom: CUSTOM_RPC
 }
@@ -121,7 +122,7 @@ function newCache(): USER_CONFIG_CACHE {
       viewMode: 'lite'
     },
     hasSignedTC: false,
-    endpointName: 'QuickNode',
+    endpointName: DEFAULT_ENDPOINT_NAME,
     endpoint: null,
     priorityFee: 'Default'
   } as USER_CONFIG_CACHE
@@ -218,7 +219,11 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [blacklisted, setBlacklisted] = useState<boolean>(false)
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false)
   const [userCache, setUserCache] = useState<USER_CONFIG_CACHE>(getOrCreateCache())
-  const [endpointName, setEndpointName] = useState<EndPointName>(userCache.endpointName || 'QuickNode')
+  const [endpointName, setEndpointName] = useState<EndPointName>(
+    userCache.endpointName !== DEFAULT_ENDPOINT_NAME && userCache.endpointName !== 'Custom'
+      ? DEFAULT_ENDPOINT_NAME
+      : userCache.endpointName
+  )
   const [priorityFee, setPriorityFee] = useState<PriorityFeeName>(userCache.priorityFee || 'Default')
   const [latency, setLatency] = useState<number>(0)
   const [shouldTrack, setShouldTrack] = useState<boolean>(true)
@@ -282,8 +287,8 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [])
 
-  const chainId = useMemo(() => RPCs[endpointName ?? 'QuickNode'].chainId, [endpointName])
-  const network = useMemo(() => RPCs[endpointName ?? 'QuickNode'].network, [endpointName])
+  const chainId = useMemo(() => RPCs[endpointName ?? DEFAULT_ENDPOINT_NAME].chainId, [endpointName])
+  const network = useMemo(() => RPCs[endpointName ?? DEFAULT_ENDPOINT_NAME].network, [endpointName])
   const endpoint = useMemo(
     () => (userCache.endpoint !== null ? userCache.endpoint : RPCs[endpointName].endpoint),
     [endpointName, userCache]

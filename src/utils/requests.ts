@@ -25,7 +25,7 @@ async function testRPC(rpc: string): Promise<boolean> {
     })
     if (!res.ok) {
       console.log('[ERROR] testing RPC failed')
-      throw new Error('Invalid RPC')
+      return false
     }
     return true
   } catch (e) {
