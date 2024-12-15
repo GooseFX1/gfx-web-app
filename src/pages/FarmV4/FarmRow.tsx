@@ -94,7 +94,7 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
 
         <IconWithFallback src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
         {pool.poolCreator === base58PublicKey && (
-          <Badge size="sm" variant="default" className={'ml-1'}>
+          <Badge size="sm" variant="default" className={'ml-1 h-5.5'}>
             Owner
           </Badge>
         )}
