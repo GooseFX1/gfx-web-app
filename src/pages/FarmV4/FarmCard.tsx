@@ -22,7 +22,7 @@ const FarmCard: FC<{
     <div
       {...props}
       className={cn(
-        `h-[207px] w-full border 
+        `h-[210px] w-full border 
         border-solid dark:border-black-4 border-grey-4 bg-white dark:bg-black-2 p-2.5 rounded-[8px]`,
         className
       )}
@@ -71,7 +71,7 @@ const FarmCard: FC<{
         {`${pool?.mintA?.symbol} - ${pool?.mintB?.symbol}`}
         <IconWithFallback src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
         {pool.poolCreator == base58PublicKey && (
-          <Badge size="sm" variant="default">
+          <Badge size="sm" variant="default" className='h-5.5'>
             Owner
           </Badge>
         )}
@@ -84,7 +84,7 @@ const FarmCard: FC<{
 export default FarmCard
 
 export const FarmCardLoader: FC<{className?:string}> = ({className}) => <div className={cn(`
-  w-full max-w-screen sm:max-w-[341px] h-[207px] p-2.5 border  flex gap-2 flex-col
+  w-full max-w-screen sm:max-w-[341px] h-[210px] p-2.5 border  flex gap-2 flex-col
         border-solid dark:border-black-4 border-grey-4 bg-white dark:bg-black-2 rounded-[8px]
 `, className)}>
   <div className={'flex w-full'}>
