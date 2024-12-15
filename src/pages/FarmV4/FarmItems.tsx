@@ -36,7 +36,7 @@ const FarmItems: FC<{
     isCardMode
   } = useGamma()
   const isSearchActive = useMemo(() => searchTokens.length > 0, [searchTokens])
-  const { isMobile, isTablet } = useBreakpoint()
+  const { isDesktop, isLaptop } = useBreakpoint()
 
   let noResultsTitle = ''
   let noResultsSubText = ''
@@ -112,7 +112,7 @@ const FarmItems: FC<{
         />
       ) : (numberOfTokensDeposited === 0 && showDeposited) || filteredPools.length === 0 ? (
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
-      ) : isCardMode || isMobile || isTablet ? (
+      ) : isCardMode || !isDesktop || !isLaptop? (
         <FarmItemsLite
           openPositionImages={openPositionImages}
           openPositionsAcrossPrograms={openPositionsAcrossPrograms}
