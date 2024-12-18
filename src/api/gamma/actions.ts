@@ -45,7 +45,7 @@ const fetchAllPools = async (
   try {
     const response = await httpClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.POOLS_INFO_ALL +
-      `?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortConfig}&sortBy=${sortKey}${search}`,
+        `?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortConfig}&sortBy=${sortKey}${search}`,
       { signal: abortSignal }
     )
     return response.data
@@ -54,34 +54,31 @@ const fetchAllPools = async (
     return null
   }
 }
-const fetchPoolsByMints = async (
-  {
-    mintA,
-    mintB,
-    page,
-    pageSize,
-    signal,
-    poolType,
-    sortOrder,
-    sortKey
-  }: {
-    mintA: string,
-    mintB?: string,
-    page: number,
-    pageSize: number
-    signal?: AbortSignal
-    poolType: 'all' | 'hyper' | 'primary',
-    sortOrder: 'asc' | 'desc',
-    sortKey: string
-  }
-): Promise<GAMMAPoolsResponse | null> => {
+const fetchPoolsByMints = async ({
+  mintA,
+  mintB,
+  page,
+  pageSize,
+  signal,
+  poolType,
+  sortOrder,
+  sortKey
+}: {
+  mintA: string
+  mintB?: string
+  page: number
+  pageSize: number
+  signal?: AbortSignal
+  poolType: 'all' | 'hyper' | 'primary'
+  sortOrder: 'asc' | 'desc'
+  sortKey: string
+}): Promise<GAMMAPoolsResponse | null> => {
   const mintQuery = `mint1=${mintA}${mintB ? `&mint2=${mintB}` : ''}`
-  const pageQuery= `page=${page}&pageSize=${pageSize}`
+  const pageQuery = `page=${page}&pageSize=${pageSize}`
   const sortQuery = `poolType=${poolType}&sortOrder=${sortOrder}&sortBy=${sortKey}`
   try {
     const response = await httpClient(GAMMA_API_BASE).get(
-      GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS +
-      `?${mintQuery}&${pageQuery}&${sortQuery}`,
+      GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS + `?${mintQuery}&${pageQuery}&${sortQuery}`,
       { signal }
     )
     return response.data
@@ -90,24 +87,26 @@ const fetchPoolsByMints = async (
     return null
   }
 }
-export const fetchAndConcatAllPoolsByMints = async ({
-                                                      mintA,
-                                                      mintB,
-                                                      page,
-                                                      pageSize
-                                                    }: {
-  mintA: string,
-  mintB?: string
-  page: number
-  pageSize: number
-}, currentResponse?: GAMMAPoolsResponse) => {
+export const fetchAndConcatAllPoolsByMints = async (
+  {
+    mintA,
+    mintB,
+    page,
+    pageSize
+  }: {
+    mintA: string
+    mintB?: string
+    page: number
+    pageSize: number
+  },
+  currentResponse?: GAMMAPoolsResponse
+) => {
   const mintQuery = `mint1=${mintA}${mintB ? `&mint2=${mintB}` : ''}`
 
   try {
-    const response = await httpClient(GAMMA_API_BASE).get(
-      GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS +
-      `?${mintQuery}&page=${page}&pageSize=${pageSize}`
-    ) as GAMMAPoolsResponse
+    const response = (await httpClient(GAMMA_API_BASE).get(
+      GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS + `?${mintQuery}&page=${page}&pageSize=${pageSize}`
+    )) as GAMMAPoolsResponse
     if (!response.success) {
       throw new Error('Error fetching pools by mints')
     }
@@ -115,12 +114,15 @@ export const fetchAndConcatAllPoolsByMints = async ({
       currentResponse.data.pools = currentResponse.data.pools.concat(response.data.pools)
     }
     if (response.data.totalPages > response.data.currentPage) {
-      return fetchAndConcatAllPoolsByMints({
-        mintA,
-        mintB,
-        page: response.data.currentPage + 1,
-        pageSize
-      }, currentResponse ?? response)
+      return fetchAndConcatAllPoolsByMints(
+        {
+          mintA,
+          mintB,
+          page: response.data.currentPage + 1,
+          pageSize
+        },
+        currentResponse ?? response
+      )
     }
     // incase of no prev response
     return currentResponse?.data ?? response.data
@@ -174,7 +176,8 @@ const fetchTokenList = async (
   try {
     const search = searchValue ? `&search=${searchValue}` : ''
     const response = await httpClient(GAMMA_API_BASE).get(
-      GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?pageSize=${pageSize}&page=${page}&tokenType=${poolType}${search}`, {
+      GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?pageSize=${pageSize}&page=${page}&tokenType=${poolType}${search}`,
+      {
         signal: signal
       }
     )
@@ -190,30 +193,46 @@ const fetchTokenList = async (
     return null
   }
 }
+const chunkTokens = (
+  tokens: string,
+  charLimit: number
+): string[] => {
+  const tokenSplit = tokens.split(',')
+  let searchTokens = ''
+  const searchTokensArray = [];
+  for (const token of tokenSplit) {
+    if (searchTokens.length + token.length > charLimit) {
+      searchTokensArray.push(searchTokens.slice(0,-1))
+      searchTokens = ''
+    }
+    searchTokens += token + ','
+  }
+  return searchTokensArray
+}
 const attachTokenList = async (
   tokens: string,
   page: number,
-  pageSize: number,
-  currentResponse?: GAMMAListTokenResponse
+  pageSize: number
 ): Promise<GAMMAListTokenResponse | null> => {
   // if no tokens passed terminate
   if (tokens?.length === 0) throw new Error('No tokens passed')
-
-  const response = await httpClient(GAMMA_API_BASE).get(
-    GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?ids=${tokens}&pageSize=${pageSize}&page=${page}`
-  ).then(response => response.data)
-  // if not successful terminate
-  if (!response.success) throw new Error('Error fetching token list')
-  // if had a previous response, append the new tokens to the previous response
-  if (currentResponse) {
-    currentResponse.data.tokens = currentResponse.data.tokens.concat(response.data.tokens)
-  }
-  // if there are more pages, recursively call the function
-  if (response.data.currentPage < response.data.totalPages) {
-    return attachTokenList(tokens, response.data.currentPage + 1, pageSize, currentResponse ?? response)
-  }
-  // return the final response
-  return currentResponse ?? response
+  const pageQuery = `&pageSize=${pageSize}&page=${page}`
+  // 2k limit
+  const remainingSearchChars =
+    2000 - GAMMA_API_BASE.length - GAMMA_ENDPOINTS_V1.TOKEN_LIST.length - 5 - pageQuery.length
+  const searchTokens = chunkTokens(tokens, remainingSearchChars)
+  const response = await Promise.all(searchTokens.map(async (searchToken) =>
+    httpClient(GAMMA_API_BASE)
+      .get(GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?ids=${searchToken}${pageQuery}`)
+      .then((response) => response.data)
+  )) as GAMMAListTokenResponse[]
+  if (response.length == 0) return null;
+  return response.reduce((acc, curr,currentIndex) => {
+    if (currentIndex != 0) {
+      acc.data.tokens = acc.data.tokens.concat(curr.data.tokens)
+    }
+    return acc
+  } ,response[0])
 }
 /**
  *
