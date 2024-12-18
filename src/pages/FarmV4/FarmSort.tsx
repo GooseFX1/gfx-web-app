@@ -86,6 +86,7 @@ function FarmSort({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: 
                 colorScheme={'primary'}
                 checked={showCreatedPools}
                 onClick={handleFilterByCreated}
+                disabled={!publicKey}
               />
             </div>
             <div className="flex items-center justify-between">
@@ -101,6 +102,7 @@ function FarmSort({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: 
                 colorScheme={'primary'}
                 checked={showDeposited}
                 onClick={handleShowDepositedToggle}
+                disabled={!publicKey}
               />
             </div>
           </div>
@@ -111,7 +113,9 @@ function FarmSort({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: 
         <DropdownMenuRadioGroup asChild value={currentSort} onValueChange={(id) => handlePoolSort(id)}>
           <div className={'grid grid-cols-2 gap-1.5 items-center'}>
             {GAMMA_SORT_CONFIG.map((s) => (
-              <DropdownMenuItem isActive={currentSort == s.id} asChild key={s.id}>
+              <DropdownMenuItem isActive={currentSort == s.id} asChild key={s.id}
+                                disabled={Number(s.id) >= 9 && !publicKey}
+              >
                 <DropdownMenuRadioItem value={s.id}>
                   <DropdownMenuItemIndicator asChild forceMount className={'hidden'}>
                     <RadioGroup value={currentSort}>

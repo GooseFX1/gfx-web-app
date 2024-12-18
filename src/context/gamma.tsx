@@ -6,7 +6,7 @@ import {
   SetStateAction,
   useCallback,
   useContext,
-  useEffect,
+  useEffect, useLayoutEffect,
   useMemo,
   useState
 } from 'react'
@@ -38,7 +38,7 @@ import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   BASE_SLIPPAGE,
   GAMMA_SORT_CONFIG,
-  GAMMA_SORT_CONFIG_MAP,
+  GAMMA_SORT_CONFIG_MAP, GAMMA_SORT_CONFIG_PUBKEY_REQUIRED,
   JupToken,
   ModeOfOperation,
   Pool,
@@ -205,6 +205,22 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       fees: '0'
     }
   })
+  useLayoutEffect(()=>{
+    if (!publicKey) {
+      if (GAMMA_SORT_CONFIG_PUBKEY_REQUIRED.includes(userCache.gamma.currentSort)) {
+        setCurrentSort(()=>{
+          updateUserCache({
+            ...userCache,
+            gamma: {
+              ...userCache.gamma,
+              currentSort: '1'
+            }
+          })
+          return '1'
+        })
+      }
+    }
+  },[publicKey, userCache])
   const [createPoolType, setCreatePoolType] = useState<string>('')
   const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
   const [viewRange, setViewRange] = useState<ViewRange>(0)
@@ -362,7 +378,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return
     }
     let key = `${sortConfig.key.toLowerCase()}`
-    if (sortConfig.id !== '1' && sortConfig.id !== '2') {
+    if (sortConfig.id !== '1' && sortConfig.id !== '2' && sortConfig.id != '9' && sortConfig.id != '10') {
       key = `${key}${computedViewRange.toLowerCase()}`
     }
     setIsLoadingPools.on();

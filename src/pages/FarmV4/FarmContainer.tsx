@@ -344,6 +344,7 @@ export const FarmContainer: FC = () => {
                                     checked={currentSort === s.id}
                                     onChange={() => handlePoolSort(s.id)}
                                     className={'hidden'}
+                                    disabled={Number(s.id) >= 9 && !publicKey}
                                   />
                                   <span className="m-0 text-regular font-bold">{s.name}</span>
                                 </Badge>
