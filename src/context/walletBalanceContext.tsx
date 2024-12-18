@@ -138,15 +138,19 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   async function getTokenAccounts() {
     if (!publicKey) return
 
-    const standardTokens: { pubkey: PublicKey, account: AccountInfo<ParsedAccountData> }[] =
-      (await connection.getParsedTokenAccountsByOwner(publicKey, {
-        programId: TOKEN_PROGRAM_ID
-      }) as any)?.value || []
+    const standardTokens: { pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }[] =
+      (
+        (await connection.getParsedTokenAccountsByOwner(publicKey, {
+          programId: TOKEN_PROGRAM_ID
+        })) as any
+      )?.value || []
 
-    const token2022: { pubkey: PublicKey, account: AccountInfo<ParsedAccountData> }[] =
-      (await connection.getParsedTokenAccountsByOwner(publicKey, {
-        programId: TOKEN_2022_PROGRAM_ID
-      }) as any)?.value || []
+    const token2022: { pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }[] =
+      (
+        (await connection.getParsedTokenAccountsByOwner(publicKey, {
+          programId: TOKEN_2022_PROGRAM_ID
+        })) as any
+      )?.value || []
 
     const accounts = [...standardTokens, ...token2022]
     const tokenAccounts = {}
@@ -207,7 +211,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         }
       }
       console.log('tokenAccounts', { tokenAccounts, tokenListResponse })
-    } catch(e) {
+    } catch (e) {
       console.error('Error fetching token list', e)
     }
     setTokenAccounts(Object.values(tokenAccounts))
@@ -248,7 +252,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   }
 
   const balanceProxyHandler = {
-    get: function(target: Balance, prop: string) {
+    get: function (target: Balance, prop: string) {
       if (prop in target) {
         return target[prop]
       } else if (prop.toLowerCase() in target) {
