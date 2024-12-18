@@ -302,7 +302,7 @@ export const FarmContainer: FC = () => {
                                 className="h-full text-regular text-left dark:text-grey-2 text-grey-1
                                               font-semibold"
                               >
-                                Show Deposited
+                                Show deposited
                               </span>
                                 <Switch
                                   variant={'default'}

@@ -49,7 +49,6 @@ function FarmSort({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: 
       return !prev
     })
   }
-  console.log({ publicKey })
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
@@ -94,7 +93,7 @@ function FarmSort({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: 
                 className="h-full text-regular text-left dark:text-grey-2 text-grey-1
                                               font-semibold"
               >
-                Show Deposited
+                Show deposited
               </span>
               <Switch
                 variant={'default'}
