@@ -193,16 +193,13 @@ const fetchTokenList = async (
     return null
   }
 }
-const chunkTokens = (
-  tokens: string,
-  charLimit: number
-): string[] => {
+const chunkTokens = (tokens: string, charLimit: number): string[] => {
   const tokenSplit = tokens.split(',')
   let searchTokens = ''
-  const searchTokensArray = [];
+  const searchTokensArray = []
   for (const token of tokenSplit) {
     if (searchTokens.length + token.length > charLimit) {
-      searchTokensArray.push(searchTokens.slice(0,-1))
+      searchTokensArray.push(searchTokens.slice(0, -1))
       searchTokens = ''
     }
     searchTokens += token + ','
@@ -221,18 +218,20 @@ const attachTokenList = async (
   const remainingSearchChars =
     2000 - GAMMA_API_BASE.length - GAMMA_ENDPOINTS_V1.TOKEN_LIST.length - 5 - pageQuery.length
   const searchTokens = chunkTokens(tokens, remainingSearchChars)
-  const response = await Promise.all(searchTokens.map(async (searchToken) =>
-    httpClient(GAMMA_API_BASE)
-      .get(GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?ids=${searchToken}${pageQuery}`)
-      .then((response) => response.data)
+  const response = (await Promise.all(
+    searchTokens.map(async (searchToken) =>
+      httpClient(GAMMA_API_BASE)
+        .get(GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?ids=${searchToken}${pageQuery}`)
+        .then((response) => response.data)
+    )
   )) as GAMMAListTokenResponse[]
-  if (response.length == 0) return null;
-  return response.reduce((acc, curr,currentIndex) => {
+  if (response.length == 0) return null
+  return response.reduce((acc, curr, currentIndex) => {
     if (currentIndex != 0) {
       acc.data.tokens = acc.data.tokens.concat(curr.data.tokens)
     }
     return acc
-  } ,response[0])
+  }, response[0])
 }
 /**
  *
