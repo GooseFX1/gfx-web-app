@@ -188,24 +188,28 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     tokenAccounts[NATIVE_MINT.toBase58()] = sol
     tokenAccounts[publicKey.toBase58()] = sol
     let currentWalletValue = new Decimal(0.0)
-    const tokenListResponse = await fetchTokensByPublicKey(addresses)
+    try {
+      const tokenListResponse = await fetchTokensByPublicKey(addresses)
 
-    if (tokenListResponse.success && tokenListResponse.data.tokens.length > 0) {
-      for (const data of tokenListResponse.data.tokens) {
-        const { address, ...rest } = data
-        if (!(data.address in tokenAccounts) && data.address in tokenInfo) {
-          tokenAccounts[data.address] = { ...tokenInfo[data.address] }
+      if (tokenListResponse.success && tokenListResponse.data.tokens.length > 0) {
+        for (const data of tokenListResponse.data.tokens) {
+          const { address, ...rest } = data
+          if (!(data.address in tokenAccounts) && data.address in tokenInfo) {
+            tokenAccounts[data.address] = { ...tokenInfo[data.address] }
+          }
+
+          tokenAccounts[data.address].mint = address
+          tokenAccounts[data.address] = Object.assign(tokenAccounts[data.address], rest)
+          tokenAccounts[data.address].price = data.price
+          const value = new Decimal(tokenAccounts[data.address].tokenAmount.uiAmount).mul(data.price)
+          tokenAccounts[data.address].value = value
+          currentWalletValue = currentWalletValue.add(value)
         }
-
-        tokenAccounts[data.address].mint = address
-        tokenAccounts[data.address] = Object.assign(tokenAccounts[data.address], rest)
-        tokenAccounts[data.address].price = data.price
-        const value = new Decimal(tokenAccounts[data.address].tokenAmount.uiAmount).mul(data.price)
-        tokenAccounts[data.address].value = value
-        currentWalletValue = currentWalletValue.add(value)
       }
+      console.log('tokenAccounts', { tokenAccounts, tokenListResponse })
+    } catch(e) {
+      console.error('Error fetching token list', e)
     }
-    console.log('tokenAccounts', { tokenAccounts, tokenListResponse })
     setTokenAccounts(Object.values(tokenAccounts))
     setBalance(tokenAccounts)
     setWalletValue(currentWalletValue.toFixed(2))
