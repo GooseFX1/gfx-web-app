@@ -1,4 +1,5 @@
-import React, { FC, useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { PublicKey } from '@solana/web3.js'
 import { tokenListAbortTokenGamma, useConnectionConfig, useDarkMode, useGamma, useRewardToggle } from '../../context'
 import { GAMMA_SORT_CONFIG, POOL_TYPE, TOKEN_LIST_PAGE_SIZE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -27,7 +28,6 @@ import { aborter, loadIconImage } from '@/utils'
 import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
 import useFirstRender from '@/hooks/useFirstRender'
 import useDebounce from '@/hooks/useDebounce'
-import { useWalletBalance } from '@/context/walletBalanceContext'
 
 export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
@@ -55,15 +55,18 @@ export const FarmContainer: FC = () => {
     updateTokenList,
     setTokenList
   } = useGamma()
-  const { publicKey } = useWallet()
+  const { wallet, publicKey } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
   const [focusOnSearch, setFocusOnSearch] = useBoolean(false)
   const { isPortfolio } = useRewardToggle()
   const [tokenListSearchValue, setTokenListSearchValue] = useState('')
-  const {debounce, abortDebounce} = useDebounce()
-  const {publicKey: pubKey} = useWalletBalance()
+  const pubKey: PublicKey | null = useMemo(
+    () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
+    [wallet?.adapter?.publicKey]
+  )
   const searchBarRef = React.useRef<HTMLDivElement>(null)
   const isFirstRender = useFirstRender()
+  const {debounce, abortDebounce} = useDebounce()
   useLayoutEffect(() => {
     if (openDepositWithdrawSlider) {
       document.body.style.overflow = 'hidden'
@@ -302,7 +305,7 @@ export const FarmContainer: FC = () => {
                                 className="h-full text-regular text-left dark:text-grey-2 text-grey-1
                                               font-semibold"
                               >
-                                Show deposited
+                                Show Deposited
                               </span>
                                 <Switch
                                   variant={'default'}
