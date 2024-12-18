@@ -15,14 +15,23 @@ import {
 } from 'gfx-component-lib'
 import { GAMMA_SORT_CONFIG } from '@/pages/FarmV4/constants'
 import { useConnectionConfig, useDarkMode, useGamma } from '@/context'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 function FarmSort({ isOpen, setIsOpen }: {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
 }) {
   const { userCache, updateUserCache } = useConnectionConfig()
-  const { showCreatedPools, setShowCreatedPools, currentSort, handlePoolSort } = useGamma()
+  const {
+    showCreatedPools,
+    setShowCreatedPools,
+    currentSort,
+    handlePoolSort,
+    showDeposited,
+    setShowDeposited
+  } = useGamma()
   const { mode } = useDarkMode()
+  const { publicKey} = useWalletBalance();
 
   const handleFilterByCreated = useCallback(
     () => {
@@ -40,6 +49,19 @@ function FarmSort({ isOpen, setIsOpen }: {
     [showCreatedPools, userCache]
   )
 
+  const handleShowDepositedToggle = () => {
+    setShowDeposited((prev) => {
+      updateUserCache({
+        gamma: {
+          ...userCache.gamma,
+          showDepositedFilter: !prev
+        }
+      })
+
+      return !prev
+    })
+  }
+  console.log({publicKey})
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
@@ -60,22 +82,43 @@ function FarmSort({ isOpen, setIsOpen }: {
       <DropdownMenuContent portal={false} align={'end'}>
         <>
           <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
-          <div className="flex items-center justify-between ">
-          <span
-            className="h-full text-regular text-left dark:text-grey-2 text-grey-1
-                        font-semibold mr-3"
-          >
-          Show created pools
-          </span>
-            <Switch
-              variant={'default'}
-              size={'sm'}
-              colorScheme={'primary'}
-              checked={showCreatedPools}
-              onClick={handleFilterByCreated}
-            />
+          <div className={'flex flex-col gap-3'}>
+            <div className="flex items-center justify-between ">
+                            <span
+                              className="h-full text-regular text-left dark:text-grey-2 text-grey-1
+                                              font-semibold"
+                            >
+                            Show created pools
+                            </span>
+              <Switch
+                variant={'default'}
+                size={'sm'}
+                colorScheme={'primary'}
+                checked={showCreatedPools}
+                onClick={handleFilterByCreated}
+              />
+            </div>
+            {publicKey != null && (
+              <div className="flex items-center justify-between">
+                              <span
+                                className="h-full text-regular text-left dark:text-grey-2 text-grey-1
+                                              font-semibold"
+                              >
+                                Show Deposited
+                              </span>
+                <Switch
+                  variant={'default'}
+                  size={'sm'}
+                  colorScheme={'primary'}
+                  checked={showDeposited}
+                  onClick={handleShowDepositedToggle}
+                />
+              </div>
+            )}
           </div>
+
         </>
+
         <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
 
         <DropdownMenuRadioGroup asChild value={currentSort} onValueChange={(id) => handlePoolSort(id)}>
