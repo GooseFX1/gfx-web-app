@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { Dialog, DialogBody, DialogContent, DialogFooter, DialogOverlay } from 'gfx-component-lib'
+import { Button, Dialog, DialogBody, DialogContent, DialogFooter, DialogOverlay } from 'gfx-component-lib'
 import { useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
@@ -23,7 +23,8 @@ import {
   getpoolId,
   lpTokensToTradingTokens,
   withdraw,
-  getMaxSolDepositAmount
+  getMaxSolDepositAmount,
+  getAccountsForDepositWithdraw
 } from '@/web3/Farm'
 import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
@@ -34,6 +35,15 @@ import { blob, publicKey as pbk, struct, u128, u64, u8 } from '@/utils/marshmall
 import useBoolean from '@/hooks/useBoolean'
 import LottieConfetti from '@/pages/FarmV4/LottieConfetti'
 import { u16 } from '@solana/buffer-layout'
+import { PoolFetchType, Raydium } from '@raydium-io/raydium-sdk-v2'
+import { PublicKey } from '@solana/web3.js'
+import { getAssociatedTokenAddress } from '@solana/spl-token-v2'
+import { Gamma } from './idl/gammaIdl'
+import * as anchor from '@coral-xyz/anchor'
+import { Program } from '@coral-xyz/anchor'
+import { getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from 'solanaspltoken049'
+
+const raydiumCpProgramId = new PublicKey('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C')
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
@@ -76,8 +86,13 @@ export const DepositWithdrawSlider: FC = () => {
   const [withdrawableBalanceB, setWithdrawableBalanceB] = useState<BN>(new BN(0))
   const [isUserTyping, setIsUserTyping] = useState<boolean>(false)
   const [isSolMaxDeposit, setIsSolMaxDeposit] = useState<boolean>(false)
-  const [userSourceTokenType, setUserSourceTokenType] = useState<'spl-token' | 'native' | 'spl-token-2022' | ''>('')
-  const [userTargetTokenType, setUserTargetTokenType] = useState<'spl-token' | 'native' | 'spl-token-2022' | ''>('')
+  const [userSourceTokenType, setUserSourceTokenType] = useState<'spl-token' | 'native' | 'spl-token-2022' | ''>(
+    ''
+  )
+  const [userTargetTokenType, setUserTargetTokenType] = useState<'spl-token' | 'native' | 'spl-token-2022' | ''>(
+    ''
+  )
+  const [raydiumCpPoolsForMigrationWithAmounts, setRaydiumCpPoolsForMigrationWithAmounts] = useState<any[]>([])
 
   const POOL_STATE_LAYOUT = struct([
     blob(8, 'discriminator'),
@@ -186,30 +201,29 @@ export const DepositWithdrawSlider: FC = () => {
     })()
   }, [selectedCardLiquidityAcc, updatedPoolState, selectedCardPool, userPublicKey])
 
-
-  useEffect(()=>{
-    (async () => {
+  useEffect(() => {
+    ;(async () => {
       try {
-        if(Object.keys(selectedCard)?.length > 0){
+        if (Object.keys(selectedCard)?.length > 0) {
           const poolIdKey = await getpoolId(selectedCard)
           const accountInfo = await connection.getAccountInfo(poolIdKey)
-            const decodedAccount = POOL_STATE_LAYOUT.decode(accountInfo.data)
-            const updatedPoolData = {
-              ...selectedCardPool,
-              lpSupply: decodedAccount.lp_supply,
-              protocolFeesToken0: decodedAccount.protocol_fees_token_0,
-              protocolFeesToken1: decodedAccount.protocol_fees_token_1,
-              comulativeTradeFeesToken0: decodedAccount.cumulative_trade_fees_token_0,
-              comulativeTradeFeesToken1: decodedAccount.cumulative_trade_fees_token_1,
-              latestDynamicFeeRate: decodedAccount.latest_dynamic_fee_rate,
-              fundFeesToken0: decodedAccount.fund_fees_token_0,
-              fundFeesToken1: decodedAccount.fund_fees_token_1,
-              token0Vault: decodedAccount.token_0_vault,
-              token1Vault: decodedAccount.token_1_vault,
-              mint0Decimals: selectedCardPool?.mint0Decimals,
-              mint1Decimals: selectedCardPool?.mint1Decimals
-            }
-            setUpdatedPoolState(updatedPoolData)
+          const decodedAccount = POOL_STATE_LAYOUT.decode(accountInfo.data)
+          const updatedPoolData = {
+            ...selectedCardPool,
+            lpSupply: decodedAccount.lp_supply,
+            protocolFeesToken0: decodedAccount.protocol_fees_token_0,
+            protocolFeesToken1: decodedAccount.protocol_fees_token_1,
+            comulativeTradeFeesToken0: decodedAccount.cumulative_trade_fees_token_0,
+            comulativeTradeFeesToken1: decodedAccount.cumulative_trade_fees_token_1,
+            latestDynamicFeeRate: decodedAccount.latest_dynamic_fee_rate,
+            fundFeesToken0: decodedAccount.fund_fees_token_0,
+            fundFeesToken1: decodedAccount.fund_fees_token_1,
+            token0Vault: decodedAccount.token_0_vault,
+            token1Vault: decodedAccount.token_1_vault,
+            mint0Decimals: selectedCardPool?.mint0Decimals,
+            mint1Decimals: selectedCardPool?.mint1Decimals
+          }
+          setUpdatedPoolState(updatedPoolData)
         }
       } catch (e) {
         console.log('Error in getting the pool state account', e)
@@ -218,17 +232,17 @@ export const DepositWithdrawSlider: FC = () => {
       try {
         const configKey = await getAmmConfigId(0)
         const accountInfo = await connection.getAccountInfo(configKey)
-          const decodedAccount = AMM_CONFIG_LAYOUT.decode(accountInfo.data)
-          const updatedPoolData = {
-            ...selectedCardPool,
-            trade_fee_rate: decodedAccount.trade_fee_rate
-          }
-          setUpdatedPoolState(updatedPoolData)
+        const decodedAccount = AMM_CONFIG_LAYOUT.decode(accountInfo.data)
+        const updatedPoolData = {
+          ...selectedCardPool,
+          trade_fee_rate: decodedAccount.trade_fee_rate
+        }
+        setUpdatedPoolState(updatedPoolData)
       } catch (e) {
         console.log('Error in getting the config account info', e)
       }
     })()
-  }, [selectedCardPool]);
+  }, [selectedCardPool])
 
   useEffect(() => {
     ;(async () => {
@@ -300,6 +314,147 @@ export const DepositWithdrawSlider: FC = () => {
       setUserTargetTokenType(balance[selectedCard?.mintB?.address].tokenType)
     }
   }, [selectedCard, balance, userPublicKey])
+
+  useEffect(() => {
+    ;(async () => {
+      if (selectedCard) {
+        setRaydiumCpPoolsForMigrationWithAmounts([])
+        const raydium = await Raydium.load({
+          connection
+        })
+
+        const raydiumPoolsOnCp = await raydium.api.fetchPoolByMints({
+          mint1: selectedCard?.mintA?.address,
+          mint2: selectedCard?.mintB?.address,
+          type: PoolFetchType.Standard
+        })
+        if (!raydiumPoolsOnCp) {
+          console.log(raydiumPoolsOnCp)
+          return
+        }
+
+        const filteredPoolsWithCp = raydiumPoolsOnCp.data.filter(
+          (pool) => pool.programId === raydiumCpProgramId.toString()
+        )
+
+        for (let i = 0; i < filteredPoolsWithCp.length; i++) {
+          try {
+            const poolInfo = await raydium.cpmm.getRpcPoolInfo(filteredPoolsWithCp[i].id)
+            console.log(poolInfo)
+            const tokenAccountAddress = await getAssociatedTokenAddress(poolInfo.mintLp, userPublicKey)
+            const lpBalance = await connection.getTokenAccountBalance(tokenAccountAddress)
+
+            setRaydiumCpPoolsForMigrationWithAmounts((prev) => [
+              ...prev,
+              {
+                poolInfo: { ...poolInfo, poolId: filteredPoolsWithCp[i].id },
+                lpBalance: lpBalance.value.uiAmount
+              }
+            ])
+            console.log('lpBalance', lpBalance)
+          } catch (e) {
+            console.log(e)
+          }
+        }
+
+        console.log(balance)
+        console.log(filteredPoolsWithCp)
+      }
+    })()
+  }, [selectedCard, balance])
+
+  const migration = async (
+    program: Program<Gamma>,
+    // how do we from token to pool? quickly. The the best way to to make some kind of mapping.
+    lp_token_account_withdraw: number,
+    minimum_token_0_amount: number,
+    minimum_token_1_amount: number,
+    maximum_token_0_amount: number,
+    maximum_token_1_amount: number,
+    poolOnRaydium: any
+  ) => {
+    if (!selectedCard) return
+    const encodedString = (string: string) => anchor.utils.bytes.utf8.encode(string)
+
+    const getRaydiumCpAuthority = () =>
+      PublicKey.findProgramAddressSync([encodedString('vault_and_lp_mint_auth_seed')], raydiumCpProgramId)[0]
+
+    const MEMO_PROGRAM_ID = new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr')
+
+    const gammaAccount = await getAccountsForDepositWithdraw(
+      selectedCard,
+      userPublicKey,
+      true,
+      userSourceTokenType,
+      userTargetTokenType
+    )
+
+    try {
+      const txBuilder = createTransactionBuilder()
+      const migrateCall = await program.methods
+        .migrateRaydiumCpSwapToGamma(
+          new BN(lp_token_account_withdraw),
+          new BN(minimum_token_0_amount),
+          new BN(minimum_token_1_amount),
+          new BN(maximum_token_0_amount),
+          new BN(maximum_token_1_amount)
+        )
+        .accounts({
+          gammaAuthority: gammaAccount.authority,
+          gammaOwner: gammaAccount.owner,
+          gammaPoolState: gammaAccount.poolState,
+          gammaToken0Account: gammaAccount.token0Account,
+          gammaToken0Vault: gammaAccount.token0Vault,
+          gammaToken1Account: gammaAccount.token1Account,
+          gammaToken1Vault: gammaAccount.token1Vault,
+          gammaUserPoolLiquidity: gammaAccount.userPoolLiquidity,
+          gammaVault0Mint: gammaAccount.vault0Mint,
+          gammaVault1Mint: gammaAccount.vault1Mint,
+          owner: gammaAccount.owner,
+          raydiumCpSwapPoolState: poolOnRaydium.poolId,
+          raydiumCpSwapOwnerLpToken: getAssociatedTokenAddressSync(
+            new PublicKey(poolOnRaydium.mintLp),
+            new PublicKey(userPublicKey)
+          ),
+          raydiumCpSwapLpMint: poolOnRaydium.mintLp,
+          raydiumCpSwapVault0Mint: poolOnRaydium.vaultA,
+          raydiumCpSwapVault1Mint: poolOnRaydium.vaultB,
+          raydiumCpSwapToken0Vault: poolOnRaydium.vaultA,
+          raydiumCpSwapToken1Vault: poolOnRaydium.vaultB,
+          memoProgram: MEMO_PROGRAM_ID,
+          raydiumCpSwapAuthority: getRaydiumCpAuthority(),
+          raydiumCpSwapProgram: raydiumCpProgramId,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          tokenProgram2022: TOKEN_2022_PROGRAM_ID
+        })
+        .instruction()
+      txBuilder.add(migrateCall)
+      setSendingTransaction(true)
+      const { success, txSig } = await sendTransaction(txBuilder, {
+        successMessage: `You successfully migrated`
+      })
+      //console.log('success', success)
+      console.log('MigrateResponse', success, txSig)
+      if (!success) {
+        //off(connectionId)
+        console.log('An error occurred while depositing!')
+        setSendingTransaction(false)
+        return
+      } else {
+        setSendingTransaction(false)
+        setUserSourceDepositAmount('')
+        setUserTargetDepositAmount('')
+        await forceCronAndUpdateLocalData(txSig)
+        setShowConfetti.on()
+        setTimeout(() => setShowConfetti.off(), 10000)
+        //setOpenDepositWithdrawSlider(false)
+        //setSelectedCardLiquidityAcc({})
+      }
+    } catch (e) {
+      setSendingTransaction(false)
+      console.log('An error occurred while depositing.', e)
+    }
+  }
 
   const handleClose = () => {
     setUserSourceDepositAmount('')
@@ -524,7 +679,7 @@ export const DepositWithdrawSlider: FC = () => {
           withdrawBigStringFarm(withdrawableBalanceB?.div(new BN(2))?.toString(), selectedCardPool?.mint1Decimals)
         )
       }
-    setIsUserTyping(false)
+      setIsUserTyping(false)
     },
     [
       modeOfOperation,
@@ -547,8 +702,9 @@ export const DepositWithdrawSlider: FC = () => {
           setUserSourceDepositAmount(userSourceTokenBal ? userSourceTokenBal?.toString() : '')
           if (Object.keys(selectedCardPool)?.length) {
             const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
-              selectedCard?.mintA?.symbol === 'SOL' ? await getMaxSolDepositAmount(userSourceTokenBal, connection) 
-              : userSourceTokenBal?.toString(),
+              selectedCard?.mintA?.symbol === 'SOL'
+                ? await getMaxSolDepositAmount(userSourceTokenBal, connection)
+                : userSourceTokenBal?.toString(),
               0,
               Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
               connection
@@ -561,8 +717,9 @@ export const DepositWithdrawSlider: FC = () => {
           setUserTargetDepositAmount(userTargetTokenBal ? userTargetTokenBal?.toString() : '')
           if (Object.keys(selectedCardPool)?.length) {
             const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
-              selectedCard?.mintB?.symbol === 'SOL' ? await getMaxSolDepositAmount(userTargetTokenBal, connection)
-              : userTargetTokenBal?.toString(),
+              selectedCard?.mintB?.symbol === 'SOL'
+                ? await getMaxSolDepositAmount(userTargetTokenBal, connection)
+                : userTargetTokenBal?.toString(),
               1,
               Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
               connection
@@ -842,6 +999,24 @@ export const DepositWithdrawSlider: FC = () => {
               updatedPoolState={updatedPoolState}
             />
             {/*{isDeposit && userPublicKey && (userSourceTokenBal === 0 || userTargetTokenBal === 0) && <SwapNow />}*/}
+            {raydiumCpPoolsForMigrationWithAmounts.map((pool) => (
+              <Button
+                key={pool.id}
+                onClick={() => {
+                  migration(
+                    GammaProgram,
+                    pool.lpBalance,
+                    0,
+                    0,
+                    Number.MAX_SAFE_INTEGER,
+                    Number.MAX_SAFE_INTEGER,
+                    pool.poolInfo
+                  )
+                }}
+              >
+                Migrate
+              </Button>
+            ))}
           </div>
         </DialogBody>
         <DialogFooter>
