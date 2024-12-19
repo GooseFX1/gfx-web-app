@@ -48,7 +48,7 @@ const ProPositions: FC = () => {
           </Container>
         </div> */}
       </div>
-      <div className="flex items-center max-sm:flex-col max-sm:gap-4 mb-3.75">
+      <div className="flex items-center max-sm:flex-col max-sm:gap-4 sm-lg:flex-col sm-lg:gap-4 mb-3.75">
         <RadioOptionGroup
           defaultValue={'All'}
           value={currentPoolType.name}
@@ -72,14 +72,14 @@ const ProPositions: FC = () => {
             }
           ]}
         />
-        <div className="flex items-center w-full justify-between">
+        <div className="flex w-full items-center justify-between">
           <SearchBar
             onChange={(e) => setSearchTokens(e?.target?.value)}
             onClear={() => setSearchTokens('')}
             value={searchTokens}
-            className={'!max-w-full flex-1'}
+            className={'!max-w-[550px] flex-1'}
           />
-          <div className="flex justify-between ml-3">
+          <div className="mr-auto">
             <FarmSort isOpen={isOpen} setIsOpen={setIsOpen.set} />
           </div>
         </div>

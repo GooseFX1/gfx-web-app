@@ -75,7 +75,7 @@ const Step3: FC<{
         <div className="flex justify-between mb-3">
           <span className="text-regular font-semibold dark:text-grey-2 text-grey-1">Inital Price</span>
           <span className="text-regular font-semibold dark:text-grey-8 text-black-4">
-            ${bigNumberFormatter(new BigNumber(initialPrice))}
+            ${bigNumberFormatter(new BigNumber(initialPrice), 6)}
           </span>
         </div>
         <div className="flex justify-between mb-3">

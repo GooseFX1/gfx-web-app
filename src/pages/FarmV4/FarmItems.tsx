@@ -4,7 +4,6 @@ import { useGamma } from '@/context'
 import FarmItemsMigrate from '@/pages/FarmV4/FarmItemsMigrate'
 import FarmItemsLite from '@/pages/FarmV4/FarmItemsLite'
 import FarmItemsPro from '@/pages/FarmV4/FarmItemsPro'
-import useBreakpoint from '../../hooks/useBreakPoint'
 import { Button } from 'gfx-component-lib'
 import { POOL_LIST_PAGE_SIZE, POOL_TYPE } from '@/pages/FarmV4/constants'
 
@@ -36,7 +35,6 @@ const FarmItems: FC<{
     isCardMode
   } = useGamma()
   const isSearchActive = useMemo(() => searchTokens.length > 0, [searchTokens])
-  const { isDesktop, isLaptop } = useBreakpoint()
 
   let noResultsTitle = ''
   let noResultsSubText = ''
@@ -112,7 +110,7 @@ const FarmItems: FC<{
         />
       ) : (numberOfTokensDeposited === 0 && showDeposited) || filteredPools.length === 0 ? (
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
-      ) : isCardMode || !isDesktop || !isLaptop? (
+      ) : isCardMode ? (
         <FarmItemsLite
           openPositionImages={openPositionImages}
           openPositionsAcrossPrograms={openPositionsAcrossPrograms}

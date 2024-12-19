@@ -45,49 +45,50 @@ const FarmItemsProSort: FC = () => {
     <div
       className={cn(
         `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr_0.5fr] border-b-1 border-solid
-        border-border-lightmode-secondary dark:border-border-darkmode-secondary h-10 px-2 items-center`,
-        isMobile && `grid-cols-[1.5fr_0.5fr]`,
-        isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
+        border-border-lightmode-secondary dark:border-border-darkmode-secondary h-10 px-2 items-center
+        sm-lg:grid-cols-[1.25fr_0.75fr_0.75fr]`,
+        isMobile && `grid-cols-[1.25fr_0.75fr_0.75fr]`,
+        isTablet && `grid-cols-[1.5fr_0.75fr_0.75fr_0.75fr_0.5fr]`
       )}
     >
       <FarmRowItem title={'Name'} className={'justify-start'} canSort={false} />
-      <FarmRowItem
-        title={'Liquidity'}
-        onClick={() => handlePoolSort(currentSort === '1' ? '2' : '1')}
-        invert={currentSort == '1'}
-      />
-      {isDesktop &&
-        <FarmRowItem 
-          title={'Fee Tier'}
-          canSort={false} 
-        />
-      }
-      {(isTablet || isDesktop) && (
+      {!isMobile && (
         <FarmRowItem
-          title={`${computedViewRange} Volume`}
-          tooltip={`${computedViewRange} Volume is reset daily at 10PM UTC`}
-          onClick={() => handlePoolSort(currentSort === '3' ? '4' : '3')}
-          invert={currentSort == '3'}
+          title={'Liquidity'}
+          onClick={() => handlePoolSort(currentSort === '1' ? '2' : '1')}
+          invert={currentSort == '1'}
+          className={'sm-lg:hidden'}
         />
       )}
+      {isDesktop &&
+        <FarmRowItem
+          title={'Fee Tier'}
+          canSort={false}
+        />
+      }
+      <FarmRowItem
+        title={`${computedViewRange} Volume`}
+        tooltip={`${computedViewRange} Volume is reset daily at 10PM UTC`}
+        onClick={() => handlePoolSort(currentSort === '3' ? '4' : '3')}
+        invert={currentSort == '3'}
+      />
       {isDesktop &&
         <FarmRowItem title={`${computedViewRange} Fees`}
           onClick={() => handlePoolSort(currentSort === '5' ? '6' : '5')}
-          invert={currentSort == '5'} 
+          invert={currentSort == '5'}
         />
       }
-      {(isTablet || isDesktop) && (
+      <FarmRowItem
+        title={`${computedViewRange} APR`}
+        tooltip={'Values are displayed in native token'}
+        onClick={() => handlePoolSort(currentSort === '7' ? '8' : '7')}
+        invert={currentSort == '7'}
+      />
+      {!isMobile &&
         <FarmRowItem
-          title={`${computedViewRange} APR`}
-          tooltip={'Values are displayed in native token'}
-          onClick={() => handlePoolSort(currentSort === '7' ? '8' : '7')}
-          invert={currentSort == '7'}
-        />
-      )}
-      {isDesktop &&
-        <FarmRowItem 
           title={'Actions'}
-          canSort={false} 
+          canSort={false}
+          className={'sm-lg:hidden'}
         />
       }
     </div>
