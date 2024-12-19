@@ -204,6 +204,9 @@ const chunkTokens = (tokens: string, charLimit: number): string[] => {
     }
     searchTokens += token + ','
   }
+  if (searchTokens.length > 0) {
+    searchTokensArray.push(searchTokens.slice(0, -1))
+  }
   return searchTokensArray
 }
 const attachTokenList = async (
