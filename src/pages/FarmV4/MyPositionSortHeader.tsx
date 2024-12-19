@@ -47,8 +47,8 @@ const MyPositionSortHeader: FC = () => {
       className={cn(
         `grid grid-flow-col grid-cols-[1.5fr_1fr_0.5fr_1fr_0.5fr_1fr] border-b-1 border-solid 
           dark:border-border-darkmode-secondary border-border-lightmode-secondary
-          h-10 px-2 items-center`,
-        isMobile && `grid-cols-[1.5fr_0.5fr]`,
+          h-10 px-2 items-center sm-lg:grid-cols-[1.25fr_0.75fr_0.75fr]`,
+        isMobile && `grid-cols-[1.25fr_0.75fr_0.75fr]`,
         isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
       )}
     >
@@ -69,24 +69,19 @@ const MyPositionSortHeader: FC = () => {
       {isDesktop && (
         <FarmRowItem
           title={'Fee'}
-          tooltip={`The percentage fee taken by the pool,
-                                 this influence the rewards you’ll earn.`}
+          tooltip={`The percentage fee taken by the pool, this influence the rewards you’ll earn.`}
           invert={sort == 'DESC' && sortType == 'fee'}
           onClick={() => handlePoolSort(sort == 'ASC' ? '5' : '6')}
           iconRight={true}
         />
       )}
-
       {isDesktop && <FarmRowItem title={'Token A/B'} />}
-
-      {(isTablet || isDesktop) && (
-        <FarmRowItem
-          title={'APR'}
-          onClick={() => handlePoolSort(sort == 'ASC' ? '7' : '8')}
-          invert={sort == 'DESC' && sortType == 'apr'}
-          iconRight={true}
-        />
-      )}
+      <FarmRowItem
+        title={'APR'}
+        onClick={() => handlePoolSort(sort == 'ASC' ? '7' : '8')}
+        invert={sort == 'DESC' && sortType == 'apr'}
+        iconRight={true}
+      />
       {(isTablet || isDesktop) && (
         <FarmRowItem
           title={'Actions'}

@@ -55,9 +55,10 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
     <div
       className={cn(
         `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr_0.5fr] dark:bg-black-2 px-2.5 cursor-pointer
-      h-15 border border-solid dark:border-black-4 border-grey-4 bg-white rounded-tiny py-3.75`,
-        isMobile && `grid-cols-[1.5fr_0.5fr]`,
-        isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
+      h-15 border border-solid dark:border-black-4 border-grey-4 bg-white rounded-tiny py-3.75
+      sm-lg:grid-cols-[1.25fr_0.75fr_0.75fr]`,
+        isMobile && `grid-cols-[1.25fr_0.75fr_0.75fr]`,
+        isTablet && `grid-cols-[1.5fr_0.75fr_0.75fr_0.75fr_0.5fr]`
       )}
       {...props}
       onClick={() => {
@@ -99,9 +100,12 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
           </Badge>
         )}
       </div>
-      <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-        {formattedTVL}
-      </div>
+      {!isMobile &&
+        <div className="flex items-center justify-center text-regular font-semibold 
+        dark:text-grey-8 text-black-4 sm-lg:hidden">
+          {formattedTVL}
+        </div>
+      }
       {isDesktop && (
         <div className='flex flex-row justify-center items-center'>
           <div
@@ -113,23 +117,19 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
           </div>
         </div>
       )}
-      {(isTablet || isDesktop) && (
-        <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-          {formattedVolume}
-        </div>
-      )}
+      <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
+        {formattedVolume}
+      </div>
       {isDesktop && (
         <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
           {formattedFees}
         </div>
       )}
-      {(isTablet || isDesktop) && (
-        <div className="flex items-center justify-center">
-          <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
-            <span className={'font-poppins font-semibold my-0.5'}>{formattedAPR}%</span>
-          </Badge>
-        </div>
-      )}
+      <div className="flex items-center justify-center">
+        <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
+          <span className={'font-poppins font-semibold my-0.5'}>{formattedAPR}%</span>
+        </Badge>
+      </div>
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center">
           <Button
@@ -155,7 +155,7 @@ export const FarmRowLoader: FC = () => {
   return <div className={cn(
     `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_0.5fr] dark:bg-black-2 px-2.5 cursor-pointer
       h-15 border border-solid dark:border-black-4 border-grey-4 bg-white rounded-tiny py-3.75`,
-    isMobile && `grid-cols-[1.5fr_0.5fr]`,
+    isMobile && `grid-cols-[1.25fr_0.75fr_0.75fr]`,
     isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
   )}>
     <div className="flex flex-row items-center">

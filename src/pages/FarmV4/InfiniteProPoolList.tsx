@@ -61,7 +61,6 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
     } else {
       content = render(items[index], index)
     }
-
     return <div style={style}>{content}</div>
   }
 

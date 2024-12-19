@@ -102,7 +102,8 @@ export const FarmHeader: FC = () => {
           <RadioOptionGroup
             defaultValue={'Pools'}
             value={isPortfolio ? 'Portfolio' : 'Pools'}
-            className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-3 min-md:mr-2 items-center'}
+            className={`w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-3 
+              sm-lg:gap-0 sm-lg:grid-cols-3 min-md:mr-2 items-center`}
             optionClassName={`min-md:w-[85px]`}
             options={[
               {
