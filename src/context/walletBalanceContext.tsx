@@ -138,15 +138,19 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   async function getTokenAccounts() {
     if (!publicKey) return
 
-    const standardTokens: { pubkey: PublicKey, account: AccountInfo<ParsedAccountData> }[] =
-      (await connection.getParsedTokenAccountsByOwner(publicKey, {
-        programId: TOKEN_PROGRAM_ID
-      }) as any)?.value || []
+    const standardTokens: { pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }[] =
+      (
+        (await connection.getParsedTokenAccountsByOwner(publicKey, {
+          programId: TOKEN_PROGRAM_ID
+        })) as any
+      )?.value || []
 
-    const token2022: { pubkey: PublicKey, account: AccountInfo<ParsedAccountData> }[] =
-      (await connection.getParsedTokenAccountsByOwner(publicKey, {
-        programId: TOKEN_2022_PROGRAM_ID
-      }) as any)?.value || []
+    const token2022: { pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }[] =
+      (
+        (await connection.getParsedTokenAccountsByOwner(publicKey, {
+          programId: TOKEN_2022_PROGRAM_ID
+        })) as any
+      )?.value || []
 
     const accounts = [...standardTokens, ...token2022]
     const tokenAccounts = {}
@@ -188,24 +192,28 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     tokenAccounts[NATIVE_MINT.toBase58()] = sol
     tokenAccounts[publicKey.toBase58()] = sol
     let currentWalletValue = new Decimal(0.0)
-    const tokenListResponse = await fetchTokensByPublicKey(addresses)
+    try {
+      const tokenListResponse = await fetchTokensByPublicKey(addresses)
 
-    if (tokenListResponse.success && tokenListResponse.data.tokens.length > 0) {
-      for (const data of tokenListResponse.data.tokens) {
-        const { address, ...rest } = data
-        if (!(data.address in tokenAccounts) && data.address in tokenInfo) {
-          tokenAccounts[data.address] = { ...tokenInfo[data.address] }
+      if (tokenListResponse.success && tokenListResponse.data.tokens.length > 0) {
+        for (const data of tokenListResponse.data.tokens) {
+          const { address, ...rest } = data
+          if (!(data.address in tokenAccounts) && data.address in tokenInfo) {
+            tokenAccounts[data.address] = { ...tokenInfo[data.address] }
+          }
+
+          tokenAccounts[data.address].mint = address
+          tokenAccounts[data.address] = Object.assign(tokenAccounts[data.address], rest)
+          tokenAccounts[data.address].price = data.price
+          const value = new Decimal(tokenAccounts[data.address].tokenAmount.uiAmount).mul(data.price)
+          tokenAccounts[data.address].value = value
+          currentWalletValue = currentWalletValue.add(value)
         }
-
-        tokenAccounts[data.address].mint = address
-        tokenAccounts[data.address] = Object.assign(tokenAccounts[data.address], rest)
-        tokenAccounts[data.address].price = data.price
-        const value = new Decimal(tokenAccounts[data.address].tokenAmount.uiAmount).mul(data.price)
-        tokenAccounts[data.address].value = value
-        currentWalletValue = currentWalletValue.add(value)
       }
+      console.log('tokenAccounts', { tokenAccounts, tokenListResponse })
+    } catch (e) {
+      console.error('Error fetching token list', e)
     }
-    console.log('tokenAccounts', { tokenAccounts, tokenListResponse })
     setTokenAccounts(Object.values(tokenAccounts))
     setBalance(tokenAccounts)
     setWalletValue(currentWalletValue.toFixed(2))
@@ -244,7 +252,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   }
 
   const balanceProxyHandler = {
-    get: function(target: Balance, prop: string) {
+    get: function (target: Balance, prop: string) {
       if (prop in target) {
         return target[prop]
       } else if (prop.toLowerCase() in target) {
