@@ -31,7 +31,7 @@ import { withdrawBigStringFarm } from '@/utils/misc'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { bigNumberFormatter } from '@/utils'
 import { blob, publicKey as pbk, struct, u128, u64, u8 } from '@/utils/marshmallow'
-import useBoolean from '@/hooks/useBoolean'
+//import useBoolean from '@/hooks/useBoolean'
 //import LottieConfetti from '@/pages/FarmV4/LottieConfetti'
 import { u16 } from '@solana/buffer-layout'
 
