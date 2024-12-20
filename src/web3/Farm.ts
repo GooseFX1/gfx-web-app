@@ -542,7 +542,8 @@ export const createPool = async (
     program: Program,
     connection: Connection,
     tokenAType: 'spl-token' | 'native' | 'spl-token-2022',
-    tokenBType: 'spl-token' | 'native' | 'spl-token-2022'
+    tokenBType: 'spl-token' | 'native' | 'spl-token-2022',
+    poolType: string
 ) => {
     let token0 = new PublicKey(tokenA?.address)
     let token1 = new PublicKey(tokenB?.address)
@@ -577,7 +578,7 @@ export const createPool = async (
         new BN(amountTokenABN),
         new BN(amountTokenBBN),
         new BN(Math.floor(Date.now() / 1000)),
-        new BN(0),
+        poolType === 'Stable' ? new BN(10000) : poolType === 'Primary' ? new BN(25000) : new BN(100000),
         new BN(0), {
         accounts: createPoolAcc
     })
