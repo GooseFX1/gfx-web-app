@@ -16,23 +16,27 @@ const FarmItemsLite: FC<{
 
   // TODO: Enable MigrateCard
   return (
-    <div className="w-full border-top grid gap-3 grid-cols-1 sm:grid-cols-2 md-lg:grid-cols-3 lg:grid-cols-4">
+    <div className="w-full border-t-1 border-solid border-border-lightmode-secondary
+         dark:border-border-darkmode-secondary">
       {/* {!isSearchActive && currentPoolType.name != POOL_TYPE.migrate.name && (
         <MigrateCard
           openPositionImages={openPositionImages}
           openPositionsAcrossPrograms={openPositionsAcrossPrograms}
         />
       )} */}
-      {isLoadingPools ?
-        <>
-          <FarmCardLoader/>
-          <FarmCardLoader/>
-          <FarmCardLoader/>
-          <FarmCardLoader/>
-        </>
-        : filteredPools.map((pool, i) => (
-        <FarmCard pool={pool} key={`${pool?.mintA.name}-${pool?.mintB.name}-${i}`} />
-      ))}
+      <div className='grid gap-3 grid-cols-1 min-sm: grid-cols-2 sm:grid-cols-2 
+        md-lg:grid-cols-3 lg:grid-cols-4 mt-3.75'>
+        {isLoadingPools ?
+          <>
+            <FarmCardLoader />
+            <FarmCardLoader />
+            <FarmCardLoader />
+            <FarmCardLoader />
+          </>
+          : filteredPools.map((pool, i) => (
+            <FarmCard pool={pool} key={`${pool?.mintA.name}-${pool?.mintB.name}-${i}`} />
+          ))}
+      </div>
     </div>
   )
 }

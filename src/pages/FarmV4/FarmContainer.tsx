@@ -54,7 +54,9 @@ export const FarmContainer: FC = () => {
     createPoolType,
     updateTokenList,
     setTokenList,
-    isPortfolio
+    isPortfolio,
+    isCardMode,
+    setIsCardMode
   } = useGamma()
   const { wallet, publicKey } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
@@ -125,6 +127,8 @@ export const FarmContainer: FC = () => {
     },
     [showCreatedPools, userCache]
   )
+  const handleLayoutToggle = () => { setIsCardMode.toggle() }
+
   useEffect(() => {
     if (isFirstRender) return
     console.log('farmTrigger')
@@ -289,41 +293,64 @@ export const FarmContainer: FC = () => {
                         <DialogBody className={'flex-col flex-[1 0] p-2 overflow-auto pb-0'}>
                           <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
                           <div className={'flex flex-col gap-3'}>
-                            <div className="flex items-center justify-between ">
-                              <span
-                                className="h-full text-regular text-left dark:text-grey-2 text-grey-1
-                                              font-semibold"
-                              >
-                                Show created pools
-                              </span>
-                              <Switch
-                                variant={'default'}
-                                size={'sm'}
-                                colorScheme={'primary'}
-                                checked={showCreatedPools}
-                                onClick={handleFilterByCreated}
-                              />
-                            </div>
-                            {pubKey != null && (
-                              <div className="flex items-center justify-between">
-                                <span
-                                  className="h-full text-regular text-left dark:text-grey-2 text-grey-1
-                                              font-semibold"
-                                >
-                                  Show Deposited
+                            {!isPortfolio &&
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="h-full text-regular text-left dark:text-grey-2 
+                                  text-grey-1 font-semibold mr-3">
+                                  Layout
                                 </span>
                                 <Switch
-                                  variant={'default'}
+                                  variant={'secondary'}
                                   size={'sm'}
-                                  colorScheme={'primary'}
-                                  checked={showDeposited}
-                                  onClick={handleShowDepositedToggle}
+                                  switchType={'icon'}
+                                  iconLeft={
+                                    <IconWithFallback
+                                      size={'xs'}
+                                      src={isCardMode ? "/img/assets/list.svg" : "/img/assets/list-active.svg"}
+                                    />}
+                                  iconRight={
+                                    <IconWithFallback
+                                      size={'xs'}
+                                      src={isCardMode ? "/img/assets/grid-active.svg" : "/img/assets/grid.svg"} />}
+                                      checked={isCardMode}
+                                      onClick={handleLayoutToggle}
                                 />
                               </div>
+                            }
+                            {pubKey != null && (
+                              <>
+                                <div className="flex items-center justify-between ">
+                                  <span
+                                    className="h-full text-regular text-left dark:text-grey-2 
+                                    text-grey-1 font-semibold">
+                                    Show created pools
+                                  </span>
+                                  <Switch
+                                    variant={'secondary'}
+                                    size={'sm'}
+                                    colorScheme={'primary'}
+                                    checked={showCreatedPools}
+                                    onClick={handleFilterByCreated}
+                                  />
+                                </div>
+                                <div className="flex items-center justify-between">
+                                  <span
+                                    className="h-full text-regular text-left dark:text-grey-2 
+                                    text-grey-1 font-semibold">
+                                    Show Deposited
+                                  </span>
+                                  <Switch
+                                    variant={'secondary'}
+                                    size={'sm'}
+                                    colorScheme={'primary'}
+                                    checked={showDeposited}
+                                    onClick={handleShowDepositedToggle}
+                                  />
+                                </div>
+                              </>
                             )}
                           </div>
                           <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
-
                           <div className={'grid grid-cols-2 gap-3'}>
                             {GAMMA_SORT_CONFIG.map((s) => (
                               <label className={`flex items-center`} key={s.id}>
