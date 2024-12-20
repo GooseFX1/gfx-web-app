@@ -69,7 +69,7 @@ function FarmSort({ isOpen, setIsOpen }: {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
-        <Button className="p-0 !h-[35px] !w-[35px] mx-3 relative" variant={'ghost'}>
+        <Button className="p-0 !h-[35px] !w-[35px] mx-3 relative m-0" variant={'ghost'}>
           <Icon
             src={`img/assets/farm_filter_${mode}.svg`}
             size={'md'}

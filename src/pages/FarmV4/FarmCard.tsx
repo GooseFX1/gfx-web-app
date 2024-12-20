@@ -66,7 +66,7 @@ const FarmCard: FC<{
       </div>
       <div
         className="flex flex-row items-center text-average font-semibold font-poppins 
-            dark:text-grey-8 text-black-4 mb-2"
+            dark:text-grey-8 text-black-4 mb-2 max-sm:text-[13px]"
       >
         {`${pool?.mintA?.symbol} - ${pool?.mintB?.symbol}`}
         <IconWithFallback src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />

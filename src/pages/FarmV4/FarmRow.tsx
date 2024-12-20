@@ -56,8 +56,8 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
       className={cn(
         `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr_0.5fr] dark:bg-black-2 px-2.5 cursor-pointer
       h-15 border border-solid dark:border-black-4 border-grey-4 bg-white rounded-tiny py-3.75
-      sm-lg:grid-cols-[1.25fr_0.75fr_0.75fr]`,
-        isMobile && `grid-cols-[1.25fr_0.75fr_0.75fr]`,
+      sm-lg:grid-cols-[1.1fr_0.85fr_0.85fr]`,
+        isMobile && `grid-cols-[1.1fr_0.85fr_0.85fr]`,
         isTablet && `grid-cols-[1.5fr_0.75fr_0.75fr_0.75fr_0.5fr]`
       )}
       {...props}
@@ -77,7 +77,7 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
           className="relative right-[10px] border-solid dark:border-black-2
           border-white border-[2px] rounded-full h-[25px] w-[25px]"
         />
-        <div className="font-poppins text-regular font-semibold dark:text-grey-8 text-black-4">
+        <div className="font-poppins text-regular font-semibold dark:text-grey-8 text-black-4 max-sm:text-tiny">
           {pool.mintA.symbol} - {pool.mintB.symbol}
         </div>
 
@@ -93,8 +93,10 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
           %
         </div>
 
-        <IconWithFallback src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
-        {pool.poolCreator === base58PublicKey && (
+        {!isMobile &&
+          <IconWithFallback src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
+        }
+        {pool.poolCreator === base58PublicKey && !isMobile && (
           <Badge size="sm" variant="default" className={'ml-1 h-5.5'}>
             Owner
           </Badge>
