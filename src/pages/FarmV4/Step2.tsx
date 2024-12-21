@@ -436,7 +436,7 @@ function TokenSelectionInput({
       {
         page: 1,
         pageSize: TOKEN_LIST_PAGE_SIZE,
-        searchValue,
+        searchValue
       },
       false
     )

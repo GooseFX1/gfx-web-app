@@ -465,7 +465,7 @@ export const withdraw = async (
     program: Program<Idl>,
     connection: Connection,
     userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
-    userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
+    userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | ''
 ): Promise<Transaction> => {
     //console.log('user withdraws', userSourceWithdrawAmount, userTargetWithdrawAmount)
     const withdrawAccounts = await getAccountsForDepositWithdraw(

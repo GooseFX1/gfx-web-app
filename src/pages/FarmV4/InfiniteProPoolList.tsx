@@ -13,7 +13,7 @@ type InfiniteProPoolListProps<T> = {
 
 const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
   render,
-  itemPadding: ITEM_PADDING = 8,
+  itemPadding: ITEM_PADDING = 8
 }): JSX.Element => {
   const {
     filteredPools: items,
