@@ -124,7 +124,10 @@ function newCache(): USER_CONFIG_CACHE {
     hasSignedTC: false,
     endpointName: DEFAULT_ENDPOINT_NAME,
     endpoint: null,
-    priorityFee: 'Default'
+    priorityFee: 'Default',
+    swap: {
+      slippage: 1.0
+    }
   } as USER_CONFIG_CACHE
 }
 
