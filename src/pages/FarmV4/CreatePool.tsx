@@ -24,7 +24,7 @@ import useTransaction from '@/hooks/useTransaction'
 import { notifyUsingPromiseForCreatePool } from '@/utils/perpsNotifications'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { INTERVALS } from '@/utils/time'
-import { POOL_TYPE } from '@/pages/FarmV4/constants'
+import { GAMMA_STABLE_TOKENS, POOL_TYPE } from '@/pages/FarmV4/constants'
 
 export const CreatePool: FC<{
   isCreatePool: boolean
@@ -64,7 +64,8 @@ export const CreatePool: FC<{
   useMemo(() => {
     if (tokenA && tokenB) {
       const isPrimary = calculatePoolType.has(tokenA.address) && calculatePoolType.has(tokenB.address)
-      setPoolType(isPrimary ? POOL_TYPE.primary.name : POOL_TYPE.hyper.name)
+      const isStable = GAMMA_STABLE_TOKENS.includes(tokenA.address) && GAMMA_STABLE_TOKENS.includes(tokenB.address)
+      setPoolType(isStable ? 'Stable' : isPrimary ? POOL_TYPE.primary.name : POOL_TYPE.hyper.name)
     }
   }, [tokenA, tokenB])
 
@@ -104,7 +105,8 @@ export const CreatePool: FC<{
           GammaProgram, 
           connection, 
           tokenAType, 
-          tokenBType
+          tokenBType,
+          poolType
         )
         txBuilder.add(tx)
         setSendingTransaction(true)
@@ -130,6 +132,7 @@ export const CreatePool: FC<{
         } else {
           await forceCronAndUpdateLocalData(txSig)
           setIsConfettiVisible(true)
+          setIsCreatePool(false)
         }
       } catch (e) {
         console.log('Error while creating a new pool.', e)

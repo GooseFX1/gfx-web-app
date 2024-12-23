@@ -36,13 +36,15 @@ const Step3: FC<{
             {poolType && (
               <>
                 <img
-                  src={`/img/assets/farm_${poolType.toLowerCase()}.svg`}
+                  src={poolType === 'Stable' ? `/img/assets/farm_primary.svg`
+                    : `/img/assets/farm_${poolType.toLowerCase()}.svg`
+                  }
                   alt={poolType}
                   height={20}
                   width={20}
                   className="mr-[5px]"
                 />
-                <span>{poolType}</span>
+                <span>{poolType === 'Stable' ? 'Primary' : poolType}</span>
               </>
             )}
           </div>

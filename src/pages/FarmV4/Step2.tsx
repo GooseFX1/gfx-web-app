@@ -311,13 +311,15 @@ const Step2: FC<{
             <Badge size={'lg'} className={`py-1.75 pl-1.75 pr-3 from-brand-secondaryGradient-primary/30
                                  to-brand-secondaryGradient-secondary/30`}>
               <img
-                src={`/img/assets/farm_${poolType.toLowerCase()}.svg`}
+                src={poolType === 'Stable' ? `/img/assets/farm_primary.svg`
+                  : `/img/assets/farm_${poolType.toLowerCase()}.svg`
+                }
                 alt={poolType}
                 height={20}
                 width={20}
                 className="mr-[5px]"
               />
-              {poolType}
+              {poolType === 'Stable' ? 'Primary' : poolType}
             </Badge>
           ) : (
             <div
@@ -434,7 +436,7 @@ function TokenSelectionInput({
       {
         page: 1,
         pageSize: TOKEN_LIST_PAGE_SIZE,
-        searchValue,
+        searchValue
       },
       false
     )
