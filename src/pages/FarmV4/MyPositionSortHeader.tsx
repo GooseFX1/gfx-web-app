@@ -61,9 +61,9 @@ const MyPositionSortHeader: FC = () => {
       />
       <FarmRowItem
         title={'Position'}
-        //onClick={handleSort('liquidity')}
+        onClick={()=>handlePoolSort(sort == 'ASC' ? '9' : '10')}
         tooltip={'Current deposit in the pool, displayed in approximate USD value.'}
-        invert={sort == 'DESC' && sortType == 'liquidity'}
+        invert={sort == 'DESC' && sortType == 'position'}
         iconRight={true}
       />
       {isDesktop && (

@@ -27,6 +27,7 @@ import FarmSort from '@/pages/FarmV4/FarmSort'
 import { aborter, loadIconImage } from '@/utils'
 import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
 import useFirstRender from '@/hooks/useFirstRender'
+import useDebounce from '@/hooks/useDebounce'
 
 export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
@@ -65,6 +66,7 @@ export const FarmContainer: FC = () => {
   )
   const searchBarRef = React.useRef<HTMLDivElement>(null)
   const isFirstRender = useFirstRender()
+  const {debounce, abortDebounce} = useDebounce()
   useLayoutEffect(() => {
     if (openDepositWithdrawSlider) {
       document.body.style.overflow = 'hidden'
@@ -132,15 +134,17 @@ export const FarmContainer: FC = () => {
       setTokenList([])
       return
     }
-    updateTokenList(
+    debounce(()=>updateTokenList(
       {
         page: 1,
         pageSize: TOKEN_LIST_PAGE_SIZE,
         searchValue: tokenListSearchValue
       },
       false
-    )
-
+    ), 250)
+    return () => {
+      abortDebounce()
+    }
   }, [tokenListSearchValue, currentPoolType])
   const isExpandedSearchOpen = tokenListSearchValue.length > 0
   const tokenRenderList = tokenListSearchValue.length > 0 || createPoolType === 'primary' || !publicKey
@@ -343,6 +347,7 @@ export const FarmContainer: FC = () => {
                                     checked={currentSort === s.id}
                                     onChange={() => handlePoolSort(s.id)}
                                     className={'hidden'}
+                                    disabled={Number(s.id) >= 9 && !publicKey}
                                   />
                                   <span className="m-0 text-regular font-bold">{s.name}</span>
                                 </Badge>

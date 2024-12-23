@@ -32,20 +32,40 @@ const fetchAggregateStats = async (): Promise<GAMMAStats | null> => {
 }
 
 const fetchAllPools = async (
-  page: number,
-  pageSize: number,
-  poolType: 'all' | 'hyper' | 'primary' = 'all',
-  sortConfig: 'asc' | 'desc',
-  sortKey: string,
-  searchTokens: string,
-  abortSignal?: AbortSignal
+  {
+    page,
+    pageSize,
+    poolType = 'all',
+    sortOrder,
+    sortKey,
+    searchTokens,
+    abortSignal,
+    showCreated,
+    showDeposited,
+    userPublicKey
+  }:{
+    page: number,
+    pageSize: number,
+    poolType: 'all' | 'hyper' | 'primary',
+    sortOrder: 'asc' | 'desc',
+    sortKey: string,
+    searchTokens: string,
+    abortSignal?: AbortSignal,
+    showCreated?: boolean
+    showDeposited?: boolean,
+    userPublicKey?: string
+  }
 ): Promise<GAMMAPoolsResponse | null> => {
   let search = searchTokens.trim().toLowerCase()
   search = search.length === 0 ? '' : `&search=${search}`
+  const showCreatedQuery = showCreated ? `&showCreated=${showCreated}` : ''
+  const showDepositedQuery = showDeposited ? `&showDeposited=${showDeposited}` : ''
+  const userPublicKeyQuery = userPublicKey ? `&userPublicKey=${userPublicKey}` : ''
   try {
     const response = await httpClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.POOLS_INFO_ALL +
-        `?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortConfig}&sortBy=${sortKey}${search}`,
+      `?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortOrder}&sortBy=${sortKey}${search}`+
+      `${showCreatedQuery}${showDepositedQuery}${userPublicKeyQuery}`,
       { signal: abortSignal }
     )
     return response.data
@@ -54,31 +74,43 @@ const fetchAllPools = async (
     return null
   }
 }
-const fetchPoolsByMints = async ({
-  mintA,
-  mintB,
-  page,
-  pageSize,
-  signal,
-  poolType,
-  sortOrder,
-  sortKey
-}: {
-  mintA: string
-  mintB?: string
-  page: number
-  pageSize: number
-  signal?: AbortSignal
-  poolType: 'all' | 'hyper' | 'primary'
-  sortOrder: 'asc' | 'desc'
-  sortKey: string
-}): Promise<GAMMAPoolsResponse | null> => {
+const fetchPoolsByMints = async (
+  {
+    mintA,
+    mintB,
+    page,
+    pageSize,
+    signal,
+    poolType,
+    sortOrder,
+    sortKey,
+    showCreated,
+    showDeposited,
+    userPublicKey
+  }: {
+    mintA: string,
+    mintB?: string,
+    page: number,
+    pageSize: number
+    signal?: AbortSignal
+    poolType: 'all' | 'hyper' | 'primary',
+    sortOrder: 'asc' | 'desc',
+    sortKey: string
+    showCreated?: boolean
+    showDeposited?: boolean,
+    userPublicKey?: string
+  }
+): Promise<GAMMAPoolsResponse | null> => {
   const mintQuery = `mint1=${mintA}${mintB ? `&mint2=${mintB}` : ''}`
-  const pageQuery = `page=${page}&pageSize=${pageSize}`
+  const pageQuery= `page=${page}&pageSize=${pageSize}`
   const sortQuery = `poolType=${poolType}&sortOrder=${sortOrder}&sortBy=${sortKey}`
+  const showCreatedQuery = showCreated ? `&showCreated=${showCreated}` : ''
+  const showDepositedQuery = showDeposited ? `&showDeposited=${showDeposited}` : ''
+  const userPublicKeyQuery = userPublicKey ? `&userPublicKey=${userPublicKey}` : ''
   try {
     const response = await httpClient(GAMMA_API_BASE).get(
-      GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS + `?${mintQuery}&${pageQuery}&${sortQuery}`,
+      GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS +
+      `?${mintQuery}&${pageQuery}&${sortQuery}${showCreatedQuery}${showDepositedQuery}${userPublicKeyQuery}`,
       { signal }
     )
     return response.data

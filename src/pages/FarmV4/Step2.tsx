@@ -41,6 +41,7 @@ import { useWalletBalance } from '@/context/walletBalanceContext'
 import Decimal from 'decimal.js-light'
 import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
 import useFirstRender from '@/hooks/useFirstRender'
+import useDebounce from '@/hooks/useDebounce'
 
 const Step2: FC<{
   tokenA: TokenListToken
@@ -418,9 +419,9 @@ function TokenSelectionInput({
   const { publicKey } = useWalletBalance()
   const isFirstRender = useFirstRender()
   const tokenRenderList = searchValue.length > 0 || !publicKey ? tokenList : topBalancesWithTokenList
-
+  const {debounce, abortDebounce} = useDebounce()
   useEffect(() => {
-    if (isFirstRender) return;
+    if (isFirstRender) return
     console.log('step2 trigger')
     if (searchValue.trim().length == 0) {
       if (publicKey) {
@@ -432,14 +433,17 @@ function TokenSelectionInput({
       }
       return
     }
-    updateTokenList(
+    debounce(() => updateTokenList(
       {
         page: 1,
         pageSize: TOKEN_LIST_PAGE_SIZE,
         searchValue
       },
       false
-    )
+    ), 250)
+    return () => {
+      abortDebounce()
+    }
   }, [searchValue, publicKey])
 
   useEffect(() => {
@@ -487,7 +491,7 @@ function TokenSelectionInput({
             <DropdownMenuContent
               className={cn(`flex flex-col mt-1 z-[1001] h-auto max-h-[396px] w-[464px] max-sm:w-[338px] relative pb-0`,
                 (!publicKey && !searchValue.trim().length) && 'pb-2'
-                )}
+              )}
               portal={true}
               align={'start'}
             >

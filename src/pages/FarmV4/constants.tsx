@@ -208,14 +208,18 @@ export const GAMMA_SORT_CONFIG: GAMMASortConfig[] = [
   { id: '5', name: 'Fees: High to Low', direction: 'DESC',  key:'fee'},
   { id: '6', name: 'Fees: Low to High', direction: 'ASC', key: 'fee'},
   { id: '7', name: 'APR: High to Low', direction: 'DESC',  key: 'apr'},
-  { id: '8', name: 'APR: Low to High', direction: 'ASC', key: 'apr'}
+  { id: '8', name: 'APR: Low to High', direction: 'ASC', key: 'apr'},
+  { id: '9', name: 'Position: High to Low', direction: 'DESC',  key: 'position'},
+  { id: '10', name: 'Position: Low to High', direction: 'ASC', key: 'position'}
 ]
+
 export type GAMMASortConfig = {
   id: string
   name: string
   direction: 'ASC' | 'DESC'
   key: string
 }
+export const GAMMA_SORT_CONFIG_PUBKEY_REQUIRED = ['9','10']
 export const GAMMA_SORT_CONFIG_MAP: Map<string, GAMMASortConfig> =
   new Map(GAMMA_SORT_CONFIG.map((item) => [item.id, item]))
 export type PoolSortId = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8'
