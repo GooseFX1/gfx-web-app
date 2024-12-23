@@ -92,7 +92,8 @@ export const Swap: FC = () => {
   return <div className={`
 mt-8 flex items-center justify-center
 `}>
-    <div className={`max-w-[528px] w-full flex flex-col border-1 border-solid border-border-lightmode-secondary 
+    <div className={`max-w-[calc(100vw_-_20px)] md:max-w-[528px] w-full flex flex-col border-1 
+    border-solid border-border-lightmode-secondary 
       dark:border-border-darkmode-secondary rounded-[10px]`}>
       <div className={`flex items-center p-2.5 border-b-1 border-solid border-solid border-border-lightmode-secondary 
       dark:border-border-darkmode-secondary gap-2.5`}>
