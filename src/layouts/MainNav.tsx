@@ -181,6 +181,25 @@ const MobileNav: FC = () => {
               &nbsp;Pools
             </ListItem>
             <ListItem
+              variant={pathname.includes('swap') && 'primary'}
+              className={cn(
+                `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
+                         dark:text-text-darkmode-tertiary h-[43px]`,
+                pathname.includes('ssl') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+              )}
+              onClick={() => {
+                setIsOpen.off()
+                history.push('/swap')
+              }}
+            >
+              <img
+                className="h-[35px]"
+                src={`/img/mainnav/swap-${mode}${pathname.includes('swap') ? '-active' : ''}.svg`}
+                alt="dark"
+              />
+              &nbsp;Swap
+            </ListItem>
+            <ListItem
               variant={pathname.includes('ssl') && 'primary'}
               className={cn(
                 `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
