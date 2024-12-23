@@ -18,8 +18,9 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
       <MainNav />
       <div
         className={cn(
-          `overflow-x-hidden min-w-vw min-h-vh max-sm:max-h-vh bg-background-lightmode-primary
-     dark:bg-background-darkmode-primary`,
+          `overflow-x-hidden min-w-vw min-h-[calc(100vh_-_56px)] max-sm:max-h-vh flex flex-col
+          bg-background-lightmode-primary dark:bg-background-darkmode-primary
+          `,
           rewardModal ? 'overflow-hidden' : '',
           mode === 'dark' ? 'dark' : ''
         )}
