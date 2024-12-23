@@ -31,7 +31,8 @@ const MyPositions: FC = () => {
     setModeOfOperation,
     isSearchActive,
     showCreatedPools,
-    filteredPools
+    filteredPools,
+    sortConfig
   } = useGamma()
   const { isTablet, isDesktop, isMobile } = useBreakPoint()
   const { mode } = useDarkMode()
@@ -72,7 +73,7 @@ const MyPositions: FC = () => {
               isMobile && `grid-cols-[1.5fr_0.5fr]`,
               isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
             )}
-            key={pool.id}
+            key={`${pool.id}_${sortConfig.id}`}
           >
             {/* name */}
             <div className="flex flex-row items-center">

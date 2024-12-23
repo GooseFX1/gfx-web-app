@@ -66,7 +66,14 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
 
   const topBalances: UserTokenAccounts[] = useMemo(() => {
     const values = Object.values(balance)
-    return values.filter((v) => v.value.gt(0)).sort((a, b) => (a.value.gte(b.value) ? -1 : 1))
+    const alreadyAdded = new Set<string>()
+    return values.filter((v) => {
+      if (alreadyAdded.has(v.symbol) || v.value.isZero()) {
+        return false
+      }
+      alreadyAdded.add(v.symbol)
+      return true
+    }).sort((a, b) => (a.value.gte(b.value) ? -1 : 1))
   }, [balance])
 
   const tokens = tokenAccounts.map((account) => ({

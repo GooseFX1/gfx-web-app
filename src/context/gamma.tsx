@@ -205,10 +205,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       fees: '0'
     }
   })
-  useLayoutEffect(()=>{
+  useLayoutEffect(() => {
     if (!publicKey) {
       if (GAMMA_SORT_CONFIG_PUBKEY_REQUIRED.includes(userCache.gamma.currentSort)) {
-        setCurrentSort(()=>{
+        setCurrentSort(() => {
           updateUserCache({
             ...userCache,
             gamma: {
@@ -220,7 +220,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         })
       }
     }
-  },[publicKey, userCache])
+  }, [publicKey, userCache])
   const [createPoolType, setCreatePoolType] = useState<string>('')
   const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
   const [viewRange, setViewRange] = useState<ViewRange>(0)
@@ -378,7 +378,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return
     }
     let key = `${sortConfig.key.toLowerCase()}`
-    if (sortConfig.id !== '1' && sortConfig.id !== '2' && sortConfig.id != '9' && sortConfig.id != '10') {
+    if (sortConfig.id == '9' || sortConfig.id == '10') {
+      return;
+    }
+    if (sortConfig.id !== '1' && sortConfig.id !== '2') {
       key = `${key}${computedViewRange.toLowerCase()}`
     }
     setIsLoadingPools.on();
@@ -617,15 +620,16 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
             ? new BN(userLpPosition?.lpTokensOwned)?.gt(new BN(0))
             : false
         }
-      })
-      .filter((pool) => {
-        const show = showCreatedPools ? pool.poolCreator == base58PublicKey : true
-
-        if (showDeposited) {
-          return pool.hasDeposit && show
-        }
-        return show
       }).sort((a, b) => {
+        if (sortConfig.id === '9' || sortConfig.id === '10') {
+          const aValue = new Decimal(a.userLpPosition.totalValue)
+          const bValue = new Decimal(b.userLpPosition.totalValue)
+
+          if (sortConfig.direction === 'ASC') {
+            return aValue.gte(bValue) ? -1 : 1
+          }
+          return aValue.lte(bValue) ? -1 : 1
+        }
         if (mintA && mintB) { // don't have both so keep current sort
           if ((a.mintA.address === mintA && a.mintB.address === mintB) ||
             (a.mintB.address === mintA && a.mintA.address === mintB)) {
@@ -637,8 +641,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
         return 0
       })
+    console.log({ newPools, sortConfig })
     return { filteredPools: newPools }
-  }, [pools, lpPositions, showDeposited, base58PublicKey, showCreatedPools, selectedTokens])
+  }, [pools, lpPositions, showDeposited, base58PublicKey, showCreatedPools, selectedTokens, sortConfig])
 
   useEffect(() => {
     if (!base58PublicKey || filteredPools.length == 0 || !selectedCard?.id) return

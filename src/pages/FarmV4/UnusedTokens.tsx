@@ -46,7 +46,7 @@ const UnusedTokens: FC = () => {
   return (
     <div
       className="h-[250px] border border-solid dark:border-black-4 border-grey-4
-        p-2.5 dark:bg-black-2 bg-white rounded-[10px] flex flex-col"
+        px-2.5 pt-2.5 dark:bg-black-2 bg-white rounded-[10px] flex flex-col"
     >
       <Tooltip>
         <TooltipTrigger asChild>
@@ -65,7 +65,7 @@ const UnusedTokens: FC = () => {
       <div className="font-poppins text-[28px] font-semibold text-black-4 dark:text-grey-8 mb-3.75">
         ${commafy(parseFloat(walletValue), 2)}
       </div>
-      <div className={`overflow-scroll`}>
+      <div className={`overflow-auto`}>
         {topBalances.slice(0, 5).map((balance) => (
           <div className="flex flex-row justify-between items-center mb-3" key={balance.symbol}>
             <div className="flex flex-row items-center">

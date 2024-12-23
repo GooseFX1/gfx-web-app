@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 //import { Container } from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { useGamma } from '@/context'
@@ -14,9 +14,16 @@ const ProPositions: FC = () => {
     currentPoolType,
     setCurrentPoolType,
     searchTokens,
-    setSearchTokens
+    setSearchTokens,
+    setShowDeposited,
+    showDeposited
   } = useGamma()
   const [isOpen, setIsOpen] = useBoolean(false)
+  useEffect(() => {
+    if (!showDeposited) {
+      setShowDeposited(true)
+    }
+  }, [])
   return (
     <div>
       <div className="flex flex-row justify-between items-center mb-3.75">
