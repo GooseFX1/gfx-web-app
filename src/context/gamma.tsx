@@ -6,7 +6,7 @@ import {
   SetStateAction,
   useCallback,
   useContext,
-  useEffect,
+  useEffect, useLayoutEffect,
   useMemo,
   useState
 } from 'react'
@@ -38,7 +38,7 @@ import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   BASE_SLIPPAGE,
   GAMMA_SORT_CONFIG,
-  GAMMA_SORT_CONFIG_MAP,
+  GAMMA_SORT_CONFIG_MAP, GAMMA_SORT_CONFIG_PUBKEY_REQUIRED,
   JupToken,
   ModeOfOperation,
   Pool,
@@ -134,7 +134,7 @@ interface GAMMADataModel {
   computedViewRange: '24H' | '7D' | '30D'
   handlePoolSort: (id: string) => void
   topBalancesWithTokenList: JupToken[]
-  calculatePoolType: Record<string, string>
+  calculatePoolType: Set<string>
   selectedTokens: JupToken[]
   addSelectedToken: (token: JupToken) => void
   removeSelectedToken: (token: JupToken) => void
@@ -185,7 +185,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isLoadingTokenList, setIsLoadingTokenList] = useBoolean(false)
   const [isLoadingPools, setIsLoadingPools] = useBoolean(false)
   const [poolPage, setPoolPage] = useState(1)
-  const [totalPoolCount, setTotalPoolCount] = useState(0);
+  const [totalPoolCount, setTotalPoolCount] = useState(0)
   const [poolsHasMoreData, setPoolsHasMoreData] = useState(true)
   const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
   const [selectedCardLiquidityAcc, setSelectedCardLiquidityAcc] = useState<any>({})
@@ -205,6 +205,22 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       fees: '0'
     }
   })
+  useLayoutEffect(() => {
+    if (!publicKey) {
+      if (GAMMA_SORT_CONFIG_PUBKEY_REQUIRED.includes(userCache.gamma.currentSort)) {
+        setCurrentSort(() => {
+          updateUserCache({
+            ...userCache,
+            gamma: {
+              ...userCache.gamma,
+              currentSort: '1'
+            }
+          })
+          return '1'
+        })
+      }
+    }
+  }, [publicKey, userCache])
   const [createPoolType, setCreatePoolType] = useState<string>('')
   const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
   const [viewRange, setViewRange] = useState<ViewRange>(0)
@@ -362,6 +378,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return
     }
     let key = `${sortConfig.key.toLowerCase()}`
+    if (sortConfig.id == '9' || sortConfig.id == '10') {
+      return;
+    }
     if (sortConfig.id !== '1' && sortConfig.id !== '2') {
       key = `${key}${computedViewRange.toLowerCase()}`
     }
@@ -377,23 +396,31 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           sortKey: key,
           page: page,
           pageSize: POOL_LIST_PAGE_SIZE,
-          signal: signal
+          signal: signal,
+          userPublicKey: base58PublicKey,
+          showDeposited,
+          showCreated: showCreatedPools
         }
       )
       : fetchAllPools(
-        page,
-        pageSize,
-        poolType,
-        sortConfig.direction.toLowerCase() as 'desc' | 'asc',
-        key,
-        searchTokens,
-        signal
+        {
+          page,
+          pageSize,
+          poolType,
+          sortOrder: sortConfig.direction.toLowerCase() as 'desc' | 'asc',
+          sortKey: key,
+          searchTokens,
+          abortSignal: signal,
+          userPublicKey: base58PublicKey,
+          showDeposited,
+          showCreated: showCreatedPools
+        }
       ))
       .then((poolsData: GAMMAPoolsResponse) => {
         if (poolsData && poolsData.success) {
           setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
-          setPoolPage(poolsData.data.currentPage);
-          setTotalPoolCount(poolsData.data.totalItems);
+          setPoolPage(poolsData.data.currentPage)
+          setTotalPoolCount(poolsData.data.totalItems)
           const existingPools = append ? pools : []
           const existingPoolsMap = new Map(
             existingPools.map((pool) => [`${pool.mintA.address}_${pool.mintB.address}`, pool])
@@ -448,7 +475,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (poolPage == 1) {
       updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type }, false)
     }
-  }, [currentPoolType])
+  }, [currentPoolType, showDeposited, showCreatedPools])
   useEffect(() => {
     if (isFirstRender) return
     updatePools({ page: poolPage, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type })
@@ -593,15 +620,16 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
             ? new BN(userLpPosition?.lpTokensOwned)?.gt(new BN(0))
             : false
         }
-      })
-      .filter((pool) => {
-        const show = showCreatedPools ? pool.poolCreator == base58PublicKey : true
-
-        if (showDeposited) {
-          return pool.hasDeposit && show
-        }
-        return show
       }).sort((a, b) => {
+        if (sortConfig.id === '9' || sortConfig.id === '10') {
+          const aValue = new Decimal(a.userLpPosition.totalValue)
+          const bValue = new Decimal(b.userLpPosition.totalValue)
+
+          if (sortConfig.direction === 'ASC') {
+            return aValue.gte(bValue) ? -1 : 1
+          }
+          return aValue.lte(bValue) ? -1 : 1
+        }
         if (mintA && mintB) { // don't have both so keep current sort
           if ((a.mintA.address === mintA && a.mintB.address === mintB) ||
             (a.mintB.address === mintA && a.mintA.address === mintB)) {
@@ -613,8 +641,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
         return 0
       })
+    console.log({ newPools, sortConfig })
     return { filteredPools: newPools }
-  }, [pools, lpPositions, showDeposited, base58PublicKey, showCreatedPools, selectedTokens])
+  }, [pools, lpPositions, showDeposited, base58PublicKey, showCreatedPools, selectedTokens, sortConfig])
 
   useEffect(() => {
     if (!base58PublicKey || filteredPools.length == 0 || !selectedCard?.id) return
