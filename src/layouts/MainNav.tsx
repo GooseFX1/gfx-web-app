@@ -194,7 +194,7 @@ const MobileNav: FC = () => {
             >
               <img
                 className="h-[35px]"
-                src={`/img/mainnav/swap-${mode}${pathname.includes('swap') ? '-active' : ''}.svg`}
+                src={`/img/mainnav/swap-${mode}${pathname.includes('swap') ? '-active' : '-inactive'}.svg`}
                 alt="dark"
               />
               &nbsp;Swap
