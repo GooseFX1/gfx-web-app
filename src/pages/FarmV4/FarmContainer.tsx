@@ -134,14 +134,19 @@ export const FarmContainer: FC = () => {
       setTokenList([])
       return
     }
-    debounce(()=>updateTokenList(
-      {
-        page: 1,
-        pageSize: TOKEN_LIST_PAGE_SIZE,
-        searchValue: tokenListSearchValue
-      },
-      false
-    ), 250)
+    debounce(
+      () =>
+        updateTokenList(
+          {
+            page: 1,
+            pageSize: TOKEN_LIST_PAGE_SIZE,
+            tokenType: currentPoolType.name.toLowerCase(),
+            searchValue: tokenListSearchValue
+          },
+          false
+        ),
+      250
+    )
     return () => {
       abortDebounce()
     }

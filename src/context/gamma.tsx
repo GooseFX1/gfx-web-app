@@ -293,7 +293,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     if (calculatePoolType.size == 0) {
       // fetch primary tokens for type calculation on create pool
-      fetchTokenList(1, 200, 'primary').then((t) => {
+      fetchTokenList(1, 250, 'primary').then((t) => {
         if (t.success) {
           const primaryTokensMap = new Set(t.data.tokens.map((token) => token.address))
           setCalculatePoolType(primaryTokensMap)
@@ -308,10 +308,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     {
       page,
       pageSize,
+      tokenType = 'all',
       searchValue = ''
     }: {
       page: number
       pageSize: number
+      tokenType: Pool
       searchValue?: string
     }, append = true) => {
     setIsLoadingTokenList.on()
@@ -319,14 +321,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       aborter.abortSignal(tokenListAbortTokenGamma)
     }
     const signal = aborter.addSignal(tokenListAbortTokenGamma)
-
-    let tokenType = ''
-
-    if (createPoolType.trim().length !== 0) {
-      tokenType = createPoolType.trim().toLowerCase() === 'primary' ? 'primary' : 'all'
-    } else {
-      tokenType = currentPoolType.type.toLowerCase() === 'primary' ? 'primary' : 'all'
-    }
 
     const response = (await fetchTokenList(
       page,
