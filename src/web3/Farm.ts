@@ -29,6 +29,7 @@ import { JupToken } from '@/pages/FarmV4/constants'
 import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import Decimal from 'decimal.js-light'
 import * as anchor from '@coral-xyz/anchor'
+import { GAMMAToken } from '@/types/gamma'
 
 enum TokenType {
   Token0,
@@ -195,34 +196,35 @@ const getAccountsForDepositWithdraw = async (
 }
 
 const getAccountsForSwappingTokens = async (
-  selectedCard: any, // order is important make sure token A and token B are correctly set
+  mintA: GAMMAToken,
+  mintB: GAMMAToken,
   userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
-  ammConfig: PublicKey,
   poolState: any,
   userPublicKey: PublicKey
 ) => {
-  const poolIdKey = await getpoolId(selectedCard)
-  const mintA = new PublicKey(selectedCard?.mintA?.address)
-  const mintB = new PublicKey(selectedCard?.mintB?.address)
+  const configIdKey = await getAmmConfigId(0)
+  const mintAPublicKey = new PublicKey(mintA?.address)
+  const mintBPublickey = new PublicKey(mintB?.address)
+  const poolIdKey = await getPoolIdKey(configIdKey, mintAPublicKey, mintBPublickey)
   const authorityKey = await getAuthorityKey()
 
   const inputTokenAccount = await getAssociatedTokenAddress(
-    mintA,
+    mintAPublicKey,
     userPublicKey,
     null,
     userSourceTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
   )
 
   const outputTokenAccount = await getAssociatedTokenAddress(
-    mintB,
+    mintBPublickey,
     userPublicKey,
     null,
     userTargetTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
   )
 
   return {
-    ammConfig: ammConfig,
+    ammConfig: configIdKey,
     poolState: poolIdKey,
     inputVault: poolState.token0Vault,
     outputVault: poolState.token1Vault,
@@ -230,8 +232,8 @@ const getAccountsForSwappingTokens = async (
     payer: userPublicKey,
     inputTokenAccount: inputTokenAccount,
     outputTokenAccount: outputTokenAccount,
-    inputTokenMint: mintA,
-    outputTokenMint: mintB,
+    inputTokenMint: mintAPublicKey,
+    outputTokenMint: mintBPublickey,
     inputTokenProgram: userSourceTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID,
     outputTokenProgram: userTargetTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID,
     authority: authorityKey
@@ -659,10 +661,11 @@ export const createPool = async (
   return createPoolTxn
 }
 
-//Instruction - 4
+//Instruction - 4 swapping TokenA -> TokenB
 export const swapTokens = async (
   amountToken: string,
-  selectedCard: any, // order is important of token A and token B
+  mintA: GAMMAToken,
+  mintB: GAMMAToken,
   userPublicKey: PublicKey,
   userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
@@ -670,23 +673,28 @@ export const swapTokens = async (
   connection: Connection
 ) => {
   const configIdKey = await getAmmConfigId(0)
-  const poolIdKey = await getpoolId(selectedCard)
-  const pool_state = await program.account.poolState.fetch(poolIdKey)
+  const mintAPublicKey = new PublicKey(mintA?.address)
+  const mintBPublickey = new PublicKey(mintB?.address)
+  const poolIdKey = await getPoolIdKey(configIdKey, mintAPublicKey, mintBPublickey)
+  const poolState = await program.account.poolState.fetch(poolIdKey)
 
-  const amount = convertToNativeValue(amountToken, selectedCard?.mintA?.decimals)
+  const amount = convertToNativeValue(amountToken, mintA?.decimals)
+
+  // TODO - calculate the slippage amount on basis of percentage selected by user
+  // 0 here means this value is ignored and user doens't have any value for minimum number of tokens they will receive.
   const slippageAmount = new anchor.BN(0)
 
   const accounts = await getAccountsForSwappingTokens(
-    selectedCard,
+    mintA,
+    mintB,
     userSourceTokenType,
     userTargetTokenType,
-    configIdKey,
-    pool_state,
+    poolState,
     userPublicKey
   )
 
   let swapTxn: Transaction
-  if (selectedCard?.mintA?.symbol === 'SOL') swapTxn = await wrapSolToken(userPublicKey, connection, amountToken)
+  if (mintA?.symbol === 'SOL') swapTxn = await wrapSolToken(userPublicKey, connection, amountToken)
   else swapTxn = new Transaction()
 
   const swapIX: TransactionInstruction = await program.instruction.swapBaseInput(
@@ -698,12 +706,12 @@ export const swapTokens = async (
   )
   swapTxn.add(swapIX)
 
-  if (selectedCard?.mintA?.symbol === 'SOL') {
-    const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintA?.address), userPublicKey)
+  if (mintA?.symbol === 'SOL') {
+    const ataAddress = await getAssociatedTokenAddress(mintAPublicKey, userPublicKey)
     const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
     swapTxn.add(tr)
-  } else if (selectedCard?.mintB?.symbol === 'SOL') {
-    const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintB?.address), userPublicKey)
+  } else if (mintB?.symbol === 'SOL') {
+    const ataAddress = await getAssociatedTokenAddress(mintBPublickey, userPublicKey)
     const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
     swapTxn.add(tr)
   }
