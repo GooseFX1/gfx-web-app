@@ -67,7 +67,7 @@ const FarmItemsProSort: FC = () => {
         />
       }
       <FarmRowItem
-        title={`${computedViewRange} Volume`}
+        title={`${computedViewRange} ${isMobile || isTablet ? 'Vol' : 'Volume'}`}
         tooltip={`${computedViewRange} Volume is reset daily at 10PM UTC`}
         onClick={() => handlePoolSort(currentSort === '3' ? '4' : '3')}
         invert={currentSort == '3'}
@@ -83,6 +83,7 @@ const FarmItemsProSort: FC = () => {
         tooltip={'Values are displayed in native token'}
         onClick={() => handlePoolSort(currentSort === '7' ? '8' : '7')}
         invert={currentSort == '7'}
+        className={'max-sm:w-full max-sm:justify-end sm-lg:w-full sm-lg:justify-end'}
       />
       {!isMobile &&
         <FarmRowItem

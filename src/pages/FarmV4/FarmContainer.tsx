@@ -9,6 +9,7 @@ import {
   cn,
   Dialog,
   DialogBody,
+  DialogCloseDefault,
   DialogContent,
   DialogOverlay,
   Popover,
@@ -291,7 +292,8 @@ export const FarmContainer: FC = () => {
                         placement={'bottom'}
                       >
                         <DialogBody className={'flex-col flex-[1 0] p-2 overflow-auto pb-0'}>
-                          <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
+                        <DialogCloseDefault className={'top-5 text-white'} />
+                          <h4 className="dark:text-white text-lg text-black-4 pb-2">Filters</h4>
                           <div className={'flex flex-col gap-3'}>
                             {!isPortfolio &&
                               <div className="flex items-center justify-between mb-2">
@@ -301,7 +303,7 @@ export const FarmContainer: FC = () => {
                                 </span>
                                 <Switch
                                   variant={'secondary'}
-                                  size={'sm'}
+                                  size={'md'}
                                   switchType={'icon'}
                                   iconLeft={
                                     <IconWithFallback
@@ -326,8 +328,8 @@ export const FarmContainer: FC = () => {
                                     Show created pools
                                   </span>
                                   <Switch
-                                    variant={'secondary'}
-                                    size={'sm'}
+                                    variant={'default'}
+                                    size={'md'}
                                     colorScheme={'primary'}
                                     checked={showCreatedPools}
                                     onClick={handleFilterByCreated}
@@ -340,8 +342,8 @@ export const FarmContainer: FC = () => {
                                     Show Deposited
                                   </span>
                                   <Switch
-                                    variant={'secondary'}
-                                    size={'sm'}
+                                    variant={'default'}
+                                    size={'md'}
                                     colorScheme={'primary'}
                                     checked={showDeposited}
                                     onClick={handleShowDepositedToggle}

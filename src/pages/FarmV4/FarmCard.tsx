@@ -6,6 +6,7 @@ import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { loadIconImage } from '@/utils'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
+import useBreakPoint from '@/hooks/useBreakPoint'
 
 const FarmCard: FC<{
   pool: GAMMAPoolWithUserLiquidity | undefined
@@ -14,6 +15,7 @@ const FarmCard: FC<{
   const { setOpenDepositWithdrawSlider, setSelectedCard } = useGamma()
   const { base58PublicKey } = useWalletBalance()
   const { mode } = useDarkMode()
+  const { isDesktop, isMobile } = useBreakPoint()
 
   // Need to change this as per on chain data, setting to true for testing ui.
   // const canClaim = true
@@ -22,10 +24,14 @@ const FarmCard: FC<{
     <div
       {...props}
       className={cn(
-        `h-[210px] w-full border 
+        `h-[210px] w-full border cursor-pointer
         border-solid dark:border-black-4 border-grey-4 bg-white dark:bg-black-2 p-2.5 rounded-[8px]`,
         className
       )}
+      onClick={() => {
+        setSelectedCard(pool)
+        setOpenDepositWithdrawSlider(true)
+      }}
     >
       <div className="flex flex-row justify-between mb-2.5 items-center">
         <div className="flex relative">
@@ -52,16 +58,18 @@ const FarmCard: FC<{
           >
             Claim
           </Button>} */}
-          <Button
-            className={cn(`cursor-pointer bg-blue-1 text-white h-[30px]`, pool.hasDeposit && 'w-[30px] h-[30px]')}
-            variant={'secondary'}
-            onClick={() => {
-              setSelectedCard(pool)
-              setOpenDepositWithdrawSlider(true)
-            }}
-          >
-            {!pool.hasDeposit ? 'Deposit' : '+'}
-          </Button>
+          {isDesktop && (
+            <Button
+              className={cn(`cursor-pointer bg-blue-1 text-white h-[30px]`, pool.hasDeposit && 'w-[30px] h-[30px]')}
+              variant={'secondary'}
+              onClick={() => {
+                setSelectedCard(pool)
+                setOpenDepositWithdrawSlider(true)
+              }}
+            >
+              {!pool.hasDeposit ? 'Deposit' : '+'}
+            </Button>
+          )}
         </div>
       </div>
       <div
@@ -69,8 +77,8 @@ const FarmCard: FC<{
             dark:text-grey-8 text-black-4 mb-2 max-sm:text-[13px]"
       >
         {`${pool?.mintA?.symbol} - ${pool?.mintB?.symbol}`}
-        <IconWithFallback src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
-        {pool.poolCreator == base58PublicKey && (
+        {/* <IconWithFallback src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" /> */}
+        {pool.poolCreator == base58PublicKey && isMobile && (
           <Badge size="sm" variant="default" className='h-5.5'>
             Owner
           </Badge>
@@ -83,7 +91,7 @@ const FarmCard: FC<{
 
 export default FarmCard
 
-export const FarmCardLoader: FC<{className?:string}> = ({className}) => <div className={cn(`
+export const FarmCardLoader: FC<{ className?: string }> = ({ className }) => <div className={cn(`
   w-full max-w-screen sm:max-w-[341px] h-[210px] p-2.5 border  flex gap-2 flex-col
         border-solid dark:border-black-4 border-grey-4 bg-white dark:bg-black-2 rounded-[8px]
 `, className)}>

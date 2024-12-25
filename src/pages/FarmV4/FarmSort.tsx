@@ -69,7 +69,7 @@ function FarmSort({ isOpen, setIsOpen }: {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
-        <Button className="p-0 !h-[35px] !w-[35px] mx-3 relative m-0" variant={'ghost'}>
+        <Button className="p-0 !h-[35px] !w-[35px] mx-3 sm-lg:ml-2 sm-lg:mr-0 relative m-0" variant={'ghost'}>
           <Icon
             src={`img/assets/farm_filter_${mode}.svg`}
             size={'md'}
@@ -93,7 +93,7 @@ function FarmSort({ isOpen, setIsOpen }: {
               </span>
               <Switch
                 variant={'secondary'}
-                size={'sm'}
+                size={'md'}
                 switchType={'icon'}
                 iconLeft={
                   <Icon
@@ -116,8 +116,8 @@ function FarmSort({ isOpen, setIsOpen }: {
                   Show Deposited pools
                 </span>
                 <Switch
-                  variant={'secondary'}
-                  size={'sm'}
+                  variant={'default'}
+                  size={'md'}
                   colorScheme={'primary'}
                   checked={showDeposited}
                   onClick={handleShowDepositedToggle}
@@ -129,8 +129,8 @@ function FarmSort({ isOpen, setIsOpen }: {
                   Show created pools
                 </span>
                 <Switch
-                  variant={'secondary'}
-                  size={'sm'}
+                  variant={'default'}
+                  size={'md'}
                   colorScheme={'primary'}
                   checked={showCreatedPools}
                   onClick={handleFilterByCreated}

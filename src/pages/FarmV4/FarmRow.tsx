@@ -93,9 +93,9 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
           %
         </div>
 
-        {!isMobile &&
+        {/* {!isMobile &&
           <IconWithFallback src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
-        }
+        } */}
         {pool.poolCreator === base58PublicKey && !isMobile && (
           <Badge size="sm" variant="default" className={'ml-1 h-5.5'}>
             Owner
@@ -127,7 +127,7 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
           {formattedFees}
         </div>
       )}
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center max-sm:justify-end sm-lg:justify-end">
         <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
           <span className={'font-poppins font-semibold my-0.5'}>{formattedAPR}%</span>
         </Badge>
