@@ -315,24 +315,15 @@ mt-8 flex items-center justify-center
               </div>
               <div
                 className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
-            text-b2 items-center`}
-              >
-                <p>Network Fee</p>
-                <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>
-                  {networkFee} SOL
-                </p>
-              </div>
-              <div
-                className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
             text-b2 justify-center items-center gap-1 items-center`}
               >
                 <Tooltip>
                   <TooltipTrigger asChild variant={'dotted'}>
-                    <p>GooseFX Fee</p>
+                    <p>Estimated Fee</p>
                   </TooltipTrigger>
                   <TooltipContent asChild>
                     <span className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>
-                      The fee that GooseFX charges for this transaction.
+                      Swap fees include SOL network cost and fees to LPs, buybacks and treasury
                     </span>
                   </TooltipContent>
                 </Tooltip>
