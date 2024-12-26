@@ -18,7 +18,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Icon,
   Input,
   InputElementLeft,
   InputGroup,
@@ -41,6 +40,7 @@ import { useWalletBalance } from '@/context/walletBalanceContext'
 import Decimal from 'decimal.js-light'
 import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
 import useFirstRender from '@/hooks/useFirstRender'
+import { IconWithFallback } from '@/components/common/IconWithFallback'
 import useDebounce from '@/hooks/useDebounce'
 
 const Step2: FC<{
@@ -469,11 +469,12 @@ function TokenSelectionInput({
                 className="min-w-[115px] h-[35px] rounded-full flex flex-row justify-between"
                 iconLeft={
                   token ? (
-                    <Icon src={loadIconImage(token?.logoURI, mode)} size={'sm'} className={'rounded-circle'} />
+                    <IconWithFallback src={loadIconImage(token?.logoURI, mode)} size={'sm'}
+                                      className={'rounded-circle'} />
                   ) : null
                 }
                 iconRight={
-                  <Icon
+                  <IconWithFallback
                     style={{
                       transform: `rotate(${isDropDownOpen ? '180deg' : '0deg'})`,
                       transition: 'transform 0.2s ease-in-out'
@@ -536,7 +537,7 @@ function TokenSelectionInput({
                         }}
                         disabled={otherToken?.address == token?.address || isLoadingTokenList}
                         iconLeft={
-                          <Icon
+                          <IconWithFallback
                             src={loadIconImage(token?.logoURI, mode)}
                             size={'sm'}
                             className={'rounded-circle'}

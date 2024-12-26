@@ -8,6 +8,7 @@ import { TokenListSkeleton } from '@/pages/FarmV4/Step2'
 import { JupToken } from './constants'
 import { useDarkMode, useGamma } from '@/context'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+import { IconWithFallback } from '@/components/common/IconWithFallback'
 
 export function InfiniteTokenList({
                                     useRenderListLength,
@@ -78,7 +79,7 @@ export function InfiniteTokenList({
       >
         <div className={'flex w-full flex-1'}>
           <div className={`flex gap-2`}>
-            <Icon
+            <IconWithFallback
               className={`rounded-circle h-[24px] w-[24px] border my-auto
                                 border-solid dark:border-black-4 border-grey-4`}
               src={loadIconImage(curToken?.logoURI, mode)}

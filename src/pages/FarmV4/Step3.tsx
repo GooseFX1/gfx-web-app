@@ -4,6 +4,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import { bigNumberFormatter, loadIconImage } from '@/utils'
 import { useDarkMode } from '@/context'
 import BigNumber from 'bignumber.js'
+import { IconWithFallback } from '@/components/common/IconWithFallback'
 
 const Step3: FC<{
   tokenA: JupToken
@@ -55,19 +56,17 @@ const Step3: FC<{
             className="text-regular font-semibold dark:text-grey-8 text-black-4 
                         flex flex-row items-center"
           >
-            <img
+            <IconWithFallback
               src={loadIconImage(tokenA?.logoURI, mode)}
               alt={'token'}
-              height={20}
-              width={20}
+              size={'sm'}
               className="mr-[5px] rounded-half"
             />
             <span>{tokenA?.symbol}&nbsp;/&nbsp;</span>
-            <img
+            <IconWithFallback
               src={loadIconImage(tokenB?.logoURI, mode)}
               alt={'token'}
-              height={20}
-              width={20}
+              size={'sm'}
               className="mr-[5px] rounded-half"
             />
             <span>{tokenB?.symbol}</span>

@@ -1,7 +1,7 @@
 import InfiniteLoader from 'react-window-infinite-loader'
 import { FixedSizeList } from 'react-window'
 import { CSSProperties, ElementType, useEffect, useRef } from 'react'
-import { Badge, Icon } from 'gfx-component-lib'
+import { Badge } from 'gfx-component-lib'
 import { bigNumberFormatter, clamp, loadIconImage, numberFormatter, truncateAddress } from '@/utils'
 import BigNumber from 'bignumber.js'
 import { TokenListSkeleton } from '@/pages/FarmV4/Step2'
@@ -9,6 +9,7 @@ import { useDarkMode } from '@/context'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { useSwap } from '@/context/newSwap'
 import { JupToken } from '@/pages/FarmV4/constants'
+import { IconWithFallback } from '@/components/common/IconWithFallback'
 
 export function InfiniteTokenListSwap({
                                     useRenderListLength,
@@ -80,7 +81,7 @@ export function InfiniteTokenListSwap({
       >
         <div className={'flex w-full flex-1'}>
           <div className={`flex gap-2`}>
-            <Icon
+            <IconWithFallback
               className={`rounded-circle h-[24px] w-[24px] border my-auto
                                 border-solid dark:border-black-4 border-grey-4`}
               src={loadIconImage(curToken?.logoURI, mode)}
@@ -115,7 +116,7 @@ export function InfiniteTokenListSwap({
                                     className={'to-brand-secondaryGradient-secondary/50 gap-1 h-[18px]'}
                                   >
                                     <h6 className={''}>{truncateAddress(curToken?.address, 3)}</h6>
-                                    <Icon
+                                    <IconWithFallback
                                       src={`/img/assets/arrowcircle-${mode}.svg`}
                                       className={'!h-[15px] !w-[15px] !min-h-[15px] !min-w-[15px]'}
                                     />
