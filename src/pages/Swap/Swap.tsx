@@ -1,13 +1,22 @@
 import React, { FC, useMemo, useState } from 'react'
 import {
-  Button, cn, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+  Button,
+  cn,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   Icon,
   IconTooltip,
-  Input, InputElementLeft, InputGroup,
-  IntemediaryToast, IntemediaryToastHeading,
+  Input,
+  InputElementLeft,
+  InputGroup,
+  IntemediaryToast,
+  IntemediaryToastHeading,
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
+  Tooltip, TooltipContent, TooltipTrigger
 } from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { useDarkMode } from '@/context'
@@ -27,7 +36,6 @@ export const Swap: FC = () => {
   const { isMobile } = useBreakPoint()
   const {
     slippage,
-    isCustomSlippage,
     setSlippage,
     selectedTokenA,
     selectedTokenB,
@@ -41,7 +49,7 @@ export const Swap: FC = () => {
   const { balance, publicKey } = useWalletBalance()
   const [value, setValue] = useState(slippage)
   const [invertPrice, setInvertPrice] = useBoolean(false)
-  const localIsCustomSlippage = isCustomSlippage || !BASE_SLIPPAGE.includes(value)
+  const localIsCustomSlippage = !BASE_SLIPPAGE.includes(value)
 
   const handleSlippageSave = () => {
     setSlippage(value)
@@ -89,197 +97,262 @@ export const Swap: FC = () => {
   const networkFee = 0.0005
   const gfxFee = 0.0005
   const minimumReceivedQuote = 0.00
-  return <div className={`
+  return (
+    <div
+      className={`
 mt-8 flex items-center justify-center
-`}>
-    <div className={`max-w-[calc(100vw_-_20px)] md:max-w-[528px] w-full flex flex-col border-1 
-    border-solid border-border-lightmode-secondary 
-      dark:border-border-darkmode-secondary rounded-[10px]`}>
-      <div className={`flex items-center p-2.5 border-b-1 border-solid border-solid border-border-lightmode-secondary 
-      dark:border-border-darkmode-secondary gap-2.5`}>
-        <h3 className={'mr-auto text-text-lightmode-primary dark:text-text-darkmode-primary'}>
-          Swap
-        </h3>
-        <Icon src={'/img/assets/refresh.svg'} onClick={handleRefresh} />
-        <Popover modal={false}>
-          <PopoverTrigger asChild>
-            <Button
-              variant={'outline'}
-              colorScheme={isDarkMode ? 'default' : 'blue'}
-              className={'bg-white'}
-              iconLeft={<Icon src={`img/assets/footer_filter_${mode}.svg`} size="sm" />}
-            >
-              <span className="font-bold text-regular text-black-4 dark:text-white">
-                {isNaN(slippage) ? '0.00' : slippage.toFixed(2)}%
-              </span>
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className={`flex flex-col max-sm:w-screen max-sm:rounded-b-none gap-2.5`}
-                          sideOffset={isMobile ? -44 : 5}
-                          align={isMobile ? 'center' : 'end'}
-                          alignOffset={0}
-          >
-            <div className={'flex gap-1 items-center'}>
-              <h5>Liquidity Slippage</h5>
-              <IconTooltip tooltipType={'outline'}>
-                <span className="font-semibold text-tiny">
-                  The maximum slippage that you are willing to accept for this transaction.
+`}
+    >
+      <div
+        className={`max-w-[calc(100vw_-_20px)] md:max-w-[528px] w-full flex flex-col border-1 
+    border-solid border-border-lightmode-secondary bg-white dark:bg-background-darkmode-secondary
+      dark:border-border-darkmode-secondary rounded-[10px]`}
+      >
+        <div
+          className={`flex items-center p-2.5 border-b-1 border-solid border-border-lightmode-secondary 
+      dark:border-border-darkmode-secondary gap-2.5`}
+        >
+          <h3 className={'mr-auto text-text-lightmode-primary dark:text-text-darkmode-primary'}>Swap</h3>
+          <Button colorScheme={isDarkMode ? 'white' : 'blue'} variant={'outline'}
+                  iconLeft={<Icon src={`/img/assets/refresh_${mode}.svg`} size={'sm'}/>}
+                  onClick={handleRefresh}
+                  className={'p-1.25 aspect-square'}
+          />
+          <Popover modal={false}>
+            <PopoverTrigger asChild>
+              <Button
+                variant={'outline'}
+                colorScheme={isDarkMode ? 'default' : 'blue'}
+                className={'bg-white'}
+                iconLeft={<Icon src={`img/assets/footer_filter_${mode}.svg`} size="sm" />}
+              >
+                <span className="font-bold text-regular text-black-4 dark:text-white">
+                  {isNaN(slippage) ? '0.00' : slippage.toFixed(2)}%
                 </span>
-              </IconTooltip>
-            </div>
-            <RadioOptionGroup defaultValue={'0.1'}
-                              value={localIsCustomSlippage ? 'custom' : value.toString()}
-                              options={[
-                                {
-                                  label: '0.1%',
-                                  value: '0.1',
-                                  onClick: () => setValue(0.1)
-                                },
-                                {
-                                  label: '0.5%',
-                                  value: '0.5',
-                                  onClick: () => setValue(0.5)
-                                },
-                                {
-                                  label: '1%',
-                                  value: '1',
-                                  onClick: () => setValue(1)
-                                },
-                                {
-                                  label: 'Custom',
-                                  value: 'custom',
-                                  onClick: () => setValue(0)
-                                }
-                              ]} />
-            <Input
-              className={'text-right'}
-              value={value}
-              onChange={(e) => setValue(parseFloat(e.target.value))}
-              type={'number'}
-            />
-            <Button fullWidth colorScheme={'blue'} disabled={value == slippage || value <= 0.0}
-                    onClick={handleSlippageSave}>
-              Save
-            </Button>
-          </PopoverContent>
-        </Popover>
-      </div>
-      <div className={'flex flex-col px-2.5 py-3.75 gap-3.75'}>
-        <div className={'flex w-full flex-col gap-3.75'}>
-          <div className={'flex w-full'}>
-            <h4 className={'text-text-lightmode-primary dark:text-text-darkmode-primary'}>
-              You're Selling:
-            </h4>
-            <p className={cn(`ml-auto text-b2 cursor-pointer`,
-              balance[selectedTokenB?.address].tokenAmount.uiAmount <= 0 &&
-              `text-text-lightmode-tertiary dark:text-text-darkmode-tertiary cursor-not-allowed`)}
-               onClick={() => {
-                 setAmountTokenA(balance[selectedTokenA?.address].tokenAmount.uiAmountString)
-                 // calculate amount B
-                 // setAmountTokenB(here)
-               }}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className={`flex flex-col max-sm:w-screen max-sm:rounded-b-none gap-2.5`}
+              sideOffset={isMobile ? -44 : 5}
+              align={isMobile ? 'center' : 'end'}
+              alignOffset={0}
             >
-              Balance: {numberFormatter(balance[selectedTokenA?.address].tokenAmount.uiAmount)} {selectedTokenA?.symbol}
-            </p>
-          </div>
-          <TokenSelectInput token={selectedTokenA} setToken={setSelectedTokenA} otherToken={selectedTokenB}
-                            handleChange={(e) => handleChange(e, true)} amountToken={amountTokenA} />
-        </div>
-        <Icon src={`/img/assets/swap-${mode}.svg`}
-              className={cn(`min-w-[40px] min-h-[45px] mx-auto cursor-not-allowed opacity-75`,
-                selectedTokenA && selectedTokenB && `cursor-pointer opacity-100`)}
-              onClick={() => {
-                setSelectedTokenB(selectedTokenA)
-                setSelectedTokenA(selectedTokenB)
-                setAmountTokenA(amountTokenB)
-                setAmountTokenB(amountTokenA)
-              }}
-        />
-        <div className={'flex w-full flex-col gap-3.75'}>
-          <div className={'flex w-full'}>
-            <h4 className={'text-text-lightmode-primary dark:text-text-darkmode-primary'}>
-              You're Buying:
-            </h4>
-            <p className={cn(`ml-auto text-b2 cursor-pointer`,
-              balance[selectedTokenB?.address].tokenAmount.uiAmount <= 0 &&
-              `text-text-lightmode-tertiary dark:text-text-darkmode-tertiary cursor-not-allowed`)}
-               onClick={() => {
-                 setAmountTokenB(balance[selectedTokenB?.address].tokenAmount.uiAmountString)
-                 // calculate amount A
-                 // setAmountTokenA(here)
-               }}
-            >
-              Balance: {numberFormatter(balance[selectedTokenB?.address].tokenAmount.uiAmount)} {selectedTokenB?.symbol}
-            </p>
-          </div>
-          <TokenSelectInput token={selectedTokenB} setToken={setSelectedTokenB} otherToken={selectedTokenA}
-                            handleChange={(e) => handleChange(e, false)} amountToken={amountTokenB} />
-        </div>
-        {publicKey && selectedTokenA && selectedTokenB &&
-          <div className={`flex flex-col gap-1.25 font-semibold text-text-lightmode-secondary
-           dark:text-text-darkmode-secondary`}>
-            <div className={`flex gap-1.25 text-b2 text-text-lightmode-primary dark:text-text-darkmode-primary
-            items-center
-            `}>
-              <Icon src={loadIconImage(invertPrice ? selectedTokenB?.logoURI : selectedTokenA?.logoURI, mode)}
-                    size={'xs'} className={'rounded-circle'} />
-              <p>1 {invertPrice ? selectedTokenB?.symbol : selectedTokenA?.symbol} ≈ </p>
-              <Icon src={loadIconImage(invertPrice ? selectedTokenA?.logoURI : selectedTokenB?.logoURI, mode)}
-                    size={'xs'} className={'rounded-circle'} />
-              <p>
-                {invertPrice ? approxAmountA : approxAmountB}&nbsp;
-                {invertPrice ? selectedTokenA?.symbol : selectedTokenB?.symbol}
-              </p>
-              <Icon src={`/img/assets/switch-value-${mode}.svg`} size={'xs'} className={'ml-auto cursor-pointer'}
-                    onClick={setInvertPrice.toggle}
+              <div className={'flex gap-1 items-center'}>
+                <Tooltip>
+                  <TooltipTrigger asChild variant={'dotted'}
+                                  className={`text-text-lightmode-primary dark:text-text-darkmode-primary
+                                  underline-offset-4
+                                  `}>
+                    <h5>Liquidity Slippage</h5>
+                  </TooltipTrigger>
+                  <TooltipContent asChild>
+                    <span className="font-semibold text-tiny">
+                      The maximum slippage that you are willing to accept for this transaction.
+                    </span>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+              <RadioOptionGroup
+                defaultValue={'0.1'}
+                value={localIsCustomSlippage ? 'custom' : value.toString()}
+                options={[
+                  {
+                    label: '0.1%',
+                    value: '0.1',
+                    onClick: () => setValue(0.1)
+                  },
+                  {
+                    label: '0.5%',
+                    value: '0.5',
+                    onClick: () => setValue(0.5)
+                  },
+                  {
+                    label: '1%',
+                    value: '1',
+                    onClick: () => setValue(1)
+                  },
+                  {
+                    label: 'Custom',
+                    value: 'custom',
+                    onClick: () => setValue(0)
+                  }
+                ]}
               />
-              <Icon src={'/img/assets/toast-loader.svg'} size={'sm'} className={'animate-spin'} />
-            </div>
-            <div className={'flex font-semibold text-b2 items-center'}>
-              <p>Price Impact</p>
-              <p className={cn(`text-text-green ml-auto`, getImpactValue(impactPercent))}>{`< ${impactPercent}%`}</p>
-            </div>
-            <div className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
-            text-b2 items-center`}>
-              <p>Network Fee</p>
-              <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>
-                {networkFee} SOL
+              <Input
+                className={'text-right'}
+                value={value}
+                onChange={(e) => setValue(parseFloat(e.target.value))}
+                type={'number'}
+              />
+              <Button
+                fullWidth
+                colorScheme={'blue'}
+                disabled={value == slippage || value <= 0.0}
+                onClick={handleSlippageSave}
+              >
+                Save
+              </Button>
+            </PopoverContent>
+          </Popover>
+        </div>
+        <div className={'flex flex-col px-2.5 py-3.75 gap-3.75'}>
+          <div className={'flex w-full flex-col gap-3.75'}>
+            <div className={'flex w-full'}>
+              <h4 className={'text-text-lightmode-primary dark:text-text-darkmode-primary'}>You're Selling:</h4>
+              <p
+                className={cn(
+                  `ml-auto text-b2 cursor-pointer`,
+                  balance[selectedTokenB?.address].tokenAmount.uiAmount <= 0 &&
+                    `text-text-lightmode-tertiary dark:text-text-darkmode-tertiary cursor-not-allowed`
+                )}
+                onClick={() => {
+                  setAmountTokenA(balance[selectedTokenA?.address].tokenAmount.uiAmountString)
+                  // calculate amount B
+                  // setAmountTokenB(here)
+                }}
+              >
+                Balance: {numberFormatter(balance[selectedTokenA?.address].tokenAmount.uiAmount)}{' '}
+                {selectedTokenA?.symbol}
               </p>
             </div>
-            <div className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
-            text-b2 justify-center items-center gap-1 items-center`}>
-              <p>GooseFX Fee</p>
-              <IconTooltip tooltipType={'outline'}>
-                <span className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>
-                  The fee that GooseFX charges for this transaction.
-                </span>
-              </IconTooltip>
-              <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>
-                {gfxFee} SOL
+            <TokenSelectInput
+              token={selectedTokenA}
+              setToken={setSelectedTokenA}
+              otherToken={selectedTokenB}
+              handleChange={(e) => handleChange(e, true)}
+              amountToken={amountTokenA}
+            />
+          </div>
+          <Icon
+            src={`/img/assets/swap-${mode}.svg`}
+            className={cn(
+              `min-w-[40px] min-h-[45px] mx-auto cursor-not-allowed opacity-75`,
+              selectedTokenA && selectedTokenB && `cursor-pointer opacity-100`
+            )}
+            onClick={() => {
+              setSelectedTokenB(selectedTokenA)
+              setSelectedTokenA(selectedTokenB)
+              setAmountTokenA(amountTokenB)
+              setAmountTokenB(amountTokenA)
+            }}
+          />
+          <div className={'flex w-full flex-col gap-3.75'}>
+            <div className={'flex w-full'}>
+              <h4 className={'text-text-lightmode-primary dark:text-text-darkmode-primary'}>You're Buying:</h4>
+              <p
+                className={cn(
+                  `ml-auto text-b2 cursor-pointer`,
+                  balance[selectedTokenB?.address].tokenAmount.uiAmount <= 0 &&
+                    `text-text-lightmode-tertiary dark:text-text-darkmode-tertiary cursor-not-allowed`
+                )}
+                onClick={() => {
+                  setAmountTokenB(balance[selectedTokenB?.address].tokenAmount.uiAmountString)
+                  // calculate amount A
+                  // setAmountTokenA(here)
+                }}
+              >
+                Balance: {numberFormatter(balance[selectedTokenB?.address].tokenAmount.uiAmount)}{' '}
+                {selectedTokenB?.symbol}
               </p>
             </div>
-            <div className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
-            text-b2 items-center`}>
-              <p>Minimum Received</p>
-              <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>
-                {minimumReceivedQuote} {selectedTokenB.symbol}
-              </p>
+            <TokenSelectInput
+              token={selectedTokenB}
+              setToken={setSelectedTokenB}
+              otherToken={selectedTokenA}
+              handleChange={(e) => handleChange(e, false)}
+              amountToken={amountTokenB}
+            />
+          </div>
+          {publicKey && selectedTokenA && selectedTokenB && (
+            <div
+              className={`flex flex-col gap-1.25 font-semibold text-text-lightmode-secondary
+           dark:text-text-darkmode-secondary`}
+            >
+              <div
+                className={`flex gap-1.25 text-b2 text-text-lightmode-primary dark:text-text-darkmode-primary
+            items-center
+            `}
+              >
+                <Icon
+                  src={loadIconImage(invertPrice ? selectedTokenB?.logoURI : selectedTokenA?.logoURI, mode)}
+                  size={'xs'}
+                  className={'rounded-circle'}
+                />
+                <p>1 {invertPrice ? selectedTokenB?.symbol : selectedTokenA?.symbol} ≈ </p>
+                <Icon
+                  src={loadIconImage(invertPrice ? selectedTokenA?.logoURI : selectedTokenB?.logoURI, mode)}
+                  size={'xs'}
+                  className={'rounded-circle'}
+                />
+                <p>
+                  {invertPrice ? approxAmountA : approxAmountB}&nbsp;
+                  {invertPrice ? selectedTokenA?.symbol : selectedTokenB?.symbol}
+                </p>
+                <Icon
+                  src={`/img/assets/switch-value-${mode}.svg`}
+                  size={'xs'}
+                  className={'ml-auto cursor-pointer'}
+                  onClick={setInvertPrice.toggle}
+                />
+                <Icon src={'/img/assets/toast-loader.svg'} size={'sm'} className={'animate-spin'} />
+              </div>
+              <div className={'flex font-semibold text-b2 items-center'}>
+                <p>Price Impact</p>
+                <p
+                  className={cn(`text-text-green ml-auto`, getImpactValue(impactPercent))}
+                >{`< ${impactPercent}%`}</p>
+              </div>
+              <div
+                className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
+            text-b2 items-center`}
+              >
+                <p>Network Fee</p>
+                <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>
+                  {networkFee} SOL
+                </p>
+              </div>
+              <div
+                className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
+            text-b2 justify-center items-center gap-1 items-center`}
+              >
+                <p>GooseFX Fee</p>
+                <IconTooltip tooltipType={'outline'}>
+                  <span className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>
+                    The fee that GooseFX charges for this transaction.
+                  </span>
+                </IconTooltip>
+                <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>
+                  {gfxFee} SOL
+                </p>
+              </div>
+              <div
+                className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
+            text-b2 items-center`}
+              >
+                <p>Minimum Received</p>
+                <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>
+                  {minimumReceivedQuote} {selectedTokenB.symbol}
+                </p>
+              </div>
             </div>
-          </div>}
-        {!publicKey ?
-          <Connect /> : <Button
-            onClick={handleSwap}
-            variant={'primary'}
-            colorScheme={'blue'}
-            fullWidth
-            disabled={!selectedTokenA || !selectedTokenB || !amountTokenA || !amountTokenB}
-          >
-            Swap
-          </Button>}
+          )}
+          {!publicKey ? (
+            <Connect />
+          ) : (
+            <Button
+              onClick={handleSwap}
+              variant={'primary'}
+              colorScheme={'blue'}
+              fullWidth
+              disabled={!selectedTokenA || !selectedTokenB || !amountTokenA || !amountTokenB}
+            >
+              Swap
+            </Button>
+          )}
+        </div>
       </div>
-
     </div>
-  </div>
+  )
 }
 
 function TokenSelectInput({
