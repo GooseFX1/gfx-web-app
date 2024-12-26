@@ -6,7 +6,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  IconTooltip,
   Input,
   InputElementLeft,
   InputGroup,
@@ -15,7 +14,9 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Tooltip, TooltipContent, TooltipTrigger
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
 } from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { useDarkMode } from '@/context'
@@ -53,10 +54,13 @@ export const Swap: FC = () => {
 
   const handleSlippageSave = () => {
     setSlippage(value)
-    toast(<IntemediaryToast>
-      <IntemediaryToastHeading stage={'success'}>Settings Saved!</IntemediaryToastHeading>
-      <p className={cn(`pt-1`)}>Swap slippage update to {value}%.</p>
-    </IntemediaryToast>, { id: 'slippage-save' })
+    toast(
+      <IntemediaryToast>
+        <IntemediaryToastHeading stage={'success'}>Settings Saved!</IntemediaryToastHeading>
+        <p className={cn(`pt-1`)}>Swap slippage update to {value}%.</p>
+      </IntemediaryToast>,
+      { id: 'slippage-save' }
+    )
   }
   const handleRefresh = () => {
     console.log('here do something')
@@ -71,18 +75,20 @@ export const Swap: FC = () => {
     }
   }
   const { approxAmountB, approxAmountA } = useMemo(() => {
-    if (!selectedTokenA || !selectedTokenB) return {
-      approxAmountB: '0.00',
-      approxAmountA: '0.00'
-    }
+    if (!selectedTokenA || !selectedTokenB)
+      return {
+        approxAmountB: '0.00',
+        approxAmountA: '0.00'
+      }
 
     const balanceA = balance[selectedTokenA.address]
     const balanceB = balance[selectedTokenB.address]
 
-    if (balanceA.price == 0 || balanceB.price == 0) return {
-      approxAmountB: '0.00',
-      approxAmountA: '0.00'
-    }
+    if (balanceA.price == 0 || balanceB.price == 0)
+      return {
+        approxAmountB: '0.00',
+        approxAmountA: '0.00'
+      }
 
     return {
       approxAmountB: balanceA.price / balanceB.price,
@@ -96,7 +102,7 @@ export const Swap: FC = () => {
   const impactPercent = 0.1
   const networkFee = 0.0005
   const gfxFee = 0.0005
-  const minimumReceivedQuote = 0.00
+  const minimumReceivedQuote = 0.0
   return (
     <div
       className={`
@@ -113,10 +119,12 @@ mt-8 flex items-center justify-center
       dark:border-border-darkmode-secondary gap-2.5`}
         >
           <h3 className={'mr-auto text-text-lightmode-primary dark:text-text-darkmode-primary'}>Swap</h3>
-          <Button colorScheme={isDarkMode ? 'white' : 'blue'} variant={'outline'}
-                  iconLeft={<IconWithFallback src={`/img/assets/refresh_${mode}.svg`} size={'sm'}/>}
-                  onClick={handleRefresh}
-                  className={'p-1.25 aspect-square'}
+          <Button
+            colorScheme={isDarkMode ? 'white' : 'blue'}
+            variant={'outline'}
+            iconLeft={<IconWithFallback src={`/img/assets/refresh_${mode}.svg`} size={'sm'} />}
+            onClick={handleRefresh}
+            className={'p-1.25 aspect-square'}
           />
           <Popover modal={false}>
             <PopoverTrigger asChild>
@@ -139,10 +147,13 @@ mt-8 flex items-center justify-center
             >
               <div className={'flex gap-1 items-center'}>
                 <Tooltip>
-                  <TooltipTrigger asChild variant={'dotted'}
-                                  className={`text-text-lightmode-primary dark:text-text-darkmode-primary
+                  <TooltipTrigger
+                    asChild
+                    variant={'dotted'}
+                    className={`text-text-lightmode-primary dark:text-text-darkmode-primary
                                   underline-offset-4
-                                  `}>
+                                  `}
+                  >
                     <h5>Liquidity Slippage</h5>
                   </TooltipTrigger>
                   <TooltipContent asChild>
@@ -315,12 +326,16 @@ mt-8 flex items-center justify-center
                 className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
             text-b2 justify-center items-center gap-1 items-center`}
               >
-                <p>GooseFX Fee</p>
-                <IconTooltip tooltipType={'outline'}>
-                  <span className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>
-                    The fee that GooseFX charges for this transaction.
-                  </span>
-                </IconTooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild variant={'dotted'}>
+                    <p>GooseFX Fee</p>
+                  </TooltipTrigger>
+                  <TooltipContent asChild>
+                    <span className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>
+                      The fee that GooseFX charges for this transaction.
+                    </span>
+                  </TooltipContent>
+                </Tooltip>
                 <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>
                   {gfxFee} SOL
                 </p>
@@ -356,12 +371,12 @@ mt-8 flex items-center justify-center
 }
 
 function TokenSelectInput({
-                            token,
-                            setToken,
-                            otherToken,
-                            handleChange,
-                            amountToken
-                          }: {
+  token,
+  setToken,
+  otherToken,
+  handleChange,
+  amountToken
+}: {
   token: JupToken | null
   setToken: (token: JupToken) => void
   otherToken: JupToken | null
@@ -374,84 +389,92 @@ function TokenSelectInput({
   const { publicKey } = useWalletBalance()
   const tokenRenderList: JupToken[] = searchValue.length > 0 || !publicKey ? tokens : topBalancesWithTokenList
 
-  return <InputGroup
-    leftItem={
-      <InputElementLeft>
-        <DropdownMenu open={isDropDownOpen} onOpenChange={setIsDropdownOpen.set}>
-          <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
-            <Button
-              colorScheme={'secondaryGradient'}
-              variant={'outline'}
-              className="min-w-[115px] h-[35px] rounded-full flex flex-row justify-between"
-              iconLeft={
-                token ? (
-                  <IconWithFallback src={loadIconImage(token?.logoURI, mode)} size={'sm'}
-                                    className={'rounded-circle'} />
-                ) : null
-              }
-              iconRight={
-                <IconWithFallback
-                  style={{
-                    transform: `rotate(${isDropDownOpen ? '180deg' : '0deg'})`,
-                    transition: 'transform 0.2s ease-in-out'
-                  }}
-                  src={`/img/assets/farm-chevron-${mode}.svg`}
-                  className={cn(!isDarkMode ? 'stroke-background-blue' : '')}
-                  size={'sm'}
-                />
-              }
-              disabled={false}
+  return (
+    <InputGroup
+      leftItem={
+        <InputElementLeft>
+          <DropdownMenu open={isDropDownOpen} onOpenChange={setIsDropdownOpen.set}>
+            <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
+              <Button
+                colorScheme={'secondaryGradient'}
+                variant={'outline'}
+                className="min-w-[115px] h-[35px] rounded-full flex flex-row justify-between"
+                iconLeft={
+                  token ? (
+                    <IconWithFallback
+                      src={loadIconImage(token?.logoURI, mode)}
+                      size={'sm'}
+                      className={'rounded-circle'}
+                    />
+                  ) : null
+                }
+                iconRight={
+                  <IconWithFallback
+                    style={{
+                      transform: `rotate(${isDropDownOpen ? '180deg' : '0deg'})`,
+                      transition: 'transform 0.2s ease-in-out'
+                    }}
+                    src={`/img/assets/farm-chevron-${mode}.svg`}
+                    className={cn(!isDarkMode ? 'stroke-background-blue' : '')}
+                    size={'sm'}
+                  />
+                }
+                disabled={false}
+              >
+                {token ? token?.symbol : 'Select Token'}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className={cn(
+                `flex flex-col mt-1 z-[1001] h-auto max-h-[396px] w-[464px] max-sm:w-[338px] relative pb-0`,
+                !publicKey && !searchValue.trim().length && 'pb-2'
+              )}
+              portal={true}
+              align={'start'}
             >
-              {token ? token?.symbol : 'Select Token'}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className={cn(`flex flex-col mt-1 z-[1001] h-auto max-h-[396px] w-[464px] max-sm:w-[338px] relative pb-0`,
-              (!publicKey && !searchValue.trim().length) && 'pb-2'
-            )}
-            portal={true}
-            align={'start'}
-          >
-            <SearchBar
-              groupClassName={'sticky'}
-              placeholder={'Search by token name symbol or address'}
-              value={searchValue}
-              onKeyDown={(e) => e.stopPropagation()}
-              onChange={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                setSearchValue(e.target.value)
-              }}
-              onClear={() => setSearchValue('')}
-              isLoading={isLoadingTokenList}
-            />
-            {searchValue && tokenRenderList.length == 0 && !isLoadingTokenList ? (
-              <div className={'mb-auto p-2'}>No Tokens Found..</div>
-            ) : null}
-            {tokenRenderList.length > 0 ? <InfiniteTokenListSwap
-              useRenderListLength={searchValue.trim().length > 0}
-              tokenRenderList={tokenRenderList}
-              onTokenSelect={(token) => {
-                setToken(token)
-                setSearchValue('')
-              }}
-              RenderAs={DropdownMenuItem}
-              checkDisabled={(t) => t?.address == otherToken?.address || isLoadingTokenList}
-            /> : null}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </InputElementLeft>
-    }
-  >
-    <Input
-      type="text"
-      placeholder={`0.00 ${token ? token?.symbol : ''}`}
-      onChange={(e) => handleChange(e, true)}
-      value={amountToken}
-      className={'h-[45px] text-right'}
-      // disabled={!token}
-    />
-  </InputGroup>
+              <SearchBar
+                groupClassName={'sticky'}
+                placeholder={'Search by token name symbol or address'}
+                value={searchValue}
+                onKeyDown={(e) => e.stopPropagation()}
+                onChange={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  setSearchValue(e.target.value)
+                }}
+                onClear={() => setSearchValue('')}
+                isLoading={isLoadingTokenList}
+              />
+              {searchValue && tokenRenderList.length == 0 && !isLoadingTokenList ? (
+                <div className={'mb-auto p-2'}>No Tokens Found..</div>
+              ) : null}
+              {tokenRenderList.length > 0 ? (
+                <InfiniteTokenListSwap
+                  useRenderListLength={searchValue.trim().length > 0}
+                  tokenRenderList={tokenRenderList}
+                  onTokenSelect={(token) => {
+                    setToken(token)
+                    setSearchValue('')
+                  }}
+                  RenderAs={DropdownMenuItem}
+                  checkDisabled={(t) => t?.address == otherToken?.address || isLoadingTokenList}
+                />
+              ) : null}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </InputElementLeft>
+      }
+    >
+      <Input
+        type="text"
+        placeholder={`0.00 ${token ? token?.symbol : ''}`}
+        onChange={(e) => handleChange(e, true)}
+        value={amountToken}
+        className={'h-[45px] text-right'}
+        // disabled={!token}
+      />
+    </InputGroup>
+  )
 }
 
 function getImpactValue(impactPercent: number) {
