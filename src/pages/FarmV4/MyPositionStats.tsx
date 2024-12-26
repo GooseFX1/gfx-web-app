@@ -1,10 +1,10 @@
 import { FC, ReactElement } from 'react'
 import { useDarkMode, useGamma } from '@/context'
-import { Icon } from 'gfx-component-lib'
 import { bigNumberFormatter, loadIconImage } from '@/utils'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
 import Decimal from 'decimal.js-light'
+import { IconWithFallback } from '@/components/common/IconWithFallback'
 
 export const MyPositionStats: FC<{
   withdrawableBalanceA: BN
@@ -39,7 +39,7 @@ export const MyPositionStats: FC<{
             Token A
           </span>
         <span className="!text-regular font-semibold dark:text-grey-8 text-black-4 inline-flex gap-1">
-            <Icon
+            <IconWithFallback
               src={loadIconImage(selectedCard.mintA.logoURI, mode)} size={'sm'} />
           {bigNumberFormatter(new BigNumber(
             new Decimal(withdrawableBalanceA?.toString())
@@ -56,7 +56,7 @@ export const MyPositionStats: FC<{
             Token B
           </span>
         <span className="!text-regular font-semibold dark:text-grey-8 text-black-4 inline-flex gap-1">
-            <Icon src={loadIconImage(selectedCard.mintB.logoURI, mode)} size={'sm'} />
+            <IconWithFallback src={loadIconImage(selectedCard.mintB.logoURI, mode)} size={'sm'} />
           {bigNumberFormatter(new BigNumber(
             new Decimal(withdrawableBalanceB?.toString())
               .div(Math.pow(10, selectedCardPool?.mint1Decimals || 0)).toString()

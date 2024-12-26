@@ -1,8 +1,9 @@
 import { useDarkMode, useGamma } from '@/context'
 import { FC } from 'react'
-import { Button, DialogTitle, Icon } from 'gfx-component-lib'
+import { Button, DialogTitle } from 'gfx-component-lib'
 import RewardsClose from '@/assets/rewards_close.svg?react'
 import { loadIconImage } from '@/utils'
+import { IconWithFallback } from '@/components/common/IconWithFallback'
 
 export const DepositWithdrawHeader: FC<{ handleClose: () => void }> = ({ handleClose }): JSX.Element => {
   const { selectedCard } = useGamma()
@@ -13,12 +14,12 @@ export const DepositWithdrawHeader: FC<{ handleClose: () => void }> = ({ handleC
         border-solid dark:border-black-4 border-grey-4 px-2.5"
     >
       <div className="flex relative w-[80px]">
-        <Icon
+        <IconWithFallback
           src={loadIconImage(selectedCard?.mintA?.logoURI, mode)}
           size="lg"
           className={'border-solid dark:border-black-2 border-white border-[3px] rounded-full'}
         />
-        <Icon
+        <IconWithFallback
           src={loadIconImage(selectedCard?.mintB?.logoURI, mode)}
           size="lg"
           className={

@@ -1,10 +1,11 @@
 import { FC, useMemo } from 'react'
-import { Badge, cn, Icon, Skeleton } from 'gfx-component-lib'
+import { Badge, cn, Skeleton } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import useBreakpoint from '../../hooks/useBreakPoint'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { loadIconImage, numberFormatter } from '@/utils'
+import { IconWithFallback } from '@/components/common/IconWithFallback'
 
 const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): JSX.Element => {
   const { setSelectedCard, setOpenDepositWithdrawSlider, viewRange } = useGamma()
@@ -65,12 +66,12 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
       }}
     >
       <div className="flex flex-row items-center">
-        <Icon
+        <IconWithFallback
           src={loadIconImage(pool.mintA.logoURI, mode)}
           className="border-solid dark:border-black-2 border-white
           border-[2px] rounded-full h-[25px] w-[25px]"
         />
-        <Icon
+        <IconWithFallback
           src={loadIconImage(pool.mintB.logoURI, mode)}
           className="relative right-[10px] border-solid dark:border-black-2
           border-white border-[2px] rounded-full h-[25px] w-[25px]"
@@ -87,7 +88,7 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
           {numberFormatter(0.2)}%
         </div>
 
-        <Icon src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
+        <IconWithFallback src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
         {pool.poolCreator === base58PublicKey && (
           <Badge size="sm" variant="default" className={'ml-1'}>
             Owner

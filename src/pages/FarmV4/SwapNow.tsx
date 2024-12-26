@@ -1,8 +1,9 @@
 import { FC, ReactElement, useCallback } from 'react'
 import { useDarkMode, useGamma } from '@/context'
-import { Button, Icon } from 'gfx-component-lib'
+import { Button } from 'gfx-component-lib'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { loadIconImage } from '@/utils'
+import { IconWithFallback } from '@/components/common/IconWithFallback'
 
 const SwapNow: FC = (): ReactElement => {
   const { selectedCard } = useGamma()
@@ -24,7 +25,7 @@ const SwapNow: FC = (): ReactElement => {
       <div className={`w-full p-[1px] bg-gradient-1 rounded-tiny`}>
         <div className={`bg-grey-5 dark:bg-black-1 h-full rounded-tiny p-2.5`}>
           <div className="flex flex-row items-center">
-            <Icon src="img/assets/jupiter.svg" size="sm" />
+            <IconWithFallback src="img/assets/jupiter.svg" size="sm" />
             <span className="font-poppins text-average font-semibold dark:text-grey-8 text-black-4 ml-2">
               Swap Now!
             </span>
@@ -41,7 +42,7 @@ const SwapNow: FC = (): ReactElement => {
           >
             {selectedCard ? (
               <span className={'flex align-center justify-center font-bold'}>
-                <Icon
+                <IconWithFallback
                   src={loadIconImage(selectedCard?.mintB?.logoURI, mode)}
                   size="sm"
                   className={'border-solid border-white border-1 rounded-full mr-1'}

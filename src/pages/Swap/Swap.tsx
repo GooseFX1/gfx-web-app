@@ -6,7 +6,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Icon,
   IconTooltip,
   Input,
   InputElementLeft,
@@ -30,6 +29,7 @@ import SearchBar from '@/components/common/SearchBar'
 import useBoolean from '@/hooks/useBoolean'
 import { InfiniteTokenListSwap } from '@/pages/Swap/InfiniteTokenListSwap'
 import { Connect } from '@/layouts'
+import { IconWithFallback } from '@/components/common/IconWithFallback'
 
 export const Swap: FC = () => {
   const { isDarkMode, mode } = useDarkMode()
@@ -114,7 +114,7 @@ mt-8 flex items-center justify-center
         >
           <h3 className={'mr-auto text-text-lightmode-primary dark:text-text-darkmode-primary'}>Swap</h3>
           <Button colorScheme={isDarkMode ? 'white' : 'blue'} variant={'outline'}
-                  iconLeft={<Icon src={`/img/assets/refresh_${mode}.svg`} size={'sm'}/>}
+                  iconLeft={<IconWithFallback src={`/img/assets/refresh_${mode}.svg`} size={'sm'}/>}
                   onClick={handleRefresh}
                   className={'p-1.25 aspect-square'}
           />
@@ -124,7 +124,7 @@ mt-8 flex items-center justify-center
                 variant={'outline'}
                 colorScheme={isDarkMode ? 'default' : 'blue'}
                 className={'bg-white'}
-                iconLeft={<Icon src={`img/assets/footer_filter_${mode}.svg`} size="sm" />}
+                iconLeft={<IconWithFallback src={`img/assets/footer_filter_${mode}.svg`} size="sm" />}
               >
                 <span className="font-bold text-regular text-black-4 dark:text-white">
                   {isNaN(slippage) ? '0.00' : slippage.toFixed(2)}%
@@ -223,7 +223,7 @@ mt-8 flex items-center justify-center
               amountToken={amountTokenA}
             />
           </div>
-          <Icon
+          <IconWithFallback
             src={`/img/assets/swap-${mode}.svg`}
             className={cn(
               `min-w-[40px] min-h-[45px] mx-auto cursor-not-allowed opacity-75`,
@@ -273,13 +273,13 @@ mt-8 flex items-center justify-center
             items-center
             `}
               >
-                <Icon
+                <IconWithFallback
                   src={loadIconImage(invertPrice ? selectedTokenB?.logoURI : selectedTokenA?.logoURI, mode)}
                   size={'xs'}
                   className={'rounded-circle'}
                 />
                 <p>1 {invertPrice ? selectedTokenB?.symbol : selectedTokenA?.symbol} ≈ </p>
-                <Icon
+                <IconWithFallback
                   src={loadIconImage(invertPrice ? selectedTokenA?.logoURI : selectedTokenB?.logoURI, mode)}
                   size={'xs'}
                   className={'rounded-circle'}
@@ -288,13 +288,13 @@ mt-8 flex items-center justify-center
                   {invertPrice ? approxAmountA : approxAmountB}&nbsp;
                   {invertPrice ? selectedTokenA?.symbol : selectedTokenB?.symbol}
                 </p>
-                <Icon
+                <IconWithFallback
                   src={`/img/assets/switch-value-${mode}.svg`}
                   size={'xs'}
                   className={'ml-auto cursor-pointer'}
                   onClick={setInvertPrice.toggle}
                 />
-                <Icon src={'/img/assets/toast-loader.svg'} size={'sm'} className={'animate-spin'} />
+                <IconWithFallback src={'/img/assets/toast-loader.svg'} size={'sm'} className={'animate-spin'} />
               </div>
               <div className={'flex font-semibold text-b2 items-center'}>
                 <p>Price Impact</p>
@@ -385,11 +385,12 @@ function TokenSelectInput({
               className="min-w-[115px] h-[35px] rounded-full flex flex-row justify-between"
               iconLeft={
                 token ? (
-                  <Icon src={loadIconImage(token?.logoURI, mode)} size={'sm'} className={'rounded-circle'} />
+                  <IconWithFallback src={loadIconImage(token?.logoURI, mode)} size={'sm'}
+                                    className={'rounded-circle'} />
                 ) : null
               }
               iconRight={
-                <Icon
+                <IconWithFallback
                   style={{
                     transform: `rotate(${isDropDownOpen ? '180deg' : '0deg'})`,
                     transition: 'transform 0.2s ease-in-out'
