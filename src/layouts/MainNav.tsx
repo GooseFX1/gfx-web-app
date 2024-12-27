@@ -162,25 +162,6 @@ const MobileNav: FC = () => {
               overflow-y-scroll`}
           >
             <ListItem
-              variant={pathname.includes('gamma') && 'primary'}
-              className={cn(
-                `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
-                         dark:text-text-darkmode-tertiary h-[43px]`,
-                pathname.includes('gamma') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-              )}
-              onClick={() => {
-                setIsOpen.off()
-                history.push('/gamma')
-              }}
-            >
-              <img
-                className="h-[35px] w-[35px]"
-                src={`/img/mainnav/pool-${mode}${pathname.includes('gamma') ? '-active' : '-inactive'}.svg`}
-                alt="dark"
-              />
-              &nbsp;Pools
-            </ListItem>
-            <ListItem
               variant={pathname.includes('swap') && 'primary'}
               className={cn(
                 `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
@@ -198,6 +179,25 @@ const MobileNav: FC = () => {
                 alt="dark"
               />
               &nbsp;Swap
+            </ListItem>
+            <ListItem
+              variant={pathname.includes('gamma') && 'primary'}
+              className={cn(
+                `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
+                         dark:text-text-darkmode-tertiary h-[43px]`,
+                pathname.includes('gamma') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+              )}
+              onClick={() => {
+                setIsOpen.off()
+                history.push('/gamma')
+              }}
+            >
+              <img
+                className="h-[35px] w-[35px]"
+                src={`/img/mainnav/pool-${mode}${pathname.includes('gamma') ? '-active' : '-inactive'}.svg`}
+                alt="dark"
+              />
+              &nbsp;Pools
             </ListItem>
             <ListItem
               variant={pathname.includes('ssl') && 'primary'}
@@ -294,21 +294,6 @@ const DesktopNav: FC = () => {
     <div className={`flex items-center gap-6 mx-auto`}>
       <Button
         variant={'ghost'}
-        onClick={() => history.push('/gamma')}
-        className={cn(
-          `tracking-wider flex-col gap-1.5 p-0 text-center text-h6 font-semibold font-poppins`,
-          pathname.includes('gamma') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-        )}
-      >
-        <img
-          className="!w-[26px] !h-[26px] mb-0.5"
-          src={`/img/mainnav/pool-${mode}${pathname.includes('gamma') ? '-active' : '-inactive'}.svg`}
-          alt="dark"
-        />
-        Pools
-      </Button>
-      <Button
-        variant={'ghost'}
         onClick={() => history.push('/swap')}
         className={cn(
           `tracking-wider flex-col gap-1.5 p-0 text-center text-h6 font-semibold font-poppins`,
@@ -321,6 +306,21 @@ const DesktopNav: FC = () => {
           alt="dark"
         />
         Swap
+      </Button>
+      <Button
+        variant={'ghost'}
+        onClick={() => history.push('/gamma')}
+        className={cn(
+          `tracking-wider flex-col gap-1.5 p-0 text-center text-h6 font-semibold font-poppins`,
+          pathname.includes('gamma') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+        )}
+      >
+        <img
+          className="!w-[26px] !h-[26px] mb-0.5"
+          src={`/img/mainnav/pool-${mode}${pathname.includes('gamma') ? '-active' : '-inactive'}.svg`}
+          alt="dark"
+        />
+        Pools
       </Button>
       <Button
         variant={'ghost'}
@@ -363,10 +363,7 @@ const DesktopNav: FC = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent portal={false} className={'mt-3 w-[300px]'}>
-          <DropdownMenuItem
-            onClick={() => history.push('/bridge')}
-            isActive={pathname.includes('bridge')}
-          >
+          <DropdownMenuItem onClick={() => history.push('/bridge')} isActive={pathname.includes('bridge')}>
             <div>
               <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Bridge</h4>
               <p className={'text-b3'}>Bridge your assets to and from other chains</p>
