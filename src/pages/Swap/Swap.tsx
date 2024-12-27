@@ -100,8 +100,7 @@ export const Swap: FC = () => {
   }
   // TODO: these values pls bois
   const impactPercent = 0.1
-  const networkFee = 0.0005
-  const gfxFee = 0.0005
+  const gfxFee = 0.0005 + 0.0005
   const minimumReceivedQuote = 0.0
   return (
     <div
