@@ -10,9 +10,9 @@ const FarmItemsPro: FC = () => (
     <div>
       <InfiniteProPoolList
         itemPadding={15}
-        render={(pool: GAMMAPoolWithUserLiquidity, i) => (
+        render={(pool: GAMMAPoolWithUserLiquidity, i) => pool ? (
           <FarmRow pool={pool} key={`${pool?.mintA.name}-${pool?.mintB.name}-${i}`} />
-        )}
+        ):null}
       />
     </div>
   </>

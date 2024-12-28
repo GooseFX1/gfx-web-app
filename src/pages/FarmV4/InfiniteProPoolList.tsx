@@ -18,7 +18,7 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
   const {
     filteredPools: items,
     currentSort,
-
+    poolsHasMoreData,
     updatePools,
     poolPage,
     currentPoolType,
@@ -59,31 +59,33 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
   const Item = ({ index, style }: { index: number; style: CSSProperties }) => {
     let content
     if (!isItemLoaded(index)) {
-      content = <FarmRowLoader />
+      content = poolsHasMoreData ? <FarmRowLoader /> : null
     } else {
       content = render(items[index], index)
     }
 
-    return <div style={style }>{content}</div>
+    return <div style={style}>{content}</div>
   }
 
   const windowHeight = Math.min(10, totalPoolCount) * 60
 
   return (
-      <InfiniteLoader isItemLoaded={isItemLoaded} itemCount={itemCount} loadMoreItems={loadMoreItems}>
-        {({ onItemsRendered, ref }) => (
-          <FixedSizeList
-            height={windowHeight}
-            itemSize={60 + ITEM_PADDING}
-            className="List"
-            itemCount={itemCount}
-            onItemsRendered={onItemsRendered}
-            ref={ref}
-          >
-            {Item}
-          </FixedSizeList>
-        )}
-      </InfiniteLoader>
+    <InfiniteLoader isItemLoaded={isItemLoaded} itemCount={itemCount} loadMoreItems={loadMoreItems}
+    threshold={3}
+    >
+      {({ onItemsRendered, ref }) => (
+        <FixedSizeList
+          height={windowHeight}
+          itemSize={60 + ITEM_PADDING}
+          className="List"
+          itemCount={itemCount}
+          onItemsRendered={onItemsRendered}
+          ref={ref}
+        >
+          {Item}
+        </FixedSizeList>
+      )}
+    </InfiniteLoader>
   )
 }
 

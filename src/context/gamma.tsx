@@ -224,7 +224,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [createPoolType, setCreatePoolType] = useState<string>('')
   const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
   const [viewRange, setViewRange] = useState<ViewRange>(0)
-  const { isProMode } = useRewardToggle()
+  const { isProMode, isPortfolio } = useRewardToggle()
   const prevIsProMode = usePrevious(isProMode)
   const {
     choices: selectedTokens,
@@ -313,7 +313,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }: {
       page: number
       pageSize: number
-      tokenType: Pool
+      tokenType?: Pool['type']
       searchValue?: string
     }, append = true) => {
     setIsLoadingTokenList.on()
@@ -463,13 +463,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (isFirstRender) return
-
-    setPoolPage(1)
-    // same page
-    if (poolPage == 1) {
-      updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type }, false)
+    if (!isPortfolio) {
+      setShowDeposited(false)
     }
-  }, [currentPoolType, showDeposited, showCreatedPools])
+    updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type }, false)
+
+  }, [isPortfolio, currentPoolType, showDeposited, showCreatedPools])
   useEffect(() => {
     if (isFirstRender) return
     updatePools({ page: poolPage, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type })
