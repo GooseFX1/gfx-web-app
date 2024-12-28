@@ -21,6 +21,7 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
     poolsHasMoreData,
     updatePools,
     poolPage,
+
     isLoadingPools,
     totalPoolCount
   } = useGamma()
@@ -69,6 +70,7 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
   return (
     <InfiniteLoader isItemLoaded={isItemLoaded} itemCount={itemCount} loadMoreItems={loadMoreItems}
     threshold={3}
+                    ref={infiniteLoaderRef}
     >
       {({ onItemsRendered, ref }) => (
         <FixedSizeList
