@@ -430,7 +430,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
           // Add any remaining existing pools that weren't in the new data
           if (append) {
-            updatedPools.push(...Array.from(existingPoolsMap.values()))
+            updatedPools.unshift(...Array.from(existingPoolsMap.values()))
           }
 
           setPools(updatedPools)
@@ -465,11 +465,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE }, false)
 
-  }, [isPortfolio, currentPoolType, showDeposited, showCreatedPools])
-  useEffect(() => {
-    if (isFirstRender) return
-    updatePools({ page: poolPage, pageSize: POOL_LIST_PAGE_SIZE })
-  }, [sortConfig, viewRange])
+  }, [isPortfolio, currentPoolType, showDeposited, showCreatedPools,sortConfig, viewRange])
 
   useEffect(() => {
 
@@ -630,7 +626,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
         return 0
       })
-    console.log({ newPools, sortConfig })
     return { filteredPools: newPools }
   }, [pools, lpPositions, showDeposited, base58PublicKey, showCreatedPools, selectedTokens, sortConfig])
 
