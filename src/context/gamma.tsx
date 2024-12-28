@@ -113,7 +113,6 @@ interface GAMMADataModel {
     data: {
       page: number
       pageSize: number
-      poolType?: Pool['type'] | 'primary'
       searchTokens?: string
     },
     append?: boolean
@@ -275,7 +274,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [isProMode, viewRange, currentSort, prevIsProMode])
   useEffect(() => {
     if (pools.length == 0) {
-      updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type })
+      updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE })
     }
     if (!gammaConfig) {
       fetchGAMMAConfig().then((config) => {
@@ -356,19 +355,17 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     {
       page,
       pageSize,
-      poolType = 'all',
       searchTokens = '',
       signal
     }: {
       page: number
       pageSize: number
-      poolType?: Pool['type'] | 'all'
       searchTokens?: string
       signal?: AbortSignal
     },
     append = true
   ) => {
-    if (poolType === 'migrate') {
+    if (currentPoolType.type === 'migrate') {
       return
     }
     let key = `${sortConfig.key.toLowerCase()}`
@@ -385,7 +382,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         {
           mintA: selectedTokens[0]?.address,
           mintB: selectedTokens[1]?.address,
-          poolType: poolType,
+          poolType: currentPoolType.type,
           sortOrder: sortConfig.direction.toLowerCase() as 'desc' | 'asc',
           sortKey: key,
           page: page,
@@ -400,7 +397,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         {
           page,
           pageSize,
-          poolType,
+          poolType: currentPoolType.type,
           sortOrder: sortConfig.direction.toLowerCase() as 'desc' | 'asc',
           sortKey: key,
           searchTokens,
@@ -466,12 +463,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (!isPortfolio) {
       setShowDeposited(false)
     }
-    updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type }, false)
+    updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE }, false)
 
   }, [isPortfolio, currentPoolType, showDeposited, showCreatedPools])
   useEffect(() => {
     if (isFirstRender) return
-    updatePools({ page: poolPage, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type })
+    updatePools({ page: poolPage, pageSize: POOL_LIST_PAGE_SIZE })
   }, [sortConfig, viewRange])
 
   useEffect(() => {
@@ -483,7 +480,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         {
           page: 1,
           pageSize: POOL_LIST_PAGE_SIZE,
-          poolType: currentPoolType.type,
           signal: aborter.addSignal('update-gamma-pools')
         },
         false
@@ -662,7 +658,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (!result) return
     getUserLpPositions()
     // will trigger updatePool useEffect
-    updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type }, false)
+    updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE }, false)
     setPoolPage(1)
   }
   const computedViewRange = viewRange == 0 ? '24H' : viewRange == 1 ? '7D' : '30D'

@@ -21,8 +21,6 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
     poolsHasMoreData,
     updatePools,
     poolPage,
-    currentPoolType,
-
     isLoadingPools,
     totalPoolCount
   } = useGamma()
@@ -50,8 +48,7 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
     if (isLoadingPools) return
     updatePools({
       page: poolPage + 1,
-      pageSize: POOL_LIST_PAGE_SIZE,
-      poolType: currentPoolType.type
+      pageSize: POOL_LIST_PAGE_SIZE
     })
   }
 
