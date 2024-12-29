@@ -30,6 +30,8 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import Decimal from 'decimal.js-light'
 import * as anchor from '@coral-xyz/anchor'
 import { GAMMAToken } from '@/types/gamma'
+import { CurveCalculator } from 'goosefx-amm-sdk'
+import BigNumber from 'bignumber.js'
 
 enum TokenType {
   Token0,
@@ -659,6 +661,55 @@ export const createPool = async (
     createPoolTxn.add(tr)
   }
   return createPoolTxn
+}
+
+/**
+ * This function is used to get the price quotes for swapping tokens
+ * This is for going from Token A to Token B
+ * @param amountToken amount of token to swap
+ * @param mintA mint of token A
+ * @param mintB mint of token B
+ * @param program program instance
+ * @param connection connection instance
+ */
+export const getPriceQuotes = async (
+  amountToken: string,
+  mintA: GAMMAToken,
+  mintB: GAMMAToken,
+  program: Program<Idl>,
+  connection: Connection
+) => {
+  const configIdKey = await getAmmConfigId(0)
+  const mintAPublicKey = new PublicKey(mintA?.address)
+  const mintBPublickey = new PublicKey(mintB?.address)
+  const poolIdKey = await getPoolIdKey(configIdKey, mintAPublicKey, mintBPublickey)
+  const ammConfigState = await program.account.ammConfig.all()
+  const poolState = await program.account.poolState.fetch(poolIdKey)
+  const observationState = await program.account.observationState.fetch(poolState.observationKey)
+
+  const inputToken0Amount = convertToNativeValue(amountToken, mintA?.decimals)
+
+  const tokenAccountInfo0 = await connection.getParsedAccountInfo(poolState?.token0Vault)
+  const amount0 = (tokenAccountInfo0?.value?.data as any).parsed?.info?.tokenAmount?.amount
+  const protocolFees0 = poolState?.protocolFeesToken0
+  const fundFees0 = poolState?.fundFeesToken0
+  const swapTokenAmount0 = new BN(amount0)?.sub(protocolFees0?.add(fundFees0))
+
+  const tokenAccountInfo1 = await connection.getParsedAccountInfo(poolState?.token1Vault)
+  const amount1 = (tokenAccountInfo1?.value?.data as any).parsed?.info?.tokenAmount?.amount
+  const protocolFees1 = poolState?.protocolFeesToken1
+  const fundFees1 = poolState?.fundFeesToken1
+  const swapTokenAmount1 = new BN(amount1)?.sub(protocolFees1?.add(fundFees1))
+
+  const swapResult = CurveCalculator.swap(
+    new BN(inputToken0Amount),
+    mintAPublicKey.equals(poolState.token0Mint) ? swapTokenAmount0 : swapTokenAmount1,
+    mintAPublicKey.equals(poolState.token0Mint) ? swapTokenAmount1 : swapTokenAmount0,
+    ammConfigState[0].account.tradeFeeRate,
+    observationState as any
+  )
+
+  return new BigNumber(swapResult.destinationAmountSwapped.toNumber()).div(10 ** mintB?.decimals).toString()
 }
 
 //Instruction - 4 swapping TokenA -> TokenB

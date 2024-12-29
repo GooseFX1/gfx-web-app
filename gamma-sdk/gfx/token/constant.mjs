@@ -1,0 +1,2 @@
+import{TOKEN_PROGRAM_ID as o}from"@solana/spl-token";var n={address:"So11111111111111111111111111111111111111112",programId:o.toBase58(),decimals:9,symbol:"SOL",name:"solana",logoURI:"",tags:[],priority:2,type:"goose-fx",extensions:{coingeckoId:"solana"}},r={address:"So11111111111111111111111111111111111111112",programId:o.toBase58(),decimals:9,symbol:"WSOL",name:"Wrapped SOL",logoURI:"",tags:[],priority:2,type:"goose-fx",extensions:{coingeckoId:"solana"}};export{n as SOL_INFO,r as TOKEN_WSOL};
+//# sourceMappingURL=constant.mjs.map

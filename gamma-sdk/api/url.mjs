@@ -1,0 +1,2 @@
+var o={BASE_HOST:"https://gamma-api.goosefx.io/v1",CONFIG:"/config",POOL_BY_IDS:"/pool/info/ids",POOL_BY_MINTS:"/pool/info/mints",POOL_LIST:"/pool/info/all",POOL_KEYS_BY_IDS:"/pool/keys/ids",TOKEN_LIST:"/token-list",JUP_TOKEN_LIST:"https://api.jup.ag/tokens/v1?tags=lst,community"},p={...o};export{o as API_URLS,p as DEV_API_URLS};
+//# sourceMappingURL=url.mjs.map
