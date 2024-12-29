@@ -117,7 +117,8 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: [
       { find: /^~/, replacement: '' },
-      { find: /^@\//, replacement: '/src/' }
+      { find: /^@\//, replacement: '/src/' },
+      { find: 'goosefx-amm-sdk', replacement: '/gamma-sdk' }
     ]
   }
 }))

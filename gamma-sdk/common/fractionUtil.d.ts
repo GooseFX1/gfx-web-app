@@ -1,0 +1,43 @@
+import { Fraction } from '../module/fraction.js';
+import { Numberish } from './bignumber.js';
+import 'bn.js';
+import './number.js';
+import 'decimal.js';
+import '../module/token.js';
+import '@solana/web3.js';
+import './pubKey.js';
+import '../module/price.js';
+import '../module/amount.js';
+import './logger.js';
+import '../module/currency.js';
+import '../module/percent.js';
+import '../gfx/token/type.js';
+import '../api/type.js';
+import '../type-f1af695b.js';
+import '@solana/spl-token';
+import '../api/api.js';
+import 'axios';
+import '../solana/type.js';
+import '../api/url.js';
+import './txTool/txType.js';
+import './owner.js';
+import './txTool/lookupTable.js';
+
+declare function toFraction(value: Numberish): Fraction;
+declare function toFractionWithDecimals(value: Numberish): {
+    fr: Fraction;
+    decimals?: number;
+};
+declare function lt(a: Numberish | undefined, b: Numberish | undefined): boolean;
+declare function gt(a: Numberish | undefined, b: Numberish | undefined): boolean;
+declare function lte(a: Numberish | undefined, b: Numberish | undefined): boolean;
+declare function gte(a: Numberish | undefined, b: Numberish | undefined): boolean;
+declare function eq(a: Numberish | undefined, b: Numberish | undefined): boolean;
+declare function div(a: Numberish | undefined, b: Numberish | undefined): Fraction | undefined;
+declare function sub(a: Numberish | undefined, b: Numberish | undefined): Fraction | undefined;
+declare function isMeaningfulNumber(n: Numberish | undefined): n is Numberish;
+declare function getMax(a: Numberish, b: Numberish): Numberish;
+declare function mul(a: Numberish | undefined, b: Numberish | undefined): Fraction | undefined;
+declare function add(a: Numberish | undefined, b: Numberish | undefined): Fraction | undefined;
+
+export { add, toFraction as default, div, eq, getMax, gt, gte, isMeaningfulNumber, lt, lte, mul, sub, toFractionWithDecimals };
