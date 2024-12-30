@@ -1,0 +1,2 @@
+"use strict";var i=Object.defineProperty;var s=Object.getOwnPropertyDescriptor;var m=Object.getOwnPropertyNames;var p=Object.prototype.hasOwnProperty;var a=(n,e,t,r)=>{if(e&&typeof e=="object"||typeof e=="function")for(let o of m(e))!p.call(n,o)&&o!==t&&i(n,o,{get:()=>e[o],enumerable:!(r=s(e,o))||r.enumerable});return n};var g=n=>a(i({},"__esModule",{value:!0}),n);var d={};module.exports=g(d);
+//# sourceMappingURL=type.js.map

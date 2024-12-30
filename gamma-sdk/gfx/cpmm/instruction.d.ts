@@ -1,0 +1,34 @@
+import BN__default from 'bn.js';
+import { PublicKey, TransactionInstruction } from '@solana/web3.js';
+import { P as PartnerType } from '../../type-acc35ac5.js';
+import '../../api/type.js';
+import '../../common/txTool/txType.js';
+import '../../type-f1af695b.js';
+import '@solana/spl-token';
+import '../../module/amount.js';
+import '../../common/number.js';
+import '../../common/logger.js';
+import '../../module/fraction.js';
+import '../../module/token.js';
+import '../../common/pubKey.js';
+import '../../module/currency.js';
+import '../../api/api.js';
+import 'axios';
+import '../../solana/type.js';
+import '../../api/url.js';
+import '../../common/owner.js';
+import '../../common/txTool/lookupTable.js';
+import '../../module/percent.js';
+import './layout.js';
+import '../../marshmallow/index.js';
+import '../../marshmallow/buffer-layout.js';
+import 'decimal.js';
+
+declare function makeInitUserPoolLiquidityInstruction(programId: PublicKey, user: PublicKey, poolId: PublicKey, userPoolLiquidity: PublicKey, partner: PartnerType | null): TransactionInstruction;
+declare function makeCreateCpmmPoolInInstruction(programId: PublicKey, creator: PublicKey, configId: PublicKey, authority: PublicKey, poolId: PublicKey, userPoolLiquidity: PublicKey, mintA: PublicKey, mintB: PublicKey, userVaultA: PublicKey, userVaultB: PublicKey, vaultA: PublicKey, vaultB: PublicKey, createPoolFeeAccount: PublicKey, mintProgramA: PublicKey, mintProgramB: PublicKey, observationId: PublicKey, amountMaxA: BN__default, amountMaxB: BN__default, openTime: BN__default, maxTradeFeeRate: BN__default, volatilityFactor: BN__default): TransactionInstruction;
+declare function makeDepositCpmmInInstruction(programId: PublicKey, owner: PublicKey, authority: PublicKey, poolId: PublicKey, userLiquidityAccount: PublicKey, userVaultA: PublicKey, userVaultB: PublicKey, vaultA: PublicKey, vaultB: PublicKey, mintA: PublicKey, mintB: PublicKey, lpAmount: BN__default, amountMaxA: BN__default, amountMaxB: BN__default): TransactionInstruction;
+declare function makeWithdrawCpmmInInstruction(programId: PublicKey, owner: PublicKey, authority: PublicKey, poolId: PublicKey, userLiquidityAccount: PublicKey, userVaultA: PublicKey, userVaultB: PublicKey, vaultA: PublicKey, vaultB: PublicKey, mintA: PublicKey, mintB: PublicKey, lpAmount: BN__default, amountMintA: BN__default, amountMintB: BN__default): TransactionInstruction;
+declare function makeSwapCpmmBaseInInInstruction(programId: PublicKey, payer: PublicKey, authority: PublicKey, configId: PublicKey, poolId: PublicKey, userInputAccount: PublicKey, userOutputAccount: PublicKey, inputVault: PublicKey, outputVault: PublicKey, inputTokenProgram: PublicKey, outputTokenProgram: PublicKey, inputMint: PublicKey, outputMint: PublicKey, observationId: PublicKey, amountIn: BN__default, amounOutMin: BN__default): TransactionInstruction;
+declare function makeSwapCpmmBaseOutInInstruction(programId: PublicKey, payer: PublicKey, authority: PublicKey, configId: PublicKey, poolId: PublicKey, userInputAccount: PublicKey, userOutputAccount: PublicKey, inputVault: PublicKey, outputVault: PublicKey, inputTokenProgram: PublicKey, outputTokenProgram: PublicKey, inputMint: PublicKey, outputMint: PublicKey, observationId: PublicKey, amountInMax: BN__default, amountOut: BN__default): TransactionInstruction;
+
+export { makeCreateCpmmPoolInInstruction, makeDepositCpmmInInstruction, makeInitUserPoolLiquidityInstruction, makeSwapCpmmBaseInInInstruction, makeSwapCpmmBaseOutInInstruction, makeWithdrawCpmmInInstruction };
