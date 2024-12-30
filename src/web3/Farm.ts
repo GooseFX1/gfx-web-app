@@ -101,8 +101,15 @@ const getPoolIdKey = async (
   mintB: PublicKey
 ): Promise<undefined | PublicKey> => {
   try {
+    const compare = mintB?.toBuffer()?.compare(mintA?.toBuffer())
+
     const getPoolIdKey: [PublicKey, number] = await PublicKey.findProgramAddress(
-      [Buffer.from(POOL_SEED_PRFIX), ammConfigId?.toBuffer(), mintA?.toBuffer(), mintB?.toBuffer()],
+      [
+        Buffer.from(POOL_SEED_PRFIX),
+        ammConfigId?.toBuffer(),
+        compare > 0 ? mintA?.toBuffer() : mintB?.toBuffer(),
+        compare > 0 ? mintB?.toBuffer() : mintA?.toBuffer()
+      ],
       new PublicKey(GAMMA_PROGRAM_ID)
     )
     return getPoolIdKey[0]
@@ -198,8 +205,8 @@ const getAccountsForDepositWithdraw = async (
 }
 
 const getAccountsForSwappingTokens = async (
-  mintA: GAMMAToken,
-  mintB: GAMMAToken,
+  mintA: GAMMAToken | JupToken,
+  mintB: GAMMAToken | JupToken,
   userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   poolState: any,
@@ -676,8 +683,8 @@ export const createPool = async (
  */
 export const getPriceQuotes = async (
   amountToken: string,
-  mintA: GAMMAToken,
-  mintB: GAMMAToken,
+  mintA: GAMMAToken | JupToken,
+  mintB: GAMMAToken | JupToken,
   program: Program<Idl>,
   connection: Connection
 ) => {
@@ -717,11 +724,12 @@ export const getPriceQuotes = async (
 //Instruction - 4 swapping TokenA -> TokenB
 export const swapTokens = async (
   amountToken: string,
-  mintA: GAMMAToken,
-  mintB: GAMMAToken,
+  mintA: GAMMAToken | JupToken,
+  mintB: GAMMAToken | JupToken,
   userPublicKey: PublicKey,
   userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
+  slippage: number,
   program: Program<Idl>,
   connection: Connection
 ) => {
@@ -733,9 +741,9 @@ export const swapTokens = async (
 
   const amount = convertToNativeValue(amountToken, mintA?.decimals)
 
-  // TODO - calculate the slippage amount on basis of percentage selected by user
-  // 0 here means this value is ignored and user doens't have any value for minimum number of tokens they will receive.
-  const slippageAmount = new anchor.BN(0)
+  const quote = await getPriceQuotes(amountToken, mintA, mintB, program, connection)
+
+  const slippageAmount = new anchor.BN(+quote * (1 + slippage / 100))
 
   const accounts = await getAccountsForSwappingTokens(
     mintA,
