@@ -147,6 +147,7 @@ export function InfiniteTokenList({
     itemCount={itemCount}
     loadMoreItems={loadMoreItems}
     threshold={1}
+    ref={infiniteLoaderRef}
   >
     {({ onItemsRendered, ref }) => (
       <FixedSizeList

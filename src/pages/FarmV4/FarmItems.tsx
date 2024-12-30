@@ -126,8 +126,7 @@ const FarmItems: FC<{
           variant={'primary'}
           onClick={() => updatePools({
             page: poolPage + 1,
-            pageSize: POOL_LIST_PAGE_SIZE,
-            poolType: currentPoolType.type
+            pageSize: POOL_LIST_PAGE_SIZE
           })}
         >
           Load More
