@@ -8066,6 +8066,9 @@ globrex@^0.1.2:
   resolved "https://registry.yarnpkg.com/globrex/-/globrex-0.1.2.tgz#dd5d9ec826232730cd6793a5e33a9302985e6098"
   integrity sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==
 
+"goosefx-amm-sdk@file:./gamma-sdk":
+  version "0.0.0"
+
 goosefx-ssl-sdk@^1.2.24, goosefx-ssl-sdk@latest:
   version "1.2.24"
   resolved "https://registry.yarnpkg.com/goosefx-ssl-sdk/-/goosefx-ssl-sdk-1.2.24.tgz#87c39cb66f66d8612dbdab715bc248871f48e415"
