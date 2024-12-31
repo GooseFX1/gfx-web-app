@@ -140,8 +140,8 @@ export const Swap: FC = () => {
       }
 
     return {
-      approxAmountB: balanceA.price / balanceB.price,
-      approxAmountA: balanceB.price / balanceA.price
+      approxAmountB: numberFormatter(balanceA.price / balanceB.price, balanceB.decimals ?? 7),
+      approxAmountA: numberFormatter(balanceB.price / balanceA.price, balanceA.decimals ?? 7)
     }
   }, [balance, selectedTokenA, selectedTokenB])
 
