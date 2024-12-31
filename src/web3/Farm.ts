@@ -101,8 +101,15 @@ const getPoolIdKey = async (
   mintB: PublicKey
 ): Promise<undefined | PublicKey> => {
   try {
+    const compare = mintB?.toBuffer()?.compare(mintA?.toBuffer())
+
     const getPoolIdKey: [PublicKey, number] = await PublicKey.findProgramAddress(
-      [Buffer.from(POOL_SEED_PRFIX), ammConfigId?.toBuffer(), mintA?.toBuffer(), mintB?.toBuffer()],
+      [
+        Buffer.from(POOL_SEED_PRFIX),
+        ammConfigId?.toBuffer(),
+        compare > 0 ? mintA?.toBuffer() : mintB?.toBuffer(),
+        compare > 0 ? mintB?.toBuffer() : mintA?.toBuffer()
+      ],
       new PublicKey(GAMMA_PROGRAM_ID)
     )
     return getPoolIdKey[0]
@@ -198,8 +205,8 @@ const getAccountsForDepositWithdraw = async (
 }
 
 const getAccountsForSwappingTokens = async (
-  mintA: GAMMAToken,
-  mintB: GAMMAToken,
+  mintA: GAMMAToken | JupToken,
+  mintB: GAMMAToken | JupToken,
   userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   poolState: any,
@@ -640,9 +647,11 @@ export const createPool = async (
     new BN(amountTokenBBN),
     new BN(Math.floor(Date.now() / 1000)),
     poolType === 'Stable' ? new BN(10000) : poolType === 'Primary' ? new BN(25000) : new BN(100000),
-    new BN(0), {
-    accounts: createPoolAcc
-  })
+    new BN(0),
+    {
+      accounts: createPoolAcc
+    }
+  )
   let createPoolTxn: Transaction
   if (token0Symbol === 'SOL') createPoolTxn = await wrapSolToken(userPubKey, connection, amountToken0)
   else if (token1Symbol === 'SOL') createPoolTxn = await wrapSolToken(userPubKey, connection, amountToken1)
@@ -674,8 +683,8 @@ export const createPool = async (
  */
 export const getPriceQuotes = async (
   amountToken: string,
-  mintA: GAMMAToken,
-  mintB: GAMMAToken,
+  mintA: GAMMAToken | JupToken,
+  mintB: GAMMAToken | JupToken,
   program: Program<Idl>,
   connection: Connection
 ) => {
@@ -709,17 +718,24 @@ export const getPriceQuotes = async (
     observationState as any
   )
 
-  return new BigNumber(swapResult.destinationAmountSwapped.toNumber()).div(10 ** mintB?.decimals).toString()
+  return {
+    destinationAmountSwapped: new BigNumber(swapResult.destinationAmountSwapped.toNumber())
+      .div(10 ** mintB?.decimals)
+      .toString(),
+    tradeFee:
+      new BigNumber(swapResult.tradeFee.toNumber()).div(10 ** mintA?.decimals).toString() + ` ${mintA?.symbol}`
+  }
 }
 
 //Instruction - 4 swapping TokenA -> TokenB
 export const swapTokens = async (
   amountToken: string,
-  mintA: GAMMAToken,
-  mintB: GAMMAToken,
+  mintA: GAMMAToken | JupToken,
+  mintB: GAMMAToken | JupToken,
   userPublicKey: PublicKey,
   userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
+  slippage: number,
   program: Program<Idl>,
   connection: Connection
 ) => {
@@ -731,9 +747,9 @@ export const swapTokens = async (
 
   const amount = convertToNativeValue(amountToken, mintA?.decimals)
 
-  // TODO - calculate the slippage amount on basis of percentage selected by user
-  // 0 here means this value is ignored and user doens't have any value for minimum number of tokens they will receive.
-  const slippageAmount = new anchor.BN(0)
+  const { destinationAmountSwapped: quote } = await getPriceQuotes(amountToken, mintA, mintB, program, connection)
+
+  const slippageAmount = new anchor.BN(+quote * (1 + slippage / 100))
 
   const accounts = await getAccountsForSwappingTokens(
     mintA,

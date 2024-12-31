@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import {
   Button,
   cn,
@@ -19,22 +19,28 @@ import {
   TooltipTrigger
 } from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
-import { useDarkMode } from '@/context'
+import { useConnectionConfig, useDarkMode, useGamma, usePriceFeedFarm } from '@/context'
 import { useSwap } from '@/context/newSwap'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { BASE_SLIPPAGE, JupToken } from '@/pages/FarmV4/constants'
 import { toast } from 'sonner'
 import { useWalletBalance } from '@/context/walletBalanceContext'
-import { loadIconImage, numberFormatter } from '@/utils'
+import { bigNumberFormatter, loadIconImage, numberFormatter } from '@/utils'
 import SearchBar from '@/components/common/SearchBar'
 import useBoolean from '@/hooks/useBoolean'
 import { InfiniteTokenListSwap } from '@/pages/Swap/InfiniteTokenListSwap'
 import { Connect } from '@/layouts'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
+import useTransaction from '@/hooks/useTransaction'
+import { getPriceQuotes, swapTokens } from '@/web3/Farm'
+import { useWallet } from '@solana/wallet-adapter-react'
+import BigNumber from 'bignumber.js'
 
 export const Swap: FC = () => {
   const { isDarkMode, mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
+  const { wallet } = useWallet()
+  const { connection } = useConnectionConfig()
   const {
     slippage,
     setSlippage,
@@ -51,6 +57,48 @@ export const Swap: FC = () => {
   const [value, setValue] = useState(slippage)
   const [invertPrice, setInvertPrice] = useBoolean(false)
   const localIsCustomSlippage = !BASE_SLIPPAGE.includes(value)
+  const { sendTransaction, createTransactionBuilder } = useTransaction()
+  const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const [userSourceTokenType, setUserSourceTokenType] = useState<'spl-token' | 'native' | 'spl-token-2022' | ''>(
+    ''
+  )
+  const [userTargetTokenType, setUserTargetTokenType] = useState<'spl-token' | 'native' | 'spl-token-2022' | ''>(
+    ''
+  )
+  const { forceCronAndUpdateLocalData } = useGamma()
+  const { GammaProgram } = usePriceFeedFarm()
+  const [sendingTransaction, setSendingTransaction] = useState(false)
+  const [loadingPriceQuote, setLoadingPriceQuote] = useState(false)
+  const [fee, setFee] = useState<string>('')
+
+  useEffect(() => {
+    if (selectedTokenA && selectedTokenB && userPublicKey) {
+      setUserSourceTokenType(balance[selectedTokenA?.address].tokenType)
+      setUserTargetTokenType(balance[selectedTokenB?.address].tokenType)
+    }
+  }, [selectedTokenA, selectedTokenB, balance, userPublicKey])
+
+  useEffect(() => {
+    const handler = setTimeout(async () => {
+      if (amountTokenA !== '' && !isNaN(+amountTokenA) && selectedTokenA && selectedTokenB) {
+        setLoadingPriceQuote(true)
+        const { destinationAmountSwapped: price, tradeFee } = await getPriceQuotes(
+          amountTokenA,
+          selectedTokenA,
+          selectedTokenB,
+          GammaProgram,
+          connection
+        )
+        setAmountTokenB(price)
+        setFee(tradeFee)
+        setLoadingPriceQuote(false)
+      }
+    }, 500)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [selectedTokenA, selectedTokenB, amountTokenA])
 
   const handleSlippageSave = () => {
     setSlippage(value)
@@ -65,7 +113,7 @@ export const Swap: FC = () => {
   const handleRefresh = () => {
     console.log('here do something')
   }
-  const handleChange = (e, isSource: boolean) => {
+  const handleChange = async (e, isSource: boolean) => {
     const inputNumber = e?.target?.value
     if (!e?.target?.value) {
       isSource ? setAmountTokenA('') : setAmountTokenB('')
@@ -95,12 +143,50 @@ export const Swap: FC = () => {
       approxAmountA: balanceB.price / balanceA.price
     }
   }, [balance, selectedTokenA, selectedTokenB])
-  const handleSwap = () => {
-    console.log('ere bois')
+
+  const handleSwap = async () => {
+    try {
+      const txBuilder = createTransactionBuilder()
+      const tx = await swapTokens(
+        amountTokenA,
+        selectedTokenA,
+        selectedTokenB,
+        userPublicKey,
+        userSourceTokenType,
+        userTargetTokenType,
+        slippage,
+        GammaProgram,
+        connection
+      )
+      txBuilder.add(tx)
+      setSendingTransaction(true)
+      // eslint-disable-next-line max-len
+      const sourceAmount = `${bigNumberFormatter(new BigNumber(amountTokenA))} ${selectedTokenA?.symbol}`
+      // eslint-disable-next-line max-len
+      const targetAmount = `${bigNumberFormatter(new BigNumber(amountTokenB))} ${selectedTokenB?.symbol}`
+      const { success, txSig } = await sendTransaction(txBuilder, {
+        successMessage: `You successfully swapped ${sourceAmount} to ${targetAmount}`
+      })
+      console.log('SwapResponse', success)
+      if (!success) {
+        //off(connectionId)
+        console.log('An error occurred while Swapping!')
+        setSendingTransaction(false)
+        return
+      } else {
+        setSendingTransaction(false)
+        setAmountTokenA('')
+        setAmountTokenB('')
+        await forceCronAndUpdateLocalData(txSig)
+      }
+    } catch (e) {
+      setSendingTransaction(false)
+      console.log('An error occurred while depositing.', e)
+    }
   }
+
   // TODO: these values pls bois
-  const impactPercent = 0.1
-  const gfxFee = 0.0005 + 0.0005
+  // const impactPercent = 0.1
   const minimumReceivedQuote = 0.0
   return (
     <div
@@ -211,9 +297,8 @@ mt-8 flex items-center justify-center
               <h4 className={'text-text-lightmode-primary dark:text-text-darkmode-primary'}>You're Selling:</h4>
               <p
                 className={cn(
-                  `ml-auto text-b2 cursor-pointer`,
-                  balance[selectedTokenB?.address].tokenAmount.uiAmount <= 0 &&
-                    `text-text-lightmode-tertiary dark:text-text-darkmode-tertiary cursor-not-allowed`
+                  `ml-auto text-b2 cursor-pointer text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`,
+                  balance[selectedTokenB?.address].tokenAmount.uiAmount <= 0 && `cursor-not-allowed`
                 )}
                 onClick={() => {
                   setAmountTokenA(balance[selectedTokenA?.address].tokenAmount.uiAmountString)
@@ -251,9 +336,8 @@ mt-8 flex items-center justify-center
               <h4 className={'text-text-lightmode-primary dark:text-text-darkmode-primary'}>You're Buying:</h4>
               <p
                 className={cn(
-                  `ml-auto text-b2 cursor-pointer`,
-                  balance[selectedTokenB?.address].tokenAmount.uiAmount <= 0 &&
-                    `text-text-lightmode-tertiary dark:text-text-darkmode-tertiary cursor-not-allowed`
+                  `ml-auto text-b2 cursor-pointer text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`,
+                  balance[selectedTokenB?.address].tokenAmount.uiAmount <= 0 && `cursor-not-allowed`
                 )}
                 onClick={() => {
                   setAmountTokenB(balance[selectedTokenB?.address].tokenAmount.uiAmountString)
@@ -271,6 +355,7 @@ mt-8 flex items-center justify-center
               otherToken={selectedTokenA}
               handleChange={(e) => handleChange(e, false)}
               amountToken={amountTokenB}
+              loadingPriceQuote={loadingPriceQuote}
             />
           </div>
           {publicKey && selectedTokenA && selectedTokenB && (
@@ -306,15 +391,15 @@ mt-8 flex items-center justify-center
                 />
                 <IconWithFallback src={'/img/assets/toast-loader.svg'} size={'sm'} className={'animate-spin'} />
               </div>
-              <div className={'flex font-semibold text-b2 items-center'}>
+              {/* <div className={'flex font-semibold text-b2 items-center'}>
                 <p>Price Impact</p>
                 <p
                   className={cn(`text-text-green ml-auto`, getImpactValue(impactPercent))}
                 >{`< ${impactPercent}%`}</p>
-              </div>
+              </div> */}
               <div
                 className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
-            text-b2 justify-center items-center gap-1 items-center`}
+            text-b2 justify-center gap-1 items-center`}
               >
                 <Tooltip>
                   <TooltipTrigger asChild variant={'dotted'}>
@@ -326,9 +411,7 @@ mt-8 flex items-center justify-center
                     </span>
                   </TooltipContent>
                 </Tooltip>
-                <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>
-                  {gfxFee} SOL
-                </p>
+                <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>{fee}</p>
               </div>
               <div
                 className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
@@ -345,6 +428,7 @@ mt-8 flex items-center justify-center
             <Connect />
           ) : (
             <Button
+              loading={sendingTransaction}
               onClick={handleSwap}
               variant={'primary'}
               colorScheme={'blue'}
@@ -365,13 +449,15 @@ function TokenSelectInput({
   setToken,
   otherToken,
   handleChange,
-  amountToken
+  amountToken,
+  loadingPriceQuote
 }: {
   token: JupToken | null
   setToken: (token: JupToken) => void
   otherToken: JupToken | null
   handleChange: (e: React.ChangeEvent<HTMLInputElement>, isTokenA: boolean) => void
   amountToken: string
+  loadingPriceQuote?: boolean
 }) {
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { isDarkMode, mode } = useDarkMode()
@@ -461,19 +547,19 @@ function TokenSelectInput({
         onChange={(e) => handleChange(e, true)}
         value={amountToken}
         className={'h-[45px] text-right'}
-        // disabled={!token}
+        disabled={loadingPriceQuote}
       />
     </InputGroup>
   )
 }
 
-function getImpactValue(impactPercent: number) {
-  switch (true) {
-    case impactPercent <= 0.1:
-      return 'text-text-green'
-    case impactPercent <= 0.5:
-      return 'text-background-yellow'
-    default:
-      return 'text-text-red'
-  }
-}
+// function getImpactValue(impactPercent: number) {
+//   switch (true) {
+//     case impactPercent <= 0.1:
+//       return 'text-text-green'
+//     case impactPercent <= 0.5:
+//       return 'text-background-yellow'
+//     default:
+//       return 'text-text-red'
+//   }
+// }
