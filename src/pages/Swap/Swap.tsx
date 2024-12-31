@@ -122,7 +122,6 @@ export const Swap: FC = () => {
       isSource ? setAmountTokenA(inputNumber) : setAmountTokenB(inputNumber)
     }
   }
-
   const { approxAmountB, approxAmountA } = useMemo(() => {
     if (!selectedTokenA || !selectedTokenB)
       return {

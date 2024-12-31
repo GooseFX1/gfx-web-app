@@ -6,6 +6,7 @@ import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { loadIconImage, numberFormatter } from '@/utils'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
+import BigNumber from 'bignumber.js'
 
 const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): JSX.Element => {
   const { setSelectedCard, setOpenDepositWithdrawSlider, viewRange } = useGamma()
@@ -85,7 +86,11 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
           font-poppins text-tiny font-semibold dark:text-grey-8 text-black-4
           border-grey-1 bg-grey-5 dark:bg-black-2 rounded-[2.5px] h-[25px] px-1 ml-2"
         >
-          {numberFormatter(0.2)}%
+          {(
+            new BigNumber(pool?.['latestDynamicFeeRate'] || 0.0).div(10 ** 4).toNumber() ||
+            new BigNumber(pool?.config.tradeFeeRate || 0.0).div(10 ** 4).toNumber()
+          ).toFixed(2)}
+          %
         </div>
 
         <IconWithFallback src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />

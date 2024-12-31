@@ -5,7 +5,7 @@ import { numberFormatter } from '@/utils'
 import BigNumber from 'bignumber.js'
 import { fetchTokensByPublicKey } from '@/api/gamma'
 
-export const PoolStats: FC<{ pool: GAMMAPool; updatedPoolState: any }> = ({
+export const PoolStats: FC<{ pool: GAMMAPool; updatedPoolState?: any }> = ({
   pool,
   updatedPoolState
 }): ReactElement => {
