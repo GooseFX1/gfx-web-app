@@ -58,6 +58,7 @@ export const Swap: FC = () => {
   const { balance, publicKey } = useWalletBalance()
   const [value, setValue] = useState(slippage)
   const [invertPrice, setInvertPrice] = useBoolean(false)
+  const [doesPoolExist, setDoesPoolExist] = useBoolean(true)
   const localIsCustomSlippage = !BASE_SLIPPAGE.includes(value)
   const { sendTransaction, createTransactionBuilder } = useTransaction()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
@@ -108,11 +109,13 @@ export const Swap: FC = () => {
         .then(({ destinationAmountSwapped: price, tradeFee }) => {
           setAmountTokenB(price)
           setFee(tradeFee)
+          setDoesPoolExist.on()
         })
         .catch((e) => {
           toast(<ErrorToast />, {
             id: 'refresh-toast-swap'
           })
+          setDoesPoolExist.off()
           console.error(e)
         })
         .finally(() => {
@@ -376,6 +379,9 @@ mt-8 flex items-center justify-center
               isLocked={true}
             />
           </div>
+          {!doesPoolExist ?
+            <h4 className={`font-bold text-text-red`}>Current pool doesn't exist. </h4>
+            : null}
           {publicKey && selectedTokenA && selectedTokenB && (
             <div
               className={`flex flex-col gap-1.25 font-semibold text-text-lightmode-secondary
@@ -549,18 +555,16 @@ function TokenSelectInput({
               {searchValue && tokenRenderList.length == 0 && !isLoadingTokenList ? (
                 <div className={'mb-auto p-2'}>No Tokens Found..</div>
               ) : null}
-              {tokenRenderList.length > 0 ? (
-                <InfiniteTokenListSwap
-                  useRenderListLength={searchValue.trim().length > 0}
-                  tokenRenderList={tokenRenderList}
-                  onTokenSelect={(token) => {
-                    setToken(token)
-                    setSearchValue('')
-                  }}
-                  RenderAs={DropdownMenuItem}
-                  checkDisabled={(t) => t?.address == otherToken?.address || isLoadingTokenList}
-                />
-              ) : null}
+              <InfiniteTokenListSwap
+                useRenderListLength={searchValue.trim().length > 0}
+                tokenRenderList={tokenRenderList}
+                onTokenSelect={(token) => {
+                  setToken(token)
+                  setSearchValue('')
+                }}
+                RenderAs={DropdownMenuItem}
+                checkDisabled={(t) => t?.address == otherToken?.address || isLoadingTokenList}
+              />
             </DropdownMenuContent>
           </DropdownMenu>
         </InputElementLeft>
