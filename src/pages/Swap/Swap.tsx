@@ -36,6 +36,7 @@ import { getPriceQuotes, swapTokens } from '@/web3/Farm'
 import { useWallet } from '@solana/wallet-adapter-react'
 import BigNumber from 'bignumber.js'
 import { forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
+import { ErrorToast } from '@/utils/perpsNotifications'
 
 export const Swap: FC = () => {
   const { isDarkMode, mode } = useDarkMode()
@@ -102,16 +103,21 @@ export const Swap: FC = () => {
   const handleRefresh = async () => {
     if (amountTokenA !== '' && !isNaN(+amountTokenA) && selectedTokenA && selectedTokenB) {
       setLoadingPriceQuote(true)
-      const { destinationAmountSwapped: price, tradeFee } = await getPriceQuotes(
-        amountTokenA,
-        selectedTokenA,
-        selectedTokenB,
-        GammaProgram,
-        connection
-      )
-      setAmountTokenB(price)
-      setFee(tradeFee)
-      setLoadingPriceQuote(false)
+
+      await getPriceQuotes(amountTokenA, selectedTokenA, selectedTokenB, GammaProgram, connection)
+        .then(({ destinationAmountSwapped: price, tradeFee }) => {
+          setAmountTokenB(price)
+          setFee(tradeFee)
+        })
+        .catch((e) => {
+          toast(<ErrorToast />, {
+            id: 'refresh-toast-swap'
+          })
+          console.error(e)
+        })
+        .finally(() => {
+          setLoadingPriceQuote(false)
+        })
     }
   }
   const handleChange = async (e, isSource: boolean) => {
@@ -173,7 +179,6 @@ export const Swap: FC = () => {
       if (!success) {
         //off(connectionId)
         console.log('An error occurred while Swapping!')
-
       } else {
         setAmountTokenA('')
         setAmountTokenB('')
@@ -183,7 +188,6 @@ export const Swap: FC = () => {
       console.log('An error occurred while depositing.', e)
     }
     setSendingTransaction(false)
-
   }
 
   // TODO: these values pls bois
@@ -208,9 +212,13 @@ mt-8 flex items-center justify-center
           <Button
             colorScheme={isDarkMode ? 'white' : 'blue'}
             variant={'outline'}
-            iconLeft={<IconWithFallback src={`/img/assets/refresh_${mode}.svg`} size={'sm'}
-            className={cn(``,loadingPriceQuote && 'animate-spin')}
-            />}
+            iconLeft={
+              <IconWithFallback
+                src={`/img/assets/refresh_${mode}.svg`}
+                size={'sm'}
+                className={cn(``, loadingPriceQuote && 'animate-spin')}
+              />
+            }
             disabled={loadingPriceQuote || !selectedTokenA || !selectedTokenB}
             onClick={handleRefresh}
             className={'p-1.25 aspect-square'}
@@ -302,8 +310,8 @@ mt-8 flex items-center justify-center
               <p
                 className={cn(
                   `ml-auto text-b2 cursor-pointer text-text-lightmode-primary dark:text-text-darkmode-primary`,
-                  balance[selectedTokenB?.address].tokenAmount.uiAmount <= 0 &&
-                  `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
+                  balance[selectedTokenA?.address].tokenAmount.uiAmount == 0 &&
+                    `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
                 )}
                 onClick={() => {
                   setAmountTokenA(balance[selectedTokenA?.address].tokenAmount.uiAmountString)
@@ -321,7 +329,8 @@ mt-8 flex items-center justify-center
               otherToken={selectedTokenB}
               handleChange={(e) => handleChange(e, true)}
               amountToken={amountTokenA}
-              disabled={sendingTransaction}
+              disableInput={loadingPriceQuote || sendingTransaction}
+              disableTokenDropDown={sendingTransaction}
             />
           </div>
           <IconWithFallback
@@ -343,8 +352,8 @@ mt-8 flex items-center justify-center
               <p
                 className={cn(
                   `ml-auto text-b2 cursor-pointer text-text-lightmode-primary dark:text-text-darkmode-primary`,
-                  balance[selectedTokenB?.address].tokenAmount.uiAmount <= 0 &&
-                  `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
+                  balance[selectedTokenB?.address].tokenAmount.uiAmount == 0 &&
+                    `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
                 )}
                 onClick={() => {
                   setAmountTokenB(balance[selectedTokenB?.address].tokenAmount.uiAmountString)
@@ -362,7 +371,9 @@ mt-8 flex items-center justify-center
               otherToken={selectedTokenA}
               handleChange={(e) => handleChange(e, false)}
               amountToken={amountTokenB}
-              disabled={loadingPriceQuote || sendingTransaction}
+              disableInput={true}
+              disableTokenDropDown={sendingTransaction}
+              isLocked={true}
             />
           </div>
           {publicKey && selectedTokenA && selectedTokenB && (
@@ -420,17 +431,17 @@ mt-8 flex items-center justify-center
                 </Tooltip>
                 <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>{fee}</p>
               </div>
-            {/*  <div*/}
-            {/*    className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold */}
-            {/*text-b2 items-center`}*/}
-            {/*  >*/}
-            {/*    <p>Minimum Received</p>*/}
-            {/*    <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`,*/}
-            {/*    loadingPriceQuote && 'opacity-70'*/}
-            {/*    )}>*/}
-            {/*      {minimumReceivedQuote} {selectedTokenB.symbol}*/}
-            {/*    </p>*/}
-            {/*  </div>*/}
+              {/*  <div*/}
+              {/*    className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold */}
+              {/*text-b2 items-center`}*/}
+              {/*  >*/}
+              {/*    <p>Minimum Received</p>*/}
+              {/*    <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`,*/}
+              {/*    loadingPriceQuote && 'opacity-70'*/}
+              {/*    )}>*/}
+              {/*      {minimumReceivedQuote} {selectedTokenB.symbol}*/}
+              {/*    </p>*/}
+              {/*  </div>*/}
             </div>
           )}
           {!publicKey ? (
@@ -459,27 +470,31 @@ function TokenSelectInput({
   otherToken,
   handleChange,
   amountToken,
-  disabled
+  disableInput,
+  disableTokenDropDown,
+  isLocked
 }: {
   token: JupToken | null
   setToken: (token: JupToken) => void
   otherToken: JupToken | null
   handleChange: (e: React.ChangeEvent<HTMLInputElement>, isTokenA: boolean) => void
   amountToken: string
-  disabled?: boolean
+  disableInput?: boolean
+  disableTokenDropDown?: boolean
+  isLocked?: boolean
 }) {
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { isDarkMode, mode } = useDarkMode()
   const { searchValue, setSearchValue, isLoadingTokenList, tokens, topBalancesWithTokenList } = useSwap()
   const { publicKey } = useWalletBalance()
   const tokenRenderList: JupToken[] = searchValue.length > 0 || !publicKey ? tokens : topBalancesWithTokenList
-console.log({ isLoadingTokenList, tokens })
+
   return (
     <InputGroup
       leftItem={
         <InputElementLeft>
           <DropdownMenu open={isDropDownOpen} onOpenChange={setIsDropdownOpen.set}>
-            <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
+            <DropdownMenuTrigger asChild className={'focus-visible:outline-none'} disabled={disableTokenDropDown}>
               <Button
                 colorScheme={'secondaryGradient'}
                 variant={'outline'}
@@ -504,7 +519,7 @@ console.log({ isLoadingTokenList, tokens })
                     size={'sm'}
                   />
                 }
-                disabled={disabled}
+                disabled={disableTokenDropDown}
               >
                 {token ? token?.symbol : 'Select Token'}
               </Button>
@@ -529,12 +544,11 @@ console.log({ isLoadingTokenList, tokens })
                 }}
                 onClear={() => setSearchValue('')}
                 isLoading={isLoadingTokenList}
-                disabled={disabled}
+                disabled={disableTokenDropDown}
               />
               {searchValue && tokenRenderList.length == 0 && !isLoadingTokenList ? (
                 <div className={'mb-auto p-2'}>No Tokens Found..</div>
               ) : null}
-              {isLoadingTokenList ? <div className={'mb-auto p-2'}>Loading Tokens..</div> : null}
               {tokenRenderList.length > 0 ? (
                 <InfiniteTokenListSwap
                   useRenderListLength={searchValue.trim().length > 0}
@@ -557,8 +571,13 @@ console.log({ isLoadingTokenList, tokens })
         placeholder={`0.00 ${token ? token?.symbol : ''}`}
         onChange={(e) => handleChange(e, true)}
         value={amountToken}
-        className={'h-[45px] text-right'}
-        disabled={disabled}
+        className={cn(
+          'h-[45px] text-right',
+          disableInput &&
+            isLocked &&
+            'disabled:text-text-lightmode-secondary disabled:dark:text-text-darkmode-secondary'
+        )}
+        disabled={disableInput}
       />
     </InputGroup>
   )
