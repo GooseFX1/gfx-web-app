@@ -69,6 +69,7 @@ export const Swap: FC = () => {
   const { GammaProgram } = usePriceFeedFarm()
   const [sendingTransaction, setSendingTransaction] = useState(false)
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false)
+  const [fee, setFee] = useState<string>('')
 
   useEffect(() => {
     if (selectedTokenA && selectedTokenB && userPublicKey) {
@@ -81,8 +82,15 @@ export const Swap: FC = () => {
     const handler = setTimeout(async () => {
       if (amountTokenA !== '' && !isNaN(+amountTokenA) && selectedTokenA && selectedTokenB) {
         setLoadingPriceQuote(true)
-        const price = await getPriceQuotes(amountTokenA, selectedTokenA, selectedTokenB, GammaProgram, connection)
+        const { destinationAmountSwapped: price, tradeFee } = await getPriceQuotes(
+          amountTokenA,
+          selectedTokenA,
+          selectedTokenB,
+          GammaProgram,
+          connection
+        )
         setAmountTokenB(price)
+        setFee(tradeFee)
         setLoadingPriceQuote(false)
       }
     }, 500)
@@ -179,8 +187,7 @@ export const Swap: FC = () => {
   }
 
   // TODO: these values pls bois
-  const impactPercent = 0.1
-  const gfxFee = 0.0005 + 0.0005
+  // const impactPercent = 0.1
   const minimumReceivedQuote = 0.0
   return (
     <div
@@ -385,15 +392,15 @@ mt-8 flex items-center justify-center
                 />
                 <IconWithFallback src={'/img/assets/toast-loader.svg'} size={'sm'} className={'animate-spin'} />
               </div>
-              <div className={'flex font-semibold text-b2 items-center'}>
+              {/* <div className={'flex font-semibold text-b2 items-center'}>
                 <p>Price Impact</p>
                 <p
                   className={cn(`text-text-green ml-auto`, getImpactValue(impactPercent))}
                 >{`< ${impactPercent}%`}</p>
-              </div>
+              </div> */}
               <div
                 className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
-            text-b2 justify-center items-center gap-1 items-center`}
+            text-b2 justify-center gap-1 items-center`}
               >
                 <Tooltip>
                   <TooltipTrigger asChild variant={'dotted'}>
@@ -405,9 +412,7 @@ mt-8 flex items-center justify-center
                     </span>
                   </TooltipContent>
                 </Tooltip>
-                <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>
-                  {gfxFee} SOL
-                </p>
+                <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>{fee}</p>
               </div>
               <div
                 className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
@@ -549,13 +554,13 @@ function TokenSelectInput({
   )
 }
 
-function getImpactValue(impactPercent: number) {
-  switch (true) {
-    case impactPercent <= 0.1:
-      return 'text-text-green'
-    case impactPercent <= 0.5:
-      return 'text-background-yellow'
-    default:
-      return 'text-text-red'
-  }
-}
+// function getImpactValue(impactPercent: number) {
+//   switch (true) {
+//     case impactPercent <= 0.1:
+//       return 'text-text-green'
+//     case impactPercent <= 0.5:
+//       return 'text-background-yellow'
+//     default:
+//       return 'text-text-red'
+//   }
+// }

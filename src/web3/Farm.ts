@@ -718,7 +718,13 @@ export const getPriceQuotes = async (
     observationState as any
   )
 
-  return new BigNumber(swapResult.destinationAmountSwapped.toNumber()).div(10 ** mintB?.decimals).toString()
+  return {
+    destinationAmountSwapped: new BigNumber(swapResult.destinationAmountSwapped.toNumber())
+      .div(10 ** mintB?.decimals)
+      .toString(),
+    tradeFee:
+      new BigNumber(swapResult.tradeFee.toNumber()).div(10 ** mintA?.decimals).toString() + ` ${mintA?.symbol}`
+  }
 }
 
 //Instruction - 4 swapping TokenA -> TokenB
@@ -741,7 +747,7 @@ export const swapTokens = async (
 
   const amount = convertToNativeValue(amountToken, mintA?.decimals)
 
-  const quote = await getPriceQuotes(amountToken, mintA, mintB, program, connection)
+  const { destinationAmountSwapped: quote } = await getPriceQuotes(amountToken, mintA, mintB, program, connection)
 
   const slippageAmount = new anchor.BN(+quote * (1 + slippage / 100))
 
