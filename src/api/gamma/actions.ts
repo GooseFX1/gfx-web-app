@@ -9,6 +9,7 @@ import {
   UserPortfolioLPPosition,
   UserPortfolioStats
 } from '../../types/gamma'
+import { BlockheightBasedTransactionConfirmationStrategy, Connection } from '@solana/web3.js'
 
 const fetchGAMMAConfig = async (): Promise<GAMMAConfig | null> => {
   try {
@@ -31,31 +32,29 @@ const fetchAggregateStats = async (): Promise<GAMMAStats | null> => {
   }
 }
 
-const fetchAllPools = async (
-  {
-    page,
-    pageSize,
-    poolType = 'all',
-    sortOrder,
-    sortKey,
-    searchTokens,
-    abortSignal,
-    showCreated,
-    showDeposited,
-    userPublicKey
-  }:{
-    page: number,
-    pageSize: number,
-    poolType: 'all' | 'hyper' | 'primary',
-    sortOrder: 'asc' | 'desc',
-    sortKey: string,
-    searchTokens: string,
-    abortSignal?: AbortSignal,
-    showCreated?: boolean
-    showDeposited?: boolean,
-    userPublicKey?: string
-  }
-): Promise<GAMMAPoolsResponse | null> => {
+const fetchAllPools = async ({
+  page,
+  pageSize,
+  poolType = 'all',
+  sortOrder,
+  sortKey,
+  searchTokens,
+  abortSignal,
+  showCreated,
+  showDeposited,
+  userPublicKey
+}: {
+  page: number
+  pageSize: number
+  poolType: 'all' | 'hyper' | 'primary'
+  sortOrder: 'asc' | 'desc'
+  sortKey: string
+  searchTokens: string
+  abortSignal?: AbortSignal
+  showCreated?: boolean
+  showDeposited?: boolean
+  userPublicKey?: string
+}): Promise<GAMMAPoolsResponse | null> => {
   let search = searchTokens.trim().toLowerCase()
   search = search.length === 0 ? '' : `&search=${search}`
   const showCreatedQuery = showCreated ? `&showCreated=${showCreated}` : ''
@@ -64,8 +63,8 @@ const fetchAllPools = async (
   try {
     const response = await httpClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.POOLS_INFO_ALL +
-      `?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortOrder}&sortBy=${sortKey}${search}`+
-      `${showCreatedQuery}${showDepositedQuery}${userPublicKeyQuery}`,
+        `?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortOrder}&sortBy=${sortKey}${search}` +
+        `${showCreatedQuery}${showDepositedQuery}${userPublicKeyQuery}`,
       { signal: abortSignal }
     )
     return response.data
@@ -74,35 +73,33 @@ const fetchAllPools = async (
     return null
   }
 }
-const fetchPoolsByMints = async (
-  {
-    mintA,
-    mintB,
-    page,
-    pageSize,
-    signal,
-    poolType,
-    sortOrder,
-    sortKey,
-    showCreated,
-    showDeposited,
-    userPublicKey
-  }: {
-    mintA: string,
-    mintB?: string,
-    page: number,
-    pageSize: number
-    signal?: AbortSignal
-    poolType: 'all' | 'hyper' | 'primary',
-    sortOrder: 'asc' | 'desc',
-    sortKey: string
-    showCreated?: boolean
-    showDeposited?: boolean,
-    userPublicKey?: string
-  }
-): Promise<GAMMAPoolsResponse | null> => {
+const fetchPoolsByMints = async ({
+  mintA,
+  mintB,
+  page,
+  pageSize,
+  signal,
+  poolType,
+  sortOrder,
+  sortKey,
+  showCreated,
+  showDeposited,
+  userPublicKey
+}: {
+  mintA: string
+  mintB?: string
+  page: number
+  pageSize: number
+  signal?: AbortSignal
+  poolType: 'all' | 'hyper' | 'primary'
+  sortOrder: 'asc' | 'desc'
+  sortKey: string
+  showCreated?: boolean
+  showDeposited?: boolean
+  userPublicKey?: string
+}): Promise<GAMMAPoolsResponse | null> => {
   const mintQuery = `mint1=${mintA}${mintB ? `&mint2=${mintB}` : ''}`
-  const pageQuery= `page=${page}&pageSize=${pageSize}`
+  const pageQuery = `page=${page}&pageSize=${pageSize}`
   const sortQuery = `poolType=${poolType}&sortOrder=${sortOrder}&sortBy=${sortKey}`
   const showCreatedQuery = showCreated ? `&showCreated=${showCreated}` : ''
   const showDepositedQuery = showDeposited ? `&showDeposited=${showDeposited}` : ''
@@ -110,7 +107,7 @@ const fetchPoolsByMints = async (
   try {
     const response = await httpClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS +
-      `?${mintQuery}&${pageQuery}&${sortQuery}${showCreatedQuery}${showDepositedQuery}${userPublicKeyQuery}`,
+        `?${mintQuery}&${pageQuery}&${sortQuery}${showCreatedQuery}${showDepositedQuery}${userPublicKeyQuery}`,
       { signal }
     )
     return response.data
@@ -296,7 +293,19 @@ const forceCronUpdate = async () => {
     return false
   }
 }
-
+const forceCronUpdateWithConnectionAndTxSig = async (connection: Connection, txSig: string) => {
+  if (txSig) {
+    // if txSig is given wait for confirmation
+    const blockHash = await connection.getLatestBlockhash()
+    const blockHeightConfirmationStrategy: BlockheightBasedTransactionConfirmationStrategy = {
+      signature: txSig,
+      blockhash: blockHash.blockhash,
+      lastValidBlockHeight: blockHash.lastValidBlockHeight
+    }
+    await connection.confirmTransaction(blockHeightConfirmationStrategy, 'confirmed')
+  }
+  return await forceCronUpdate()
+}
 export {
   fetchGAMMAConfig,
   fetchAggregateStats,
@@ -307,5 +316,6 @@ export {
   fetchTokenList,
   fetchTokensByPublicKey,
   fetchPoolsByMints,
-  forceCronUpdate
+  forceCronUpdate,
+  forceCronUpdateWithConnectionAndTxSig
 }

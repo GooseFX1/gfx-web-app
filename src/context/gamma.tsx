@@ -20,7 +20,7 @@ import {
   fetchTokenList,
   fetchTokensByPublicKey,
   fetchUser,
-  forceCronUpdate
+  forceCronUpdate, forceCronUpdateWithConnectionAndTxSig
 } from '@/api/gamma'
 import {
   GAMMAConfig,
@@ -53,7 +53,6 @@ import useBoolean from '@/hooks/useBoolean'
 import Decimal from 'decimal.js-light'
 import { aborter } from '@/utils'
 import BN from 'bn.js'
-import { BlockheightBasedTransactionConfirmationStrategy } from '@solana/web3.js'
 import usePrevious from '@/hooks/usePrevious'
 import useMultiSelect from '@/hooks/useMultiSelect'
 import useFirstRender from '@/hooks/useFirstRender'
@@ -291,8 +290,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }, 60000)
 
     if (calculatePoolType.size == 0) {
+      const abortSig = 'tokenListCalcPoolTypeGamma'
+      const signal = aborter.addSignal(abortSig)
       // fetch primary tokens for type calculation on create pool
-      fetchTokenList(1, 250, 'primary').then((t) => {
+      fetchTokenList(1, 250, 'primary', '', signal).then((t) => {
         if (t.success) {
           const primaryTokensMap = new Set(t.data.tokens.map((token) => token.address))
           setCalculatePoolType(primaryTokensMap)
@@ -631,25 +632,15 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (!base58PublicKey || filteredPools.length == 0 || !selectedCard?.id) return
-    const pool = filteredPools.filter(pool => pool.id === selectedCard.id)
+    const pool = filteredPools.filter((pool) => pool.id === selectedCard.id)
     if (pool.length == 0) return
     setSelectedCard(pool[0])
   }, [base58PublicKey, filteredPools])
 
   const isSearchActive = searchTokens.trim().length > 0
   const forceCronAndUpdateLocalData = async (txSig?: string) => {
+    const result = txSig ? await forceCronUpdateWithConnectionAndTxSig(connection, txSig) : await forceCronUpdate();
 
-    if (txSig) {
-      // if txSig is given wait for confirmation
-      const blockHash = await connection.getLatestBlockhash()
-      const blockHeightConfirmationStrategy: BlockheightBasedTransactionConfirmationStrategy = {
-        signature: txSig,
-        blockhash: blockHash.blockhash,
-        lastValidBlockHeight: blockHash.lastValidBlockHeight
-      }
-      await connection.confirmTransaction(blockHeightConfirmationStrategy, 'confirmed')
-    }
-    const result = await forceCronUpdate()
     if (!result) return
     getUserLpPositions()
     // will trigger updatePool useEffect

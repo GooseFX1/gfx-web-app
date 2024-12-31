@@ -296,7 +296,7 @@ const DesktopNav: FC = () => {
         variant={'ghost'}
         onClick={() => history.push('/swap')}
         className={cn(
-          `tracking-wider flex-col gap-1.5 p-0 text-center text-h6 font-semibold font-poppins`,
+          `tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
           pathname.includes('swap') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
         )}
       >

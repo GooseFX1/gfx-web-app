@@ -136,12 +136,10 @@ export const Router: FC = () => {
                           </Route>
                           <Route exact path={['/swap']}>
                             <PriceFeedFarmProvider>
-                              <GammaProvider>
-                                <SwapProvider>
-                                  {/*<JupWidget />*/}
-                                  <Swap />
-                                </SwapProvider>
-                              </GammaProvider>
+                              <SwapProvider>
+                                {/*<JupWidget />*/}
+                                <Swap />
+                              </SwapProvider>
                             </PriceFeedFarmProvider>
                           </Route>
                           <Route exact path="/analytics">

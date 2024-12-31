@@ -10,6 +10,7 @@ import { fetchTokenList } from '@/api/gamma'
 import { aborter } from '@/utils'
 import { useConnectionConfig } from '@/context/settings'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+import useFirstRender from '@/hooks/useFirstRender'
 
 
 interface ISwapConfig {
@@ -47,7 +48,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [amountTokenA, setAmountTokenA] = useState<string>('')
   const [amountTokenB, setAmountTokenB] = useState<string>('')
   const [slippage, setSlippage] = useState<number>(1.0)
-
+  const firstMount = useFirstRender()
   // external hooks
   const { userCache, updateUserCache } = useConnectionConfig()
   const { balance, topBalances, publicKey } = useWalletBalance()
@@ -55,10 +56,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
                           page
                         }) => {
     setIsLoadingTokenList.on()
-    if (aborter.getSignal(tokenListAborterTokenSwap)) {
-      aborter.abortSignal(tokenListAborterTokenSwap)
-    }
     const signal = aborter.addSignal(tokenListAborterTokenSwap)
+
     fetchTokenList(page, TOKEN_LIST_PAGE_SIZE, 'all', searchValue, signal).then((res) => {
       if (!res.success) return
       if (res?.data?.tokens) {
@@ -72,9 +71,11 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
   }
   useEffect(() => {
-    updateTokens({
-      page: 1
-    })
+    if (firstMount) {
+      updateTokens({
+        page: 1
+      })
+    }
   }, [])
   useEffect(() => {
     updateUserCache({
@@ -108,6 +109,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [topBalances, tokens, balance, publicKey])
 
   useEffect(() => {
+    if (firstMount) return;
     const timeout = setTimeout(() => {
       updateTokens({
         page: 1

@@ -19,7 +19,7 @@ import {
   TooltipTrigger
 } from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
-import { useConnectionConfig, useDarkMode, useGamma, usePriceFeedFarm } from '@/context'
+import { useConnectionConfig, useDarkMode, usePriceFeedFarm } from '@/context'
 import { useSwap } from '@/context/newSwap'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { BASE_SLIPPAGE, JupToken } from '@/pages/FarmV4/constants'
@@ -35,6 +35,7 @@ import useTransaction from '@/hooks/useTransaction'
 import { getPriceQuotes, swapTokens } from '@/web3/Farm'
 import { useWallet } from '@solana/wallet-adapter-react'
 import BigNumber from 'bignumber.js'
+import { forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
 
 export const Swap: FC = () => {
   const { isDarkMode, mode } = useDarkMode()
@@ -65,7 +66,7 @@ export const Swap: FC = () => {
   const [userTargetTokenType, setUserTargetTokenType] = useState<'spl-token' | 'native' | 'spl-token-2022' | ''>(
     ''
   )
-  const { forceCronAndUpdateLocalData } = useGamma()
+
   const { GammaProgram } = usePriceFeedFarm()
   const [sendingTransaction, setSendingTransaction] = useState(false)
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false)
@@ -80,19 +81,7 @@ export const Swap: FC = () => {
 
   useEffect(() => {
     const handler = setTimeout(async () => {
-      if (amountTokenA !== '' && !isNaN(+amountTokenA) && selectedTokenA && selectedTokenB) {
-        setLoadingPriceQuote(true)
-        const { destinationAmountSwapped: price, tradeFee } = await getPriceQuotes(
-          amountTokenA,
-          selectedTokenA,
-          selectedTokenB,
-          GammaProgram,
-          connection
-        )
-        setAmountTokenB(price)
-        setFee(tradeFee)
-        setLoadingPriceQuote(false)
-      }
+      await handleRefresh()
     }, 500)
 
     return () => {
@@ -110,8 +99,20 @@ export const Swap: FC = () => {
       { id: 'slippage-save' }
     )
   }
-  const handleRefresh = () => {
-    console.log('here do something')
+  const handleRefresh = async () => {
+    if (amountTokenA !== '' && !isNaN(+amountTokenA) && selectedTokenA && selectedTokenB) {
+      setLoadingPriceQuote(true)
+      const { destinationAmountSwapped: price, tradeFee } = await getPriceQuotes(
+        amountTokenA,
+        selectedTokenA,
+        selectedTokenB,
+        GammaProgram,
+        connection
+      )
+      setAmountTokenB(price)
+      setFee(tradeFee)
+      setLoadingPriceQuote(false)
+    }
   }
   const handleChange = async (e, isSource: boolean) => {
     const inputNumber = e?.target?.value
@@ -146,6 +147,7 @@ export const Swap: FC = () => {
 
   const handleSwap = async () => {
     try {
+      setSendingTransaction(true)
       const txBuilder = createTransactionBuilder()
       const tx = await swapTokens(
         amountTokenA,
@@ -159,35 +161,34 @@ export const Swap: FC = () => {
         connection
       )
       txBuilder.add(tx)
-      setSendingTransaction(true)
       // eslint-disable-next-line max-len
       const sourceAmount = `${bigNumberFormatter(new BigNumber(amountTokenA))} ${selectedTokenA?.symbol}`
       // eslint-disable-next-line max-len
       const targetAmount = `${bigNumberFormatter(new BigNumber(amountTokenB))} ${selectedTokenB?.symbol}`
       const { success, txSig } = await sendTransaction(txBuilder, {
-        successMessage: `You successfully swapped ${sourceAmount} to ${targetAmount}`
+        // eslint-disable-next-line max-len
+        successMessage: `You successfully swapped ${sourceAmount} ${selectedTokenA?.symbol} to ${targetAmount} ${selectedTokenB?.symbol}`
       })
       console.log('SwapResponse', success)
       if (!success) {
         //off(connectionId)
         console.log('An error occurred while Swapping!')
-        setSendingTransaction(false)
-        return
+
       } else {
-        setSendingTransaction(false)
         setAmountTokenA('')
         setAmountTokenB('')
-        await forceCronAndUpdateLocalData(txSig)
+        await forceCronUpdateWithConnectionAndTxSig(connection, txSig)
       }
     } catch (e) {
-      setSendingTransaction(false)
       console.log('An error occurred while depositing.', e)
     }
+    setSendingTransaction(false)
+
   }
 
   // TODO: these values pls bois
   // const impactPercent = 0.1
-  const minimumReceivedQuote = 0.0
+  // const minimumReceivedQuote = 0.0
   return (
     <div
       className={`
@@ -207,7 +208,10 @@ mt-8 flex items-center justify-center
           <Button
             colorScheme={isDarkMode ? 'white' : 'blue'}
             variant={'outline'}
-            iconLeft={<IconWithFallback src={`/img/assets/refresh_${mode}.svg`} size={'sm'} />}
+            iconLeft={<IconWithFallback src={`/img/assets/refresh_${mode}.svg`} size={'sm'}
+            className={cn(``,loadingPriceQuote && 'animate-spin')}
+            />}
+            disabled={loadingPriceQuote || !selectedTokenA || !selectedTokenB}
             onClick={handleRefresh}
             className={'p-1.25 aspect-square'}
           />
@@ -297,8 +301,9 @@ mt-8 flex items-center justify-center
               <h4 className={'text-text-lightmode-primary dark:text-text-darkmode-primary'}>You're Selling:</h4>
               <p
                 className={cn(
-                  `ml-auto text-b2 cursor-pointer text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`,
-                  balance[selectedTokenB?.address].tokenAmount.uiAmount <= 0 && `cursor-not-allowed`
+                  `ml-auto text-b2 cursor-pointer text-text-lightmode-primary dark:text-text-darkmode-primary`,
+                  balance[selectedTokenB?.address].tokenAmount.uiAmount <= 0 &&
+                  `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
                 )}
                 onClick={() => {
                   setAmountTokenA(balance[selectedTokenA?.address].tokenAmount.uiAmountString)
@@ -316,6 +321,7 @@ mt-8 flex items-center justify-center
               otherToken={selectedTokenB}
               handleChange={(e) => handleChange(e, true)}
               amountToken={amountTokenA}
+              disabled={loadingPriceQuote || sendingTransaction}
             />
           </div>
           <IconWithFallback
@@ -336,8 +342,9 @@ mt-8 flex items-center justify-center
               <h4 className={'text-text-lightmode-primary dark:text-text-darkmode-primary'}>You're Buying:</h4>
               <p
                 className={cn(
-                  `ml-auto text-b2 cursor-pointer text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`,
-                  balance[selectedTokenB?.address].tokenAmount.uiAmount <= 0 && `cursor-not-allowed`
+                  `ml-auto text-b2 cursor-pointer text-text-lightmode-primary dark:text-text-darkmode-primary`,
+                  balance[selectedTokenB?.address].tokenAmount.uiAmount <= 0 &&
+                  `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
                 )}
                 onClick={() => {
                   setAmountTokenB(balance[selectedTokenB?.address].tokenAmount.uiAmountString)
@@ -355,7 +362,7 @@ mt-8 flex items-center justify-center
               otherToken={selectedTokenA}
               handleChange={(e) => handleChange(e, false)}
               amountToken={amountTokenB}
-              loadingPriceQuote={loadingPriceQuote}
+              disabled={loadingPriceQuote || sendingTransaction}
             />
           </div>
           {publicKey && selectedTokenA && selectedTokenB && (
@@ -413,15 +420,17 @@ mt-8 flex items-center justify-center
                 </Tooltip>
                 <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>{fee}</p>
               </div>
-              <div
-                className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
-            text-b2 items-center`}
-              >
-                <p>Minimum Received</p>
-                <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>
-                  {minimumReceivedQuote} {selectedTokenB.symbol}
-                </p>
-              </div>
+            {/*  <div*/}
+            {/*    className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold */}
+            {/*text-b2 items-center`}*/}
+            {/*  >*/}
+            {/*    <p>Minimum Received</p>*/}
+            {/*    <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`,*/}
+            {/*    loadingPriceQuote && 'opacity-70'*/}
+            {/*    )}>*/}
+            {/*      {minimumReceivedQuote} {selectedTokenB.symbol}*/}
+            {/*    </p>*/}
+            {/*  </div>*/}
             </div>
           )}
           {!publicKey ? (
@@ -450,21 +459,21 @@ function TokenSelectInput({
   otherToken,
   handleChange,
   amountToken,
-  loadingPriceQuote
+  disabled
 }: {
   token: JupToken | null
   setToken: (token: JupToken) => void
   otherToken: JupToken | null
   handleChange: (e: React.ChangeEvent<HTMLInputElement>, isTokenA: boolean) => void
   amountToken: string
-  loadingPriceQuote?: boolean
+  disabled?: boolean
 }) {
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { isDarkMode, mode } = useDarkMode()
   const { searchValue, setSearchValue, isLoadingTokenList, tokens, topBalancesWithTokenList } = useSwap()
   const { publicKey } = useWalletBalance()
   const tokenRenderList: JupToken[] = searchValue.length > 0 || !publicKey ? tokens : topBalancesWithTokenList
-
+console.log({ isLoadingTokenList, tokens })
   return (
     <InputGroup
       leftItem={
@@ -495,7 +504,7 @@ function TokenSelectInput({
                     size={'sm'}
                   />
                 }
-                disabled={false}
+                disabled={disabled}
               >
                 {token ? token?.symbol : 'Select Token'}
               </Button>
@@ -520,10 +529,12 @@ function TokenSelectInput({
                 }}
                 onClear={() => setSearchValue('')}
                 isLoading={isLoadingTokenList}
+                disabled={disabled}
               />
               {searchValue && tokenRenderList.length == 0 && !isLoadingTokenList ? (
                 <div className={'mb-auto p-2'}>No Tokens Found..</div>
               ) : null}
+              {isLoadingTokenList ? <div className={'mb-auto p-2'}>Loading Tokens..</div> : null}
               {tokenRenderList.length > 0 ? (
                 <InfiniteTokenListSwap
                   useRenderListLength={searchValue.trim().length > 0}
@@ -547,7 +558,7 @@ function TokenSelectInput({
         onChange={(e) => handleChange(e, true)}
         value={amountToken}
         className={'h-[45px] text-right'}
-        disabled={loadingPriceQuote}
+        disabled={disabled}
       />
     </InputGroup>
   )
