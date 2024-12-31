@@ -321,7 +321,7 @@ mt-8 flex items-center justify-center
               otherToken={selectedTokenB}
               handleChange={(e) => handleChange(e, true)}
               amountToken={amountTokenA}
-              disabled={loadingPriceQuote || sendingTransaction}
+              disabled={sendingTransaction}
             />
           </div>
           <IconWithFallback
