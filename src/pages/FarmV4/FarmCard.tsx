@@ -1,10 +1,11 @@
 import { useDarkMode, useGamma } from '@/context'
-import { Badge, Button, cn, Icon, Skeleton } from 'gfx-component-lib'
+import { Badge, Button, cn, Skeleton } from 'gfx-component-lib'
 import { FC, ReactElement } from 'react'
 import { PoolStats } from './PoolStats'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { loadIconImage } from '@/utils'
+import { IconWithFallback } from '@/components/common/IconWithFallback'
 
 const FarmCard: FC<{
   pool: GAMMAPoolWithUserLiquidity | undefined
@@ -28,12 +29,12 @@ const FarmCard: FC<{
     >
       <div className="flex flex-row justify-between mb-2.5 items-center">
         <div className="flex relative">
-          <Icon
+          <IconWithFallback
             src={loadIconImage(pool?.mintA?.logoURI, mode)}
             size="lg"
             className={'outline dark:outline-black-2 outline-white outline-[3px] rounded-full'}
           />
-          <Icon
+          <IconWithFallback
             src={loadIconImage(pool?.mintB?.logoURI, mode)}
             size="lg"
             className={
@@ -68,7 +69,7 @@ const FarmCard: FC<{
             dark:text-grey-8 text-black-4 mb-2"
       >
         {`${pool?.mintA?.symbol} - ${pool?.mintB?.symbol}`}
-        <Icon src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
+        <IconWithFallback src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
         {pool.poolCreator == base58PublicKey && (
           <Badge size="sm" variant="default">
             Owner

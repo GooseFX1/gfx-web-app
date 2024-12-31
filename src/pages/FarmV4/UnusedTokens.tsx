@@ -1,11 +1,12 @@
 import { useDarkMode, useGamma, useRewardToggle } from '@/context'
-import { Icon, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
+import { Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import { FC } from 'react'
 import { POOL_TYPE } from './constants'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { commafy, loadIconImage, numberFormatter } from '@/utils'
 import { fetchTokensByPublicKey } from '@/api/gamma'
 import { GAMMAListTokenResponse } from '@/types/gamma'
+import { IconWithFallback } from '@/components/common/IconWithFallback'
 
 const ExplorePools: FC<{ tokenMint: string }> = ({ tokenMint }) => {
   const { setIsPortfolio } = useRewardToggle()
@@ -69,7 +70,7 @@ const UnusedTokens: FC = () => {
         {topBalances.slice(0, 5).map((balance) => (
           <div className="flex flex-row justify-between items-center mb-3" key={balance.symbol}>
             <div className="flex flex-row items-center">
-              <Icon
+              <IconWithFallback
                 src={loadIconImage(balance.logoURI, mode)}
                 alt="token"
                 size="sm"

@@ -24,6 +24,8 @@ import { Toaster } from 'gfx-component-lib'
 import { RewardsProvider } from '@/context/rewardsContext'
 import { MarketProductGroupProvider } from './context/market_product_group'
 import { PasswordProvider } from './context/passwordProtectionProvider'
+import { Swap } from '@/pages/Swap'
+import { SwapProvider } from '@/context/newSwap'
 
 const Bridge = lazy(() => import('./pages/Bridge'))
 const GenericNotFound = lazy(() => import('./pages/InvalidUrl'))
@@ -131,6 +133,14 @@ export const Router: FC = () => {
                                 </GammaProvider>
                               </PriceFeedFarmProvider>
                             </PasswordProvider>
+                          </Route>
+                          <Route exact path={['/swap']}>
+                            <PriceFeedFarmProvider>
+                              <SwapProvider>
+                                {/*<JupWidget />*/}
+                                <Swap />
+                              </SwapProvider>
+                            </PriceFeedFarmProvider>
                           </Route>
                           <Route exact path="/analytics">
                             <AnalyticsWrapper />

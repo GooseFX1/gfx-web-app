@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react'
-import { Badge, Button, cn, Icon } from 'gfx-component-lib'
+import { Badge, Button, cn } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import { ModeOfOperation } from './constants'
 import { loadIconImage, numberFormatter } from '@/utils'
@@ -9,6 +9,7 @@ import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { FarmRowLoader } from '@/pages/FarmV4/FarmRow'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+import { IconWithFallback } from '@/components/common/IconWithFallback'
 
 const renderPosition = (p: GAMMAPoolWithUserLiquidity) => {
   const liq = p.userLpPosition
@@ -77,12 +78,12 @@ const MyPositions: FC = () => {
           >
             {/* name */}
             <div className="flex flex-row items-center">
-              <Icon
+              <IconWithFallback
                 src={loadIconImage(pool.mintA.logoURI, mode)}
                 className="border-solid dark:border-black-2 border-white
                                   border-[2px] rounded-full h-[25px] w-[25px]"
               />
-              <Icon
+              <IconWithFallback
                 src={loadIconImage(pool.mintB.logoURI, mode)}
                 className="relative right-[10px] border-solid dark:border-black-2
                                   border-white border-[2px] rounded-full h-[25px] w-[25px]"

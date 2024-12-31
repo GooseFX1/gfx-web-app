@@ -11,7 +11,6 @@ import {
   DialogBody,
   DialogContent,
   DialogOverlay,
-  Icon,
   Popover,
   PopoverAnchor,
   PopoverContent,
@@ -27,6 +26,7 @@ import FarmSort from '@/pages/FarmV4/FarmSort'
 import { aborter, loadIconImage } from '@/utils'
 import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
 import useFirstRender from '@/hooks/useFirstRender'
+import { IconWithFallback } from '@/components/common/IconWithFallback'
 import useDebounce from '@/hooks/useDebounce'
 
 export const FarmContainer: FC = () => {
@@ -205,12 +205,12 @@ export const FarmContainer: FC = () => {
                                  from-brand-secondaryGradient-primary/30
                                  to-brand-secondaryGradient-secondary/30 py-[2.5px] gap-1 before:z-0 
                                  `}>
-                            <Icon size={'sm'} src={loadIconImage(token.logoURI, mode)}
+                            <IconWithFallback size={'sm'} src={loadIconImage(token.logoURI, mode)}
                                   className={'rounded-full'}
                                   onClick={() => removeSelectedToken(token)} />
                             <h5 className={'text-text-lightmode-primary dark:text-text-white'}>{token.symbol}</h5>
-                            <Icon className={`!w-[11px] !h-[11px] !min-w-[11px] !min-h-[11px] z-0 cursor-pointer 
-                            `}
+                            <IconWithFallback
+                              className={`!w-[11px] !h-[11px] !min-w-[11px] !min-h-[11px] z-0 cursor-pointer`}
                                   src={`/img/assets/close-${mode}.svg`}
                                   onClick={() => {
                                     removeSelectedToken(token)
@@ -266,7 +266,7 @@ export const FarmContainer: FC = () => {
                 {breakpoint.isMobile ? (
                   <div>
                     <Button className="p-0 !h-[35px] !w-[35px] mx-2 relative" variant={'ghost'}>
-                      <Icon
+                      <IconWithFallback
                         src={`img/assets/farm_filter_${mode}.svg`}
                         size={'md'}
                         className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}

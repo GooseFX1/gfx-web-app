@@ -67,13 +67,15 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   const topBalances: UserTokenAccounts[] = useMemo(() => {
     const values = Object.values(balance)
     const alreadyAdded = new Set<string>()
-    return values.filter((v) => {
-      if (alreadyAdded.has(v.symbol) || v.value.isZero()) {
-        return false
-      }
-      alreadyAdded.add(v.symbol)
-      return true
-    }).sort((a, b) => (a.value.gte(b.value) ? -1 : 1))
+    return values
+      .filter((v) => {
+        if (alreadyAdded.has(v.symbol) || v.value.isZero()) {
+          return false
+        }
+        alreadyAdded.add(v.symbol)
+        return true
+      })
+      .sort((a, b) => (a.value.gte(b.value) ? -1 : 1))
   }, [balance])
 
   const tokens = tokenAccounts.map((account) => ({
@@ -120,11 +122,12 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   }, [tokenAccounts])
   useEffect(() => {
     if (!publicKey) {
-      callbackOff
+      callbackOff()
       setTokenAccounts([])
       setBalance({})
       return
     }
+
     getTokenAccounts()
   }, [connection, network, publicKey])
 
@@ -144,22 +147,17 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
 
   async function getTokenAccounts() {
     if (!publicKey) return
+    const [standardTokens, token2022, solBalance] = await Promise.all([
+      connection.getParsedTokenAccountsByOwner(publicKey, {
+        programId: TOKEN_PROGRAM_ID
+      }),
+      connection.getParsedTokenAccountsByOwner(publicKey, {
+        programId: TOKEN_2022_PROGRAM_ID
+      }),
+      connection.getBalance(publicKey)
+    ])
 
-    const standardTokens: { pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }[] =
-      (
-        (await connection.getParsedTokenAccountsByOwner(publicKey, {
-          programId: TOKEN_PROGRAM_ID
-        })) as any
-      )?.value || []
-
-    const token2022: { pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }[] =
-      (
-        (await connection.getParsedTokenAccountsByOwner(publicKey, {
-          programId: TOKEN_2022_PROGRAM_ID
-        })) as any
-      )?.value || []
-
-    const accounts = [...standardTokens, ...token2022]
+    const accounts = [...standardTokens.value, ...token2022.value]
     const tokenAccounts = {}
     const tokenInfo = {}
     let addresses = NATIVE_MINT.toBase58() + ','
@@ -173,7 +171,6 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
 
     addresses = addresses.slice(0, -1)
 
-    const solBalance = await connection.getBalance(publicKey)
     const solUIAmount = solBalance / 10 ** 9
 
     const sol = {

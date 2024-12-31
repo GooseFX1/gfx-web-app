@@ -1,0 +1,157 @@
+import React, {
+  createContext,
+  FC,
+  ReactNode,
+  useContext, useEffect, useMemo, useState
+} from 'react'
+import { JupToken, TOKEN_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
+import useBoolean from '@/hooks/useBoolean'
+import { fetchTokenList } from '@/api/gamma'
+import { aborter } from '@/utils'
+import { useConnectionConfig } from '@/context/settings'
+import { useWalletBalance } from '@/context/walletBalanceContext'
+import useFirstRender from '@/hooks/useFirstRender'
+
+
+interface ISwapConfig {
+  tokens: JupToken[]
+  selectedTokenA: JupToken | null
+  selectedTokenB: JupToken | null
+  amountTokenA: string
+  amountTokenB: string
+  slippage: number
+  tokenPage: number
+  maxTokensReached: boolean
+  isLoadingTokenList: boolean
+  searchValue: string
+  setAmountTokenA: (amount: string) => void
+  setAmountTokenB: (amount: string) => void
+  setSearchValue: (value: string) => void
+  setSelectedTokenA: (token: JupToken) => void
+  setSelectedTokenB: (token: JupToken) => void
+  setSlippage: (slippage: number) => void
+  topBalancesWithTokenList: JupToken[]
+  setTokenPage: (page: number) => void
+}
+
+
+const SwapContext = createContext<ISwapConfig | null>(null)
+const tokenListAborterTokenSwap = 'tokenListSWAP'
+export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [tokens, setTokens] = useState<JupToken[]>([])
+  const [tokenPage, setTokenPage] = useState<number>(1)
+  const [maxTokensReached, setMaxTokensReached] = useBoolean(true)
+  const [isLoadingTokenList, setIsLoadingTokenList] = useBoolean(false)
+  const [searchValue, setSearchValue] = useState<string>('')
+  const [selectedTokenA, setSelectedTokenA] = useState<JupToken | null>(null)
+  const [selectedTokenB, setSelectedTokenB] = useState<JupToken | null>(null)
+  const [amountTokenA, setAmountTokenA] = useState<string>('')
+  const [amountTokenB, setAmountTokenB] = useState<string>('')
+  const [slippage, setSlippage] = useState<number>(1.0)
+  const firstMount = useFirstRender()
+  // external hooks
+  const { userCache, updateUserCache } = useConnectionConfig()
+  const { balance, topBalances, publicKey } = useWalletBalance()
+  const updateTokens = ({
+                          page
+                        }) => {
+    setIsLoadingTokenList.on()
+    const signal = aborter.addSignal(tokenListAborterTokenSwap)
+
+    fetchTokenList(page, TOKEN_LIST_PAGE_SIZE, 'all', searchValue, signal).then((res) => {
+      if (!res.success) return
+      if (res?.data?.tokens) {
+        setTokens(res.data.tokens)
+      }
+      setTokenPage(res.data.currentPage)
+      setMaxTokensReached.set(res.data.totalPages == res.data.currentPage)
+    })
+      .finally(() => {
+        setIsLoadingTokenList.off()
+      })
+  }
+  useEffect(() => {
+    if (firstMount) {
+      updateTokens({
+        page: 1
+      })
+    }
+  }, [])
+  useEffect(() => {
+    updateUserCache({
+      ...userCache,
+      swap: {
+        ...userCache.swap,
+        slippage: slippage
+      }
+    })
+  }, [slippage, userCache])
+
+  const topBalancesWithTokenList: JupToken[] = useMemo(() => {
+    if (!tokens.length || !publicKey) return []
+    const data = []
+    const hasTokenSet = new Set()
+    for (const tokenBalance of topBalances) {
+      if (!hasTokenSet.has(tokenBalance.mint)) {
+        hasTokenSet.add(tokenBalance.mint)
+        data.push({
+          ...tokenBalance,
+          address: tokenBalance.mint
+        })
+      }
+    }
+    for (const token of tokens) {
+      if (!hasTokenSet.has(token.address)) {
+        data.push(token)
+      }
+    }
+    return data.sort((a, b) => (balance[a.address].value.gt(balance[b.address].value) ? -1 : 1))
+  }, [topBalances, tokens, balance, publicKey])
+
+  useEffect(() => {
+    if (firstMount) return;
+    const timeout = setTimeout(() => {
+      updateTokens({
+        page: 1
+      })
+    }, 250)
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [searchValue])
+  return (
+    <SwapContext.Provider
+      value={{
+        tokens,
+        selectedTokenA,
+        selectedTokenB,
+        amountTokenA,
+        amountTokenB,
+        slippage,
+        tokenPage,
+        maxTokensReached,
+        isLoadingTokenList,
+        setAmountTokenA,
+        setAmountTokenB,
+        setSearchValue,
+        setSelectedTokenA,
+        setSelectedTokenB,
+        setSlippage,
+        topBalancesWithTokenList,
+        searchValue,
+        setTokenPage
+      }}
+    >
+      {children}
+    </SwapContext.Provider>
+  )
+}
+
+export const useSwap = (): ISwapConfig => {
+  const context = useContext(SwapContext)
+
+  if (!context) {
+    throw new Error('Missing swap context')
+  }
+  return context
+}

@@ -13,7 +13,9 @@ type UserGAMMAConfig = {
   currentSort: string
   viewMode: 'lite' | 'pro';
 }
-
+type UserSWAPConfig = {
+  slippage: number
+}
 export interface USER_CONFIG_CACHE {
   hasDexOnboarded: boolean
   endpointName: EndPointName
@@ -22,4 +24,5 @@ export interface USER_CONFIG_CACHE {
   gamma: UserGAMMAConfig
   hasSignedTC: boolean
   priorityFee: PriorityFeeName
+  swap: UserSWAPConfig
 }

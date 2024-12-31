@@ -1,9 +1,10 @@
 import { FC, ReactElement, useMemo } from 'react'
 import { useDarkMode } from '@/context'
-import { Badge, cn, Icon } from 'gfx-component-lib'
+import { Badge, cn } from 'gfx-component-lib'
 import { loadIconImage, truncateAddress, truncateBigNumber } from '@/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GAMMAToken } from '@/types/gamma'
+import { IconWithFallback } from '@/components/common/IconWithFallback'
 
 export const TokenRow: FC<{
   isMintA: boolean
@@ -28,7 +29,7 @@ export const TokenRow: FC<{
     return (
       <div className="flex flex-row justify-between items-center mx-2.5">
         <div className="flex flex-row">
-          <Icon
+          <IconWithFallback
             src={loadIconImage(token?.logoURI, mode)}
             size="sm"
             className={`mr-2 border border-solid rounded-circle 
@@ -43,7 +44,7 @@ export const TokenRow: FC<{
                 <span className={'font-poppins font-semibold my-0.5 mr-2'}>
                   {truncateAddress(token?.address, 3)}
                 </span>
-                <Icon
+                <IconWithFallback
                   src={`/img/assets/arrowcircle-${mode}.svg`}
                   className={'!h-[18px] !w-[18px] !min-h-[18px] !min-w-[18px]'}
                 />
@@ -52,7 +53,7 @@ export const TokenRow: FC<{
           </div>
         </div>
         {isDeposit && <div className='flex flex-row items-center'>
-          <Icon src={getWalletIcon()} size='sm' />
+          <IconWithFallback src={getWalletIcon()} size='sm' />
           <div
             className={cn(
               'ml-1.5 text-regular font-semibold dark:text-grey-8 text-black-4',
