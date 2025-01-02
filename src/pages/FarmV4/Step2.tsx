@@ -517,7 +517,7 @@ function TokenSelectionInput({
                 >
                   Popular
                 </h5>
-                <div className={'flex pb-2 gap-3'}>
+                <div className={'flex pb-2 gap-3 overflow-scroll'}>
                   {loadingPopularTokens ? (
                     <>
                       <Skeleton className={'h-[35px] w-[80px]'} />
@@ -529,7 +529,7 @@ function TokenSelectionInput({
                     popularTokens.map((token) => (
                       <Button
                         className={`border-solid dark:border-black-4 border-grey-4 border 
-                          cursor-pointer p-1 flex rounded-[4px] min-w-[60px]`}
+                          cursor-pointer p-1 flex rounded-[4px] min-w-[80px] md:min-w-[60px] grow shrink`}
                         key={token?.address}
                         onClick={() => {
                           setToken(token)
