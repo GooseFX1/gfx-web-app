@@ -19,7 +19,7 @@ const DepositWithdrawToggle: FC<{
     <RadioOptionGroup
       defaultValue={ModeOfOperation.DEPOSIT}
       value={modeOfOperation === ModeOfOperation.DEPOSIT ? ModeOfOperation.DEPOSIT : ModeOfOperation.WITHDRAW}
-      className={`w-full mt-3 max-sm:mt-1 px-2.5`}
+      className={`w-full sm:mt-3 mt-2.5 px-2.5`}
       optionClassName={`w-full text-h5`}
       options={[
         {
