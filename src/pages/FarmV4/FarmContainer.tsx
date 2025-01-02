@@ -308,7 +308,7 @@ export const FarmContainer: FC = () => {
                           <div className={'flex flex-col gap-3'}>
                             {!isPortfolio &&
                               <div className="flex items-center justify-between mb-2">
-                                <span className="h-full text-regular text-left dark:text-grey-2 
+                                <span className="h-full text-regular text-left dark:text-grey-2
                                   text-grey-1 font-semibold mr-3">
                                   Layout
                                 </span>
@@ -319,13 +319,13 @@ export const FarmContainer: FC = () => {
                                   iconLeft={
                                     <IconWithFallback
                                       size={'xs'}
-                                      src={isCardMode === 'card' ? 
+                                      src={isCardMode === 'card' ?
                                         "/img/assets/list.svg" : "/img/assets/list-active.svg"}
                                     />}
                                   iconRight={
                                     <IconWithFallback
                                       size={'xs'}
-                                      src={isCardMode === 'card' ? 
+                                      src={isCardMode === 'card' ?
                                         "/img/assets/grid-active.svg" : "/img/assets/grid.svg"} />}
                                       checked={isCardMode === 'card'}
                                       onClick={handleLayoutToggle}
@@ -336,7 +336,7 @@ export const FarmContainer: FC = () => {
                               <>
                                 <div className="flex items-center justify-between ">
                                   <span
-                                    className="h-full text-regular text-left dark:text-grey-2 
+                                    className="h-full text-regular text-left dark:text-grey-2
                                     text-grey-1 font-semibold">
                                     Show created pools
                                   </span>
@@ -350,7 +350,7 @@ export const FarmContainer: FC = () => {
                                 </div>
                                 <div className="flex items-center justify-between">
                                   <span
-                                    className="h-full text-regular text-left dark:text-grey-2 
+                                    className="h-full text-regular text-left dark:text-grey-2
                                     text-grey-1 font-semibold">
                                     Show Deposited
                                   </span>
@@ -396,7 +396,12 @@ export const FarmContainer: FC = () => {
                                     className={'hidden'}
                                     disabled={Number(s.id) >= 9 && !publicKey}
                                   />
-                                  <span className="m-0 text-regular font-bold">{s.name}</span>
+                                  <span className={`m-0 text-regular font-bold
+                                     overflow-hidden
+                                      overflow-ellipsis
+                                      whitespace-nowrap`}>
+                                    {s.name}
+                                  </span>
                                 </Badge>
                               </label>
                             ))}
