@@ -453,7 +453,13 @@ mt-8 flex items-center justify-center
               variant={'primary'}
               colorScheme={'blue'}
               fullWidth
-              disabled={!selectedTokenA || !selectedTokenB || !amountTokenA || !amountTokenB}
+              disabled={
+                !selectedTokenA ||
+                !selectedTokenB ||
+                !amountTokenA ||
+                !amountTokenB ||
+                balance[selectedTokenA?.address].tokenAmount.uiAmount < +amountTokenA
+              }
             >
               Swap
             </Button>
