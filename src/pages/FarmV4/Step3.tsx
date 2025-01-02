@@ -83,7 +83,7 @@ const Step3: FC<{
             {`Token A (${tokenA?.symbol})`}
           </span>
           <span className="text-regular font-semibold dark:text-grey-8 text-black-4">
-            {bigNumberFormatter(new BigNumber(amountTokenA))} {tokenA?.symbol}
+            {bigNumberFormatter(new BigNumber(amountTokenA), tokenA?.decimals ?? 6)} {tokenA?.symbol}
           </span>
         </div>
         <div className="flex justify-between mb-3">
@@ -91,7 +91,7 @@ const Step3: FC<{
             {`Token B (${tokenB?.symbol})`}
           </span>
           <span className="text-regular font-semibold dark:text-grey-8 text-black-4">
-            {bigNumberFormatter(new BigNumber(amountTokenB))} {tokenB?.symbol}
+            {bigNumberFormatter(new BigNumber(amountTokenB), tokenB?.decimals ?? 6)} {tokenB?.symbol}
           </span>
         </div>
         {/* <div className="flex justify-between mb-2">
