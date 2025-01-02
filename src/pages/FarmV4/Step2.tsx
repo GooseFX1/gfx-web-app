@@ -34,7 +34,7 @@ import Text from '@/components/Text'
 import { fetchAndConcatAllPoolsByMints, fetchTokensByPublicKey } from '@/api/gamma'
 import { GAMMAPool } from '@/types/gamma'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { loadIconImage } from '@/utils'
+import { loadIconImage, numberFormatter } from '@/utils'
 import SearchBar from '@/components/common/SearchBar'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import Decimal from 'decimal.js-light'
@@ -179,7 +179,18 @@ const Step2: FC<{
           <div>
             <div className="flex flex-row justify-between items-center mb-2.5">
               <h4>1. Select Token A</h4>
-              <div className={cn('flex flex-row items-center', !tokenA && 'invisible')}>
+              <div className={cn('flex flex-row items-center', !tokenA && 'invisible')}
+                   onClick={() =>
+                     handleChange(
+                       {
+                         target: {
+                           value: walletTokenA
+                         }
+                       },
+                       true
+                     )
+                   }
+              >
                 <img
                   src={`/img/assets/wallet-${mode}-${walletTokenA !== '0.00' ? 'enabled' : 'disabled'}.svg`}
                   alt="wallet"
@@ -191,7 +202,7 @@ const Step2: FC<{
                     walletTokenA === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
                   )}
                 >
-                  {walletTokenA} {tokenA?.symbol}
+                  {numberFormatter(+walletTokenA)} {tokenA?.symbol}
                 </span>
               </div>
             </div>
@@ -206,7 +217,18 @@ const Step2: FC<{
           <div>
             <div className="flex flex-row justify-between items-center mb-2.5">
               <h4>2. Select Token B</h4>
-              <div className={cn('flex flex-row items-center', !tokenB && 'invisible')}>
+              <div className={cn('flex flex-row items-center', !tokenB && 'invisible')}
+                   onClick={() =>
+                     handleChange(
+                       {
+                         target: {
+                           value: walletTokenB
+                         }
+                       },
+                       false
+                     )
+                   }
+              >
                 <img
                   src={`/img/assets/wallet-${mode}-${walletTokenB !== '0.00' ? 'enabled' : 'disabled'}.svg`}
                   alt="wallet"
@@ -218,7 +240,7 @@ const Step2: FC<{
                     walletTokenB === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
                   )}
                 >
-                  {walletTokenB} {tokenB?.symbol}
+                  {numberFormatter(+walletTokenB)} {tokenB?.symbol}
                 </span>
               </div>
             </div>
@@ -409,7 +431,8 @@ function TokenSelectionInput({
   amountToken: string
   setToken: Dispatch<SetStateAction<JupToken>>
 }) {
-  const { isLoadingTokenList, tokenList, updateTokenList, setPage, topBalancesWithTokenList, setTokenList } = useGamma()
+  const { isLoadingTokenList, tokenList, updateTokenList, setPage, topBalancesWithTokenList, setTokenList } =
+    useGamma()
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
   // const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
@@ -419,7 +442,7 @@ function TokenSelectionInput({
   const { publicKey } = useWalletBalance()
   const isFirstRender = useFirstRender()
   const tokenRenderList = searchValue.length > 0 || !publicKey ? tokenList : topBalancesWithTokenList
-  const {debounce, abortDebounce} = useDebounce()
+  const { debounce, abortDebounce } = useDebounce()
   useEffect(() => {
     if (isFirstRender) return
     console.log('step2 trigger')
@@ -517,7 +540,7 @@ function TokenSelectionInput({
                 >
                   Popular
                 </h5>
-                <div className={'flex pb-2 gap-3 overflow-scroll'}>
+                <div className={'flex md:pb-2 gap-3 overflow-scroll'}>
                   {loadingPopularTokens ? (
                     <>
                       <Skeleton className={'h-[35px] w-[80px]'} />
