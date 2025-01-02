@@ -380,7 +380,7 @@ mt-8 flex items-center justify-center
             />
           </div>
           {!doesPoolExist ?
-            <h4 className={`font-bold text-text-red`}>Current pool doesn't exist. </h4>
+            <h4 className={`font-semibold text-text-red`}>Current pool doesn't exist. </h4>
             : null}
           {publicKey && selectedTokenA && selectedTokenB && (
             <div
