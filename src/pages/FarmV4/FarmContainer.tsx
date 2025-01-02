@@ -179,7 +179,7 @@ export const FarmContainer: FC = () => {
             <RadioOptionGroup
               defaultValue={'All'}
               value={currentPoolType.name}
-              className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-3 min-md:mr-2 items-center'}
+              className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 min-md:mr-2 items-center'}
               optionClassName={`min-md:w-[85px]`}
               options={[
                 {

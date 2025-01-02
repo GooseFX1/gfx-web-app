@@ -89,6 +89,7 @@ interface GAMMADataModel {
   updateTokenList: ({ page, pageSize, searchValue }: {
     page: number
     pageSize: number
+    tokenType?: Pool['type']
     searchValue?: string,
     signal?: AbortSignal
   }, append?: boolean) => Promise<void>
