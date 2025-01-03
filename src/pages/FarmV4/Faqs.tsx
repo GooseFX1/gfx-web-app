@@ -1,12 +1,10 @@
 import { FC, ReactNode } from 'react'
 import { faqs, faqsMigrate, POOL_TYPE } from './constants'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, cn } from 'gfx-component-lib'
-import { useGamma, useRewardToggle } from '../../context'
+import { useGamma } from '../../context'
 
 export const Faqs: FC = () => {
-  const { currentPoolType } = useGamma()
-
-  const { isPortfolio } = useRewardToggle()
+  const { isPortfolio, currentPoolType } = useGamma()
   return !isPortfolio && (
     <div className={cn(`max-sm:w-[calc(100% - 15px)]`)}>
       <div className="flex flex-row mt-10 mb-5 items-center">

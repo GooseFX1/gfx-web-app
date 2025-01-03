@@ -1,4 +1,4 @@
-import { useDarkMode, useGamma, useRewardToggle } from '@/context'
+import { useDarkMode, useGamma } from '@/context'
 import { Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import { FC } from 'react'
 import { POOL_TYPE } from './constants'
@@ -9,8 +9,7 @@ import { GAMMAListTokenResponse } from '@/types/gamma'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 
 const ExplorePools: FC<{ tokenMint: string }> = ({ tokenMint }) => {
-  const { setIsPortfolio } = useRewardToggle()
-  const { setCurrentPoolType, addSelectedToken, clearAllSelectedTokens } = useGamma()
+  const { setCurrentPoolType, addSelectedToken, clearAllSelectedTokens, setIsPortfolio } = useGamma()
   const chooseToken = async () => {
     clearAllSelectedTokens()
 

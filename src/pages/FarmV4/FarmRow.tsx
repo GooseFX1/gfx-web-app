@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react'
-import { Badge, Button, cn, Icon, Skeleton } from 'gfx-component-lib'
+import { Badge, Button, cn, Skeleton } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import useBreakpoint from '../../hooks/useBreakPoint'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
@@ -81,18 +81,6 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
           {pool.mintA.symbol} - {pool.mintB.symbol}
         </div>
 
-        <div
-          className="border border-solid dark:border-black-4 flex items-center
-          font-poppins text-tiny font-semibold dark:text-grey-8 text-black-4
-          border-grey-1 bg-grey-5 dark:bg-black-2 rounded-[2.5px] h-[25px] px-1 ml-2"
-        >
-          {(
-            new BigNumber(pool?.['latestDynamicFeeRate'] || 0.0).div(10 ** 4).toNumber() ||
-            new BigNumber(pool?.config.tradeFeeRate || 0.0).div(10 ** 4).toNumber()
-          ).toFixed(2)}
-          %
-        </div>
-
         {/* {!isMobile &&
           <IconWithFallback src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
         } */}
@@ -115,7 +103,11 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
                 font-poppins text-tiny font-semibold dark:text-grey-8 text-black-4 justify-center
                 border-grey-1 bg-grey-5 dark:bg-black-2 rounded-[2.5px] h-[30px] p-2"
           >
-            {numberFormatter(0.2)}%
+            {(
+              new BigNumber(pool?.['latestDynamicFeeRate'] || 0.0).div(10 ** 4).toNumber() ||
+              new BigNumber(pool?.config.tradeFeeRate || 0.0).div(10 ** 4).toNumber()
+            ).toFixed(2)}
+            %
           </div>
         </div>
       )}
