@@ -40,7 +40,6 @@ import SocialLinks from '@/components/common/SocialLinks'
 import { NAV_LINKS, navigateTo, navigateToCurried } from '@/utils/requests'
 import { FooterDivider } from '@/layouts/Footer'
 import PriorityFee from '@/components/footer/PriorityFee'
-//import { LiteProToggle } from '@/pages/FarmV4/LiteProToggle'
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
