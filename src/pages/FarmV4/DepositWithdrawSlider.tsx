@@ -70,7 +70,6 @@ export const DepositWithdrawSlider: FC = () => {
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
   const { balance } = useWalletBalance()
-  //const [showConfetti, setShowConfetti] = useBoolean(false)
   const [updatedPoolState, setUpdatedPoolState] = useState<any>({})
   const [withdrawableBalanceA, setWithdrawableBalanceA] = useState<BN>(new BN(0))
   const [withdrawableBalanceB, setWithdrawableBalanceB] = useState<BN>(new BN(0))
@@ -638,8 +637,6 @@ export const DepositWithdrawSlider: FC = () => {
         setUserSourceDepositAmount('')
         setUserTargetDepositAmount('')
         await forceCronAndUpdateLocalData(txSig)
-        // setShowConfetti.on()
-        // setTimeout(() => setShowConfetti.off(), 10000)
         //setOpenDepositWithdrawSlider(false)
         //setSelectedCardLiquidityAcc({})
       }
@@ -732,7 +729,6 @@ export const DepositWithdrawSlider: FC = () => {
     <Dialog open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
       <DialogOverlay />
 
-      {/*showConfetti && <LottieConfetti onClick={setShowConfetti.off} /> */}
       {/*This one for not closing on click outside*/}
       {/*<div*/}
       {/*  className={cn(`fixed top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50*/}
