@@ -51,7 +51,18 @@ function FarmSort({ isOpen, setIsOpen }: {
     [showCreatedPools, userCache]
   )
 
-  const handleLayoutToggle = () => { setIsCardMode.toggle() }
+  const handleLayoutToggle = useCallback(() => {
+    setIsCardMode((prev) => {
+      updateUserCache({
+        gamma: {
+          ...userCache.gamma,
+          viewMode: prev === 'card' ? 'row' : 'card'
+        }
+      })
+
+      return prev === 'card' ? 'row' : 'card'
+    })
+  }, [isCardMode, userCache])
 
   const handleShowDepositedToggle = () => {
     setShowDeposited((prev) => {
@@ -98,14 +109,14 @@ function FarmSort({ isOpen, setIsOpen }: {
                 iconLeft={
                   <Icon
                     size={'xs'}
-                    src={isCardMode ? "/img/assets/list.svg" : "/img/assets/list-active.svg"}
+                    src={isCardMode === 'card' ? "/img/assets/list.svg" : "/img/assets/list-active.svg"}
                   />}
                 iconRight={
                   <Icon
                     size={'xs'}
-                    src={isCardMode ? "/img/assets/grid-active.svg" : "/img/assets/grid.svg"} />}
-                checked={isCardMode}
-                onClick={handleLayoutToggle}
+                    src={isCardMode === 'card' ? "/img/assets/grid-active.svg" : "/img/assets/grid.svg"} />}
+                    checked={isCardMode === 'card'}
+                    onClick={handleLayoutToggle}
               />
             </div>
           }
