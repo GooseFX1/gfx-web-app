@@ -128,7 +128,18 @@ export const FarmContainer: FC = () => {
     },
     [showCreatedPools, userCache]
   )
-  const handleLayoutToggle = () => { setIsCardMode.toggle() }
+  const handleLayoutToggle = useCallback(() => {
+    setIsCardMode((prev) => {
+      updateUserCache({
+        gamma: {
+          ...userCache.gamma,
+          viewMode: prev === 'card' ? 'row' : 'card'
+        }
+      })
+
+      return prev === 'card' ? 'row' : 'card'
+    })
+  }, [isCardMode, userCache])
 
   useEffect(() => {
     if (isFirstRender) return
@@ -308,13 +319,15 @@ export const FarmContainer: FC = () => {
                                   iconLeft={
                                     <IconWithFallback
                                       size={'xs'}
-                                      src={isCardMode ? "/img/assets/list.svg" : "/img/assets/list-active.svg"}
+                                      src={isCardMode === 'card' ? 
+                                        "/img/assets/list.svg" : "/img/assets/list-active.svg"}
                                     />}
                                   iconRight={
                                     <IconWithFallback
                                       size={'xs'}
-                                      src={isCardMode ? "/img/assets/grid-active.svg" : "/img/assets/grid.svg"} />}
-                                      checked={isCardMode}
+                                      src={isCardMode === 'card' ? 
+                                        "/img/assets/grid-active.svg" : "/img/assets/grid.svg"} />}
+                                      checked={isCardMode === 'card'}
                                       onClick={handleLayoutToggle}
                                 />
                               </div>

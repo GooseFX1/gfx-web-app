@@ -141,8 +141,8 @@ interface GAMMADataModel {
   setTokenList: Dispatch<SetStateAction<TokenListToken[]>>
   isPortfolio: boolean
   setIsPortfolio: { toggle: () => void; on: () => void; off: () => void; set: (value: boolean) => void }
-  isCardMode: boolean
-  setIsCardMode: { toggle: () => void; on: () => void; off: () => void; set: (value: boolean) => void }
+  isCardMode: string
+  setIsCardMode: Dispatch<SetStateAction<string>>
 }
 
 export type TokenListToken = {
@@ -227,7 +227,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
   const [viewRange, setViewRange] = useState<ViewRange>(0)
   const [isPortfolio, setIsPortfolio] = useBoolean(false)
-  const [isCardMode, setIsCardMode] = useBoolean(userCache.gamma.viewMode === 'card')
+  const [isCardMode, setIsCardMode] = useState<string>(userCache.gamma.viewMode)
   const prevIsCardMode = usePrevious(isCardMode)
   const {
     choices: selectedTokens,

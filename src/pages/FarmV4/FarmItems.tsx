@@ -107,7 +107,7 @@ const FarmItems: FC<{
         />
       ) : (numberOfTokensDeposited === 0 && showDeposited) || filteredPools.length === 0 ? (
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
-      ) : isCardMode ? (
+      ) : isCardMode === 'card' ? (
         <FarmItemsLite
           openPositionImages={openPositionImages}
           openPositionsAcrossPrograms={openPositionsAcrossPrograms}
