@@ -4,8 +4,8 @@ import { useGamma } from '@/context'
 import FarmItemsMigrate from '@/pages/FarmV4/FarmItemsMigrate'
 import FarmItemsLite from '@/pages/FarmV4/FarmItemsLite'
 import FarmItemsPro from '@/pages/FarmV4/FarmItemsPro'
-import { Button } from 'gfx-component-lib'
-import { POOL_LIST_PAGE_SIZE, POOL_TYPE } from '@/pages/FarmV4/constants'
+//import { Button } from 'gfx-component-lib'
+import { POOL_TYPE } from '@/pages/FarmV4/constants'
 
 export const noPoolsFound = {
   title: 'Oops, no pools found',
@@ -29,9 +29,6 @@ const FarmItems: FC<{
     currentPoolType,
     searchTokens,
     showDeposited,
-    updatePools,
-    poolPage,
-    poolsHasMoreData,
     isCardMode
   } = useGamma()
   const isSearchActive = useMemo(() => searchTokens.length > 0, [searchTokens])
@@ -118,7 +115,7 @@ const FarmItems: FC<{
       ) :
         <FarmItemsPro />
       }
-      {!isCardMode && ((!(numberOfTokensDeposited === 0 && showDeposited) || filteredPools.length !== 0) &&
+      {/* {!isCardMode && ((!(numberOfTokensDeposited === 0 && showDeposited) || filteredPools.length !== 0) &&
         currentPoolType.type != 'migrate') && poolsHasMoreData &&
         <Button
           className="cursor-pointer rounded-full border-[1.5px] border-solid border-purple-5
@@ -131,7 +128,7 @@ const FarmItems: FC<{
         >
           Load More
         </Button>
-      }
+      } */}
     </div>
   )
 }

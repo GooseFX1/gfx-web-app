@@ -15,7 +15,7 @@
 // import useBreakPoint from '@/hooks/useBreakPoint'
 
 // export const LiteProToggle = (): ReactElement => {
-//   const { isCardMode, setIsCardMode, setIsPortfolio } = useRewardToggle()
+//   const { isCardMode, setIsCardMode, setIsPortfolio } = useGamma()
 //   const { mode } = useDarkMode()
 //   const { isMobile } = useBreakPoint()
 //   const [isDialogOpen, setIsDialogOpen] = useState(false)
