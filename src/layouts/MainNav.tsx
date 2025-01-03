@@ -212,7 +212,7 @@ const MobileNav: FC = () => {
             >
               <img
                 className="h-[35px]"
-                src={`/img/mainnav/bridge-${mode}${pathname.includes('ssl') ? '-active' : ''}.svg`}
+                src={`/img/mainnav/farm-${mode}${pathname.includes('ssl') ? '-active' : ''}.svg`}
                 alt="dark"
               />
               &nbsp;SSL
@@ -331,7 +331,7 @@ const DesktopNav: FC = () => {
       >
         <img
           className="w-[26px] h-[26px] mb-0.5"
-          src={`/img/mainnav/bridge-${mode}${pathname.includes('ssl') ? '-active' : ''}.svg`}
+          src={`/img/mainnav/farm-${mode}${pathname.includes('ssl') ? '-active' : ''}.svg`}
           alt="dark"
         />
         SSL

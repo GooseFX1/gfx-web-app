@@ -9,10 +9,7 @@ import { IconWithFallback } from '@/components/common/IconWithFallback'
 export const MyPositionStats: FC<{
   withdrawableBalanceA: BN
   withdrawableBalanceB: BN
-}> = ({
-        withdrawableBalanceA,
-        withdrawableBalanceB
-      }): ReactElement => {
+}> = ({ withdrawableBalanceA, withdrawableBalanceB }): ReactElement => {
   const { selectedCard, selectedCardPool } = useGamma()
   const { mode } = useDarkMode()
   if (!selectedCard || !selectedCard.hasDeposit) return null
@@ -20,48 +17,63 @@ export const MyPositionStats: FC<{
   return (
     <>
       <div className="flex justify-between mb-2">
-          <span
-            className={`!text-regular font-semibold dark:text-text-darkmode-secondary
+        <span
+          className={`!text-regular font-semibold dark:text-text-darkmode-secondary
                text-text-lightmode-secondary`}
-          >
-            Est. 24H Fees
-          </span>
+        >
+          Est. 24H Fees
+        </span>
         <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">
-            ${bigNumberFormatter(new BigNumber(selectedCard.userLpPosition?.stats?.daily?.feesUSD))}
-          </span>
+          ${bigNumberFormatter(new BigNumber(selectedCard.userLpPosition?.stats?.daily?.feesUSD))}
+        </span>
       </div>
       <div className="flex justify-between mb-2">
-          <span
-            className={`!text-regular font-semibold dark:text-text-darkmode-secondary
+        <span
+          className={`!text-regular font-semibold dark:text-text-darkmode-secondary
                text-text-lightmode-secondary
               `}
-          >
-            Token A
-          </span>
+        >
+          Token A
+        </span>
         <span className="!text-regular font-semibold dark:text-grey-8 text-black-4 inline-flex gap-1">
-            <IconWithFallback
-              src={loadIconImage(selectedCard.mintA.logoURI, mode)} size={'sm'} />
-          {bigNumberFormatter(new BigNumber(
-            new Decimal(withdrawableBalanceA?.toString())
-              .div(Math.pow(10, selectedCardPool?.mint0Decimals || 0)).toString()
-          ))}
-          </span>
+          <IconWithFallback
+            src={loadIconImage(selectedCard.mintA.logoURI, mode)}
+            size={'sm'}
+            className={`border border-solid rounded-circle 
+                dark:border-border-darkmode-secondary border-border-lightmode-secondary`}
+          />
+          {bigNumberFormatter(
+            new BigNumber(
+              new Decimal(withdrawableBalanceA?.toString())
+                .div(Math.pow(10, selectedCardPool?.mint0Decimals || 0))
+                .toString()
+            )
+          )}
+        </span>
       </div>
       <div className="flex justify-between mb-2">
-          <span
-            className={`!text-regular font-semibold dark:text-text-darkmode-secondary
+        <span
+          className={`!text-regular font-semibold dark:text-text-darkmode-secondary
                text-text-lightmode-secondary
               `}
-          >
-            Token B
-          </span>
+        >
+          Token B
+        </span>
         <span className="!text-regular font-semibold dark:text-grey-8 text-black-4 inline-flex gap-1">
-            <IconWithFallback src={loadIconImage(selectedCard.mintB.logoURI, mode)} size={'sm'} />
-          {bigNumberFormatter(new BigNumber(
-            new Decimal(withdrawableBalanceB?.toString())
-              .div(Math.pow(10, selectedCardPool?.mint1Decimals || 0)).toString()
-          ))}
-          </span>
+          <IconWithFallback
+            src={loadIconImage(selectedCard.mintB.logoURI, mode)}
+            size={'sm'}
+            className={`border border-solid rounded-circle 
+                dark:border-border-darkmode-secondary border-border-lightmode-secondary`}
+          />
+          {bigNumberFormatter(
+            new BigNumber(
+              new Decimal(withdrawableBalanceB?.toString())
+                .div(Math.pow(10, selectedCardPool?.mint1Decimals || 0))
+                .toString()
+            )
+          )}
+        </span>
       </div>
     </>
   )

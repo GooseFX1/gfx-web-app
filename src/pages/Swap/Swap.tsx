@@ -74,6 +74,17 @@ export const Swap: FC = () => {
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false)
   const [fee, setFee] = useState<string>('')
 
+  const swapNotValid = useMemo(
+    () =>
+      !selectedTokenA ||
+      !selectedTokenB ||
+      !amountTokenA ||
+      !amountTokenB ||
+      balance[selectedTokenA?.address].tokenAmount.uiAmount < +amountTokenA ||
+      +amountTokenA == 0,
+    [selectedTokenA, selectedTokenB, amountTokenA, amountTokenB, balance]
+  )
+
   useEffect(() => {
     if (selectedTokenA && selectedTokenB && userPublicKey) {
       setUserSourceTokenType(balance[selectedTokenA?.address].tokenType)
@@ -102,7 +113,8 @@ export const Swap: FC = () => {
     )
   }
   const handleRefresh = async () => {
-    if (amountTokenA !== '' && !isNaN(+amountTokenA) && selectedTokenA && selectedTokenB) {
+    if (+amountTokenA === 0) setAmountTokenB('')
+    if (amountTokenA !== '' && !isNaN(+amountTokenA) && +amountTokenA > 0 && selectedTokenA && selectedTokenB) {
       setLoadingPriceQuote(true)
 
       await getPriceQuotes(amountTokenA, selectedTokenA, selectedTokenB, GammaProgram, connection)
@@ -132,7 +144,7 @@ export const Swap: FC = () => {
       isSource ? setAmountTokenA(inputNumber) : setAmountTokenB(inputNumber)
     }
   }
-  const { approxAmountB, approxAmountA } = useMemo(() => {
+  const { approxAmountB, approxAmountA } = useMemo(() => {    
     if (!selectedTokenA || !selectedTokenB)
       return {
         approxAmountB: '0.00',
@@ -148,6 +160,7 @@ export const Swap: FC = () => {
         approxAmountA: '0.00'
       }
 
+    console.log(numberFormatter(balanceA.price / balanceB.price, balanceB.decimals ?? 7))
     return {
       approxAmountB: numberFormatter(balanceA.price / balanceB.price, balanceB.decimals ?? 7),
       approxAmountA: numberFormatter(balanceB.price / balanceA.price, balanceA.decimals ?? 7)
@@ -318,8 +331,6 @@ mt-8 flex items-center justify-center
                 )}
                 onClick={() => {
                   setAmountTokenA(balance[selectedTokenA?.address].tokenAmount.uiAmountString)
-                  // calculate amount B
-                  // setAmountTokenB(here)
                 }}
               >
                 Balance: {numberFormatter(balance[selectedTokenA?.address].tokenAmount.uiAmount)}{' '}
@@ -354,15 +365,10 @@ mt-8 flex items-center justify-center
               <h4 className={'text-text-lightmode-primary dark:text-text-darkmode-primary'}>You're Buying:</h4>
               <p
                 className={cn(
-                  `ml-auto text-b2 cursor-pointer text-text-lightmode-primary dark:text-text-darkmode-primary`,
+                  `ml-auto text-b2 text-text-lightmode-primary dark:text-text-darkmode-primary`,
                   balance[selectedTokenB?.address].tokenAmount.uiAmount == 0 &&
                     `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
                 )}
-                onClick={() => {
-                  setAmountTokenB(balance[selectedTokenB?.address].tokenAmount.uiAmountString)
-                  // calculate amount A
-                  // setAmountTokenA(here)
-                }}
               >
                 Balance: {numberFormatter(balance[selectedTokenB?.address].tokenAmount.uiAmount)}{' '}
                 {selectedTokenB?.symbol}
@@ -372,16 +378,14 @@ mt-8 flex items-center justify-center
               token={selectedTokenB}
               setToken={setSelectedTokenB}
               otherToken={selectedTokenA}
-              handleChange={(e) => handleChange(e, false)}
+              // handleChange={(e) => handleChange(e, false)}
               amountToken={amountTokenB}
               disableInput={true}
               disableTokenDropDown={sendingTransaction}
               isLocked={true}
             />
           </div>
-          {!doesPoolExist ?
-            <h4 className={`font-semibold text-text-red`}>Current pool doesn't exist. </h4>
-            : null}
+          {!doesPoolExist ? <h4 className={`font-semibold text-text-red`}>Current pool doesn't exist. </h4> : null}
           {publicKey && selectedTokenA && selectedTokenB && (
             <div
               className={`flex flex-col gap-1.25 font-semibold text-text-lightmode-secondary
@@ -404,7 +408,8 @@ mt-8 flex items-center justify-center
                   className={'rounded-circle'}
                 />
                 <p>
-                  {invertPrice ? approxAmountA : approxAmountB}&nbsp;
+                  {invertPrice ? approxAmountA : approxAmountB}
+                  {' '}
                   {invertPrice ? selectedTokenA?.symbol : selectedTokenB?.symbol}
                 </p>
                 <IconWithFallback
@@ -459,13 +464,7 @@ mt-8 flex items-center justify-center
               variant={'primary'}
               colorScheme={'blue'}
               fullWidth
-              disabled={
-                !selectedTokenA ||
-                !selectedTokenB ||
-                !amountTokenA ||
-                !amountTokenB ||
-                balance[selectedTokenA?.address].tokenAmount.uiAmount < +amountTokenA
-              }
+              disabled={swapNotValid}
             >
               Swap
             </Button>
