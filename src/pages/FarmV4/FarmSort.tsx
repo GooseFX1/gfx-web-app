@@ -137,7 +137,7 @@ function FarmSort({ isOpen, setIsOpen }: {
               <div className="flex items-center justify-between">
                 <span
                   className="h-full text-regular text-left dark:text-grey-2 text-grey-1 font-semibold mr-3">
-                  Show created pools
+                  Show Created pools
                 </span>
                 <Switch
                   variant={'default'}

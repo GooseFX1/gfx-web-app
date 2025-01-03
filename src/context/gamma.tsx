@@ -466,12 +466,14 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (isFirstRender) return
+    updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE }, false)
+  }, [currentPoolType, showDeposited, showCreatedPools,sortConfig, viewRange])
+
+  useEffect(() => {
     if (!isPortfolio) {
       setShowDeposited(false)
     }
-    updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE }, false)
-
-  }, [isPortfolio, currentPoolType, showDeposited, showCreatedPools,sortConfig, viewRange])
+  }, [isPortfolio])
 
   useEffect(() => {
 
