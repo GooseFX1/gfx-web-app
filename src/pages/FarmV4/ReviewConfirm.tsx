@@ -10,7 +10,8 @@ export const ReviewConfirm: FC<{
   tokenAActionValue: string
   tokenBActionValue: string
   updatedPoolState: any
-}> = ({ tokenAActionValue, tokenBActionValue, updatedPoolState }): ReactElement => {
+  isDeposit: boolean
+}> = ({ tokenAActionValue, tokenBActionValue, updatedPoolState, isDeposit }): ReactElement => {
   const { selectedCard } = useGamma()
   const { balance } = useWalletBalance()
 
@@ -58,7 +59,7 @@ export const ReviewConfirm: FC<{
           <Tooltip>
             <TooltipTrigger className={`!font-regular font-semibold 
                         dark:text-grey-2 text-grey-1 underline decoration-dotted`}>
-            Total Deposit
+            Total {isDeposit ? 'Deposit' : 'Withdraw'}
             </TooltipTrigger>
             <TooltipContent>
               This is the sum of your deposits of Token A/B

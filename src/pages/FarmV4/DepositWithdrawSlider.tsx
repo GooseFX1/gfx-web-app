@@ -838,6 +838,7 @@ export const DepositWithdrawSlider: FC = () => {
               tokenAActionValue={isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount}
               tokenBActionValue={isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount}
               updatedPoolState={updatedPoolState}
+              isDeposit={isDeposit}
             />
             {/*{isDeposit && userPublicKey && (userSourceTokenBal === 0 || userTargetTokenBal === 0) && <SwapNow />}*/}
           </div>
