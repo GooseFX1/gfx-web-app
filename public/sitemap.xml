@@ -6,7 +6,7 @@
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>https://app.goosefx.io/ssl/</loc>
+        <loc>https://app.goosefx.io/swap/</loc>
         <changefreq>monthly</changefreq>
         <priority>1.0</priority>
     </url>
@@ -14,6 +14,11 @@
         <loc>https://app.goosefx.io/gamma/</loc>
         <changefreq>monthly</changefreq>
         <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://app.goosefx.io/ssl/</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
     </url>
     <url>
         <loc>https://app.goosefx.io/bridge/</loc>
