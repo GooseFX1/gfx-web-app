@@ -854,3 +854,17 @@ const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, 
     return null
   }
 }
+
+export const doesPoolWithMintsExist =
+  async (mintA: string, mintB: string, program: Program<Idl>): Promise<boolean> => {
+  try {
+    const configIdKey = await getAmmConfigId(0)
+    const mintAPublicKey = new PublicKey(mintA)
+    const mintBPublickey = new PublicKey(mintB)
+    const poolIdKey = await getPoolIdKey(configIdKey, mintAPublicKey, mintBPublickey)
+    const poolState = await program.account.poolState.fetch(poolIdKey)
+    return poolState != null;
+  } catch(e) {
+    return false
+  }
+}

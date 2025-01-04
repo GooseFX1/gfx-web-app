@@ -32,7 +32,7 @@ import { InfiniteTokenListSwap } from '@/pages/Swap/InfiniteTokenListSwap'
 import { Connect } from '@/layouts'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import useTransaction from '@/hooks/useTransaction'
-import { getPriceQuotes, swapTokens } from '@/web3/Farm'
+import { doesPoolWithMintsExist, getPriceQuotes, swapTokens } from '@/web3/Farm'
 import { useWallet } from '@solana/wallet-adapter-react'
 import BigNumber from 'bignumber.js'
 import { forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
@@ -93,14 +93,15 @@ export const Swap: FC = () => {
   }, [selectedTokenA, selectedTokenB, balance, userPublicKey])
 
   useEffect(() => {
+    if (!doesPoolExist) return
     const handler = setTimeout(async () => {
       await handleRefresh()
-    }, 500)
+    }, 15000)
 
     return () => {
       clearTimeout(handler)
     }
-  }, [selectedTokenA, selectedTokenB, amountTokenA])
+  }, [selectedTokenA, selectedTokenB, amountTokenA, doesPoolExist])
 
   const handleSlippageSave = () => {
     setSlippage(value)
@@ -112,7 +113,15 @@ export const Swap: FC = () => {
       { id: 'slippage-save' }
     )
   }
+  const checkIfPoolExists = async () =>
+    doesPoolWithMintsExist(selectedTokenA.address, selectedTokenB.address, GammaProgram).then(res=>{
+      setDoesPoolExist.set(res)
+      return res;
+    })
+
   const handleRefresh = async () => {
+    await checkIfPoolExists()
+    if (!doesPoolExist) return;
     if (+amountTokenA === 0) setAmountTokenB('')
     if (amountTokenA !== '' && !isNaN(+amountTokenA) && +amountTokenA > 0 && selectedTokenA && selectedTokenB) {
       setLoadingPriceQuote(true)
@@ -121,13 +130,11 @@ export const Swap: FC = () => {
         .then(({ destinationAmountSwapped: price, tradeFee }) => {
           setAmountTokenB(price)
           setFee(tradeFee)
-          setDoesPoolExist.on()
         })
         .catch((e) => {
           toast(<ErrorToast />, {
             id: 'refresh-toast-swap'
           })
-          setDoesPoolExist.off()
           console.error(e)
         })
         .finally(() => {
@@ -206,6 +213,10 @@ export const Swap: FC = () => {
     setSendingTransaction(false)
   }
 
+  useEffect(()=> {
+    if (!(selectedTokenA && selectedTokenB)) return
+    checkIfPoolExists()
+  },[selectedTokenA, selectedTokenB])
   // TODO: these values pls bois
   // const impactPercent = 0.1
   // const minimumReceivedQuote = 0.0
@@ -343,7 +354,7 @@ mt-8 flex items-center justify-center
               otherToken={selectedTokenB}
               handleChange={(e) => handleChange(e, true)}
               amountToken={amountTokenA}
-              disableInput={loadingPriceQuote || sendingTransaction}
+              disableInput={loadingPriceQuote || sendingTransaction || !doesPoolExist}
               disableTokenDropDown={sendingTransaction}
             />
           </div>
@@ -488,7 +499,7 @@ function TokenSelectInput({
   token: JupToken | null
   setToken: (token: JupToken) => void
   otherToken: JupToken | null
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>, isTokenA: boolean) => void
+  handleChange?: (e: React.ChangeEvent<HTMLInputElement>, isTokenA: boolean) => void
   amountToken: string
   disableInput?: boolean
   disableTokenDropDown?: boolean
