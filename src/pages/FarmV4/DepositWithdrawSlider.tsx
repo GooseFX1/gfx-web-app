@@ -815,7 +815,8 @@ export const DepositWithdrawSlider: FC = () => {
               withdrawAmount={userSourceWithdrawAmount}
               handleHalf={() => handleHalf(true)}
               handleMax={() => handleMax(true)}
-              disabled={!publicKey || isDeposit ? userSourceTokenBal <= 0 : withdrawableBalanceA?.lte(new BN(0))}
+              disabled={publicKey == null ||
+                (isDeposit ? userSourceTokenBal <= 0 : withdrawableBalanceA?.lte(new BN(0)))}
             />
             <TokenRow
               isMintA={false}
@@ -830,7 +831,8 @@ export const DepositWithdrawSlider: FC = () => {
               withdrawAmount={userTargetWithdrawAmount}
               handleHalf={() => handleHalf(false)}
               handleMax={() => handleMax(false)}
-              disabled={!publicKey || isDeposit ? userTargetTokenBal <= 0 : withdrawableBalanceB?.lte(new BN(0))}
+              disabled={publicKey == null ||
+                (isDeposit ? userTargetTokenBal <= 0 : withdrawableBalanceB?.lte(new BN(0)))}
             />
             <ReviewConfirm
               tokenAActionValue={isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount}
