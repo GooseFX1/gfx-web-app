@@ -69,7 +69,7 @@ export const DepositWithdrawSlider: FC = () => {
   const isDeposit = useMemo(() => modeOfOperation === ModeOfOperation.DEPOSIT, [modeOfOperation])
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
-  const { balance } = useWalletBalance()
+  const { balance, publicKey } = useWalletBalance()
   const [updatedPoolState, setUpdatedPoolState] = useState<any>({})
   const [withdrawableBalanceA, setWithdrawableBalanceA] = useState<BN>(new BN(0))
   const [withdrawableBalanceB, setWithdrawableBalanceB] = useState<BN>(new BN(0))
@@ -815,7 +815,8 @@ export const DepositWithdrawSlider: FC = () => {
               withdrawAmount={userSourceWithdrawAmount}
               handleHalf={() => handleHalf(true)}
               handleMax={() => handleMax(true)}
-              disabled={isDeposit ? userSourceTokenBal <= 0 : withdrawableBalanceA?.lte(new BN(0))}
+              disabled={publicKey == null ||
+                (isDeposit ? userSourceTokenBal <= 0 : withdrawableBalanceA?.lte(new BN(0)))}
             />
             <TokenRow
               isMintA={false}
@@ -830,12 +831,14 @@ export const DepositWithdrawSlider: FC = () => {
               withdrawAmount={userTargetWithdrawAmount}
               handleHalf={() => handleHalf(false)}
               handleMax={() => handleMax(false)}
-              disabled={isDeposit ? userTargetTokenBal <= 0 : withdrawableBalanceB?.lte(new BN(0))}
+              disabled={publicKey == null ||
+                (isDeposit ? userTargetTokenBal <= 0 : withdrawableBalanceB?.lte(new BN(0)))}
             />
             <ReviewConfirm
               tokenAActionValue={isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount}
               tokenBActionValue={isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount}
               updatedPoolState={updatedPoolState}
+              isDeposit={isDeposit}
             />
             {/*{isDeposit && userPublicKey && (userSourceTokenBal === 0 || userTargetTokenBal === 0) && <SwapNow />}*/}
           </div>

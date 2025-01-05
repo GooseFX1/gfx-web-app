@@ -91,7 +91,7 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
         )}
       </div>
       {!isMobile &&
-        <div className="flex items-center justify-center text-regular font-semibold 
+        <div className="flex items-center justify-center text-regular font-semibold
         dark:text-grey-8 text-black-4 sm-lg:hidden">
           {formattedTVL}
         </div>

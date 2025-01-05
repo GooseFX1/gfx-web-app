@@ -22,10 +22,10 @@ export const PasswordProtectionPage: React.FC<PasswordScreenProps> = ({ onSubmit
   }
 
   return (
-    <div className="flex flex-col items-center justify-center px-4 py-20">
+    <div className="flex flex-col items-center justify-center px-4 md:py-20">
       <Lottie
         animationData={isDarkMode ? passwordProtectionDark : passwordProtectionLight}
-        className="w-56 h-56 mb-6"
+        className="w-56 h-56 md:mb-6"
         loop={true}
       />
 
