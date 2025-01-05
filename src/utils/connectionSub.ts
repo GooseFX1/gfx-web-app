@@ -1,5 +1,5 @@
 import { AccountChangeCallback, Connection, ProgramAccountChangeCallback, PublicKey } from '@solana/web3.js'
-import { APP_RPC } from '../context'
+import { HELIUS_RPC } from '../context'
 import { SubType, Unsubs } from '../hooks/useSolSub'
 
 class SolanaSub {
@@ -9,7 +9,7 @@ class SolanaSub {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {
     this.subs = new Map()
-    this.connection = new Connection(APP_RPC.endpoint, 'processed')
+    this.connection = new Connection(HELIUS_RPC.endpoint, 'processed')
   }
 
   changeConnection = (endpoint: string) => {

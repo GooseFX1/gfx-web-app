@@ -10,7 +10,7 @@ import {
   SSLToken
 } from '@/pages/FarmV3/constants'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { APP_RPC, useAccounts, useConnectionConfig, usePriceFeedFarm, useSSLContext } from '@/context'
+import { HELIUS_RPC, useAccounts, useConnectionConfig, usePriceFeedFarm, useSSLContext } from '@/context'
 import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import useSolSub from '@/hooks/useSolSub'
 import useBreakPoint from '@/hooks/useBreakPoint'
@@ -185,7 +185,7 @@ const CollapsibleContent: FC<{
   const [actionModal, setActionModal] = useState<boolean>(false)
 
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
-  const slotConnection = new Connection(APP_RPC.endpoint, 'finalized')
+  const slotConnection = new Connection(HELIUS_RPC.endpoint, 'finalized')
   const wal = useWallet()
   const { connection } = useConnectionConfig()
   const { prices, SSLProgram } = usePriceFeedFarm()

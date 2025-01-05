@@ -23,7 +23,7 @@ import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { testRPC } from '@/utils/requests'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import useBoolean from '@/hooks/useBoolean'
-
+import { RPCs } from '@/context/settings'
 type RPCToggleProps = Omit<FooterItemProps, 'title'>
 const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
   const { mode } = useDarkMode()
@@ -90,20 +90,10 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
         <RadioOptionGroup
           defaultValue={RPC}
           onChange={(v) => setRPC(v as EndPointName)}
-          options={[
-            // {
-            //   label: <RPCLineItem title={'QuickNode'} endpoint={'QuickNode'} />,
-            //   value: 'QuickNode'
-            // },
-            {
-              label: <RPCLineItem title={'Helius'} endpoint={'Helius'} />,
-              value: 'Helius'
-            },
-            {
-              label: <RPCLineItem title={'Custom'} endpoint={'Custom'} />,
-              value: 'Custom'
-            }
-          ]}
+          options={Object.values(RPCs).map((rpc) => ({
+              label: <RPCLineItem title={rpc.name} endpoint={rpc.name} />,
+              value: rpc.name
+          }))}
         />
         {RPC == 'Custom' && (
           <>
