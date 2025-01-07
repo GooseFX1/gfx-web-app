@@ -37,6 +37,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import BigNumber from 'bignumber.js'
 import { forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
 import { ErrorToast } from '@/utils/perpsNotifications'
+import Decimal from 'decimal.js'
 
 export const Swap: FC = () => {
   const { isDarkMode, mode } = useDarkMode()
@@ -95,12 +96,12 @@ export const Swap: FC = () => {
   useEffect(() => {
     if (!doesPoolExist) return
     handleRefresh()
-    const handler = setTimeout(async () => {
+    const handler = setInterval(async () => {
       await handleRefresh()
     }, 15000)
 
     return () => {
-      clearTimeout(handler)
+      clearInterval(handler)
     }
   }, [selectedTokenA, selectedTokenB, amountTokenA, doesPoolExist])
 
@@ -174,7 +175,27 @@ export const Swap: FC = () => {
       approxAmountA: numberFormatter(balanceB.price / balanceA.price, balanceA.decimals ?? 7)
     }
   }, [balance, selectedTokenA, selectedTokenB])
+  const {usdValueA} = useMemo(()=>{
+    if (!selectedTokenA || !selectedTokenB)
+      return {
+        usdValueA: '0.00',
+        usdValueB: '0.00'
+      }
+    const balanceA = balance[selectedTokenA.address]
+    const balanceB = balance[selectedTokenB.address]
+    if (balanceA.price == 0 || balanceB.price == 0 || amountTokenA == '' || amountTokenB == '')
+      return {
+        usdValueA: '0.00',
+        usdValueB: '0.00'
+      }
+    const usdValueA = new Decimal(amountTokenA).mul(balanceA.price)
+    const usdValueB = new Decimal(amountTokenB).mul(balanceB.price)
 
+    return {
+      usdValueA: numberFormatter(usdValueA.toNumber()),
+      usdValueB
+    }
+  },[amountTokenA,amountTokenB,balance,selectedTokenA,selectedTokenB])
   const handleSwap = async () => {
     try {
       setSendingTransaction(true)
@@ -355,7 +376,7 @@ mt-8 flex items-center justify-center
               otherToken={selectedTokenB}
               handleChange={(e) => handleChange(e, true)}
               amountToken={amountTokenA}
-              disableInput={loadingPriceQuote || sendingTransaction || !doesPoolExist}
+              disableInput={sendingTransaction || !doesPoolExist}
               disableTokenDropDown={sendingTransaction}
             />
           </div>
@@ -462,6 +483,26 @@ mt-8 flex items-center justify-center
                     ) : (
                       fee
                     )}
+                  </p>
+                </div>
+              }
+              { amountTokenA && amountTokenB &&
+                <div
+                  className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
+            text-b2 justify-center gap-1 items-center`}
+                >
+                  <Tooltip>
+                    <TooltipTrigger asChild variant={'dotted'}>
+                      <p>USD Value</p>
+                    </TooltipTrigger>
+                    <TooltipContent asChild>
+                      <span className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>
+                        Approximate value in USD of the amount you are swapping
+                      </span>
+                    </TooltipContent>
+                  </Tooltip>
+                  <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>
+                    $ {usdValueA}
                   </p>
                 </div>
               }
