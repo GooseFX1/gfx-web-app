@@ -694,19 +694,23 @@ export const getPriceQuotes = async (
   const mintAPublicKey = new PublicKey(mintA?.address)
   const mintBPublickey = new PublicKey(mintB?.address)
   const poolIdKey = await getPoolIdKey(configIdKey, mintAPublicKey, mintBPublickey)
-  const ammConfigState = await program.account.ammConfig.all()
-  const poolState = await program.account.poolState.fetch(poolIdKey)
-  const observationState = await program.account.observationState.fetch(poolState.observationKey)
+  const [ammConfigState,poolState] = await Promise.all([
+    program.account.ammConfig.all(),
+    program.account.poolState.fetch(poolIdKey)
+  ])
+  const [observationState, tokenAccountInfo0, tokenAccountInfo1] = await Promise.all([
+    program.account.observationState.fetch(poolState.observationKey),
+    connection.getParsedAccountInfo(poolState?.token0Vault),
+    connection.getParsedAccountInfo(poolState?.token1Vault)
+  ])
 
   const inputToken0Amount = convertToNativeValue(amountToken, mintA?.decimals)
 
-  const tokenAccountInfo0 = await connection.getParsedAccountInfo(poolState?.token0Vault)
   const amount0 = (tokenAccountInfo0?.value?.data as any).parsed?.info?.tokenAmount?.amount
   const protocolFees0 = poolState?.protocolFeesToken0
   const fundFees0 = poolState?.fundFeesToken0
   const swapTokenAmount0 = new BN(amount0)?.sub(protocolFees0?.add(fundFees0))
 
-  const tokenAccountInfo1 = await connection.getParsedAccountInfo(poolState?.token1Vault)
   const amount1 = (tokenAccountInfo1?.value?.data as any).parsed?.info?.tokenAmount?.amount
   const protocolFees1 = poolState?.protocolFeesToken1
   const fundFees1 = poolState?.fundFeesToken1
