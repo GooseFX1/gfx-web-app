@@ -232,11 +232,13 @@ const getAccountsForSwappingTokens = async (
     userTargetTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
   )
 
+  const compare = mintAPublicKey?.toBuffer()?.compare(poolState.token0Mint?.toBuffer())
+
   return {
     ammConfig: configIdKey,
     poolState: poolIdKey,
-    inputVault: poolState.token0Vault,
-    outputVault: poolState.token1Vault,
+    inputVault: compare > 0 ? poolState.token1Vault : poolState.token0Vault,
+    outputVault: compare > 0 ? poolState.token0Vault : poolState.token1Vault,
     observationState: poolState.observationKey,
     payer: userPublicKey,
     inputTokenAccount: inputTokenAccount,
@@ -762,7 +764,32 @@ export const swapTokens = async (
 
   let swapTxn: Transaction
   if (mintA?.symbol === 'SOL') swapTxn = await wrapSolToken(userPublicKey, connection, amountToken)
-  else swapTxn = new Transaction()
+  else {
+    const accountExists = await connection.getAccountInfo(accounts.inputTokenAccount)
+    if (!accountExists)
+      swapTxn.add(
+        createAssociatedTokenAccountInstruction(
+          userPublicKey,
+          accounts.inputTokenAccount,
+          userPublicKey,
+          accounts.inputTokenMint
+        )
+      )
+  }
+
+  if (mintB?.symbol === 'SOL') swapTxn = await wrapSolToken(userPublicKey, connection, '0')
+  else {
+    const accountExists = await connection.getAccountInfo(accounts.outputTokenAccount)
+    if (!accountExists)
+      swapTxn.add(
+        createAssociatedTokenAccountInstruction(
+          userPublicKey,
+          accounts.outputTokenAccount,
+          userPublicKey,
+          accounts.outputTokenMint
+        )
+      )
+  }
 
   const swapIX: TransactionInstruction = await program.instruction.swapBaseInput(
     new anchor.BN(amount),
