@@ -762,25 +762,13 @@ export const swapTokens = async (
     userPublicKey
   )
 
-  let swapTxn: Transaction
+  let swapTxn: Transaction = new Transaction()
   if (mintA?.symbol === 'SOL') swapTxn = await wrapSolToken(userPublicKey, connection, amountToken)
-  else {
-    const accountExists = await connection.getAccountInfo(accounts.inputTokenAccount)
-    if (!accountExists)
-      swapTxn.add(
-        createAssociatedTokenAccountInstruction(
-          userPublicKey,
-          accounts.inputTokenAccount,
-          userPublicKey,
-          accounts.inputTokenMint
-        )
-      )
-  }
 
   if (mintB?.symbol === 'SOL') swapTxn = await wrapSolToken(userPublicKey, connection, '0')
   else {
     const accountExists = await connection.getAccountInfo(accounts.outputTokenAccount)
-    if (!accountExists)
+    if (!accountExists) {
       swapTxn.add(
         createAssociatedTokenAccountInstruction(
           userPublicKey,
@@ -789,6 +777,7 @@ export const swapTokens = async (
           accounts.outputTokenMint
         )
       )
+    }
   }
 
   const swapIX: TransactionInstruction = await program.instruction.swapBaseInput(
