@@ -94,6 +94,7 @@ export const Swap: FC = () => {
 
   useEffect(() => {
     if (!doesPoolExist) return
+    handleRefresh()
     const handler = setTimeout(async () => {
       await handleRefresh()
     }, 15000)
@@ -419,8 +420,7 @@ mt-8 flex items-center justify-center
                   className={'rounded-circle'}
                 />
                 <p>
-                  {invertPrice ? approxAmountA : approxAmountB}
-                  {' '}
+                  {invertPrice ? approxAmountA : approxAmountB}{' '}
                   {invertPrice ? selectedTokenA?.symbol : selectedTokenB?.symbol}
                 </p>
                 <IconWithFallback
@@ -437,22 +437,34 @@ mt-8 flex items-center justify-center
                   className={cn(`text-text-green ml-auto`, getImpactValue(impactPercent))}
                 >{`< ${impactPercent}%`}</p>
               </div> */}
-              <div
-                className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
+              { amountTokenA &&
+                <div
+                  className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
             text-b2 justify-center gap-1 items-center`}
-              >
-                <Tooltip>
-                  <TooltipTrigger asChild variant={'dotted'}>
-                    <p>Estimated Fee</p>
-                  </TooltipTrigger>
-                  <TooltipContent asChild>
-                    <span className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>
-                      Swap fees include SOL network cost and fees to LPs, buybacks and treasury
-                    </span>
-                  </TooltipContent>
-                </Tooltip>
-                <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>{fee}</p>
-              </div>
+                >
+                  <Tooltip>
+                    <TooltipTrigger asChild variant={'dotted'}>
+                      <p>Estimated Fee</p>
+                    </TooltipTrigger>
+                    <TooltipContent asChild>
+                      <span className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>
+                        Swap fees include SOL network cost and fees to LPs, buybacks and treasury
+                      </span>
+                    </TooltipContent>
+                  </Tooltip>
+                  <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>
+                    {loadingPriceQuote ? (
+                      <IconWithFallback
+                        src={`/img/assets/refresh_${mode}.svg`}
+                        size={'xs'}
+                        className={cn('animate-spin')}
+                      />
+                    ) : (
+                      fee
+                    )}
+                  </p>
+                </div>
+              }
               {/*  <div*/}
               {/*    className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold */}
               {/*text-b2 items-center`}*/}
