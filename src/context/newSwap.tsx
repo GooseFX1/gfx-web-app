@@ -31,6 +31,7 @@ interface ISwapConfig {
 const SwapContext = createContext<ISwapConfig | null>(null)
 const tokenListAborterTokenSwap = 'tokenListSWAP'
 export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { userCache, updateUserCache } = useConnectionConfig()
   const [tokens, setTokens] = useState<JupToken[]>([])
   const [tokenPage, setTokenPage] = useState<number>(1)
   const [maxTokensReached, setMaxTokensReached] = useBoolean(true)
@@ -40,10 +41,9 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [selectedTokenB, setSelectedTokenB] = useState<JupToken | null>(null)
   const [amountTokenA, setAmountTokenA] = useState<string>('')
   const [amountTokenB, setAmountTokenB] = useState<string>('')
-  const [slippage, setSlippage] = useState<number>(1.0)
+  const [slippage, setSlippage] = useState<number>(userCache?.swap?.slippage ?? 1.0)
   const firstMount = useFirstRender()
   // external hooks
-  const { userCache, updateUserCache } = useConnectionConfig()
   const { balance, topBalances, publicKey } = useWalletBalance()
   
   const updateTokens = ({ page }) => {
