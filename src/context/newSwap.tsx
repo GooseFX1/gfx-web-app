@@ -1,9 +1,4 @@
-import React, {
-  createContext,
-  FC,
-  ReactNode,
-  useContext, useEffect, useMemo, useState
-} from 'react'
+import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useState } from 'react'
 import { JupToken, TOKEN_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
 import useBoolean from '@/hooks/useBoolean'
 import { fetchTokenList } from '@/api/gamma'
@@ -11,7 +6,6 @@ import { aborter } from '@/utils'
 import { useConnectionConfig } from '@/context/settings'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import useFirstRender from '@/hooks/useFirstRender'
-
 
 interface ISwapConfig {
   tokens: JupToken[]
@@ -34,7 +28,6 @@ interface ISwapConfig {
   setTokenPage: (page: number) => void
 }
 
-
 const SwapContext = createContext<ISwapConfig | null>(null)
 const tokenListAborterTokenSwap = 'tokenListSWAP'
 export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -52,20 +45,20 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   // external hooks
   const { userCache, updateUserCache } = useConnectionConfig()
   const { balance, topBalances, publicKey } = useWalletBalance()
-  const updateTokens = ({
-                          page
-                        }) => {
+  
+  const updateTokens = ({ page }) => {
     setIsLoadingTokenList.on()
     const signal = aborter.addSignal(tokenListAborterTokenSwap)
 
-    fetchTokenList(page, TOKEN_LIST_PAGE_SIZE, 'all', searchValue, signal).then((res) => {
-      if (!res.success) return
-      if (res?.data?.tokens) {
-        setTokens(res.data.tokens)
-      }
-      setTokenPage(res.data.currentPage)
-      setMaxTokensReached.set(res.data.totalPages == res.data.currentPage)
-    })
+    fetchTokenList(page, TOKEN_LIST_PAGE_SIZE, undefined, searchValue, signal)
+      .then((res) => {
+        if (!res.success) return
+        if (res?.data?.tokens) {
+          setTokens(res.data.tokens)
+        }
+        setTokenPage(res.data.currentPage)
+        setMaxTokensReached.set(res.data.totalPages == res.data.currentPage)
+      })
       .finally(() => {
         setIsLoadingTokenList.off()
       })
@@ -109,7 +102,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [topBalances, tokens, balance, publicKey])
 
   useEffect(() => {
-    if (firstMount) return;
+    if (firstMount) return
     const timeout = setTimeout(() => {
       updateTokens({
         page: 1

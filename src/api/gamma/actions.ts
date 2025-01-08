@@ -204,8 +204,9 @@ const fetchTokenList = async (
 ): Promise<GAMMAListTokenResponse | null> => {
   try {
     const search = searchValue ? `&search=${searchValue}` : ''
+    const poolTypeQuery = poolType ? `&tokenType=${poolType}` : ''
     const response = await httpClient(GAMMA_API_BASE).get(
-      GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?pageSize=${pageSize}&page=${page}&tokenType=${poolType}${search}`,
+      GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?pageSize=${pageSize}&page=${page}${poolTypeQuery}${search}`,
       {
         signal: signal
       }
