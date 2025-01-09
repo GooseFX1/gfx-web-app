@@ -176,24 +176,18 @@ export const Swap: FC = () => {
     }
   }, [balance, selectedTokenA, selectedTokenB])
   const {usdValueA, usdValueB} = useMemo(()=>{
-    if (!selectedTokenA || !selectedTokenB)
-      return {
-        usdValueA: '0.00',
-        usdValueB: '0.00'
-      }
-
-    if (selectedTokenA.price == 0 || selectedTokenB.price == 0 || amountTokenA == '' || amountTokenB == '')
-      return {
-        usdValueA: '0.00',
-        usdValueB: '0.00'
-      }
-    const usdValueA = new Decimal(amountTokenA).mul(selectedTokenA.price)
-    const usdValueB = new Decimal(amountTokenB).mul(selectedTokenB.price)
-
-    return {
-      usdValueA: numberFormatter(usdValueA.toNumber()),
-      usdValueB: numberFormatter(usdValueB.toNumber())
+    const returnValue = {
+     usdValueA : '0.00',
+      usdValueB : '0.00'
     }
+    if (amountTokenA && selectedTokenA && selectedTokenA.price) {
+      returnValue.usdValueA = numberFormatter(new Decimal(amountTokenA).mul(selectedTokenA.price).toNumber())
+    }
+    if (amountTokenB && selectedTokenB && selectedTokenB.price) {
+      returnValue.usdValueB = numberFormatter(new Decimal(amountTokenB).mul(selectedTokenB.price).toNumber())
+    }
+
+    return returnValue;
   },[amountTokenA,amountTokenB,balance,selectedTokenA,selectedTokenB])
 
   const handleSwap = async () => {
@@ -380,12 +374,15 @@ mt-8 flex items-center justify-center
                 disableInput={sendingTransaction || !doesPoolExist}
                 disableTokenDropDown={sendingTransaction}
               />
-              <p
-                className={cn(`ml-auto text-b2 text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
+              {selectedTokenA ? (
+                <p
+                  className={cn(`ml-auto text-b2 text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
                 font-bold
-                `)}>
-                ${usdValueA}
-              </p>
+                `)}
+                >
+                  ${usdValueA}
+                </p>
+              ) : null}
             </div>
           </div>
           <IconWithFallback
@@ -426,12 +423,17 @@ mt-8 flex items-center justify-center
                 disableTokenDropDown={sendingTransaction}
                 isLocked={true}
               />
-              <p
-                className={cn(`ml-auto text-b2 text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
+              { selectedTokenB ?
+                <p
+                  className={cn(`ml-auto text-b2 text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
                 font-bold
-                `)}>
-                ${usdValueB}
-              </p>
+                `)}
+                >
+                  ${usdValueB}
+                </p>
+                :
+                null
+              }
             </div>
           </div>
           {!doesPoolExist ? <h4 className={`font-semibold text-text-red`}>Current pool doesn't exist. </h4> : null}
