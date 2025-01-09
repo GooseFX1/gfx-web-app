@@ -22,6 +22,7 @@ export type JupToken = {
   "symbol": string,
   "decimals": number,
   "logoURI": string,
+  "price": number
 }
 
 export type PoolType = {

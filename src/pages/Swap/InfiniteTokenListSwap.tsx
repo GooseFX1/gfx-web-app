@@ -137,7 +137,11 @@ export function InfiniteTokenListSwap({
                                 truncate font-semibold
                                 `}
             >
-              ${bigNumberFormatter(new BigNumber(balance[curToken?.address].value.toString()))}
+              ${bigNumberFormatter(new BigNumber(
+              balance[curToken?.address].price != 0 ?
+                balance[curToken?.address].value.toString() :
+                curToken?.price.toString()
+            ))}
             </p>
           </div>
         </div>

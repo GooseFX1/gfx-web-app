@@ -175,27 +175,27 @@ export const Swap: FC = () => {
       approxAmountA: numberFormatter(balanceB.price / balanceA.price, balanceA.decimals ?? 7)
     }
   }, [balance, selectedTokenA, selectedTokenB])
-  const {usdValueA} = useMemo(()=>{
+  const {usdValueA, usdValueB} = useMemo(()=>{
     if (!selectedTokenA || !selectedTokenB)
       return {
         usdValueA: '0.00',
         usdValueB: '0.00'
       }
-    const balanceA = balance[selectedTokenA.address]
-    const balanceB = balance[selectedTokenB.address]
-    if (balanceA.price == 0 || balanceB.price == 0 || amountTokenA == '' || amountTokenB == '')
+
+    if (selectedTokenA.price == 0 || selectedTokenB.price == 0 || amountTokenA == '' || amountTokenB == '')
       return {
         usdValueA: '0.00',
         usdValueB: '0.00'
       }
-    const usdValueA = new Decimal(amountTokenA).mul(balanceA.price)
-    const usdValueB = new Decimal(amountTokenB).mul(balanceB.price)
+    const usdValueA = new Decimal(amountTokenA).mul(selectedTokenA.price)
+    const usdValueB = new Decimal(amountTokenB).mul(selectedTokenB.price)
 
     return {
       usdValueA: numberFormatter(usdValueA.toNumber()),
-      usdValueB
+      usdValueB: numberFormatter(usdValueB.toNumber())
     }
   },[amountTokenA,amountTokenB,balance,selectedTokenA,selectedTokenB])
+
   const handleSwap = async () => {
     try {
       setSendingTransaction(true)
@@ -370,15 +370,23 @@ mt-8 flex items-center justify-center
                 {selectedTokenA?.symbol}
               </p>
             </div>
-            <TokenSelectInput
-              token={selectedTokenA}
-              setToken={setSelectedTokenA}
-              otherToken={selectedTokenB}
-              handleChange={(e) => handleChange(e, true)}
-              amountToken={amountTokenA}
-              disableInput={sendingTransaction || !doesPoolExist}
-              disableTokenDropDown={sendingTransaction}
-            />
+            <div className={'flex flex-col gap-1.5'}>
+              <TokenSelectInput
+                token={selectedTokenA}
+                setToken={setSelectedTokenA}
+                otherToken={selectedTokenB}
+                handleChange={(e) => handleChange(e, true)}
+                amountToken={amountTokenA}
+                disableInput={sendingTransaction || !doesPoolExist}
+                disableTokenDropDown={sendingTransaction}
+              />
+              <p
+                className={cn(`ml-auto text-b2 text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
+                font-bold
+                `)}>
+                ${usdValueA}
+              </p>
+            </div>
           </div>
           <IconWithFallback
             src={`/img/assets/swap-${mode}.svg`}
@@ -407,16 +415,24 @@ mt-8 flex items-center justify-center
                 {selectedTokenB?.symbol}
               </p>
             </div>
-            <TokenSelectInput
-              token={selectedTokenB}
-              setToken={setSelectedTokenB}
-              otherToken={selectedTokenA}
-              // handleChange={(e) => handleChange(e, false)}
-              amountToken={amountTokenB}
-              disableInput={true}
-              disableTokenDropDown={sendingTransaction}
-              isLocked={true}
-            />
+            <div className={'flex flex-col gap-1.5'}>
+              <TokenSelectInput
+                token={selectedTokenB}
+                setToken={setSelectedTokenB}
+                otherToken={selectedTokenA}
+                // handleChange={(e) => handleChange(e, false)}
+                amountToken={amountTokenB}
+                disableInput={true}
+                disableTokenDropDown={sendingTransaction}
+                isLocked={true}
+              />
+              <p
+                className={cn(`ml-auto text-b2 text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
+                font-bold
+                `)}>
+                ${usdValueB}
+              </p>
+            </div>
           </div>
           {!doesPoolExist ? <h4 className={`font-semibold text-text-red`}>Current pool doesn't exist. </h4> : null}
           {publicKey && selectedTokenA && selectedTokenB && (
@@ -458,7 +474,7 @@ mt-8 flex items-center justify-center
                   className={cn(`text-text-green ml-auto`, getImpactValue(impactPercent))}
                 >{`< ${impactPercent}%`}</p>
               </div> */}
-              { amountTokenA &&
+              {amountTokenA && (
                 <div
                   className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
             text-b2 justify-center gap-1 items-center`}
@@ -485,27 +501,7 @@ mt-8 flex items-center justify-center
                     )}
                   </p>
                 </div>
-              }
-              { amountTokenA && amountTokenB &&
-                <div
-                  className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
-            text-b2 justify-center gap-1 items-center`}
-                >
-                  <Tooltip>
-                    <TooltipTrigger asChild variant={'dotted'}>
-                      <p>USD Value</p>
-                    </TooltipTrigger>
-                    <TooltipContent asChild>
-                      <span className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>
-                        Approximate value in USD of the amount you are swapping
-                      </span>
-                    </TooltipContent>
-                  </Tooltip>
-                  <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>
-                    $ {usdValueA}
-                  </p>
-                </div>
-              }
+              )}
               {/*  <div*/}
               {/*    className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold */}
               {/*text-b2 items-center`}*/}

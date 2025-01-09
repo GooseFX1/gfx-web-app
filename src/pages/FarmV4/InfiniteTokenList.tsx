@@ -128,14 +128,20 @@ export function InfiniteTokenList({
               className={`text-b2 font-bold dark:text-text-darkmode-primary 
                                 text-text-lightmode-primary`}
             >
-              {numberFormatter(balance[curToken?.address].tokenAmount.uiAmount)}
+              {numberFormatter(
+                balance[curToken?.address].tokenAmount.uiAmount
+              )}
             </p>
             <p
               className={`text-b3 dark:text-text-darkmode-secondary text-text-lightmode-secondary 
                                 truncate font-semibold
                                 `}
             >
-              ${bigNumberFormatter(new BigNumber(balance[curToken?.address].value.toString()))}
+              ${bigNumberFormatter(new BigNumber(
+                balance[curToken?.address].price != 0 ?
+                balance[curToken?.address].value.toString() :
+                  curToken?.price.toString()
+            ))}
             </p>
           </div>
         </div>
