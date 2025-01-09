@@ -6,7 +6,7 @@ import { aborter } from '@/utils'
 import { useConnectionConfig } from '@/context/settings'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import useFirstRender from '@/hooks/useFirstRender'
-import { useLocation } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 
 interface ISwapConfig {
   tokens: JupToken[]
@@ -33,6 +33,7 @@ const SwapContext = createContext<ISwapConfig | null>(null)
 const tokenListAborterTokenSwap = 'tokenListSWAP'
 export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const currentLocation = useLocation()
+  const history = useHistory()
   const { userCache, updateUserCache } = useConnectionConfig()
   const [tokens, setTokens] = useState<JupToken[]>([])
   const [tokenPage, setTokenPage] = useState<number>(1)
@@ -51,6 +52,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const query = new URLSearchParams(location.search);
     const mintA = query.get('mintA');
     const mintB = query.get('mintB');
+    if (mintA == selectedTokenA?.address && mintB == selectedTokenB?.address) return;
     let keys = '';
     if (mintA) {
       keys += mintA;
@@ -70,7 +72,28 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       })
     })
-  }, [currentLocation])
+  }, [currentLocation,selectedTokenA,selectedTokenA])
+
+  useEffect(() => {
+    const mintA = selectedTokenA?.address;
+    const mintB = selectedTokenB?.address;
+    const params = new URLSearchParams();
+    if (mintA) {
+      params.set('mintA', mintA);
+    }
+    if (mintB) {
+      params.set('mintB', mintB);
+    }
+    const newUrl = `${location.pathname}?${params.toString()}`;
+    if (location.pathname !== newUrl) {
+      history.push({
+        pathname: location.pathname,
+        search: params.toString()
+      });
+    }
+
+  }, [selectedTokenA,selectedTokenB])
+
   const updateTokens = ({ page }) => {
     setIsLoadingTokenList.on()
     const signal = aborter.addSignal(tokenListAborterTokenSwap)
