@@ -9,9 +9,8 @@ import BigNumber from 'bignumber.js'
 export const ReviewConfirm: FC<{
   tokenAActionValue: string
   tokenBActionValue: string
-  updatedPoolState: any
   isDeposit: boolean
-}> = ({ tokenAActionValue, tokenBActionValue, updatedPoolState, isDeposit }): ReactElement => {
+}> = ({ tokenAActionValue, tokenBActionValue, isDeposit }): ReactElement => {
   const { selectedCard } = useGamma()
   const { balance } = useWalletBalance()
 
@@ -42,7 +41,7 @@ export const ReviewConfirm: FC<{
           <Tooltip>
             <TooltipTrigger className={`!font-regular !font-semibold dark:text-text-darkmode-secondary
                         text-grey-1 underline decoration-dotted`}>
-            Pool Fee Rate
+              Pool Fee Rate
             </TooltipTrigger>
             <TooltipContent>
               This fee is dynamically calculated based on volatility in the pools to provide the best returns for LPs.
@@ -51,15 +50,18 @@ export const ReviewConfirm: FC<{
           </Tooltip>
 
           <span className="!font-regular font-semibold dark:text-grey-8 text-black-4">
-            {(new BigNumber(updatedPoolState?.latestDynamicFeeRate || 0.00).div(10**4).toNumber()
-              || new BigNumber(updatedPoolState?.trade_fee_rate || 0.00).div(10**4).toNumber()).toFixed(2)}%
+            {(
+              new BigNumber(selectedCard?.latestDynamicFeeRate || 0.0).div(10 ** 4).toNumber() ||
+              new BigNumber(selectedCard?.config.tradeFeeRate || 0.0).div(10 ** 4).toNumber()
+            ).toFixed(2)}
+            %
           </span>
         </div>
         <div className="flex justify-between mb-2">
           <Tooltip>
             <TooltipTrigger className={`!font-regular font-semibold 
                         dark:text-grey-2 text-grey-1 underline decoration-dotted`}>
-            Total {isDeposit ? 'Deposit' : 'Withdraw'}
+              Total {isDeposit ? 'Deposit' : 'Withdraw'}
             </TooltipTrigger>
             <TooltipContent>
               This is the sum of your deposits of Token A/B

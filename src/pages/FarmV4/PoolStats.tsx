@@ -5,10 +5,7 @@ import { numberFormatter } from '@/utils'
 import BigNumber from 'bignumber.js'
 import { fetchTokensByPublicKey } from '@/api/gamma'
 
-export const PoolStats: FC<{ pool: GAMMAPool; updatedPoolState?: any }> = ({
-  pool,
-  updatedPoolState
-}): ReactElement => {
+export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
   const poolTVL = useMemo(() => {
     const liquidity = parseFloat(pool.tvl)
     return liquidity ? numberFormatter(liquidity) : '0.00'
@@ -24,37 +21,27 @@ export const PoolStats: FC<{ pool: GAMMAPool; updatedPoolState?: any }> = ({
 
   useEffect(() => {
     ;(async () => {
-      if (
-        !pool.mintA ||
-        !pool.mintB ||
-        !updatedPoolState?.comulativeTradeFeesToken0 ||
-        !updatedPoolState?.comulativeTradeFeesToken1
-      )
-        return
+      if (!pool.mintA || !pool.mintB) return
       setFees('Loading')
       const tokenListData = await fetchTokensByPublicKey(`${pool.mintA.address},${pool.mintB.address}`)
 
-      if (
-        !tokenListData.success ||
-        tokenListData.data.tokens?.length !== 2
-      )
-        return
+      if (!tokenListData.success || tokenListData.data.tokens?.length !== 2) return
 
       const tokenA = tokenListData.data.tokens[0]
       const tokenB = tokenListData.data.tokens[1]
 
-      const tokenAfee = new BigNumber(updatedPoolState.comulativeTradeFeesToken0)
-        .div(10**pool.mintA.decimals)
+      const tokenAfee = new BigNumber(pool.mintA.cumulativeTradeFees)
+        .div(10 ** pool.mintA.decimals)
         .multipliedBy(new BigNumber(tokenA.price))
-      const tokenBfee = new BigNumber(updatedPoolState.comulativeTradeFeesToken1)
-        .div(10**pool.mintB.decimals)
+      const tokenBfee = new BigNumber(pool.mintB.cumulativeTradeFees)
+        .div(10 ** pool.mintB.decimals)
         .multipliedBy(new BigNumber(tokenB.price))
 
       const totalFee = tokenAfee.plus(tokenBfee).toNumber()
 
       setFees(`$${numberFormatter(totalFee)}`)
     })()
-  }, [pool, updatedPoolState?.comulativeTradeFeesToken0, updatedPoolState?.comulativeTradeFeesToken1])
+  }, [pool])
 
   return (
     <>

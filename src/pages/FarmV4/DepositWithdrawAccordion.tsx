@@ -8,12 +8,7 @@ import BN from 'bn.js'
 const DepositWithdrawAccordion: FC<{
   withdrawableBalanceA: BN
   withdrawableBalanceB: BN
-  updatedPoolState: any
-}> = ({
-  withdrawableBalanceA,
-  withdrawableBalanceB,
-  updatedPoolState
-}): ReactElement => {
+}> = ({ withdrawableBalanceA, withdrawableBalanceB }): ReactElement => {
   const { selectedCard } = useGamma()
   return (
     <Accordion
@@ -29,7 +24,10 @@ const DepositWithdrawAccordion: FC<{
             <h4>My Position</h4>
           </AccordionTrigger>
           <AccordionContent>
-            <MyPositionStats withdrawableBalanceA={withdrawableBalanceA} withdrawableBalanceB={withdrawableBalanceB} />
+            <MyPositionStats
+              withdrawableBalanceA={withdrawableBalanceA}
+              withdrawableBalanceB={withdrawableBalanceB}
+            />
           </AccordionContent>
         </AccordionItem>
       ) : null}
@@ -38,9 +36,7 @@ const DepositWithdrawAccordion: FC<{
           <h4>Pool Stats</h4>
         </AccordionTrigger>
         <AccordionContent>
-          <PoolStats pool={selectedCard}
-          updatedPoolState={updatedPoolState}
-          />
+          <PoolStats pool={selectedCard} />
         </AccordionContent>
       </AccordionItem>
     </Accordion>
