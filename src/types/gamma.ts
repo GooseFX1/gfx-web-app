@@ -45,6 +45,7 @@ type GAMMAToken = {
   decimals: number
   tags: string[] // "hasFreeze" | "hasTransferFee" | "token-2022" | "community" | "unknown" ..etc
   extensions: ExtensionsItem
+  cumulativeTradeFees: number
 }
 
 type GAMMATokenList = {
@@ -99,6 +100,7 @@ interface GAMMAPool {
   pool_type: 'primary' | 'hyper'
   price?: string
   poolCreator: string
+  latestDynamicFeeRate: number
 }
 export type GAMMAPoolWithUserLiquidity = GAMMAPool & {
   userLpPosition: UserPortfolioLPPosition,
@@ -178,10 +180,10 @@ type GAMMAAPIBaseResponse<T> = {
 }
 
 type GAMMAPoolsResponse = GAMMAAPIBaseResponse<{
-  pools: GAMMAPool[]
+    pools: GAMMAPool[]
 } & GAMMAAPIPaginatedResponse>
 type GAMMAListTokenResponse = GAMMAAPIBaseResponse<{
-  tokens: TokenListToken[]
+    tokens: TokenListToken[]
 } & GAMMAAPIPaginatedResponse>
 type GAMMAStats = {
   tvl: string
@@ -215,5 +217,5 @@ export type {
   GAMMAListTokenResponse,
   GAMMAUser,
   GAMMAUserLPPositionWithPrice,
-   GAMMAStats
+  GAMMAStats
 }

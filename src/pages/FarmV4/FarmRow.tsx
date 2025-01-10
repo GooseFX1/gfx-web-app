@@ -104,7 +104,7 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
                 border-grey-1 bg-grey-5 dark:bg-black-2 rounded-[2.5px] h-[30px] p-2"
           >
             {(
-              new BigNumber(pool?.['latestDynamicFeeRate'] || 0.0).div(10 ** 4).toNumber() ||
+              new BigNumber(pool?.latestDynamicFeeRate || 0.0).div(10 ** 4).toNumber() ||
               new BigNumber(pool?.config.tradeFeeRate || 0.0).div(10 ** 4).toNumber()
             ).toFixed(2)}
             %
