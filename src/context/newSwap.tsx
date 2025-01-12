@@ -1,4 +1,4 @@
-import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useState } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { JupToken, TOKEN_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
 import useBoolean from '@/hooks/useBoolean'
 import { fetchTokenList, fetchTokensByPublicKey } from '@/api/gamma'
@@ -6,7 +6,7 @@ import { aborter } from '@/utils'
 import { useConnectionConfig } from '@/context/settings'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import useFirstRender from '@/hooks/useFirstRender'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 interface ISwapConfig {
   tokens: JupToken[]
@@ -32,7 +32,6 @@ interface ISwapConfig {
 const SwapContext = createContext<ISwapConfig | null>(null)
 const tokenListAborterTokenSwap = 'tokenListSWAP'
 export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const currentLocation = useLocation()
   const history = useHistory()
   const { userCache, updateUserCache } = useConnectionConfig()
   const [tokens, setTokens] = useState<JupToken[]>([])
@@ -48,11 +47,11 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const firstMount = useFirstRender()
   // external hooks
   const { balance, topBalances, publicKey } = useWalletBalance()
-  useEffect(() => {
+  useLayoutEffect(() => {
     const query = new URLSearchParams(location.search);
     const mintA = query.get('mintA');
     const mintB = query.get('mintB');
-    if (mintA == selectedTokenA?.address && mintB == selectedTokenB?.address) return;
+
     let keys = '';
     if (mintA) {
       keys += mintA;
@@ -72,7 +71,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       })
     })
-  }, [currentLocation,selectedTokenA,selectedTokenA])
+  }, [])
 
   useEffect(() => {
     const mintA = selectedTokenA?.address;
