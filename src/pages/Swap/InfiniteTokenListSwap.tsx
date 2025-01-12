@@ -55,7 +55,7 @@ export function InfiniteTokenListSwap({
   const Item = ({ index, style }: { index: number, style: CSSProperties }) => {
     if (!isItemLoaded(index)||isLoadingTokenList) {
       if (index > 0) return null
-      return <div style={style} className={`flex flex-col gap-2`}>
+      return <RenderAs style={style} className={`flex flex-col gap-2`}>
         <TokenListSkeleton RenderAs={RenderAs} />
         <TokenListSkeleton RenderAs={RenderAs} />
         <TokenListSkeleton RenderAs={RenderAs} />
@@ -63,7 +63,7 @@ export function InfiniteTokenListSwap({
         <TokenListSkeleton RenderAs={RenderAs} />
         <TokenListSkeleton RenderAs={RenderAs} />
         <TokenListSkeleton RenderAs={RenderAs} />
-      </div>
+      </RenderAs>
     }
 
     const curToken = tokenRenderList[index]
@@ -137,7 +137,11 @@ export function InfiniteTokenListSwap({
                                 truncate font-semibold
                                 `}
             >
-              ${bigNumberFormatter(new BigNumber(balance[curToken?.address].value.toString()))}
+              ${bigNumberFormatter(new BigNumber(
+              balance[curToken?.address].price != 0 ?
+                balance[curToken?.address].value.toString() :
+                curToken?.price.toString()
+            ))}
             </p>
           </div>
         </div>

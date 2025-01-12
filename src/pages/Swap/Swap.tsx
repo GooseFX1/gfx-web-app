@@ -32,11 +32,12 @@ import { InfiniteTokenListSwap } from '@/pages/Swap/InfiniteTokenListSwap'
 import { Connect } from '@/layouts'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import useTransaction from '@/hooks/useTransaction'
-import { getPriceQuotes, swapTokens } from '@/web3/Farm'
+import { doesPoolWithMintsExist, getPriceQuotes, swapTokens } from '@/web3/Farm'
 import { useWallet } from '@solana/wallet-adapter-react'
 import BigNumber from 'bignumber.js'
 import { forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
 import { ErrorToast } from '@/utils/perpsNotifications'
+import Decimal from 'decimal.js'
 
 export const Swap: FC = () => {
   const { isDarkMode, mode } = useDarkMode()
@@ -93,14 +94,16 @@ export const Swap: FC = () => {
   }, [selectedTokenA, selectedTokenB, balance, userPublicKey])
 
   useEffect(() => {
-    const handler = setTimeout(async () => {
+    if (!doesPoolExist) return
+    handleRefresh()
+    const handler = setInterval(async () => {
       await handleRefresh()
-    }, 500)
+    }, 15000)
 
     return () => {
-      clearTimeout(handler)
+      clearInterval(handler)
     }
-  }, [selectedTokenA, selectedTokenB, amountTokenA])
+  }, [selectedTokenA, selectedTokenB, amountTokenA, doesPoolExist])
 
   const handleSlippageSave = () => {
     setSlippage(value)
@@ -112,7 +115,15 @@ export const Swap: FC = () => {
       { id: 'slippage-save' }
     )
   }
+  const checkIfPoolExists = async () =>
+    doesPoolWithMintsExist(selectedTokenA.address, selectedTokenB.address, GammaProgram).then(res=>{
+      setDoesPoolExist.set(res)
+      return res;
+    })
+
   const handleRefresh = async () => {
+    await checkIfPoolExists()
+    if (!doesPoolExist) return;
     if (+amountTokenA === 0) setAmountTokenB('')
     if (amountTokenA !== '' && !isNaN(+amountTokenA) && +amountTokenA > 0 && selectedTokenA && selectedTokenB) {
       setLoadingPriceQuote(true)
@@ -121,13 +132,11 @@ export const Swap: FC = () => {
         .then(({ destinationAmountSwapped: price, tradeFee }) => {
           setAmountTokenB(price)
           setFee(tradeFee)
-          setDoesPoolExist.on()
         })
         .catch((e) => {
           toast(<ErrorToast />, {
             id: 'refresh-toast-swap'
           })
-          setDoesPoolExist.off()
           console.error(e)
         })
         .finally(() => {
@@ -166,6 +175,20 @@ export const Swap: FC = () => {
       approxAmountA: numberFormatter(balanceB.price / balanceA.price, balanceA.decimals ?? 7)
     }
   }, [balance, selectedTokenA, selectedTokenB])
+  const {usdValueA, usdValueB} = useMemo(()=>{
+    const returnValue = {
+     usdValueA : '0.00',
+      usdValueB : '0.00'
+    }
+    if (amountTokenA && selectedTokenA && selectedTokenA.price) {
+      returnValue.usdValueA = numberFormatter(new Decimal(amountTokenA).mul(selectedTokenA.price).toNumber())
+    }
+    if (amountTokenB && selectedTokenB && selectedTokenB.price) {
+      returnValue.usdValueB = numberFormatter(new Decimal(amountTokenB).mul(selectedTokenB.price).toNumber())
+    }
+
+    return returnValue;
+  },[amountTokenA,amountTokenB,balance,selectedTokenA,selectedTokenB])
 
   const handleSwap = async () => {
     try {
@@ -206,6 +229,10 @@ export const Swap: FC = () => {
     setSendingTransaction(false)
   }
 
+  useEffect(()=> {
+    if (!(selectedTokenA && selectedTokenB)) return
+    checkIfPoolExists()
+  },[selectedTokenA, selectedTokenB])
   // TODO: these values pls bois
   // const impactPercent = 0.1
   // const minimumReceivedQuote = 0.0
@@ -337,15 +364,26 @@ mt-8 flex items-center justify-center
                 {selectedTokenA?.symbol}
               </p>
             </div>
-            <TokenSelectInput
-              token={selectedTokenA}
-              setToken={setSelectedTokenA}
-              otherToken={selectedTokenB}
-              handleChange={(e) => handleChange(e, true)}
-              amountToken={amountTokenA}
-              disableInput={loadingPriceQuote || sendingTransaction}
-              disableTokenDropDown={sendingTransaction}
-            />
+            <div className={'flex flex-col gap-1.5'}>
+              <TokenSelectInput
+                token={selectedTokenA}
+                setToken={setSelectedTokenA}
+                otherToken={selectedTokenB}
+                handleChange={(e) => handleChange(e, true)}
+                amountToken={amountTokenA}
+                disableInput={sendingTransaction || !doesPoolExist}
+                disableTokenDropDown={sendingTransaction}
+              />
+              {selectedTokenA ? (
+                <p
+                  className={cn(`ml-auto text-b2 text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
+                font-bold
+                `)}
+                >
+                  ${usdValueA}
+                </p>
+              ) : null}
+            </div>
           </div>
           <IconWithFallback
             src={`/img/assets/swap-${mode}.svg`}
@@ -374,16 +412,29 @@ mt-8 flex items-center justify-center
                 {selectedTokenB?.symbol}
               </p>
             </div>
-            <TokenSelectInput
-              token={selectedTokenB}
-              setToken={setSelectedTokenB}
-              otherToken={selectedTokenA}
-              // handleChange={(e) => handleChange(e, false)}
-              amountToken={amountTokenB}
-              disableInput={true}
-              disableTokenDropDown={sendingTransaction}
-              isLocked={true}
-            />
+            <div className={'flex flex-col gap-1.5'}>
+              <TokenSelectInput
+                token={selectedTokenB}
+                setToken={setSelectedTokenB}
+                otherToken={selectedTokenA}
+                // handleChange={(e) => handleChange(e, false)}
+                amountToken={amountTokenB}
+                disableInput={true}
+                disableTokenDropDown={sendingTransaction}
+                isLocked={true}
+              />
+              { selectedTokenB ?
+                <p
+                  className={cn(`ml-auto text-b2 text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
+                font-bold
+                `)}
+                >
+                  ${usdValueB}
+                </p>
+                :
+                null
+              }
+            </div>
           </div>
           {!doesPoolExist ? <h4 className={`font-semibold text-text-red`}>Current pool doesn't exist. </h4> : null}
           {publicKey && selectedTokenA && selectedTokenB && (
@@ -408,8 +459,7 @@ mt-8 flex items-center justify-center
                   className={'rounded-circle'}
                 />
                 <p>
-                  {invertPrice ? approxAmountA : approxAmountB}
-                  {' '}
+                  {invertPrice ? approxAmountA : approxAmountB}{' '}
                   {invertPrice ? selectedTokenA?.symbol : selectedTokenB?.symbol}
                 </p>
                 <IconWithFallback
@@ -426,22 +476,34 @@ mt-8 flex items-center justify-center
                   className={cn(`text-text-green ml-auto`, getImpactValue(impactPercent))}
                 >{`< ${impactPercent}%`}</p>
               </div> */}
-              <div
-                className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
+              {amountTokenA && (
+                <div
+                  className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold 
             text-b2 justify-center gap-1 items-center`}
-              >
-                <Tooltip>
-                  <TooltipTrigger asChild variant={'dotted'}>
-                    <p>Estimated Fee</p>
-                  </TooltipTrigger>
-                  <TooltipContent asChild>
-                    <span className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>
-                      Swap fees include SOL network cost and fees to LPs, buybacks and treasury
-                    </span>
-                  </TooltipContent>
-                </Tooltip>
-                <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>{fee}</p>
-              </div>
+                >
+                  <Tooltip>
+                    <TooltipTrigger asChild variant={'dotted'}>
+                      <p>Estimated Fee</p>
+                    </TooltipTrigger>
+                    <TooltipContent asChild>
+                      <span className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>
+                        Swap fees include SOL network cost and fees to LPs, buybacks and treasury
+                      </span>
+                    </TooltipContent>
+                  </Tooltip>
+                  <p className={cn(`text-text-lightmode-primary dark:text-text-darkmode-primary ml-auto`)}>
+                    {loadingPriceQuote ? (
+                      <IconWithFallback
+                        src={`/img/assets/refresh_${mode}.svg`}
+                        size={'xs'}
+                        className={cn('animate-spin')}
+                      />
+                    ) : (
+                      fee
+                    )}
+                  </p>
+                </div>
+              )}
               {/*  <div*/}
               {/*    className={`flex text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold */}
               {/*text-b2 items-center`}*/}
@@ -488,7 +550,7 @@ function TokenSelectInput({
   token: JupToken | null
   setToken: (token: JupToken) => void
   otherToken: JupToken | null
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>, isTokenA: boolean) => void
+  handleChange?: (e: React.ChangeEvent<HTMLInputElement>, isTokenA: boolean) => void
   amountToken: string
   disableInput?: boolean
   disableTokenDropDown?: boolean

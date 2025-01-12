@@ -19,7 +19,7 @@ export const TermsOfService: FC<{
   setVisible?: Dispatch<SetStateAction<boolean>>
   visible?: boolean
 }> = ({ setVisible, visible }) => {
-  const { blacklisted, userCache, updateUserCache } = useConnectionConfig()
+  const { userCache, updateUserCache } = useConnectionConfig()
   const breakpoint = useBreakPoint()
   const isMobile = breakpoint.isMobile
   const isOnAmm = window.location.pathname.includes('gamma')
@@ -28,17 +28,13 @@ export const TermsOfService: FC<{
   // const [isRead, setRead] = useState<boolean>(false)
   console.log('TOS USER CACHE', userCache)
   useLayoutEffect(() => {
-    if (blacklisted) {
-      setToShow(false)
-      return;
-    }
     const isOnAmm = window.location.pathname.includes('gamma');
     const canShowTos = (isOnAmm && userCache.gamma.hasGAMMAOnboarded) || (!isOnAmm && !userCache.hasSignedTC);
 
     if (visible || canShowTos) {
       setToShow(true)
     }
-  }, [visible, userCache.gamma.hasGAMMAOnboarded, userCache.hasSignedTC, blacklisted])
+  }, [visible, userCache.gamma.hasGAMMAOnboarded, userCache.hasSignedTC])
 
   const accept = () => {
     updateUserCache({

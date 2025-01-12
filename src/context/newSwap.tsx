@@ -1,11 +1,12 @@
-import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useState } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { JupToken, TOKEN_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
 import useBoolean from '@/hooks/useBoolean'
-import { fetchTokenList } from '@/api/gamma'
+import { fetchTokenList, fetchTokensByPublicKey } from '@/api/gamma'
 import { aborter } from '@/utils'
 import { useConnectionConfig } from '@/context/settings'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import useFirstRender from '@/hooks/useFirstRender'
+import { useHistory } from 'react-router-dom'
 
 interface ISwapConfig {
   tokens: JupToken[]
@@ -31,6 +32,8 @@ interface ISwapConfig {
 const SwapContext = createContext<ISwapConfig | null>(null)
 const tokenListAborterTokenSwap = 'tokenListSWAP'
 export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const history = useHistory()
+  const { userCache, updateUserCache } = useConnectionConfig()
   const [tokens, setTokens] = useState<JupToken[]>([])
   const [tokenPage, setTokenPage] = useState<number>(1)
   const [maxTokensReached, setMaxTokensReached] = useBoolean(true)
@@ -40,12 +43,56 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [selectedTokenB, setSelectedTokenB] = useState<JupToken | null>(null)
   const [amountTokenA, setAmountTokenA] = useState<string>('')
   const [amountTokenB, setAmountTokenB] = useState<string>('')
-  const [slippage, setSlippage] = useState<number>(1.0)
+  const [slippage, setSlippage] = useState<number>(userCache?.swap?.slippage ?? 1.0)
   const firstMount = useFirstRender()
   // external hooks
-  const { userCache, updateUserCache } = useConnectionConfig()
   const { balance, topBalances, publicKey } = useWalletBalance()
-  
+  useLayoutEffect(() => {
+    const query = new URLSearchParams(location.search);
+    const mintA = query.get('mintA');
+    const mintB = query.get('mintB');
+
+    let keys = '';
+    if (mintA) {
+      keys += mintA;
+    }
+    if (mintB) {
+      keys += ',';
+      keys += mintB;
+    }
+    fetchTokensByPublicKey(keys).then((res)=>{
+      if (!res || !res.success) return;
+      res.data.tokens.forEach((token)=>{
+        if (token.address === mintA) {
+          setSelectedTokenA(token);
+        }
+        if (token.address === mintB) {
+          setSelectedTokenB(token);
+        }
+      })
+    })
+  }, [])
+
+  useEffect(() => {
+    const mintA = selectedTokenA?.address;
+    const mintB = selectedTokenB?.address;
+    const params = new URLSearchParams();
+    if (mintA) {
+      params.set('mintA', mintA);
+    }
+    if (mintB) {
+      params.set('mintB', mintB);
+    }
+    const newUrl = `${location.pathname}?${params.toString()}`;
+    if (location.pathname !== newUrl) {
+      history.push({
+        pathname: location.pathname,
+        search: params.toString()
+      });
+    }
+
+  }, [selectedTokenA,selectedTokenB])
+
   const updateTokens = ({ page }) => {
     setIsLoadingTokenList.on()
     const signal = aborter.addSignal(tokenListAborterTokenSwap)
