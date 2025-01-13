@@ -39,6 +39,8 @@ import { forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
 import { ErrorToast } from '@/utils/perpsNotifications'
 import Decimal from 'decimal.js'
 
+import LottieSwapCountDown from './LottieSwapCountDown'
+
 export const Swap: FC = () => {
   const { isDarkMode, mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
@@ -74,7 +76,7 @@ export const Swap: FC = () => {
   const [sendingTransaction, setSendingTransaction] = useState(false)
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false)
   const [fee, setFee] = useState<string>('')
-
+  const [isRefreshing, setIsRefreshing] = useBoolean(false)
   const swapNotValid = useMemo(
     () =>
       !selectedTokenA ||
@@ -93,17 +95,17 @@ export const Swap: FC = () => {
     }
   }, [selectedTokenA, selectedTokenB, balance, userPublicKey])
 
-  useEffect(() => {
-    if (!doesPoolExist) return
-    handleRefresh()
-    const handler = setInterval(async () => {
-      await handleRefresh()
-    }, 15000)
-
-    return () => {
-      clearInterval(handler)
-    }
-  }, [selectedTokenA, selectedTokenB, amountTokenA, doesPoolExist])
+  // useEffect(() => {
+  //   if (!doesPoolExist) return
+  //   handleRefresh()
+  //   const handler = setInterval(async () => {
+  //     await handleRefresh()
+  //   }, 15000)
+  //
+  //   return () => {
+  //     clearInterval(handler)
+  //   }
+  // }, [selectedTokenA, selectedTokenB, amountTokenA, doesPoolExist])
 
   const handleSlippageSave = () => {
     setSlippage(value)
@@ -116,14 +118,19 @@ export const Swap: FC = () => {
     )
   }
   const checkIfPoolExists = async () =>
-    doesPoolWithMintsExist(selectedTokenA.address, selectedTokenB.address, GammaProgram).then(res=>{
+    doesPoolWithMintsExist(selectedTokenA.address, selectedTokenB.address, GammaProgram).then((res) => {
       setDoesPoolExist.set(res)
-      return res;
+      return res
     })
 
   const handleRefresh = async () => {
+    console.log('REFRESH')
+    setIsRefreshing.on()
     await checkIfPoolExists()
-    if (!doesPoolExist) return;
+    if (!doesPoolExist) {
+      setIsRefreshing.off()
+      return
+    }
     if (+amountTokenA === 0) setAmountTokenB('')
     if (amountTokenA !== '' && !isNaN(+amountTokenA) && +amountTokenA > 0 && selectedTokenA && selectedTokenB) {
       setLoadingPriceQuote(true)
@@ -143,6 +150,7 @@ export const Swap: FC = () => {
           setLoadingPriceQuote(false)
         })
     }
+    setIsRefreshing.off()
   }
   const handleChange = async (e, isSource: boolean) => {
     const inputNumber = e?.target?.value
@@ -153,7 +161,7 @@ export const Swap: FC = () => {
       isSource ? setAmountTokenA(inputNumber) : setAmountTokenB(inputNumber)
     }
   }
-  const { approxAmountB, approxAmountA } = useMemo(() => {    
+  const { approxAmountB, approxAmountA } = useMemo(() => {
     if (!selectedTokenA || !selectedTokenB)
       return {
         approxAmountB: '0.00',
@@ -175,10 +183,10 @@ export const Swap: FC = () => {
       approxAmountA: numberFormatter(balanceB.price / balanceA.price, balanceA.decimals ?? 7)
     }
   }, [balance, selectedTokenA, selectedTokenB])
-  const {usdValueA, usdValueB} = useMemo(()=>{
+  const { usdValueA, usdValueB } = useMemo(() => {
     const returnValue = {
-     usdValueA : '0.00',
-      usdValueB : '0.00'
+      usdValueA: '0.00',
+      usdValueB: '0.00'
     }
     if (amountTokenA && selectedTokenA && selectedTokenA.price) {
       returnValue.usdValueA = numberFormatter(new Decimal(amountTokenA).mul(selectedTokenA.price).toNumber())
@@ -187,8 +195,8 @@ export const Swap: FC = () => {
       returnValue.usdValueB = numberFormatter(new Decimal(amountTokenB).mul(selectedTokenB.price).toNumber())
     }
 
-    return returnValue;
-  },[amountTokenA,amountTokenB,balance,selectedTokenA,selectedTokenB])
+    return returnValue
+  }, [amountTokenA, amountTokenB, balance, selectedTokenA, selectedTokenB])
 
   const handleSwap = async () => {
     try {
@@ -229,13 +237,21 @@ export const Swap: FC = () => {
     setSendingTransaction(false)
   }
 
-  useEffect(()=> {
+  useEffect(() => {
     if (!(selectedTokenA && selectedTokenB)) return
     checkIfPoolExists()
-  },[selectedTokenA, selectedTokenB])
-  // TODO: these values pls bois
-  // const impactPercent = 0.1
-  // const minimumReceivedQuote = 0.0
+  }, [selectedTokenA, selectedTokenB])
+
+  useEffect(() => {
+    const timeout = setTimeout(async () => {
+      await handleRefresh()
+    }, 250)
+
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [amountTokenA])
+
   return (
     <div
       className={`
@@ -423,7 +439,7 @@ mt-8 flex items-center justify-center
                 disableTokenDropDown={sendingTransaction}
                 isLocked={true}
               />
-              { selectedTokenB ?
+              {selectedTokenB ? (
                 <p
                   className={cn(`ml-auto text-b2 text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
                 font-bold
@@ -431,9 +447,7 @@ mt-8 flex items-center justify-center
                 >
                   ${usdValueB}
                 </p>
-                :
-                null
-              }
+              ) : null}
             </div>
           </div>
           {!doesPoolExist ? <h4 className={`font-semibold text-text-red`}>Current pool doesn't exist. </h4> : null}
@@ -468,7 +482,7 @@ mt-8 flex items-center justify-center
                   className={'ml-auto cursor-pointer'}
                   onClick={setInvertPrice.toggle}
                 />
-                <IconWithFallback src={'/img/assets/toast-loader.svg'} size={'sm'} className={'animate-spin'} />
+                <LottieSwapCountDown onFinish={handleRefresh} isRefreshing={isRefreshing} />
               </div>
               {/* <div className={'flex font-semibold text-b2 items-center'}>
                 <p>Price Impact</p>
