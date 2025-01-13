@@ -27,8 +27,14 @@ export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
 
       if (!tokenListData.success || tokenListData.data.tokens?.length !== 2) return
 
-      const tokenA = tokenListData.data.tokens[0]
-      const tokenB = tokenListData.data.tokens[1]
+      const tokenA =
+        tokenListData.data.tokens[0].address === pool.mintA.address
+          ? tokenListData.data.tokens[0]
+          : tokenListData.data.tokens[1]
+      const tokenB =
+        tokenListData.data.tokens[0].address === pool.mintA.address
+          ? tokenListData.data.tokens[1]
+          : tokenListData.data.tokens[0]
 
       const tokenAfee = new BigNumber(pool.mintA.cumulativeTradeFees)
         .div(10 ** pool.mintA.decimals)
