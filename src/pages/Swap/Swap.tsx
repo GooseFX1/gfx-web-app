@@ -393,7 +393,6 @@ mt-8 flex items-center justify-center
               {selectedTokenA ? (
                 <p
                   className={cn(`ml-auto text-b2 text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
-                font-bold
                 `)}
                 >
                   ${usdValueA}
@@ -442,7 +441,6 @@ mt-8 flex items-center justify-center
               {selectedTokenB ? (
                 <p
                   className={cn(`ml-auto text-b2 text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
-                font-bold
                 `)}
                 >
                   ${usdValueB}
