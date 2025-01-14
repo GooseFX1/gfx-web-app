@@ -64,7 +64,7 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
     return <div style={style}>{content}</div>
   }
 
-  const windowHeight = Math.min(10, totalPoolCount) * 60
+  const windowHeight = Math.min(10, totalPoolCount) * 60 + (2*ITEM_PADDING)
 
   return (
     <InfiniteLoader isItemLoaded={isItemLoaded} itemCount={itemCount} loadMoreItems={loadMoreItems}
