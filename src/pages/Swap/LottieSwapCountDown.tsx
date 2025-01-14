@@ -7,9 +7,10 @@ import { useDarkMode } from '@/context'
 type LottieSwapCountDownProps = {
   onFinish: () => Promise<void>
   isRefreshing: boolean
+  hasInput: boolean
 }
 
-function LottieSwapCountDown({ onFinish, isRefreshing }: LottieSwapCountDownProps) {
+function LottieSwapCountDown({ onFinish, isRefreshing, hasInput }: LottieSwapCountDownProps) {
   const { isDarkMode } = useDarkMode()
   const lastFrameRef = useRef(0)
 
@@ -41,18 +42,26 @@ function LottieSwapCountDown({ onFinish, isRefreshing }: LottieSwapCountDownProp
       // ref: lottieRef,
     },
     {
-      width: '40px',
-      height: '40px'
+      width: '20px',
+      height: '20px'
     }
   )
   useEffect(() => {
-    if (isRefreshing && lastFrameRef.current > 0) {
+    if (isRefreshing) {
+      // refresh triggered
       lastFrameRef.current = 0
       goToAndStop(0, true)
-    } else if (!isRefreshing) {
+    }
+    else if (!hasInput) {
+      // has no input - pause at point; we can't countdown with no input
+      lastFrameRef.current = 0
+      goToAndStop(0, true)
+    }
+    else if (!isRefreshing) {
+      // finished refreshing - resume from last frame - should be 0
       goToAndPlay(lastFrameRef.current, true)
     }
-  }, [isRefreshing])
+  }, [isRefreshing, hasInput])
   return <>{View}</>
 }
 

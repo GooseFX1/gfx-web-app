@@ -451,7 +451,7 @@ mt-8 flex items-center justify-center
             </div>
           </div>
           {!doesPoolExist ? <h4 className={`font-semibold text-text-red`}>Current pool doesn't exist. </h4> : null}
-          {publicKey && selectedTokenA && selectedTokenB && (
+          {selectedTokenA && selectedTokenB && (
             <div
               className={`flex flex-col gap-1.25 font-semibold text-text-lightmode-secondary
            dark:text-text-darkmode-secondary`}
@@ -482,7 +482,11 @@ mt-8 flex items-center justify-center
                   className={'ml-auto cursor-pointer'}
                   onClick={setInvertPrice.toggle}
                 />
-                <LottieSwapCountDown onFinish={handleRefresh} isRefreshing={isRefreshing} />
+                <LottieSwapCountDown
+                  onFinish={handleRefresh}
+                  isRefreshing={isRefreshing}
+                  hasInput={+amountTokenA > 0}
+                />
               </div>
               {/* <div className={'flex font-semibold text-b2 items-center'}>
                 <p>Price Impact</p>
