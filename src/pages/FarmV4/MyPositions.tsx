@@ -76,6 +76,11 @@ const MyPositions: FC = () => {
               isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
             )}
             key={`${pool.id}_${sortConfig.id}`}
+            onClick={()=>{
+              setSelectedCard(pool)
+              setOpenDepositWithdrawSlider(true)
+              setModeOfOperation(ModeOfOperation.DEPOSIT)
+            }}
           >
             {/* name */}
             <div className="flex flex-row items-center">
@@ -154,7 +159,9 @@ const MyPositions: FC = () => {
                 <Button
                   colorScheme={'blue'}
                   className={'h-7.5 w-7.5 mr-4'}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
                     setSelectedCard(pool)
                     setOpenDepositWithdrawSlider(true)
                     setModeOfOperation(ModeOfOperation.DEPOSIT)
@@ -168,7 +175,9 @@ const MyPositions: FC = () => {
                   disabled={
                     pool.userLpPosition.tokenADeposited === '0' && pool.userLpPosition.tokenBDeposited === '0'
                   }
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
                     setSelectedCard(pool)
                     setOpenDepositWithdrawSlider(true)
                     setModeOfOperation(ModeOfOperation.WITHDRAW)
