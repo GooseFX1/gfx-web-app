@@ -159,7 +159,9 @@ const MyPositions: FC = () => {
                 <Button
                   colorScheme={'blue'}
                   className={'h-7.5 w-7.5 mr-4'}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
                     setSelectedCard(pool)
                     setOpenDepositWithdrawSlider(true)
                     setModeOfOperation(ModeOfOperation.DEPOSIT)
@@ -173,7 +175,9 @@ const MyPositions: FC = () => {
                   disabled={
                     pool.userLpPosition.tokenADeposited === '0' && pool.userLpPosition.tokenBDeposited === '0'
                   }
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
                     setSelectedCard(pool)
                     setOpenDepositWithdrawSlider(true)
                     setModeOfOperation(ModeOfOperation.WITHDRAW)
