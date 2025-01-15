@@ -85,12 +85,10 @@ interface IRewardsContext {
   activeUnstakingTickets: UnstakeTicket[]
   hasRewards: boolean
   initializeUserAccount: () => Promise<boolean>
-  closeUserAccount: () => Promise<void>
   stake: (amount: number) => Promise<void>
   unstake: (amount: number) => Promise<void>
   claimFees: () => Promise<void>
   redeemUnstakingTickets: (ticketContracts: UnstakeableTicket[]) => Promise<void>
-  enterGiveaway: (giveawayContract: string) => void
   getClaimableFees: () => Promise<number>
   getUiAmount: (value: anchor.BN, isUsdc?: boolean) => number
   totalStakedInUSD: number
@@ -153,14 +151,14 @@ const RewardsContext = createContext<IRewardsContext | null>(null)
 //   const unstakingTickets = await stakeRewards.getUnstakingTickets(wallet)
 //   return unstakingTickets
 // }
-const fetchAllRewardData = async (stakeRewards: GfxStakeRewards, wallet: PublicKey) => {
+const fetchAllRewardData = async (stakeRewards: GfxStakeRewards, wallet?: PublicKey) => {
   // bulk operation to retrieve all cachable values of the contract
-  const [userMetadata, stakePool, gofxVault, unstakingTickets, claimable] = await Promise.all([
-    stakeRewards.getUserMetaData(wallet),
+  const [stakePool, gofxVault, unstakingTickets, claimable,userMetadata] = await Promise.all([
     stakeRewards.getStakePool(),
     stakeRewards.getGoFxVault(),
-    stakeRewards.getUnstakingTickets(wallet),
-    stakeRewards.getUserRewardsHoldingAmount(wallet)
+    wallet ?  stakeRewards.getUnstakingTickets(wallet) : [],
+    wallet ? stakeRewards.getUserRewardsHoldingAmount(wallet) : '0.00',
+    wallet ? stakeRewards.getUserMetaData(wallet) : initialState.user.staking.userMetadata
   ])
 
   const unstakeableTickets = stakeRewards.getUnstakeableTickets(unstakingTickets)
@@ -264,7 +262,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           setActiveUnstakingTickets(
             newUserMetaData.unstakingTickets.filter((ticket) => ticket.createdAt.toString() !== '0')
           )
-          console.log('user meta data update', newUserMetaData)
+          console.log('user meta data update', { newUserMetaData, newUnstakaebleTicekts })
         }
       },
       {
@@ -329,7 +327,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [])
 
   useEffect(() => {
-    if (!publicKey || !stakeRewards) {
+    if (!stakeRewards) {
       return
     }
     console.log('fetching-rewards', publicKey?.toBase58())
@@ -413,43 +411,6 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     return true
   }, [stakeRewards, publicKey, sendTransaction, connection])
-  const closeUserAccount = useCallback(async () => {
-    //TODO: the below is not currently in use -> removing for now if needed add back in
-    // const txn = stakeRewards.closeUserAccount(null, publicKey)
-    //
-    //    const txnSig = await walletContext.sendTransaction(new Transaction().add(txn), connection).catch((err) => {
-    //      console.log(err)
-    //      return ''
-    //    })
-    //    await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
-    //      .then(() => {
-    //        notify({
-    //          message: Notification(
-    //            'Close successful!',
-    //            false,
-    //            <div>
-    //              <p>Account closed</p>
-    //            </div>
-    //          ),
-    //          type: 'success'
-    //        })
-    //      })
-    //      .catch((err) => {
-    //        console.log('close-failed', err)
-    //        notify({
-    //          message: Notification(
-    //            'Close failed!',
-    //            true,
-    //            <div>
-    //              <p>{err.msg}</p>
-    //            </div>
-    //          ),
-    //          type: 'error'
-    //        })
-    //      }).finally(()=>updateStakeDetails()
-    //      )
-    //
-  }, [stakeRewards, connection, publicKey])
 
   const stake = useCallback(
     async (amount: number) => {
@@ -457,9 +418,11 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const stakeAmount = new anchor.BN(amount * 1e9)
 
       const txn = await checkForUserAccount(async () => stakeRewards.stake(stakeAmount, publicKey))
-      console.log('STAKE')
-      sendTransaction(txn)
-      console.log('STAKE END')
+      sendTransaction(txn).then((res)=>{
+        if (res.success) {
+          updateStakeDetails()
+        }
+      })
     },
     [stakeRewards, publicKey, sendTransaction, connection]
   )
@@ -482,9 +445,13 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         stakeRewards.unstake(unstakeAmount, publicKey)
       )
       txBuilder.add(txn._instructions)
-      sendTransaction(txBuilder)
+      sendTransaction(txBuilder).then((res)=>{
+        if (res.success) {
+          updateStakeDetails()
+        }
+      })
     },
-    [stakeRewards, publicKey, sendTransaction, connection]
+    [stakeRewards, publicKey, sendTransaction, connection, updateStakeDetails]
   )
   const getClaimableFees = useCallback(async (): Promise<number> => {
     // retrieves value of claimable amount from contract
@@ -494,8 +461,12 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const claimFees = useCallback(async () => {
     const txn = await checkForUserAccount(async () => stakeRewards.claimFees(publicKey))
     console.log('claim fees txn', txn)
-    sendTransaction(txn)
-  }, [stakeRewards, publicKey, connection, claimable, sendTransaction])
+    sendTransaction(txn).then((res)=>{
+      if (res.success) {
+        updateStakeDetails()
+      }
+    })
+  }, [stakeRewards, publicKey, connection, claimable, sendTransaction, updateStakeDetails])
   const redeemUnstakingTickets = useCallback(
     async (toUnstake: UnstakeableTicket[]) => {
       const txn = await checkForUserAccount(async () =>
@@ -504,16 +475,13 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           publicKey
         )
       )
-      sendTransaction(txn)
+      sendTransaction(txn).then((res)=>{
+        if (res.success) {
+          updateStakeDetails()
+        }
+      })
     },
-    [stakeRewards, publicKey, sendTransaction]
-  )
-  const enterGiveaway = useCallback(
-    (giveawayContract: string) => {
-      //TODO: handle entering giveaway
-      console.log('enter-giveaway', giveawayContract)
-    },
-    [stakeRewards, publicKey]
+    [stakeRewards, publicKey, sendTransaction, updateStakeDetails]
   )
 
   const getUiAmount = useCallback((value: BN, isUsdc = false) => {
@@ -544,12 +512,10 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         unstakeableTickets,
         activeUnstakingTickets,
         initializeUserAccount,
-        closeUserAccount,
         stake,
         unstake,
         claimFees,
         redeemUnstakingTickets,
-        enterGiveaway,
         getClaimableFees,
         getUiAmount,
         hasRewards,
