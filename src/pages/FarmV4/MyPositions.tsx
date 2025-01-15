@@ -134,7 +134,7 @@ const MyPositions: FC = () => {
               <div className="flex items-center justify-center">
                 <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
                   <span className={'font-poppins font-semibold my-0.5'}>
-                    {numberFormatter(pool.stats.monthly.feesAprUSD)}%
+                    {numberFormatter(pool.stats.daily.feesAprUSD)}%
                   </span>
                 </Badge>
               </div>
