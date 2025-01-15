@@ -310,7 +310,6 @@ export const DepositWithdrawSlider: FC = () => {
     setSelectedCardLiquidityAcc({})
     setUpdatedPoolState({})
     setModeOfOperation(ModeOfOperation?.DEPOSIT)
-    setOpenDepositWithdrawSlider(false)
   }
 
   const handleInputChange = async (input: string, sourceToken: boolean) => {
@@ -726,7 +725,12 @@ export const DepositWithdrawSlider: FC = () => {
   }, [isDeposit, userSourceWithdrawAmount, userTargetWithdrawAmount])
 
   return (
-    <Dialog open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
+    <Dialog open={openDepositWithdrawSlider} onOpenChange={(v)=>{
+      if(!v){
+        handleClose()
+      }
+      setOpenDepositWithdrawSlider(v)
+    }}>
       <DialogOverlay />
 
       {/*This one for not closing on click outside*/}
@@ -788,7 +792,7 @@ export const DepositWithdrawSlider: FC = () => {
           />
         </GammaActionModal>
         <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
-          <DepositWithdrawHeader handleClose={handleClose} />
+          <DepositWithdrawHeader handleClose={()=>setOpenDepositWithdrawSlider(false)} />
           <div className="flex flex-col overflow-y-scroll h-full pb-[110px]">
             <DepositWithdrawToggle
               setUserSourceDepositAmount={setUserSourceDepositAmount}

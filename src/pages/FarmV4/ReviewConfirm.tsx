@@ -20,7 +20,7 @@ export const ReviewConfirm: FC<{
 
     return depositAValue.plus(depositBValue)
   }, [balance, selectedCard, tokenBActionValue, tokenAActionValue])
-
+  console.log({selectedCard: selectedCard?.config})
   return (
     <>
       <DepositWithdrawLabel text="2. Review and Confirm" />
