@@ -56,29 +56,6 @@ export const POOL_TYPE: PoolType = {
 
 export const faqs = [
   {
-    question: 'What is the difference between LITE and PRO mode on GAMMA?',
-    answer: (
-      <div>
-        <p>Lite Mode, offers a simplified interface making it easier to deposit, withdraw, and claim rewards for new
-          users.
-          It’s designed for users who prefer a straightforward experience.</p> <br/>
-        <p>Pro Mode, provides a more advanced interface, allowing you to track multiple pools at once, view detailed
-          stats for each pool, and manage your entire portfolio. It’s ideal for users who want deeper insights and more
-          control over their LP positions.
-        </p>
-      </div>
-    )
-  },
-  {
-    question: 'Which mode should I use, Lite or Pro?',
-    answer: (
-      <div>
-        It depends on your needs. If you’re looking for simplicity and speed, Lite Mode is perfect. If you want to dive
-        deeper into analytics and track multiple LP positions, Pro Mode is the way to go.
-      </div>
-    )
-  },
-  {
     question: 'What are the dynamic fee min and max ranges?',
     answer: (
       <div>
