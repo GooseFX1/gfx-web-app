@@ -1,13 +1,13 @@
 import { useDarkMode, useGamma } from '@/context'
 import { FC } from 'react'
-import { Button, DialogTitle } from 'gfx-component-lib'
+import { Button, DialogClose, DialogTitle } from 'gfx-component-lib'
 import RewardsClose from '@/assets/rewards_close.svg?react'
 import { loadIconImage } from '@/utils'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 
-export const DepositWithdrawHeader: FC<{ handleClose: () => void }> = ({ handleClose }): JSX.Element => {
+export const DepositWithdrawHeader: FC = (): JSX.Element => {
   const { selectedCard } = useGamma()
-  const {mode} = useDarkMode()
+  const { mode } = useDarkMode()
   return (
     <DialogTitle
       className="w-full h-14 flex flex-row items-center border-b 
@@ -30,18 +30,19 @@ export const DepositWithdrawHeader: FC<{ handleClose: () => void }> = ({ handleC
       <div className="font-poppins font-semibold text-average text-black-4 dark:text-grey-8 ">
         {selectedCard?.mintA?.symbol + ' - ' + selectedCard?.mintB?.symbol}
       </div>
-      <Button
-        onClick={handleClose}
-        variant={'ghost'}
-        className={`inline-block absolute p-[inherit] right-3.75 top-5 min-md:right-5
+      <DialogClose asChild>
+        <Button
+          variant={'ghost'}
+          className={`inline-block absolute p-[inherit] right-3.75 top-5 min-md:right-5
              min-md:top-5 z-[1] w-max p-0`}
-        size={'sm'}
-      >
-        <RewardsClose
-          className={`h-5.25 w-5.25 min-md:h-5 min-md:w-5 
+          size={'sm'}
+        >
+          <RewardsClose
+            className={`h-5.25 w-5.25 min-md:h-5 min-md:w-5 
             stroke-border-lightmode-primary dark:stroke-border-darkmode-primary`}
-        />
-      </Button>
+          />
+        </Button>
+      </DialogClose>
     </DialogTitle>
   )
 }

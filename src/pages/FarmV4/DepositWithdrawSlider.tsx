@@ -725,12 +725,7 @@ export const DepositWithdrawSlider: FC = () => {
   }, [isDeposit, userSourceWithdrawAmount, userTargetWithdrawAmount])
 
   return (
-    <Dialog open={openDepositWithdrawSlider} onOpenChange={(v)=>{
-      if(!v){
-        handleClose()
-      }
-      setOpenDepositWithdrawSlider(v)
-    }}>
+    <Dialog open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
       <DialogOverlay />
 
       {/*This one for not closing on click outside*/}
@@ -747,6 +742,9 @@ export const DepositWithdrawSlider: FC = () => {
         placement={isMobile ? 'bottom' : 'right'}
         // onInteractOutside={(e) => e.preventDefault()}
         aria-describedby={null}
+        onCloseAutoFocus={()=>{
+          handleClose()
+        }}
       >
         <GammaActionModal
           isOpen={actionType != '' && actionType != 'deposit'}
@@ -792,7 +790,7 @@ export const DepositWithdrawSlider: FC = () => {
           />
         </GammaActionModal>
         <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
-          <DepositWithdrawHeader handleClose={()=>setOpenDepositWithdrawSlider(false)} />
+          <DepositWithdrawHeader />
           <div className="flex flex-col overflow-y-scroll h-full pb-[110px]">
             <DepositWithdrawToggle
               setUserSourceDepositAmount={setUserSourceDepositAmount}
