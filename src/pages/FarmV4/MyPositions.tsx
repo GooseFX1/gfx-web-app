@@ -76,7 +76,11 @@ const MyPositions: FC = () => {
               isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
             )}
             key={`${pool.id}_${sortConfig.id}`}
-            onClick={()=>setSelectedCard(pool)}
+            onClick={()=>{
+              setSelectedCard(pool)
+              setOpenDepositWithdrawSlider(true)
+              setModeOfOperation(ModeOfOperation.DEPOSIT)
+            }}
           >
             {/* name */}
             <div className="flex flex-row items-center">
