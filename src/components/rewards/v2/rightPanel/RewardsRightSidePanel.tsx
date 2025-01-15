@@ -53,7 +53,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
                   </p>
                   <p className={cn(mode == 'dark' ? `text-black-4` : `text-grey-5`)}>My Stake Ratio</p>
                   <p className={cn(mode == 'dark' ? `text-black-4` : `text-grey-5`)}>
-                    ≈ {stakeRatio == '0.00' ? '<0.01' : stakeRatio}%
+                    ≈ {stakeRatio}%
                   </p>
                 </div>
               }
