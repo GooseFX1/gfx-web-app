@@ -89,7 +89,6 @@ interface IRewardsContext {
   unstake: (amount: number) => Promise<void>
   claimFees: () => Promise<void>
   redeemUnstakingTickets: (ticketContracts: UnstakeableTicket[]) => Promise<void>
-  enterGiveaway: (giveawayContract: string) => void
   getClaimableFees: () => Promise<number>
   getUiAmount: (value: anchor.BN, isUsdc?: boolean) => number
   totalStakedInUSD: number
@@ -263,7 +262,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           setActiveUnstakingTickets(
             newUserMetaData.unstakingTickets.filter((ticket) => ticket.createdAt.toString() !== '0')
           )
-          console.log('user meta data update', newUserMetaData)
+          console.log('user meta data update', { newUserMetaData, newUnstakaebleTicekts })
         }
       },
       {
@@ -419,9 +418,11 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const stakeAmount = new anchor.BN(amount * 1e9)
 
       const txn = await checkForUserAccount(async () => stakeRewards.stake(stakeAmount, publicKey))
-      console.log('STAKE')
-      sendTransaction(txn)
-      console.log('STAKE END')
+      sendTransaction(txn).then((res)=>{
+        if (res.success) {
+          updateStakeDetails()
+        }
+      })
     },
     [stakeRewards, publicKey, sendTransaction, connection]
   )
@@ -444,9 +445,13 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         stakeRewards.unstake(unstakeAmount, publicKey)
       )
       txBuilder.add(txn._instructions)
-      sendTransaction(txBuilder)
+      sendTransaction(txBuilder).then((res)=>{
+        if (res.success) {
+          updateStakeDetails()
+        }
+      })
     },
-    [stakeRewards, publicKey, sendTransaction, connection]
+    [stakeRewards, publicKey, sendTransaction, connection, updateStakeDetails]
   )
   const getClaimableFees = useCallback(async (): Promise<number> => {
     // retrieves value of claimable amount from contract
@@ -456,8 +461,12 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const claimFees = useCallback(async () => {
     const txn = await checkForUserAccount(async () => stakeRewards.claimFees(publicKey))
     console.log('claim fees txn', txn)
-    sendTransaction(txn)
-  }, [stakeRewards, publicKey, connection, claimable, sendTransaction])
+    sendTransaction(txn).then((res)=>{
+      if (res.success) {
+        updateStakeDetails()
+      }
+    })
+  }, [stakeRewards, publicKey, connection, claimable, sendTransaction, updateStakeDetails])
   const redeemUnstakingTickets = useCallback(
     async (toUnstake: UnstakeableTicket[]) => {
       const txn = await checkForUserAccount(async () =>
@@ -466,16 +475,13 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           publicKey
         )
       )
-      sendTransaction(txn)
+      sendTransaction(txn).then((res)=>{
+        if (res.success) {
+          updateStakeDetails()
+        }
+      })
     },
-    [stakeRewards, publicKey, sendTransaction]
-  )
-  const enterGiveaway = useCallback(
-    (giveawayContract: string) => {
-      //TODO: handle entering giveaway
-      console.log('enter-giveaway', giveawayContract)
-    },
-    [stakeRewards, publicKey]
+    [stakeRewards, publicKey, sendTransaction, updateStakeDetails]
   )
 
   const getUiAmount = useCallback((value: BN, isUsdc = false) => {
@@ -510,7 +516,6 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         unstake,
         claimFees,
         redeemUnstakingTickets,
-        enterGiveaway,
         getClaimableFees,
         getUiAmount,
         hasRewards,
