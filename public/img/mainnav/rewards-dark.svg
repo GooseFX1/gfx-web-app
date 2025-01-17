@@ -1,11 +1,11 @@
-<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="Rewards">
-<path id="Star 1" d="M9.66356 4.24522L10 3.56932L10.3364 4.24521L10.784 4.02241L10.3364 4.24522C11.505 6.59273 13.4073 8.49504 15.7548 9.66356L16.4307 10L15.7548 10.3364C13.4073 11.505 11.505 13.4073 10.3364 15.7548L10 16.4307L9.66356 15.7548C8.49504 13.4073 6.59273 11.505 4.24522 10.3364L4.02241 10.784L4.24521 10.3364L3.56932 10L4.24522 9.66356C6.59273 8.49504 8.49504 6.59273 9.66356 4.24522Z" fill="url(#paint0_linear_18615_18017)" stroke="white"/>
-</g>
+<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="0.75" y="0.75" width="28.5" height="28.5" rx="14.25" fill="url(#paint0_linear_19928_11841)"/>
+<rect x="0.75" y="0.75" width="28.5" height="28.5" rx="14.25" stroke="#EEEEEE" stroke-width="1.5"/>
+<path d="M11 17.4C11 18.7255 12.1939 19.8 13.6667 19.8H16.3333C17.8061 19.8 19 18.7255 19 17.4C19 16.0745 17.8061 15 16.3333 15H13.6667C12.1939 15 11 13.9255 11 12.6C11 11.2745 12.1939 10.2 13.6667 10.2H16.3333C17.8061 10.2 19 11.2745 19 12.6M15 9V21" stroke="white" stroke-width="1.28571" stroke-linecap="round" stroke-linejoin="round"/>
 <defs>
-<linearGradient id="paint0_linear_18615_18017" x1="7.20102" y1="8.60034" x2="14.201" y2="10.0003" gradientUnits="userSpaceOnUse">
-<stop stop-color="#FFD68E"/>
-<stop offset="1" stop-color="#F2A000"/>
+<linearGradient id="paint0_linear_19928_11841" x1="23" y1="27.5" x2="1.11116" y2="11.6141" gradientUnits="userSpaceOnUse">
+<stop stop-color="#0F7B41"/>
+<stop offset="1" stop-color="#0DCBAC"/>
 </linearGradient>
 </defs>
 </svg>
