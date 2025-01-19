@@ -108,7 +108,7 @@ export type GAMMAPoolWithUserLiquidity = GAMMAPool & {
 }
 interface GAMMAPoolStats {
   range: '24H' | '7D' | '30D'
-  tradeFeesUSD: number
+  feesUSD: number
   volumeTokenAUSD: number
   volumeTokenBUSD: number
   feesAprUSD: number
