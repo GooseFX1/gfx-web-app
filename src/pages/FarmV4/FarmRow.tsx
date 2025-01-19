@@ -20,33 +20,35 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
   }, [pool])
   const { formattedVolume, formattedFees, formattedAPR } = useMemo(
     () => {
-      if (!pool.stats) {
+    if (!pool.stats) {
+      return {
+        formattedVolume: '0.00',
+        formattedFees: '0.00',
+        formattedAPR: '0.00'
+      }
+    }
+    switch (viewRange) {
+      case 0:
         return {
-          formattedVolume: '0.00',
-          formattedFees: '0.00',
-          formattedAPR: '0.00'
+          formattedVolume: numberFormatter(pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD),
+          formattedFees: numberFormatter(pool.stats.daily.feesUSD),
+          formattedAPR: numberFormatter(pool.stats.daily.feesAprUSD)
         }
-      }
-      switch (viewRange) {
-        case 0:
-          return {
-            formattedVolume: numberFormatter(pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD),
-            formattedFees: numberFormatter(pool.stats.daily.tradeFeesUSD),
-            formattedAPR: numberFormatter(pool.stats.daily.feesAprUSD)
-          }
-        case 1:
-          return {
-            formattedVolume: numberFormatter(pool.stats.weekly.volumeTokenAUSD + pool.stats.weekly.volumeTokenBUSD),
-            formattedFees: numberFormatter(pool.stats.weekly.tradeFeesUSD),
-            formattedAPR: numberFormatter(pool.stats.weekly.feesAprUSD)
-          }
-        case 2:
-          return {
-            formattedVolume: numberFormatter(pool.stats.monthly.volumeTokenAUSD + pool.stats.monthly.volumeTokenBUSD),
-            formattedFees: numberFormatter(pool.stats.monthly.tradeFeesUSD),
-            formattedAPR: numberFormatter(pool.stats.monthly.feesAprUSD)
-          }
-      }
+      case 1:
+        return {
+          formattedVolume: numberFormatter(pool.stats.weekly.volumeTokenAUSD + pool.stats.weekly.volumeTokenBUSD),
+          formattedFees: numberFormatter(pool.stats.weekly.feesUSD),
+          formattedAPR: numberFormatter(pool.stats.weekly.feesAprUSD)
+        }
+      case 2:
+        return {
+          formattedVolume: numberFormatter(
+            pool.stats.monthly.volumeTokenAUSD + pool.stats.monthly.volumeTokenBUSD
+          ),
+          formattedFees: numberFormatter(pool.stats.monthly.feesUSD),
+          formattedAPR: numberFormatter(pool.stats.monthly.feesAprUSD)
+        }
+    }
     },
     [pool.stats, viewRange]
   )
@@ -119,11 +121,11 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
           {formattedFees}
         </div>
       )}
-      <div className="flex items-center justify-center max-sm:justify-end sm-lg:justify-end">
+          <div className="flex items-center justify-center max-sm:justify-end sm-lg:justify-end">
         <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
           <span className={'font-poppins font-semibold my-0.5'}>{formattedAPR}%</span>
-        </Badge>
-      </div>
+            </Badge>
+          </div>
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center">
           <Button
@@ -147,20 +149,20 @@ export default FarmRow
 export const FarmRowLoader: FC = () => {
   const { isMobile, isTablet, isDesktop } = useBreakpoint()
   return <div className={cn(
-    `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_0.5fr] dark:bg-black-2 px-2.5 cursor-pointer
+        `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_0.5fr] dark:bg-black-2 px-2.5 cursor-pointer
       h-15 border border-solid dark:border-black-4 border-grey-4 bg-white rounded-tiny py-3.75`,
-    isMobile && `grid-cols-[1.25fr_0.75fr_0.75fr]`,
-    isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
+        isMobile && `grid-cols-[1.25fr_0.75fr_0.75fr]`,
+        isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
   )}>
-    <div className="flex flex-row items-center">
+      <div className="flex flex-row items-center">
       <Skeleton className={`border-solid dark:border-black-2 border-white
           border-[2px] rounded-full h-[25px] w-[25px]`} />
       <Skeleton className={`relative right-[10px] border-solid dark:border-black-2
           border-white border-[2px] rounded-full h-[25px] w-[25px]`} />
 
-      <Skeleton className={'w-[100px] h-[25px] rounded-[2px]'} />
-    </div>
-    <Skeleton className={'w-[100px] h-[25px] rounded-[2px] inline-flex m-auto'} />
+        <Skeleton className={'w-[100px] h-[25px] rounded-[2px]'} />
+      </div>
+      <Skeleton className={'w-[100px] h-[25px] rounded-[2px] inline-flex m-auto'} />
 
     {(isTablet || isDesktop) && (
       <Skeleton className={'w-[100px] h-[25px] rounded-[2px] inline-flex m-auto'} />
@@ -173,5 +175,5 @@ export const FarmRowLoader: FC = () => {
     {(isTablet || isDesktop) && (
       <Skeleton className={'w-[100px] h-[25px] rounded-[2px] inline-flex m-auto'} />
     )}
-  </div>
+    </div>
 }
