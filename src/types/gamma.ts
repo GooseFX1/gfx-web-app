@@ -74,13 +74,16 @@ interface GAMMAPoolKeys {
   mintLp: GAMMAToken
   config: GAMMAConfig
 }
-
+type GAMMATokenWithPoolData = GAMMAToken & {
+  protocolFees: string
+  fundFees: string
+}
 interface GAMMAPool {
   programId: string
   id: string
   authority: string
-  mintA: GAMMAToken
-  mintB: GAMMAToken
+  mintA: GAMMATokenWithPoolData
+  mintB: GAMMATokenWithPoolData
   mintAmountA: number
   mintAmountB: number
   mintAVault: string
@@ -217,5 +220,6 @@ export type {
   GAMMAListTokenResponse,
   GAMMAUser,
   GAMMAUserLPPositionWithPrice,
-  GAMMAStats
+  GAMMAStats,
+  GAMMATokenWithPoolData
 }

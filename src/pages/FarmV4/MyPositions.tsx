@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react'
 import { Badge, Button, cn } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import { ModeOfOperation } from './constants'
-import { loadIconImage, numberFormatter } from '@/utils'
+import { bigNumberFormatter, loadIconImage, numberFormatter } from '@/utils'
 import NoResultsFound from '@/pages/FarmV4/NoResultsFound'
 import { noPoolsFound } from '@/pages/FarmV4/FarmItems'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
@@ -10,6 +10,8 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 import { FarmRowLoader } from '@/pages/FarmV4/FarmRow'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
+import Decimal from 'decimal.js'
+import BigNumber from 'bignumber.js'
 
 const renderPosition = (p: GAMMAPoolWithUserLiquidity) => {
   const liq = p.userLpPosition
@@ -18,9 +20,21 @@ const renderPosition = (p: GAMMAPoolWithUserLiquidity) => {
 }
 
 const renderTokenBalance = (p: GAMMAPoolWithUserLiquidity) => {
+  // TEMP Solution - replace call on portfolio with /portfolio endpoint
   const liq = p.userLpPosition
-  const tokenA = numberFormatter(liq.uiValueA, 2)
-  const tokenB = numberFormatter(liq.uiValueB, 2)
+  const tokensOwned = new Decimal(liq.lpTokensOwned);
+  const supply = new Decimal(p.lpSupply);
+
+  if (tokensOwned.isZero() || supply.isZero()) {
+    return '0.00 / 0.00'
+  }
+  const swapAmountA = new Decimal(p.liquidityTokenA).sub(p.mintA.protocolFees).add(p.mintA.fundFees)
+  const swapAmountB = new Decimal(p.liquidityTokenB).sub(p.mintB.protocolFees).add(p.mintB.fundFees)
+
+  const amountA = tokensOwned.mul(swapAmountA).div(supply).div(Math.pow(10, p.mintA.decimals)).toString()
+  const amountB = tokensOwned.mul(swapAmountB).div(supply).div(Math.pow(10, p.mintB.decimals)).toString()
+  const tokenA = bigNumberFormatter(new BigNumber(amountA), 2)
+  const tokenB = bigNumberFormatter(new BigNumber(amountB), 2)
 
   return `${tokenA} / ${tokenB}`
 }
@@ -62,7 +76,7 @@ const MyPositions: FC = () => {
       break
   }
   //const canClaim = false
-
+  console.log({positions})
   return (
     <div className={`flex flex-col gap-[15px] mt-[15px]`}>
       {positions.length > 0 ? (

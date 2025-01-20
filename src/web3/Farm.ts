@@ -390,6 +390,10 @@ export const lpTokensToTradingTokens = async (
   connection: Connection
 ): Promise<{ tokenAmount0: BN; tokenAmount1: BN }> => {
   try {
+    const lpTokenSupply = poolState?.lpSupply
+    if (lpTokenSupply.eq(new BN(0))) {
+      return { tokenAmount0: new BN(0), tokenAmount1: new BN(0) }
+    }
     const tokenAccountInfo0 = await connection.getParsedAccountInfo(poolState?.token0Vault)
     const amount0 = (tokenAccountInfo0?.value?.data as any).parsed?.info?.tokenAmount?.amount
     const protocolFees0 = poolState?.protocolFeesToken0
@@ -402,18 +406,8 @@ export const lpTokensToTradingTokens = async (
     const fundFees1 = poolState?.fundFeesToken1
     const swapTokenAmount1 = new BN(amount1)?.sub(protocolFees1?.add(fundFees1))
 
-    const lpTokenSupply = poolState?.lpSupply
-
-    let tokenAmount0: BN
-    let tokenAmount1: BN
-
-    if (lpTokenSupply.eq(new BN(0))) {
-      tokenAmount0 = new BN(0)
-      tokenAmount1 = new BN(0)
-    } else {
-      tokenAmount0 = lpTokenAmount.mul(swapTokenAmount0).div(lpTokenSupply)
-      tokenAmount1 = lpTokenAmount.mul(swapTokenAmount1).div(lpTokenSupply)
-    }
+    const tokenAmount0 = lpTokenAmount.mul(swapTokenAmount0).div(lpTokenSupply)
+    const tokenAmount1 = lpTokenAmount.mul(swapTokenAmount1).div(lpTokenSupply)
 
     return { tokenAmount0, tokenAmount1 }
   } catch (e) {
