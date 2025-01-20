@@ -21,7 +21,7 @@ export const RewardsButton: FC = () => {
 
   const riveComponent = (
     <>
-      <img className={cn(`min-h-[20px] min-w-[20px]`)} src={`/img/mainnav/rewards-${mode}.svg`} />
+      <img className={cn(`min-h-[30px] min-w-[30px]`)} src={`/img/mainnav/rewards-${mode}.svg`} />
 
       {hasRewards && (
         <img
@@ -41,9 +41,9 @@ export const RewardsButton: FC = () => {
   return (
     <Button
       onClick={handleClick}
-      variant={'outline'}
+      variant={'ghost'}
       size={'sm'}
-      className={'border-background-blue dark:border-white rounded-full w-[30px] relative'}
+      className={'p-0 w-[30px] relative'}
     >
       {riveComponent}
     </Button>

@@ -95,7 +95,7 @@ export const MainNav: FC = () => {
         </div>
 
         <DesktopNav />
-        <div className={`flex items-center gap-2 absolute right-0 mr-2.5 min-md:mr-0 min-md:pr-[15px]`}>
+        <div className={`flex items-center gap-3.75 absolute right-0 mr-2.5 min-md:mr-0 min-md:pr-[15px]`}>
           <RewardsButton />
           {/* {pathname.includes('gamma') && <LiteProToggle />} */}
           <Connect />

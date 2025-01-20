@@ -587,7 +587,7 @@ function TokenSelectInput({
               <Button
                 colorScheme={'secondaryGradient'}
                 variant={'outline'}
-                className="min-w-[115px] h-[35px] rounded-full flex flex-row justify-between"
+                className="min-w-[115px] h-[35px] rounded-full flex flex-row justify-between z-10"
                 iconLeft={
                   token ? (
                     <IconWithFallback
