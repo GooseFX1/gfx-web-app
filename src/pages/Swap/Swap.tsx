@@ -73,7 +73,6 @@ export const Swap: FC = () => {
     ''
   )
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [prefetchedQuoteValues, setPrefetchedQuoteValues] = useState<{
     configIdKey: PublicKey | undefined
     poolIdKey: PublicKey | undefined
@@ -153,7 +152,7 @@ export const Swap: FC = () => {
         selectedTokenB,
         GammaProgram,
         connection,
-        // prefetchedQuoteValues
+        prefetchedQuoteValues
       )
         .then(({ destinationAmountSwapped: price, tradeFee }) => {
           setAmountTokenB(price)
