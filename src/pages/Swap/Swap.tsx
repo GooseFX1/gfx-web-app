@@ -700,7 +700,7 @@ function TokenSelectInput({
               <InfiniteTokenListSwap
                 useRenderListLength={searchValue.trim().length > 0}
                 tokenRenderList={tokenRenderList}
-                onTokenSelect={async (token) => {
+                onTokenSelect={(token) => {
                   setToken(token)
                   setSearchValue('')
                   setAmountTokenB('')
