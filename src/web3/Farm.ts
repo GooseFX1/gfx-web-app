@@ -95,7 +95,7 @@ export const getAmmConfigId = async (index: number): Promise<undefined | PublicK
   }
 }
 
-const getPoolIdKey = async (
+export const getPoolIdKey = async (
   ammConfigId: PublicKey,
   mintA: PublicKey,
   mintB: PublicKey
@@ -682,20 +682,47 @@ export const getPriceQuotes = async (
   mintA: GAMMAToken | JupToken,
   mintB: GAMMAToken | JupToken,
   program: Program<Idl>,
-  connection: Connection
+  connection: Connection,
+  _prefetchedValues?:
+    | {
+        configIdKey: PublicKey | undefined
+        poolIdKey: PublicKey | undefined
+        ammConfigState: any
+        poolState: any
+        observationState: any
+        tokenAccountInfo0: any
+        tokenAccountInfo1: any,
+        mintAAddress: string,
+        mintBAddress: string
+      }
+    | null
+    | undefined
 ) => {
-  const configIdKey = await getAmmConfigId(0)
+  let prefetchedValues = _prefetchedValues;
+  
+  if (
+    mintA.address !== prefetchedValues?.mintAAddress ||
+    mintB.address !== prefetchedValues?.mintBAddress
+  ) {
+    prefetchedValues = null
+  }
+
+  const configIdKey = prefetchedValues?.configIdKey ?? (await getAmmConfigId(0))
   const mintAPublicKey = new PublicKey(mintA?.address)
   const mintBPublickey = new PublicKey(mintB?.address)
-  const poolIdKey = await getPoolIdKey(configIdKey, mintAPublicKey, mintBPublickey)
-  const [ammConfigState,poolState] = await Promise.all([
-    program.account.ammConfig.all(),
-    program.account.poolState.fetch(poolIdKey)
+
+  const poolIdKey =
+    prefetchedValues?.poolIdKey ?? (await getPoolIdKey(configIdKey, mintAPublicKey, mintBPublickey))
+
+  const [ammConfigState, poolState] = await Promise.all([
+    prefetchedValues?.ammConfigState ?? program.account.ammConfig.all(),
+    prefetchedValues?.poolState ?? program.account.poolState.fetch(poolIdKey)
   ])
+
   const [observationState, tokenAccountInfo0, tokenAccountInfo1] = await Promise.all([
-    program.account.observationState.fetch(poolState.observationKey),
-    connection.getParsedAccountInfo(poolState?.token0Vault),
-    connection.getParsedAccountInfo(poolState?.token1Vault)
+    prefetchedValues?.observationState ?? program.account.observationState.fetch(poolState.observationKey),
+    prefetchedValues?.tokenAccountInfo0 ?? connection.getParsedAccountInfo(poolState?.token0Vault),
+    prefetchedValues?.tokenAccountInfo1 ?? connection.getParsedAccountInfo(poolState?.token1Vault)
   ])
 
   const inputToken0Amount = convertToNativeValue(amountToken, mintA?.decimals)
@@ -853,16 +880,19 @@ const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, 
   }
 }
 
-export const doesPoolWithMintsExist =
-  async (mintA: string, mintB: string, program: Program<Idl>): Promise<boolean> => {
+export const doesPoolWithMintsExist = async (
+  mintA: string,
+  mintB: string,
+  program: Program<Idl>
+): Promise<boolean> => {
   try {
     const configIdKey = await getAmmConfigId(0)
     const mintAPublicKey = new PublicKey(mintA)
     const mintBPublickey = new PublicKey(mintB)
     const poolIdKey = await getPoolIdKey(configIdKey, mintAPublicKey, mintBPublickey)
     const poolState = await program.account.poolState.fetch(poolIdKey)
-    return poolState != null;
-  } catch(e) {
+    return poolState != null
+  } catch (e) {
     return false
   }
 }

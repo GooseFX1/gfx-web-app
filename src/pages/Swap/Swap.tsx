@@ -32,7 +32,7 @@ import { InfiniteTokenListSwap } from '@/pages/Swap/InfiniteTokenListSwap'
 import { Connect } from '@/layouts'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import useTransaction from '@/hooks/useTransaction'
-import { doesPoolWithMintsExist, getPriceQuotes, swapTokens } from '@/web3/Farm'
+import { doesPoolWithMintsExist, getAmmConfigId, getPoolIdKey, getPriceQuotes, swapTokens } from '@/web3/Farm'
 import { useWallet } from '@solana/wallet-adapter-react'
 import BigNumber from 'bignumber.js'
 import { forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
@@ -40,6 +40,7 @@ import { ErrorToast } from '@/utils/perpsNotifications'
 import Decimal from 'decimal.js'
 
 import LottieSwapCountDown from './LottieSwapCountDown'
+import { PublicKey } from '@solana/web3.js'
 
 export const Swap: FC = () => {
   const { isDarkMode, mode } = useDarkMode()
@@ -71,6 +72,18 @@ export const Swap: FC = () => {
   const [userTargetTokenType, setUserTargetTokenType] = useState<'spl-token' | 'native' | 'spl-token-2022' | ''>(
     ''
   )
+
+  const [prefetchedQuoteValues, setPrefetchedQuoteValues] = useState<{
+    configIdKey: PublicKey | undefined
+    poolIdKey: PublicKey | undefined
+    ammConfigState: any
+    poolState: any
+    observationState: any
+    tokenAccountInfo0: any
+    tokenAccountInfo1: any
+    mintAAddress: string,
+    mintBAddress: string
+  }>(null)
 
   const { GammaProgram } = usePriceFeedFarm()
   const [sendingTransaction, setSendingTransaction] = useState(false)
@@ -135,7 +148,14 @@ export const Swap: FC = () => {
     if (amountTokenA !== '' && !isNaN(+amountTokenA) && +amountTokenA > 0 && selectedTokenA && selectedTokenB) {
       setLoadingPriceQuote(true)
 
-      await getPriceQuotes(amountTokenA, selectedTokenA, selectedTokenB, GammaProgram, connection)
+      await getPriceQuotes(
+        amountTokenA,
+        selectedTokenA,
+        selectedTokenB,
+        GammaProgram,
+        connection,
+        prefetchedQuoteValues
+      )
         .then(({ destinationAmountSwapped: price, tradeFee }) => {
           setAmountTokenB(price)
           setFee(tradeFee)
@@ -161,6 +181,39 @@ export const Swap: FC = () => {
       isSource ? setAmountTokenA(inputNumber) : setAmountTokenB(inputNumber)
     }
   }
+  const handlePrefetchingAccounts = async () => {
+    if (selectedTokenA && selectedTokenB) {
+      const configIdKey = await getAmmConfigId(0)
+      const mintAPublicKey = new PublicKey(selectedTokenA?.address)
+      const mintBPublickey = new PublicKey(selectedTokenB?.address)
+
+      const poolIdKey = await getPoolIdKey(configIdKey, mintAPublicKey, mintBPublickey)
+
+      const [ammConfigState, poolState] = await Promise.all([
+        GammaProgram.account.ammConfig.all(),
+        GammaProgram.account.poolState.fetch(poolIdKey)
+      ])
+
+      const [observationState, tokenAccountInfo0, tokenAccountInfo1] = await Promise.all([
+        GammaProgram.account.observationState.fetch(poolState.observationKey),
+        connection.getParsedAccountInfo(poolState?.token0Vault),
+        connection.getParsedAccountInfo(poolState?.token1Vault)
+      ])
+
+      setPrefetchedQuoteValues({
+        ammConfigState,
+        configIdKey,
+        poolIdKey,
+        observationState,
+        poolState,
+        tokenAccountInfo0,
+        tokenAccountInfo1,
+        mintAAddress: selectedTokenA.address,
+        mintBAddress: selectedTokenB.address
+      })
+    }
+  }
+
   const { approxAmountB, approxAmountA } = useMemo(() => {
     if (!selectedTokenA || !selectedTokenB)
       return {
@@ -240,6 +293,8 @@ export const Swap: FC = () => {
   useEffect(() => {
     if (!(selectedTokenA && selectedTokenB)) return
     checkIfPoolExists()
+    handlePrefetchingAccounts()
+    handleRefresh()
   }, [selectedTokenA, selectedTokenB])
 
   useEffect(() => {
@@ -389,6 +444,7 @@ mt-8 flex items-center justify-center
                 amountToken={amountTokenA}
                 disableInput={sendingTransaction || !doesPoolExist}
                 disableTokenDropDown={sendingTransaction}
+                setAmountTokenB={setAmountTokenB}
               />
               {selectedTokenA ? (
                 <p
@@ -437,6 +493,7 @@ mt-8 flex items-center justify-center
                 disableInput={true}
                 disableTokenDropDown={sendingTransaction}
                 isLocked={true}
+                setAmountTokenB={setAmountTokenB}
               />
               {selectedTokenB ? (
                 <p
@@ -561,7 +618,8 @@ function TokenSelectInput({
   amountToken,
   disableInput,
   disableTokenDropDown,
-  isLocked
+  isLocked,
+  setAmountTokenB
 }: {
   token: JupToken | null
   setToken: (token: JupToken) => void
@@ -571,6 +629,7 @@ function TokenSelectInput({
   disableInput?: boolean
   disableTokenDropDown?: boolean
   isLocked?: boolean
+  setAmountTokenB: (amount: string) => void
 }) {
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { isDarkMode, mode } = useDarkMode()
@@ -644,6 +703,7 @@ function TokenSelectInput({
                 onTokenSelect={(token) => {
                   setToken(token)
                   setSearchValue('')
+                  setAmountTokenB('')
                 }}
                 RenderAs={DropdownMenuItem}
                 checkDisabled={(t) => t?.address == otherToken?.address || isLoadingTokenList}
