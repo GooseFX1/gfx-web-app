@@ -81,6 +81,8 @@ export const Swap: FC = () => {
     observationState: any
     tokenAccountInfo0: any
     tokenAccountInfo1: any
+    mintAAddress: string,
+    mintBAddress: string
   }>(null)
 
   const { GammaProgram } = usePriceFeedFarm()
@@ -205,7 +207,9 @@ export const Swap: FC = () => {
         observationState,
         poolState,
         tokenAccountInfo0,
-        tokenAccountInfo1
+        tokenAccountInfo1,
+        mintAAddress: selectedTokenA.address,
+        mintBAddress: selectedTokenB.address
       })
     }
   }
@@ -290,6 +294,7 @@ export const Swap: FC = () => {
     if (!(selectedTokenA && selectedTokenB)) return
     checkIfPoolExists()
     handlePrefetchingAccounts()
+    handleRefresh()
   }, [selectedTokenA, selectedTokenB])
 
   useEffect(() => {
@@ -439,6 +444,7 @@ mt-8 flex items-center justify-center
                 amountToken={amountTokenA}
                 disableInput={sendingTransaction || !doesPoolExist}
                 disableTokenDropDown={sendingTransaction}
+                setAmountTokenB={setAmountTokenB}
               />
               {selectedTokenA ? (
                 <p
@@ -487,6 +493,7 @@ mt-8 flex items-center justify-center
                 disableInput={true}
                 disableTokenDropDown={sendingTransaction}
                 isLocked={true}
+                setAmountTokenB={setAmountTokenB}
               />
               {selectedTokenB ? (
                 <p
@@ -611,7 +618,8 @@ function TokenSelectInput({
   amountToken,
   disableInput,
   disableTokenDropDown,
-  isLocked
+  isLocked,
+  setAmountTokenB
 }: {
   token: JupToken | null
   setToken: (token: JupToken) => void
@@ -621,6 +629,7 @@ function TokenSelectInput({
   disableInput?: boolean
   disableTokenDropDown?: boolean
   isLocked?: boolean
+  setAmountTokenB: (amount: string) => void
 }) {
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { isDarkMode, mode } = useDarkMode()
@@ -691,9 +700,10 @@ function TokenSelectInput({
               <InfiniteTokenListSwap
                 useRenderListLength={searchValue.trim().length > 0}
                 tokenRenderList={tokenRenderList}
-                onTokenSelect={(token) => {
+                onTokenSelect={async (token) => {
                   setToken(token)
                   setSearchValue('')
+                  setAmountTokenB('')
                 }}
                 RenderAs={DropdownMenuItem}
                 checkDisabled={(t) => t?.address == otherToken?.address || isLoadingTokenList}

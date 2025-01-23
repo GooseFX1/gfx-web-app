@@ -689,7 +689,7 @@ export const getPriceQuotes = async (
   mintB: GAMMAToken | JupToken,
   program: Program<Idl>,
   connection: Connection,
-  prefetchedValues?:
+  _prefetchedValues?:
     | {
         configIdKey: PublicKey | undefined
         poolIdKey: PublicKey | undefined
@@ -697,11 +697,22 @@ export const getPriceQuotes = async (
         poolState: any
         observationState: any
         tokenAccountInfo0: any
-        tokenAccountInfo1: any
+        tokenAccountInfo1: any,
+        mintAAddress: string,
+        mintBAddress: string
       }
     | null
     | undefined
 ) => {
+  let prefetchedValues = _prefetchedValues;
+
+  if (
+    mintA.address !== prefetchedValues.mintAAddress ||
+    mintB.address !== prefetchedValues.mintBAddress
+  ) {
+    prefetchedValues = null
+  }
+
   const configIdKey = prefetchedValues?.configIdKey ?? (await getAmmConfigId(0))
   const mintAPublicKey = new PublicKey(mintA?.address)
   const mintBPublickey = new PublicKey(mintB?.address)
