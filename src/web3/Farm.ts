@@ -705,10 +705,10 @@ export const getPriceQuotes = async (
     | undefined
 ) => {
   let prefetchedValues = _prefetchedValues;
-
+  
   if (
-    mintA.address !== prefetchedValues.mintAAddress ||
-    mintB.address !== prefetchedValues.mintBAddress
+    mintA.address !== prefetchedValues?.mintAAddress ||
+    mintB.address !== prefetchedValues?.mintBAddress
   ) {
     prefetchedValues = null
   }
