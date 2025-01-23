@@ -1,15 +1,17 @@
-import { CANCELED_STATUS_CODE, httpClient } from '../index'
+import { CANCELED_STATUS_CODE, httpClient } from '@/api'
 import { GAMMA_API_BASE, GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
 import {
   GAMMAConfig,
   GAMMAListTokenResponse,
   GAMMAPoolsResponse,
+  GAMMAPortfolioPoolResponse,
   GAMMAStats,
   GAMMAUser,
   UserPortfolioLPPosition,
   UserPortfolioStats
-} from '../../types/gamma'
+} from '@/types/gamma'
 import { BlockheightBasedTransactionConfirmationStrategy, Connection } from '@solana/web3.js'
+import { aborter } from '@/utils'
 
 const fetchGAMMAConfig = async (): Promise<GAMMAConfig | null> => {
   try {
@@ -307,6 +309,33 @@ const forceCronUpdateWithConnectionAndTxSig = async (connection: Connection, txS
   }
   return await forceCronUpdate()
 }
+
+const fetchProfilePools = async ({
+  publicKey,
+  sortOrder,
+  sortBy,
+  page,
+  pageSize,
+  poolType,
+  search
+}: {
+  publicKey: string
+  sortOrder: 'desc' | 'asc'
+  sortBy: string
+  page: number
+  pageSize: number,
+  poolType: 'all' | 'primary' | 'hyper',
+  search: string
+}): Promise<GAMMAPortfolioPoolResponse> => {
+  const signal = aborter.addSignal(`GAMMA-PORTFOLIO-POOLS`)
+  const searchQuery = search ? `&search=${search}` : ''
+  // eslint-disable-next-line max-len
+  const url = `${GAMMA_ENDPOINTS_V1.PORTFOLIO_POOLS}?userPublicKey=${publicKey}&sortOrder=${sortOrder}&sortBy=${sortBy}&page=${page}&pageSize=${pageSize}&poolType=${poolType}${searchQuery}`
+  return await httpClient(GAMMA_API_BASE)
+    .get(url,{ signal })
+    .then((response)=> response.data) as GAMMAPortfolioPoolResponse
+}
+
 export {
   fetchGAMMAConfig,
   fetchAggregateStats,
@@ -318,5 +347,6 @@ export {
   fetchTokensByPublicKey,
   fetchPoolsByMints,
   forceCronUpdate,
-  forceCronUpdateWithConnectionAndTxSig
+  forceCronUpdateWithConnectionAndTxSig,
+  fetchProfilePools
 }

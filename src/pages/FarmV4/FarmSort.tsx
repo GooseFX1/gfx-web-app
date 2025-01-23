@@ -154,7 +154,7 @@ function FarmSort({ isOpen, setIsOpen }: {
         <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
         <DropdownMenuRadioGroup asChild value={currentSort} onValueChange={(id) => handlePoolSort(id)}>
           <div className={'grid grid-cols-2 gap-1.5 items-center'}>
-            {GAMMA_SORT_CONFIG.map((s) => (
+            {GAMMA_SORT_CONFIG.map((s) => (isPortfolio && +s.id >= 5 || (!isPortfolio)) &&  (
               <DropdownMenuItem isActive={currentSort == s.id} asChild key={s.id}>
                 <DropdownMenuRadioItem value={s.id}>
                   <DropdownMenuItemIndicator asChild forceMount className={'hidden'}>

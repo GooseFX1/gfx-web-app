@@ -20,7 +20,8 @@ import {
   fetchTokenList,
   fetchTokensByPublicKey,
   fetchUser,
-  forceCronUpdate, forceCronUpdateWithConnectionAndTxSig
+  forceCronUpdate, forceCronUpdateWithConnectionAndTxSig,
+  fetchProfilePools
 } from '@/api/gamma'
 import {
   GAMMAConfig,
@@ -376,10 +377,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return
     }
     let key = `${sortConfig.key.toLowerCase()}`
-    if (sortConfig.id == '9' || sortConfig.id == '10') {
+    if ((sortConfig.id == '9' || sortConfig.id == '10') && !isPortfolio) {
       return;
     }
-    if (sortConfig.id !== '1' && sortConfig.id !== '2') {
+    if (sortConfig.id !== '1' && sortConfig.id !== '2' && sortConfig.id !== '9' && sortConfig.id !== '10') {
       key = `${key}${computedViewRange.toLowerCase()}`
     }
     setIsLoadingPools.on();
@@ -400,6 +401,16 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           showCreated: showCreatedPools
         }
       )
+      : isPortfolio && publicKey  ?
+        fetchProfilePools({
+          publicKey: publicKey.toBase58(),
+          sortOrder: sortConfig.direction.toLowerCase() as 'desc' | 'asc',
+          sortBy: key,
+          page,
+          pageSize,
+          poolType: currentPoolType.type,
+          search: searchTokens
+        })
       : fetchAllPools(
         {
           page,

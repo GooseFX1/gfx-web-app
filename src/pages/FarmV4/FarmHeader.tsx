@@ -18,7 +18,8 @@ export const FarmHeader: FC = () => {
     setViewRange: setRange, 
     setIsPortfolio, 
     isPortfolio, 
-    setCurrentPoolType 
+    setCurrentPoolType,
+    setCurrentSort
   } = useGamma()
   const { wallet } = useWallet()
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
@@ -110,6 +111,7 @@ export const FarmHeader: FC = () => {
                 value: 'Pools',
                 label: 'Pools',
                 onClick: () => {
+                  setCurrentSort('1')
                   setCurrentPoolType(POOL_TYPE.primary)
                   setIsPortfolio.off()
                 }
@@ -118,6 +120,7 @@ export const FarmHeader: FC = () => {
                 value: 'Portfolio',
                 label: 'Portfolio',
                 onClick: () => {
+                  setCurrentSort('5')
                   setCurrentPoolType(POOL_TYPE.all)
                   setIsPortfolio.on()
                 }

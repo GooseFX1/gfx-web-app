@@ -74,10 +74,12 @@ interface GAMMAPoolKeys {
   mintLp: GAMMAToken
   config: GAMMAConfig
 }
+
 type GAMMATokenWithPoolData = GAMMAToken & {
   protocolFees: string
   fundFees: string
 }
+
 interface GAMMAPool {
   programId: string
   id: string
@@ -105,10 +107,12 @@ interface GAMMAPool {
   poolCreator: string
   latestDynamicFeeRate: number
 }
+
 export type GAMMAPoolWithUserLiquidity = GAMMAPool & {
-  userLpPosition: UserPortfolioLPPosition,
+  userLpPosition: UserPortfolioLPPosition
   hasDeposit: boolean
 }
+
 interface GAMMAPoolStats {
   range: '24H' | '7D' | '30D'
   feesUSD: number
@@ -163,6 +167,7 @@ interface UserPortfolioLPPosition {
     mintAuthority: string | null
   }
 }
+
 type GAMMAUserLPPositionWithPrice = UserPortfolioLPPosition & {
   totalValue: string
   valueA: string
@@ -182,27 +187,41 @@ type GAMMAAPIBaseResponse<T> = {
   data: T
 }
 
-type GAMMAPoolsResponse = GAMMAAPIBaseResponse<{
+type GAMMAPoolsResponse = GAMMAAPIBaseResponse<
+  {
     pools: GAMMAPool[]
-} & GAMMAAPIPaginatedResponse>
-type GAMMAListTokenResponse = GAMMAAPIBaseResponse<{
+  } & GAMMAAPIPaginatedResponse
+>
+type GAMMAListTokenResponse = GAMMAAPIBaseResponse<
+  {
     tokens: TokenListToken[]
-} & GAMMAAPIPaginatedResponse>
+  } & GAMMAAPIPaginatedResponse
+>
 type GAMMAStats = {
   tvl: string
   stats24h: {
     volume: string
     fees: string
-  },
+  }
   stats7d: {
     volume: string
     fees: string
-  },
+  }
   stats30d: {
     volume: string
     fees: string
   }
 }
+type GAMMAPortfolioPool = GAMMAPoolWithUserLiquidity & {
+  currentPositionUSD: string
+  tokenARatio: string
+  tokenBRatio: string
+}
+type GAMMAPortfolioPoolResponse = GAMMAAPIBaseResponse<
+  {
+    pools: GAMMAPortfolioPool[]
+  } & GAMMAAPIPaginatedResponse
+>
 export type {
   GAMMAConfig,
   GAMMATokenList,
@@ -221,5 +240,7 @@ export type {
   GAMMAUser,
   GAMMAUserLPPositionWithPrice,
   GAMMAStats,
-  GAMMATokenWithPoolData
+  GAMMATokenWithPoolData,
+  GAMMAPortfolioPool,
+  GAMMAPortfolioPoolResponse
 }

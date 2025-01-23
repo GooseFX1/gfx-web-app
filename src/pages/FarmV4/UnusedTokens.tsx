@@ -9,7 +9,7 @@ import { GAMMAListTokenResponse } from '@/types/gamma'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 
 const ExplorePools: FC<{ tokenMint: string }> = ({ tokenMint }) => {
-  const { setCurrentPoolType, addSelectedToken, clearAllSelectedTokens, setIsPortfolio } = useGamma()
+  const { setCurrentPoolType, addSelectedToken, clearAllSelectedTokens, setIsPortfolio, setCurrentSort } = useGamma()
   const chooseToken = async () => {
     clearAllSelectedTokens()
 
@@ -31,6 +31,7 @@ const ExplorePools: FC<{ tokenMint: string }> = ({ tokenMint }) => {
         await chooseToken()
         setIsPortfolio.off()
         setCurrentPoolType(POOL_TYPE?.primary)
+        setCurrentSort('1')
       }}
       className="text-regular font-bold text-blue-1 dark:text-grey-8 underline cursor-pointer"
     >
