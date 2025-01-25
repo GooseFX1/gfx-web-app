@@ -135,7 +135,11 @@ const MyPositions: FC = () => {
                                   font-poppins text-tiny font-semibold dark:text-grey-8 text-black-4 mx-auto
                                   border-grey-1 bg-grey-5 dark:bg-black-2 rounded-[2.5px] h-[25px] px-1"
               >
-                {numberFormatter(pool.stats.monthly.tradeFeesUSD)}%
+                {(
+                  new BigNumber(pool?.latestDynamicFeeRate || 0.0).div(10 ** 4).toNumber() ||
+                  new BigNumber(pool?.config.tradeFeeRate || 0.0).div(10 ** 4).toNumber()
+                ).toFixed(2)}
+                %
               </div>
             )}
 
@@ -150,13 +154,13 @@ const MyPositions: FC = () => {
             )}
 
             {/* apr */}
-              <div className="flex items-center justify-center">
-                <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
-                  <span className={'font-poppins font-semibold my-0.5'}>
-                    {numberFormatter(pool.stats.daily.feesAprUSD)}%
-                  </span>
-                </Badge>
-              </div>
+            <div className="flex items-center justify-center">
+              <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
+                <span className={'font-poppins font-semibold my-0.5'}>
+                  {numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD))}%
+                </span>
+              </Badge>
+            </div>
 
             {/* actions */}
             {(isTablet || isDesktop) && (

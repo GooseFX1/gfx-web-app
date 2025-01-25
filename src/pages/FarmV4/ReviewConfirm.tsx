@@ -33,8 +33,11 @@ export const ReviewConfirm: FC<{
             Est. 24H Fees
           </span>
           <span className="!font-regular font-semibold dark:text-grey-8 text-black-4">
-            ${numberFormatter(selectedCard?.stats?.daily?.feesUSD || 0.00,
-            new BigNumber(selectedCard?.stats?.daily?.feesUSD || 0.00).gt(0) ? 4 : 2)}
+            $
+            {numberFormatter(
+              Math.max(0, selectedCard?.stats?.daily?.feesUSD) || 0.0,
+              new BigNumber(Math.max(0, selectedCard?.stats?.daily?.feesUSD) || 0.0).gt(0) ? 4 : 2
+            )}
           </span>
         </div>
         <div className="flex justify-between mb-2">

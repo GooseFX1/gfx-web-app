@@ -16,10 +16,9 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
 
   const formattedTVL = useMemo(() => {
     const liquidity = parseFloat(pool.tvl)
-    return liquidity ? numberFormatter(liquidity) : '0.00'
+    return liquidity ? numberFormatter(Math.max(0, liquidity)) : '0.00'
   }, [pool])
-  const { formattedVolume, formattedFees, formattedAPR } = useMemo(
-    () => {
+  const { formattedVolume, formattedFees, formattedAPR } = useMemo(() => {
     if (!pool.stats) {
       return {
         formattedVolume: '0.00',
@@ -30,28 +29,30 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
     switch (viewRange) {
       case 0:
         return {
-          formattedVolume: numberFormatter(pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD),
-          formattedFees: numberFormatter(pool.stats.daily.feesUSD),
-          formattedAPR: numberFormatter(pool.stats.daily.feesAprUSD)
+          formattedVolume: numberFormatter(
+            Math.max(0, pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD)
+          ),
+          formattedFees: numberFormatter(Math.max(0, pool.stats.daily.feesUSD)),
+          formattedAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD))
         }
       case 1:
         return {
-          formattedVolume: numberFormatter(pool.stats.weekly.volumeTokenAUSD + pool.stats.weekly.volumeTokenBUSD),
-          formattedFees: numberFormatter(pool.stats.weekly.feesUSD),
-          formattedAPR: numberFormatter(pool.stats.weekly.feesAprUSD)
+          formattedVolume: numberFormatter(
+            Math.max(0, pool.stats.weekly.volumeTokenAUSD + pool.stats.weekly.volumeTokenBUSD)
+          ),
+          formattedFees: numberFormatter(Math.max(0, pool.stats.weekly.feesUSD)),
+          formattedAPR: numberFormatter(Math.max(0, pool.stats.weekly.feesAprUSD))
         }
       case 2:
         return {
           formattedVolume: numberFormatter(
-            pool.stats.monthly.volumeTokenAUSD + pool.stats.monthly.volumeTokenBUSD
+            Math.max(0, pool.stats.monthly.volumeTokenAUSD + pool.stats.monthly.volumeTokenBUSD)
           ),
-          formattedFees: numberFormatter(pool.stats.monthly.feesUSD),
-          formattedAPR: numberFormatter(pool.stats.monthly.feesAprUSD)
+          formattedFees: numberFormatter(Math.max(0, pool.stats.monthly.feesUSD)),
+          formattedAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUSD))
         }
     }
-    },
-    [pool.stats, viewRange]
-  )
+  }, [pool.stats, viewRange])
 
   return (
     <div
