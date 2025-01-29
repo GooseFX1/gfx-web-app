@@ -33,21 +33,28 @@ export const FarmHeader: FC = () => {
   const infoCards = useMemo(() => {
     const data = [
       {
-        name: 'TVL', value: bigNumberFormatter(new BigNumber(stats?.tvl)),
+        name: 'TVL',
+        value: bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.tvl))),
         tooltip: 'TVL represents the total USD value of all assets deposited in our pools'
       },
       {
         name: `${computedViewRange} Volume`,
-        value: range === 0 ? bigNumberFormatter(new BigNumber(stats?.stats24h?.volume)) :
-          range === 1 ? bigNumberFormatter(new BigNumber(stats?.stats7d?.volume)) :
-            bigNumberFormatter(new BigNumber(stats?.stats30d?.volume)),
+        value:
+          range === 0
+            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats24h?.volume)))
+            : range === 1
+            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats7d?.volume)))
+            : bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats30d?.volume))),
         tooltip: ''
       },
       {
-        name: `${computedViewRange} Fees`, value: range === 0 ?
-          bigNumberFormatter(new BigNumber(stats?.stats24h?.fees)) : range === 1 ?
-            bigNumberFormatter(new BigNumber(stats?.stats7d?.fees)) :
-            bigNumberFormatter(new BigNumber(stats?.stats30d?.fees)),
+        name: `${computedViewRange} Fees`,
+        value:
+          range === 0
+            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats24h?.fees)))
+            : range === 1
+            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats7d?.fees)))
+            : bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats30d?.fees))),
         tooltip: ''
       }
     ]

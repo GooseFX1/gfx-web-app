@@ -8,16 +8,19 @@ import { fetchTokensByPublicKey } from '@/api/gamma'
 export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
   const poolTVL = useMemo(() => {
     const liquidity = parseFloat(pool.tvl)
-    return liquidity ? numberFormatter(liquidity) : '0.00'
+    return liquidity ? numberFormatter(Math.max(0, liquidity)) : '0.00'
   }, [pool])
   const dailyVolume = useMemo(
-    () => numberFormatter(pool?.stats?.daily?.volumeTokenAUSD + pool?.stats?.daily?.volumeTokenBUSD),
+    () => numberFormatter(Math.max(0, pool?.stats?.daily?.volumeTokenAUSD + pool?.stats?.daily?.volumeTokenBUSD)),
     [pool?.stats?.daily?.volumeTokenAUSD, pool?.stats?.daily?.volumeTokenBUSD]
   )
 
   const [fees, setFees] = useState<string>('Loading')
 
-  const dailyAPR = useMemo(() => numberFormatter(pool?.stats?.daily?.feesAprUSD), [pool?.stats?.daily?.feesAprUSD])
+  const dailyAPR = useMemo(
+    () => numberFormatter(Math.max(0, pool?.stats?.daily?.feesAprUSD)),
+    [pool?.stats?.daily?.feesAprUSD]
+  )
 
   useEffect(() => {
     ;(async () => {
