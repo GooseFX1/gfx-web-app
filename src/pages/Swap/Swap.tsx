@@ -41,7 +41,7 @@ import Decimal from 'decimal.js'
 
 import LottieSwapCountDown from './LottieSwapCountDown'
 import { PublicKey } from '@solana/web3.js'
-import { Skeleton } from 'antd'
+import { Skeleton } from 'gfx-component-lib'
 
 export const Swap: FC = () => {
   const { isDarkMode, mode } = useDarkMode()
@@ -527,7 +527,7 @@ mt-8 flex items-center justify-center
                   className={'rounded-circle'}
                 />
                 {loadingApproxAmounts ? (
-                  <Skeleton.Input style={{ width: 50 }} active={true} />
+                  <Skeleton className="w-[100px] h-[25px] rounded-[2px] inline-flex m-auto" />
                 ) : (
                   <p>
                     {approxAmountAToB} {invertPrice ? selectedTokenA?.symbol : selectedTokenB?.symbol}
