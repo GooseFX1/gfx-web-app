@@ -41,6 +41,7 @@ import Decimal from 'decimal.js'
 
 import LottieSwapCountDown from './LottieSwapCountDown'
 import { PublicKey } from '@solana/web3.js'
+import { Skeleton } from 'gfx-component-lib'
 
 export const Swap: FC = () => {
   const { isDarkMode, mode } = useDarkMode()
@@ -72,6 +73,8 @@ export const Swap: FC = () => {
   const [userTargetTokenType, setUserTargetTokenType] = useState<'spl-token' | 'native' | 'spl-token-2022' | ''>(
     ''
   )
+  const [approxAmountAToB, setApproxAmountAToB] = useState<string>('0.00')
+  const [loadingApproxAmounts, setLoadingApproxAmounts] = useBoolean(false)
 
   const [prefetchedQuoteValues, setPrefetchedQuoteValues] = useState<{
     configIdKey: PublicKey | undefined
@@ -81,7 +84,7 @@ export const Swap: FC = () => {
     observationState: any
     tokenAccountInfo0: any
     tokenAccountInfo1: any
-    mintAAddress: string,
+    mintAAddress: string
     mintBAddress: string
   }>(null)
 
@@ -214,28 +217,23 @@ export const Swap: FC = () => {
     }
   }
 
-  const { approxAmountB, approxAmountA } = useMemo(() => {
-    if (!selectedTokenA || !selectedTokenB)
-      return {
-        approxAmountB: '0.00',
-        approxAmountA: '0.00'
-      }
+  const handleApproxAmounts = async () => {
+    if (!selectedTokenA || !selectedTokenB) return
+    setLoadingApproxAmounts.on()
 
-    const balanceA = balance[selectedTokenA.address]
-    const balanceB = balance[selectedTokenB.address]
+    const tokenAtoB = await getPriceQuotes(
+      '1',
+      selectedTokenA,
+      selectedTokenB,
+      GammaProgram,
+      connection,
+      prefetchedQuoteValues
+    )
 
-    if (balanceA.price == 0 || balanceB.price == 0)
-      return {
-        approxAmountB: '0.00',
-        approxAmountA: '0.00'
-      }
+    setLoadingApproxAmounts.off()
+    setApproxAmountAToB(tokenAtoB.destinationAmountSwapped)
+  }
 
-    console.log(numberFormatter(balanceA.price / balanceB.price, balanceB.decimals ?? 7))
-    return {
-      approxAmountB: numberFormatter(balanceA.price / balanceB.price, balanceB.decimals ?? 7),
-      approxAmountA: numberFormatter(balanceB.price / balanceA.price, balanceA.decimals ?? 7)
-    }
-  }, [balance, selectedTokenA, selectedTokenB])
   const { usdValueA, usdValueB } = useMemo(() => {
     const returnValue = {
       usdValueA: '0.00',
@@ -295,6 +293,7 @@ export const Swap: FC = () => {
     checkIfPoolExists()
     handlePrefetchingAccounts()
     handleRefresh()
+    handleApproxAmounts()
   }, [selectedTokenA, selectedTokenB])
 
   useEffect(() => {
@@ -527,10 +526,13 @@ mt-8 flex items-center justify-center
                   size={'xs'}
                   className={'rounded-circle'}
                 />
-                <p>
-                  {invertPrice ? approxAmountA : approxAmountB}{' '}
-                  {invertPrice ? selectedTokenA?.symbol : selectedTokenB?.symbol}
-                </p>
+                {loadingApproxAmounts ? (
+                  <Skeleton className="w-[100px] h-[25px] rounded-[2px] inline-flex m-auto" />
+                ) : (
+                  <p>
+                    {approxAmountAToB} {invertPrice ? selectedTokenA?.symbol : selectedTokenB?.symbol}
+                  </p>
+                )}
                 <IconWithFallback
                   src={`/img/assets/switch-value-${mode}.svg`}
                   size={'xs'}
