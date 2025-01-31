@@ -2,16 +2,14 @@ import { FC, useMemo } from 'react'
 import { Badge, Button, cn } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import { ModeOfOperation } from './constants'
-import { bigNumberFormatter, loadIconImage, numberFormatter } from '@/utils'
+import { loadIconImage, numberFormatter } from '@/utils'
 import NoResultsFound from '@/pages/FarmV4/NoResultsFound'
 import { noPoolsFound } from '@/pages/FarmV4/FarmItems'
-import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
+import { GAMMAPoolWithUserLiquidity, GAMMAPortfolioPool } from '@/types/gamma'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { FarmRowLoader } from '@/pages/FarmV4/FarmRow'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
-import Decimal from 'decimal.js'
-import BigNumber from 'bignumber.js'
 
 const renderPosition = (p: GAMMAPoolWithUserLiquidity) => {
   const liq = p.userLpPosition
@@ -19,24 +17,10 @@ const renderPosition = (p: GAMMAPoolWithUserLiquidity) => {
   return numberFormatter(liq.totalValue, 2)
 }
 
-const renderTokenBalance = (p: GAMMAPoolWithUserLiquidity) => {
-  // TEMP Solution - replace call on portfolio with /portfolio endpoint
-  const liq = p.userLpPosition
-  const tokensOwned = new Decimal(liq.lpTokensOwned);
-  const supply = new Decimal(p.lpSupply);
-
-  if (tokensOwned.isZero() || supply.isZero()) {
-    return '0.00 / 0.00'
-  }
-  const swapAmountA = new Decimal(p.liquidityTokenA).sub(p.mintA.protocolFees).add(p.mintA.fundFees)
-  const swapAmountB = new Decimal(p.liquidityTokenB).sub(p.mintB.protocolFees).add(p.mintB.fundFees)
-
-  const amountA = tokensOwned.mul(swapAmountA).div(supply).div(Math.pow(10, p.mintA.decimals)).toString()
-  const amountB = tokensOwned.mul(swapAmountB).div(supply).div(Math.pow(10, p.mintB.decimals)).toString()
-  const tokenA = bigNumberFormatter(new BigNumber(amountA), 2)
-  const tokenB = bigNumberFormatter(new BigNumber(amountB), 2)
-
-  return `${tokenA} / ${tokenB}`
+const renderTokenBalance = (p: GAMMAPortfolioPool) => {
+  const ratioA = numberFormatter(+p.tokenARatio, 2)
+  const ratioB = numberFormatter(+p.tokenBRatio, 2)
+  return `${ratioA} / ${ratioB}`
 }
 
 const MyPositions: FC = () => {
@@ -53,7 +37,10 @@ const MyPositions: FC = () => {
   const { mode } = useDarkMode()
   const { base58PublicKey } = useWalletBalance()
 
-  const positions = useMemo(() => filteredPools.filter((pool) => pool.userLpPosition), [filteredPools])
+  const positions = useMemo(
+    () => filteredPools.filter((pool) => pool.userLpPosition) as GAMMAPortfolioPool[],
+    [filteredPools]
+  )
 
   let noResultsTitle = ''
   let noResultsSubText = ''
@@ -75,12 +62,11 @@ const MyPositions: FC = () => {
       noResultsSubText = noPoolsFound.subText
       break
   }
-  //const canClaim = false
-  console.log({positions})
+
   return (
     <div className={`flex flex-col gap-[15px] mt-[15px]`}>
       {positions.length > 0 ? (
-        positions.map((pool: GAMMAPoolWithUserLiquidity) => (
+        positions.map((pool) => (
           <div
             className={cn(
               `grid grid-flow-col grid-cols-[1.5fr_1fr_0.5fr_1fr_0.5fr_1fr] dark:bg-black-2 px-2.5 cursor-pointer
@@ -114,7 +100,7 @@ const MyPositions: FC = () => {
               >
                 {pool.mintA.symbol} - {pool.mintB.symbol}
               </div>
-              {pool.poolCreator == base58PublicKey && !isMobile &&  (
+              {pool.poolCreator == base58PublicKey && !isMobile && (
                 <Badge size="sm" variant="default" className='h-5.5'>
                   Owner
                 </Badge>
