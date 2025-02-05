@@ -10,6 +10,7 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 import { FarmRowLoader } from '@/pages/FarmV4/FarmRow'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
+import BigNumber from 'bignumber.js'
 
 const renderPosition = (p: GAMMAPoolWithUserLiquidity) => {
   const liq = p.userLpPosition
