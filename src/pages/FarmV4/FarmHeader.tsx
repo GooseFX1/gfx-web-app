@@ -141,6 +141,20 @@ export const FarmHeader: FC = () => {
             : 'All your deposits, rewards and advance metrics in one place.'}
         </div>
         <Button
+          className="pr-2 cursor-pointer absolute right-28 max-sm:hidden top-0"
+          colorScheme={'blue'}
+          variant={'secondary'}
+        >
+          <a
+            className="font-bold text-regular dark:text-white text-blue-1 visited:text-blue-1"
+            href="https://docs.goosefx.io/features/farm"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            FAQs
+          </a>
+        </Button>
+        <Button
           className="pr-2 cursor-pointer absolute right-5 max-sm:right-[8px] top-0"
           colorScheme={'blue'}
           variant={'secondary'}
@@ -150,7 +164,6 @@ export const FarmHeader: FC = () => {
           New Pool
         </Button>
       </div>
-
       {!isPortfolio && (
         <div
           className={`flex flex-row relative items-center no-scrollbar gap-2.5 

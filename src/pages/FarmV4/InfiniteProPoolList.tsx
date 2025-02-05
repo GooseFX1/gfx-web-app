@@ -64,12 +64,12 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
     return <div style={style}>{content}</div>
   }
 
-  const windowHeight = (Math.min(10, totalPoolCount) * 60) + ( Math.min(10, totalPoolCount) * ITEM_PADDING)
+  const windowHeight = (Math.min(10, totalPoolCount) * 60) + (Math.min(10, totalPoolCount) * ITEM_PADDING)
 
   return (
     <InfiniteLoader isItemLoaded={isItemLoaded} itemCount={itemCount} loadMoreItems={loadMoreItems}
-    threshold={3}
-                    ref={infiniteLoaderRef}
+      threshold={3}
+      ref={infiniteLoaderRef}
     >
       {({ onItemsRendered, ref }) => (
         <FixedSizeList
