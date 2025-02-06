@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import {
   tokenListAbortTokenGamma,
@@ -6,7 +6,7 @@ import {
   useDarkMode,
   useGamma
 } from '../../context'
-import { GAMMA_SORT_CONFIG, POOL_TYPE, TOKEN_LIST_PAGE_SIZE } from './constants'
+import { GAMMA_SORT_CONFIG, POOL_TYPE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
   Badge,
@@ -18,23 +18,16 @@ import {
   DialogContent,
   DialogOverlay,
   DialogPortal,
-  Popover,
-  PopoverAnchor,
-  PopoverContent,
   Switch
 } from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
-import SearchBar from '@/components/common/SearchBar'
 import useBoolean from '@/hooks/useBoolean'
 import FarmItems from './FarmItems'
 import Portfolio from './Portfolio'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import FarmSort from '@/pages/FarmV4/FarmSort'
-import { aborter, loadIconImage } from '@/utils'
-import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
-import useFirstRender from '@/hooks/useFirstRender'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
-import useDebounce from '@/hooks/useDebounce'
+import TokenSearchBar from '@/pages/FarmV4/TokenSearchBar'
 
 export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
@@ -51,31 +44,17 @@ export const FarmContainer: FC = () => {
     setShowDeposited,
     filteredPools,
     handlePoolSort,
-    selectedTokens,
-    removeSelectedToken,
-    addSelectedToken,
-    hasSelectedToken,
-    isLoadingTokenList,
-    topBalancesWithTokenList,
-    tokenList,
-    createPoolType,
-    updateTokenList,
-    setTokenList,
     isPortfolio,
     isCardMode,
     setIsCardMode
   } = useGamma()
   const { wallet, publicKey } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
-  const [focusOnSearch, setFocusOnSearch] = useBoolean(false)
-  const [tokenListSearchValue, setTokenListSearchValue] = useState('')
   const pubKey: PublicKey | null = useMemo(
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
     [wallet?.adapter?.publicKey]
   )
-  const searchBarRef = React.useRef<HTMLDivElement>(null)
-  const isFirstRender = useFirstRender()
-  const { debounce, abortDebounce } = useDebounce()
+
   useLayoutEffect(() => {
     if (openDepositWithdrawSlider) {
       document.body.style.overflow = 'hidden'
@@ -144,38 +123,6 @@ export const FarmContainer: FC = () => {
     })
   }, [isCardMode, userCache])
 
-  useEffect(() => {
-    if (isFirstRender) return
-    console.log('farmTrigger')
-    // faking search
-    if (tokenListSearchValue.trim().length == 0) {
-      aborter.abortSignal(tokenListAbortTokenGamma)
-      setTokenList([])
-      return
-    }
-    debounce(
-      () =>
-        updateTokenList(
-          {
-            page: 1,
-            pageSize: TOKEN_LIST_PAGE_SIZE,
-            tokenType: currentPoolType.name.toLowerCase(),
-            searchValue: tokenListSearchValue
-          },
-          false
-        ),
-      250
-    )
-    return () => {
-      abortDebounce()
-    }
-  }, [tokenListSearchValue, currentPoolType])
-  const isExpandedSearchOpen = tokenListSearchValue.length > 0
-  const tokenRenderList =
-    tokenListSearchValue.length > 0 || createPoolType === 'primary' || !publicKey
-      ? tokenList
-      : topBalancesWithTokenList
-
   return (
     <div className={'flex flex-col gap-3.75'}>
       {!isPortfolio ? (
@@ -205,106 +152,7 @@ export const FarmContainer: FC = () => {
               ]}
             />
             <div className="flex items-center w-full justify-between relative">
-              <Popover open={isExpandedSearchOpen || focusOnSearch}>
-                <PopoverAnchor className={'w-[550px] mr-auto'} ref={searchBarRef}>
-                  <SearchBar
-                    onChange={(e) => setTokenListSearchValue(e?.target?.value)}
-                    onClear={() => setTokenListSearchValue('')}
-                    value={tokenListSearchValue}
-                    className={'flex-1 bg-white dark:bg-black-2'}
-                    onFocusCapture={setFocusOnSearch.on}
-                    onBlurCapture={setFocusOnSearch.off}
-                    isLoading={tokenListSearchValue.trim().length > 0 && isLoadingTokenList}
-                    additionalInputElementLeft={
-                      <div className={'inline-flex gap-2'}>
-                        {selectedTokens.map((token) => (
-                          <Badge
-                            variant="default"
-                            size={'lg'}
-                            key={`main-search-${token.symbol}`}
-                            className={`
-                                 from-brand-secondaryGradient-primary/30
-                                 to-brand-secondaryGradient-secondary/30 py-[2.5px] gap-1 before:z-0 
-                                 `}
-                          >
-                            <IconWithFallback
-                              size={'sm'}
-                              src={loadIconImage(token.logoURI, mode)}
-                              className={'rounded-full'}
-                              onClick={() => removeSelectedToken(token)}
-                            />
-                            <h5 className={'text-text-lightmode-primary dark:text-text-white'}>{token.symbol}</h5>
-                            <IconWithFallback
-                              className={`!w-[11px] !h-[11px] !min-w-[11px] !min-h-[11px] z-0 cursor-pointer`}
-                              src={`/img/assets/close-${mode}.svg`}
-                              onClick={() => {
-                                removeSelectedToken(token)
-                              }}
-                            />
-                          </Badge>
-                        ))}
-                      </div>
-                    }
-                  />
-                </PopoverAnchor>
-                <PopoverContent
-                  onOpenAutoFocus={(e) => e.preventDefault()}
-                  onMouseDown={(e) => e.preventDefault()}
-                  style={{
-                    width: `${searchBarRef.current?.clientWidth ?? 600}px`
-                  }}
-                  align={'center'}
-                  side={'bottom'}
-                  avoidCollisions={false}
-                >
-                  {tokenListSearchValue && tokenRenderList.length == 0 && !isLoadingTokenList ? (
-                    <div
-                      className={`mb-auto p-2
-                  text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
-                  `}
-                    >
-                      No Tokens Found..
-                    </div>
-                  ) : null}
-                  {!tokenListSearchValue && focusOnSearch ? (
-                    <div
-                      className={`mb-auto p-2
-                  text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
-                  `}
-                    >
-                      Search for token or paste mint address
-                    </div>
-                  ) : null}
-                  {tokenListSearchValue && (
-                    <InfiniteTokenList
-                      useRenderListLength={tokenListSearchValue.trim().length > 0}
-                      tokenRenderList={tokenRenderList}
-                      onTokenSelect={(t) => {
-                        setTokenListSearchValue('')
-                        addSelectedToken(t)
-                      }}
-                      checkDisabled={(t) =>
-                        hasSelectedToken(t) || isLoadingTokenList || selectedTokens.length == 2
-                      }
-                      RenderAs={({ children, className, ...props }) => (
-                        <Button
-                          {...props}
-                          fullWidth
-                          variant={''}
-                          className={cn(
-                            `p-1.5 text-start rounded-[3px] h-auto
-                       hover:bg-background-lightmode-primary hover:dark:bg-background-darkmode-primary
-                      `,
-                            className
-                          )}
-                        >
-                          {children}
-                        </Button>
-                      )}
-                    />
-                  )}
-                </PopoverContent>
-              </Popover>
+              <TokenSearchBar poolType={currentPoolType.name} />
               <div className="flex justify-between items-center">
                 {breakpoint.isMobile ? (
                   <div>
