@@ -137,8 +137,8 @@ export const fetchAndConcatAllPoolsByMints = async (
   try {
     const response = (await httpClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS + `?${mintQuery}&page=${page}&pageSize=${pageSize}`
-    )) as GAMMAPoolsResponse
-    if (!response.success) {
+    ))?.data as GAMMAPoolsResponse
+    if (!response || !response.success) {
       throw new Error('Error fetching pools by mints')
     }
     if (currentResponse) {
