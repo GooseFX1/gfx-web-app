@@ -3,7 +3,7 @@ import React, { FC, HTMLAttributes, useEffect, useRef } from 'react'
 import InfiniteLoader from 'react-window-infinite-loader'
 import { FixedSizeList } from 'react-window'
 import { POOL_LIST_PAGE_SIZE } from './constants'
-import { FarmRowLoader } from './FarmRow'
+import { FarmRowLoaderText } from './FarmRow'
 import { CSSProperties } from 'styled-components'
 
 type InfiniteProPoolListProps<T> = {
@@ -57,7 +57,7 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
   const Item = ({ index, style }: { index: number; style: CSSProperties }) => {
     let content
     if (!isItemLoaded(index)) {
-      content = poolsHasMoreData ? <FarmRowLoader /> : null
+      content = poolsHasMoreData ? <FarmRowLoaderText /> : null
     } else {
       content = render(items[index], index)
     }
@@ -68,7 +68,7 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
 
   return (
     <InfiniteLoader isItemLoaded={isItemLoaded} itemCount={itemCount} loadMoreItems={loadMoreItems}
-      threshold={3}
+      threshold={0}
       ref={infiniteLoaderRef}
     >
       {({ onItemsRendered, ref }) => (

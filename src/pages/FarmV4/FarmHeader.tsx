@@ -12,12 +12,12 @@ import { CreatePool } from './CreatePool'
 import BigNumber from 'bignumber.js'
 
 export const FarmHeader: FC = () => {
-  const { stats, 
-    viewRange: range, 
-    computedViewRange, 
-    setViewRange: setRange, 
-    setIsPortfolio, 
-    isPortfolio, 
+  const { stats,
+    viewRange: range,
+    computedViewRange,
+    setViewRange: setRange,
+    setIsPortfolio,
+    isPortfolio,
     setCurrentPoolType,
     setCurrentSort
   } = useGamma()
@@ -44,8 +44,8 @@ export const FarmHeader: FC = () => {
           range === 0
             ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats24h?.volume)))
             : range === 1
-            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats7d?.volume)))
-            : bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats30d?.volume))),
+              ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats7d?.volume)))
+              : bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats30d?.volume))),
         tooltip: ''
       },
       {
@@ -54,8 +54,8 @@ export const FarmHeader: FC = () => {
           range === 0
             ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats24h?.fees)))
             : range === 1
-            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats7d?.fees)))
-            : bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats30d?.fees))),
+              ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats7d?.fees)))
+              : bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats30d?.fees))),
         tooltip: ''
       }
     ]
@@ -140,20 +140,15 @@ export const FarmHeader: FC = () => {
             ? 'Provide liquidity and earn fees'
             : 'All your deposits, rewards and advance metrics in one place.'}
         </div>
-        <Button
-          className="pr-2 cursor-pointer absolute right-28 max-sm:hidden top-0"
-          colorScheme={'blue'}
-          variant={'secondary'}
-        >
-          <a
-            className="font-bold text-regular dark:text-white text-blue-1 visited:text-blue-1"
-            href="https://docs.goosefx.io/features/farm"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            FAQs
-          </a>
-        </Button>
+        <img
+          src="img/assets/question-icn.svg"
+          alt="primary"
+          height={35}
+          width={35}
+          onClick={() =>
+            window.open('https://www.goosefx.io/gamma#faqs')}
+          className="cursor-pointer absolute right-28 top-0"
+        />
         <Button
           className="pr-2 cursor-pointer absolute right-5 max-sm:right-[8px] top-0"
           colorScheme={'blue'}
@@ -170,11 +165,11 @@ export const FarmHeader: FC = () => {
           overflow-x-scroll pl-5 max-sm:pl-2.5 pr-0`}
         >
           <RadioOptionGroup
-              optionSize={isMobile ? 'xl' : 'sm'}
-              defaultValue={'24h'}
-              orientation={'vertical'}
-              className={'gap-0'}
-              options={options}
+            optionSize={isMobile ? 'xl' : 'sm'}
+            defaultValue={'24h'}
+            orientation={'vertical'}
+            className={'gap-0'}
+            options={options}
           />
           <div className="flex flex-row gap-2.5 self-stretch">
             {infoCards?.map((card) => (
