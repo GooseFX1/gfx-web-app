@@ -2,6 +2,8 @@
 import { FC } from 'react'
 import FarmCard, { FarmCardLoader } from '@/pages/FarmV4/FarmCard'
 import { useGamma } from '@/context'
+import { Button } from 'gfx-component-lib'
+import { POOL_LIST_PAGE_SIZE } from './constants'
 
 const FarmItemsLite: FC<{
   openPositionImages: string[]
@@ -9,7 +11,10 @@ const FarmItemsLite: FC<{
 }> = ({ openPositionImages, openPositionsAcrossPrograms }) => {
   const {
     filteredPools,
-    isLoadingPools
+    isLoadingPools,
+    updatePools,
+    poolPage,
+    totalPoolCount
     // currentPoolType,
     // isSearchActive
   } = useGamma()
@@ -37,6 +42,20 @@ const FarmItemsLite: FC<{
             <FarmCard pool={pool} key={`${pool?.mintA.name}-${pool?.mintB.name}-${i}`} />
           ))}
       </div>
+      {totalPoolCount !== filteredPools.length && (
+        <Button
+          className="cursor-pointer rounded-full border-[1.5px] border-solid border-purple-5
+            dark:bg-black-1 dark:text-white bg-grey-5 font-bold text-regular text-black-4
+            flex flex-row justify-center items-center mt-2.5 mx-auto"
+          variant={'primary'}
+          onClick={() => updatePools({
+            page: poolPage + 1,
+            pageSize: POOL_LIST_PAGE_SIZE
+          })}
+        >
+          Load More
+        </Button>
+      )}
     </div>
   )
 }
