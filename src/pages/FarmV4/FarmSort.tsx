@@ -97,7 +97,7 @@ function FarmSort({ isOpen, setIsOpen }: {
       <DropdownMenuContent portal={false} align={'end'}>
         <>
           <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
-          {!isPortfolio && 
+          {!isPortfolio &&
             <div className="flex items-center justify-between mb-2">
               <span className="h-full text-regular text-left dark:text-grey-2 text-grey-1 font-semibold mr-3">
                 Layout
@@ -115,25 +115,27 @@ function FarmSort({ isOpen, setIsOpen }: {
                   <Icon
                     size={'xs'}
                     src={isCardMode === 'card' ? "/img/assets/grid-active.svg" : "/img/assets/grid.svg"} />}
-                    checked={isCardMode === 'card'}
-                    onClick={handleLayoutToggle}
+                checked={isCardMode === 'card'}
+                onClick={handleLayoutToggle}
               />
             </div>
           }
           {connected && (
             <>
-              <div className="flex items-center justify-between mb-2">
-                <span className="h-full text-regular text-left dark:text-grey-2 text-grey-1 font-semibold mr-3">
-                  Show Deposited pools
-                </span>
-                <Switch
-                  variant={'default'}
-                  size={'md'}
-                  colorScheme={'primary'}
-                  checked={showDeposited}
-                  onClick={handleShowDepositedToggle}
-                />
-              </div>
+              {!isPortfolio && (
+                <div className="flex items-center justify-between mb-2">
+                  <span className="h-full text-regular text-left dark:text-grey-2 text-grey-1 font-semibold mr-3">
+                    Show Deposited pools
+                  </span>
+                  <Switch
+                    variant={'default'}
+                    size={'md'}
+                    colorScheme={'primary'}
+                    checked={showDeposited}
+                    onClick={handleShowDepositedToggle}
+                  />
+                </div>
+              )}
               <div className="flex items-center justify-between">
                 <span
                   className="h-full text-regular text-left dark:text-grey-2 text-grey-1 font-semibold mr-3">
@@ -154,7 +156,7 @@ function FarmSort({ isOpen, setIsOpen }: {
         <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
         <DropdownMenuRadioGroup asChild value={currentSort} onValueChange={(id) => handlePoolSort(id)}>
           <div className={'grid grid-cols-2 gap-1.5 items-center'}>
-            {GAMMA_SORT_CONFIG.map((s) => (isPortfolio && +s.id >= 5 || (!isPortfolio)) &&  (
+            {GAMMA_SORT_CONFIG.map((s) => (isPortfolio && +s.id >= 5 || (!isPortfolio)) && (
               <DropdownMenuItem isActive={currentSort == s.id} asChild key={s.id}>
                 <DropdownMenuRadioItem value={s.id}>
                   <DropdownMenuItemIndicator asChild forceMount className={'hidden'}>
