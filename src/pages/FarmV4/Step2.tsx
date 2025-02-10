@@ -5,7 +5,6 @@ import {
   SetStateAction,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useState
 } from 'react'
@@ -127,9 +126,10 @@ const Step2: FC<{
       }
     }, [tokenA, tokenB])
 
-    useLayoutEffect(() => {
+    useEffect(() => {
       if (!tokenA || !tokenB) return
       const fetchPools = async () => {
+        console.log('fetching pools')
         const response = await fetchAndConcatAllPoolsByMints({
           mintA: tokenA?.address, mintB: tokenB?.address,
           page: 1, pageSize: POOL_LIST_PAGE_SIZE
@@ -137,13 +137,12 @@ const Step2: FC<{
         console.log('here', response)
         if (
           !response ||
-          !response.data?.pools ||
-          !response.data.pools ||
-          response.data.pools.length <= 0 ||
-          !response.success
+          !response.pools ||
+          !response.pools ||
+          response.pools.length <= 0
         )
           return
-        for (const pool of response.data.pools) {
+        for (const pool of response.pools) {
           if (pool?.mintA?.address == tokenA?.address && pool?.mintB?.address == tokenB?.address) {
             setPoolExists(true)
             setPoolExistsText(`${tokenA?.symbol} - ${tokenB?.symbol}`)
