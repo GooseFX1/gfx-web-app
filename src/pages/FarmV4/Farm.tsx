@@ -4,15 +4,10 @@ import { FarmContainer } from './FarmContainer'
 //import { Faqs } from './Faqs'
 import GammaOnboard from './GammaOnboard'
 import { useGamma } from '@/context'
-import { POOL_TYPE } from './constants'
 import LottieConfetti from '@/pages/FarmV4/LottieConfetti'
 
 const FarmV4: FC = () => {
-  const { setCurrentPoolType, isConfettiVisible, setIsConfettiVisible, isCardMode } = useGamma()
-
-  useEffect(() => {
-    setCurrentPoolType(POOL_TYPE.primary)
-  }, [isCardMode])
+  const {  isConfettiVisible, setIsConfettiVisible } = useGamma()
 
   useEffect(() => {
     setTimeout(() => setIsConfettiVisible(false), 10000)

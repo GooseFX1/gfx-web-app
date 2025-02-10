@@ -69,7 +69,7 @@ export const FarmContainer: FC = () => {
   )
   const searchBarRef = React.useRef<HTMLDivElement>(null)
   const isFirstRender = useFirstRender()
-  const {debounce, abortDebounce} = useDebounce()
+  const { debounce, abortDebounce } = useDebounce()
   useLayoutEffect(() => {
     if (openDepositWithdrawSlider) {
       document.body.style.overflow = 'hidden'
@@ -222,15 +222,15 @@ export const FarmContainer: FC = () => {
                                  to-brand-secondaryGradient-secondary/30 py-[2.5px] gap-1 before:z-0 
                                  `}>
                             <IconWithFallback size={'sm'} src={loadIconImage(token.logoURI, mode)}
-                                  className={'rounded-full'}
-                                  onClick={() => removeSelectedToken(token)} />
+                              className={'rounded-full'}
+                              onClick={() => removeSelectedToken(token)} />
                             <h5 className={'text-text-lightmode-primary dark:text-text-white'}>{token.symbol}</h5>
                             <IconWithFallback
                               className={`!w-[11px] !h-[11px] !min-w-[11px] !min-h-[11px] z-0 cursor-pointer`}
-                                  src={`/img/assets/close-${mode}.svg`}
-                                  onClick={() => {
-                                    removeSelectedToken(token)
-                                  }} />
+                              src={`/img/assets/close-${mode}.svg`}
+                              onClick={() => {
+                                removeSelectedToken(token)
+                              }} />
                           </Badge>
                         ))}</div>}
                   />
@@ -303,7 +303,7 @@ export const FarmContainer: FC = () => {
                         placement={'bottom'}
                       >
                         <DialogBody className={'flex-col flex-[1 0] p-2 overflow-auto pb-0'}>
-                        <DialogCloseDefault className={'top-5 text-white'} />
+                          <DialogCloseDefault className={'top-5 text-white'} />
                           <h4 className="dark:text-white text-lg text-black-4 pb-2">Filters</h4>
                           <div className={'flex flex-col gap-3'}>
                             {!isPortfolio &&
@@ -327,8 +327,8 @@ export const FarmContainer: FC = () => {
                                       size={'xs'}
                                       src={isCardMode === 'card' ?
                                         "/img/assets/grid-active.svg" : "/img/assets/grid.svg"} />}
-                                      checked={isCardMode === 'card'}
-                                      onClick={handleLayoutToggle}
+                                  checked={isCardMode === 'card'}
+                                  onClick={handleLayoutToggle}
                                 />
                               </div>
                             }
@@ -348,20 +348,22 @@ export const FarmContainer: FC = () => {
                                     onClick={handleFilterByCreated}
                                   />
                                 </div>
-                                <div className="flex items-center justify-between">
-                                  <span
-                                    className="h-full text-regular text-left dark:text-grey-2
+                                {!isPortfolio &&
+                                  <div className="flex items-center justify-between">
+                                    <span
+                                      className="h-full text-regular text-left dark:text-grey-2
                                     text-grey-1 font-semibold">
-                                    Show Deposited
-                                  </span>
-                                  <Switch
-                                    variant={'default'}
-                                    size={'md'}
-                                    colorScheme={'primary'}
-                                    checked={showDeposited}
-                                    onClick={handleShowDepositedToggle}
-                                  />
-                                </div>
+                                      Show Deposited
+                                    </span>
+                                    <Switch
+                                      variant={'default'}
+                                      size={'md'}
+                                      colorScheme={'primary'}
+                                      checked={showDeposited}
+                                      onClick={handleShowDepositedToggle}
+                                    />
+                                  </div>
+                                }
                               </>
                             )}
                           </div>
