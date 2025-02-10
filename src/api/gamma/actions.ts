@@ -323,17 +323,45 @@ const fetchProfilePools = async ({
   sortOrder: 'desc' | 'asc'
   sortBy: string
   page: number
-  pageSize: number,
-  poolType: 'all' | 'primary' | 'hyper',
+  pageSize: number
+  poolType: 'all' | 'primary' | 'hyper'
   search: string
 }): Promise<GAMMAPortfolioPoolResponse> => {
   const signal = aborter.addSignal(`GAMMA-PORTFOLIO-POOLS`)
   const searchQuery = search ? `&search=${search}` : ''
   // eslint-disable-next-line max-len
   const url = `${GAMMA_ENDPOINTS_V1.PORTFOLIO_POOLS}?userPublicKey=${publicKey}&sortOrder=${sortOrder}&sortBy=${sortBy}&page=${page}&pageSize=${pageSize}&poolType=${poolType}${searchQuery}`
-  return await httpClient(GAMMA_API_BASE)
-    .get(url,{ signal })
-    .then((response)=> response.data) as GAMMAPortfolioPoolResponse
+  return (await httpClient(GAMMA_API_BASE)
+    .get(url, { signal })
+    .then((response) => response.data)) as GAMMAPortfolioPoolResponse
+}
+
+const fetchProfilePoolsByMints = async ({
+  publicKey,
+  sortOrder,
+  sortBy,
+  page,
+  pageSize,
+  poolType,
+  mintA,
+  mintB
+}: {
+  publicKey: string
+  sortOrder: 'desc' | 'asc'
+  sortBy: string
+  page: number
+  pageSize: number
+  poolType: 'all' | 'primary' | 'hyper'
+  mintA?: string
+  mintB?: string
+}): Promise<GAMMAPortfolioPoolResponse> => {
+  const signal = aborter.addSignal(`GAMMA-PORTFOLIO-POOLS`)
+  const searchQuery = `&${mintA ? `&mintA=${mintA}` : ''}${mintB ? `&mintB=${mintB}` : ''}`
+  // eslint-disable-next-line max-len
+  const url = `${GAMMA_ENDPOINTS_V1.PORTFOLIO_POOLS_SEARCH}?userPublicKey=${publicKey}&sortOrder=${sortOrder}&sortBy=${sortBy}&page=${page}&pageSize=${pageSize}&poolType=${poolType}${searchQuery}`
+  return (await httpClient(GAMMA_API_BASE)
+    .get(url, { signal })
+    .then((response) => response.data)) as GAMMAPortfolioPoolResponse
 }
 
 export {
@@ -348,5 +376,6 @@ export {
   fetchPoolsByMints,
   forceCronUpdate,
   forceCronUpdateWithConnectionAndTxSig,
-  fetchProfilePools
+  fetchProfilePools,
+  fetchProfilePoolsByMints
 }

@@ -3,18 +3,16 @@ import { FC, useEffect } from 'react'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { useGamma } from '@/context'
 import { POOL_TYPE } from './constants'
-import SearchBar from '@/components/common/SearchBar'
 import MyPositionSortHeader from './MyPositionSortHeader'
 import MyPositionItems from './MyPositions'
 import FarmSort from '@/pages/FarmV4/FarmSort'
 import useBoolean from '@/hooks/useBoolean'
+import TokenSearchBar from '@/pages/FarmV4/TokenSearchBar'
 
 const ProPositions: FC = () => {
   const {
     currentPoolType,
     setCurrentPoolType,
-    searchTokens,
-    setSearchTokens,
     setShowDeposited,
     showDeposited
   } = useGamma()
@@ -73,12 +71,7 @@ const ProPositions: FC = () => {
           ]}
         />
         <div className="flex w-full items-center justify-between">
-          <SearchBar
-            onChange={(e) => setSearchTokens(e?.target?.value)}
-            onClear={() => setSearchTokens('')}
-            value={searchTokens}
-            className={'!max-w-[550px] flex-1'}
-          />
+          <TokenSearchBar poolType={currentPoolType.name} />
           <div className="mr-auto">
             <FarmSort isOpen={isOpen} setIsOpen={setIsOpen.set} />
           </div>

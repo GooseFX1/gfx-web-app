@@ -21,7 +21,7 @@ import {
   fetchTokensByPublicKey,
   fetchUser,
   forceCronUpdate, forceCronUpdateWithConnectionAndTxSig,
-  fetchProfilePools
+  fetchProfilePools, fetchProfilePoolsByMints
 } from '@/api/gamma'
 import {
   GAMMAConfig,
@@ -387,48 +387,63 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       key = `${key}${computedViewRange.toLowerCase()}`
     }
     setIsLoadingPools.on();
-
-    (selectedTokens.length > 0 ?
-      fetchPoolsByMints(
-        {
-          mintA: selectedTokens[0]?.address,
-          mintB: selectedTokens[1]?.address,
-          poolType: currentPoolType.type,
-          sortOrder: sortConfig.direction.toLowerCase() as 'desc' | 'asc',
-          sortKey: key,
-          page: page,
-          pageSize: POOL_LIST_PAGE_SIZE,
-          signal: signal,
-          userPublicKey: base58PublicKey,
-          showDeposited,
-          showCreated: showCreatedPools
-        }
-      )
-      : isPortfolio && publicKey  ?
-        fetchProfilePools({
+    let result;
+    if (isPortfolio && publicKey) {
+      result = selectedTokens.length > 0 ?
+        fetchProfilePoolsByMints({
           publicKey: publicKey.toBase58(),
           sortOrder: sortConfig.direction.toLowerCase() as 'desc' | 'asc',
           sortBy: key,
           page,
           pageSize,
           poolType: currentPoolType.type,
-          search: searchTokens
+          mintA: selectedTokens[0]?.address,
+          mintB: selectedTokens[1]?.address,
         })
-      : fetchAllPools(
-        {
-          page,
-          pageSize,
-          poolType: currentPoolType.type,
-          sortOrder: sortConfig.direction.toLowerCase() as 'desc' | 'asc',
-          sortKey: key,
-          searchTokens,
-          abortSignal: signal,
-          userPublicKey: base58PublicKey,
-          showDeposited,
-          showCreated: showCreatedPools
-        }
-      ))
-      .then((poolsData: GAMMAPoolsResponse) => {
+        : fetchProfilePools({
+        publicKey: publicKey.toBase58(),
+        sortOrder: sortConfig.direction.toLowerCase() as 'desc' | 'asc',
+        sortBy: key,
+        page,
+        pageSize,
+        poolType: currentPoolType.type,
+        search: searchTokens
+      });
+    } else {
+      result = selectedTokens.length > 0 ?
+        fetchPoolsByMints(
+          {
+            mintA: selectedTokens[0]?.address,
+            mintB: selectedTokens[1]?.address,
+            poolType: currentPoolType.type,
+            sortOrder: sortConfig.direction.toLowerCase() as 'desc' | 'asc',
+            sortKey: key,
+            page: page,
+            pageSize: POOL_LIST_PAGE_SIZE,
+            signal: signal,
+            userPublicKey: base58PublicKey,
+            showDeposited,
+            showCreated: showCreatedPools
+          }
+        )
+        : fetchAllPools(
+          {
+            page,
+            pageSize,
+            poolType: currentPoolType.type,
+            sortOrder: sortConfig.direction.toLowerCase() as 'desc' | 'asc',
+            sortKey: key,
+            searchTokens,
+            abortSignal: signal,
+            userPublicKey: base58PublicKey,
+            showDeposited,
+            showCreated: showCreatedPools
+          }
+        )
+    }
+
+
+      result.then((poolsData: GAMMAPoolsResponse) => {
         if (poolsData && poolsData.success) {
           setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
           setPoolPage(poolsData.data.currentPage)
@@ -491,7 +506,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [isPortfolio])
 
   useEffect(() => {
-
     const timeout = setTimeout(() => {
       //debounced search
       setPoolPage(1)
