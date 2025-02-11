@@ -5,8 +5,7 @@ import { Badge, Icon } from 'gfx-component-lib'
 import { bigNumberFormatter, clamp, loadIconImage, numberFormatter, truncateAddress } from '@/utils'
 import BigNumber from 'bignumber.js'
 import { TokenListSkeleton } from '@/pages/FarmV4/Step2'
-import { JupToken } from './constants'
-import { useDarkMode, useGamma } from '@/context'
+import { TokenListToken, useDarkMode, useGamma } from '@/context'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 
@@ -18,9 +17,9 @@ export function InfiniteTokenList({
                                     RenderAs
                                   }: {
   useRenderListLength: boolean,
-  tokenRenderList: JupToken[]
-  onTokenSelect: (token: JupToken) => void
-  checkDisabled: (currToken: JupToken) => boolean,
+  tokenRenderList: TokenListToken[]
+  onTokenSelect: (token: TokenListToken) => void
+  checkDisabled: (currToken: TokenListToken) => boolean,
   RenderAs: ElementType
 }) {
   const infiniteLoaderRef = useRef(null)

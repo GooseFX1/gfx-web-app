@@ -133,9 +133,9 @@ interface GAMMADataModel {
   setViewRange: Dispatch<SetStateAction<ViewRange>>
   computedViewRange: '24H' | '7D' | '30D'
   handlePoolSort: (id: string) => void
-  topBalancesWithTokenList: JupToken[]
+  topBalancesWithTokenList: TokenListToken[]
   calculatePoolType: Set<string>
-  selectedTokens: JupToken[]
+  selectedTokens: TokenListToken[]
   addSelectedToken: (token: JupToken) => void
   removeSelectedToken: (token: JupToken) => void
   hasSelectedToken: (token: JupToken) => boolean
@@ -159,6 +159,8 @@ export type TokenListToken = {
   freeze_authority: string | null
   mint_authority: string | null
   price: number
+  isLST: boolean
+  isPrimary: boolean
 }
 export const tokenListAbortTokenGamma = 'tokenList-gamma' as const
 
@@ -239,7 +241,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     removeChoice: removeSelectedToken,
     hasChoice: hasSelectedToken,
     clearAllChoices: clearAllSelectedTokens
-  } = useMultiSelect<JupToken, string>({
+  } = useMultiSelect<TokenListToken, string>({
     uniqueValueSelector: (token) => token.address
   })
   const isFirstRender = useFirstRender()
@@ -685,7 +687,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
   const computedViewRange = viewRange == 0 ? '24H' : viewRange == 1 ? '7D' : '30D'
 
-  const topBalancesWithTokenList: JupToken[] = useMemo(() => {
+  const topBalancesWithTokenList: TokenListToken[] = useMemo(() => {
     const data = []
     const hasTokenSet = new Set()
     for (const tokenBalance of topBalances) {
