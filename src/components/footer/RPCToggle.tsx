@@ -24,13 +24,15 @@ import { testRPC } from '@/utils/requests'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import useBoolean from '@/hooks/useBoolean'
 import { RPCs } from '@/context/settings'
+
 type RPCToggleProps = Omit<FooterItemProps, 'title'>
+
 const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
   const { mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
-  const { endpointName, setEndpointName, latency, updateUserCache } = useConnectionConfig()
+  const { endpoint, endpointName, setEndpointName, latency, updateUserCache } = useConnectionConfig()
   const [RPC, setRPC] = useState<EndPointName>(endpointName)
-  const [rpcUrl, setRpcUrl] = useState('')
+  const [rpcUrl, setRpcUrl] = useState(endpointName === 'Custom' ? endpoint : '')
   const [error, setError] = useState('')
   const [isOpen, setIsOpen] = useBoolean(false)
 
@@ -40,8 +42,8 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
   )
   const handleSave = useCallback(() => {
     if (RPC === 'Custom') {
-      testRPC(rpcUrl).then((res) => {
-        if (res) {
+      testRPC(rpcUrl).then((isValid: boolean) => {
+        if (isValid) {
           updateUserCache({endpoint: rpcUrl, endpointName: "Custom"})
           setEndpointName(RPC)
           setError('')
@@ -52,17 +54,21 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
       })
 
       return
+    } else {
+      updateUserCache({ endpointName: RPC, endpoint: null })
     }
     setError('')
     setIsOpen.off()
     setEndpointName(RPC)
   }, [RPC, setEndpointName, rpcUrl])
+
   const onCustomRPCClear = useCallback(() => {
     setError('')
     setRpcUrl('')
   }, [])
 
   const saveDisabled = endpointName == RPC || (RPC == 'Custom' && (rpcUrl.trim() === ''))
+
   const content = useMemo(() => {
     const trigger = (
       <FooterItemContent className={'gap-0 cursor-pointer'}>
@@ -115,7 +121,7 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
                 className={
                   Boolean(error) &&
                   `border-border-red focus:border-border-red dark:border-border-red 
-            dark:focus:border-border-red`
+                    dark:focus:border-border-red`
                 }
                 value={rpcUrl}
                 placeholder={'Enter custom RPC'}

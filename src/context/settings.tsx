@@ -77,7 +77,7 @@ const CUSTOM_RPC: RPC = {
   network: WalletAdapterNetwork.Mainnet
 }
 export const RPCs = {
-  // QuickNode: QN_RPC,
+  QuickNode: QN_RPC,
   Helius: HELIUS_RPC,
   Custom: CUSTOM_RPC
 }
@@ -293,7 +293,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const chainId = useMemo(() => RPCs[endpointName ?? DEFAULT_ENDPOINT_NAME].chainId, [endpointName])
   const network = useMemo(() => RPCs[endpointName ?? DEFAULT_ENDPOINT_NAME].network, [endpointName])
   const endpoint = useMemo(
-    () => (userCache.endpoint !== null ? userCache.endpoint : RPCs[endpointName].endpoint),
+    () => userCache.endpoint !== null ? userCache.endpoint : RPCs[endpointName].endpoint,
     [endpointName, userCache]
   )
 
@@ -301,12 +301,6 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     () => {
       const payload: Partial<USER_CONFIG_CACHE> = {}
       // WHY?! -_- .. need smarter way to handle this
-      if (endpoint !== userCache.endpoint) {
-        payload.endpoint = endpoint
-      }
-      if (endpointName !== userCache.endpointName) {
-        payload.endpointName = endpointName
-      }
       if (priorityFee !== userCache.priorityFee) {
         payload.priorityFee = priorityFee
       }
@@ -314,7 +308,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         updateUserCache(payload)
       }
     },
-    [priorityFee, endpointName, endpoint]
+    [priorityFee]
   )
 
   const { connection, perpsConnection } = useMemo(() => {
