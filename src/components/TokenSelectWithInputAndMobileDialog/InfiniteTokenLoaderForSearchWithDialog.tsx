@@ -18,6 +18,9 @@ export type InfiniteTokenLoaderForSearchWithDialogProps = {
   isLoadingTokenList: boolean
 } & TokenSelectProps
 
+/**
+ * @deprecated part of TokenSelectButtonWithSearchDialog
+ */
 function InfiniteTokenLoaderForSearchWithDialog({
   token,
   onSelectToken,

@@ -194,6 +194,9 @@ const DialogWrapper = ({
   return <>{children}</>
 }
 
+/**
+ * @deprecated part of TokenSearchWithMobileDialog
+ */
 function TokenSelectButtonWithSearchDialog({
   token,
   onSelectToken,
