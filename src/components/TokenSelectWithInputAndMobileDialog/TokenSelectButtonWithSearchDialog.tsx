@@ -80,81 +80,85 @@ const SearchContent = ({
       .finally(() => setLoadingPopularTokens.off())
   }, [isMobile])
   if (isMobile) {
-    return (
-      <DialogPortal>
-        <DialogOverlay />
-        <DialogContent
-          className={`flex flex-col gap-0 h-[370px] max-h-screen max-w-[100dvw] p-0 pt-3 border-1 border-solid border-border-lightmode-secondary
+    try {
+      return (
+        <DialogPortal>
+          <DialogOverlay />
+          <DialogContent
+            className={`flex flex-col gap-0 h-[370px] max-h-screen max-w-[100dvw] p-0 pt-3 border-1 border-solid border-border-lightmode-secondary
            dark:border-border-darkmode-secondary `} placement={'bottom'}>
-          <DialogHeader className={`flex-row px-2.5 pb-2.5 border-b-1 border-solid border-border-lightmode-secondary
+            <DialogHeader className={`flex-row px-2.5 pb-2.5 border-b-1 border-solid border-border-lightmode-secondary
            dark:border-border-darkmode-secondary max-w-[100dvw] h-max`}>
-            {searchBar}
-            <DialogClose className={'inline-flex justify-items-start'}>
-              <Icon src={`/img/assets/close-${mode}.svg`} size={'xs'} />
-            </DialogClose>
-          </DialogHeader>
-          <DialogBody className={'flex flex-col px-2.5'}>
-            <div
-              className={cn(
-                `flex flex-col overflow-auto border-b-1 border-solid dark:border-black-4 border-grey-4 h-max`,
-              )}
-            >
-              <h5
-                className={`my-2 dark:text-text-darkmode-secondary 
-                                        text-text-lightmode-secondary`}
+              {searchBar}
+              <DialogClose className={'inline-flex justify-items-start'}>
+                <Icon src={`/img/assets/close-${mode}.svg`} size={'xs'} />
+              </DialogClose>
+            </DialogHeader>
+            <DialogBody className={'flex flex-col px-2.5'}>
+              <div
+                className={cn(
+                  `flex flex-col overflow-auto border-b-1 border-solid dark:border-black-4 border-grey-4 h-max`,
+                )}
               >
-                Popular
-              </h5>
-              <div className={'flex flex-row gap-3 overflow-scroll'}>
-                {loadingPopularTokens ? (
-                  <>
-                    <Skeleton className={'h-[35px] w-[80px]'} />
-                    <Skeleton className={'h-[35px] w-[80px]'} />
-                    <Skeleton className={'h-[35px] w-[80px]'} />
-                    <Skeleton className={'h-[35px] w-[80px]'} />
-                  </>
-                ) : (
-                  popularTokens.map((popularToken) => (
-                    <Button
-                      className={`border-solid dark:border-black-4 border-grey-4 border 
+                <h5
+                  className={`my-2 dark:text-text-darkmode-secondary 
+                                        text-text-lightmode-secondary`}
+                >
+                  Popular
+                </h5>
+                <div className={'flex flex-row gap-3 overflow-scroll'}>
+                  {loadingPopularTokens ? (
+                    <>
+                      <Skeleton className={'h-[35px] w-[80px]'} />
+                      <Skeleton className={'h-[35px] w-[80px]'} />
+                      <Skeleton className={'h-[35px] w-[80px]'} />
+                      <Skeleton className={'h-[35px] w-[80px]'} />
+                    </>
+                  ) : (
+                    popularTokens.map((popularToken) => (
+                      <Button
+                        className={`border-solid dark:border-black-4 border-grey-4 border 
                           cursor-pointer p-1 flex rounded-[4px] min-w-[80px] md:min-w-[60px] grow shrink`}
-                      key={popularToken?.address}
-                      onClick={() => {
-                        setToken(popularToken)
-                        setIsOpen(false)
-                      }}
-                      disabled={token?.address == popularToken?.address || isLoadingTokenList}
-                      iconLeft={
-                        <IconWithFallback
-                          src={loadIconImage(popularToken?.logoURI, mode)}
-                          size={'sm'}
-                          className={'rounded-circle'}
-                        />
-                      }
-                    >
+                        key={popularToken?.address}
+                        onClick={() => {
+                          setToken(popularToken)
+                          setIsOpen(false)
+                        }}
+                        disabled={token?.address == popularToken?.address || isLoadingTokenList}
+                        iconLeft={
+                          <IconWithFallback
+                            src={loadIconImage(popularToken?.logoURI, mode)}
+                            size={'sm'}
+                            className={'rounded-circle'}
+                          />
+                        }
+                      >
                       <span
                         className={`font-bold dark:text-text-darkmode-secondary 
                                         text-text-lightmode-secondary`}
                       >
                         {popularToken?.symbol}
                       </span>
-                    </Button>
-                  ))
-                )}
+                      </Button>
+                    ))
+                  )}
+                </div>
               </div>
-            </div>
-            {tokenListLength === 0 && !isLoadingTokenList && (
-              <p
-                className={`text-center text-b3 text-text-lightmode-secondary dark:text-text-darkmode-secondary`}
-              >
-                No tokens found
-              </p>
-            )}
-            {infiniteTokenLoader}
-          </DialogBody>
-        </DialogContent>
-      </DialogPortal>
-    )
+              {tokenListLength === 0 && !isLoadingTokenList && (
+                <p
+                  className={`text-center text-b3 text-text-lightmode-secondary dark:text-text-darkmode-secondary`}
+                >
+                  No tokens found
+                </p>
+              )}
+              {infiniteTokenLoader}
+            </DialogBody>
+          </DialogContent>
+        </DialogPortal>
+      )
+    } catch(e) {
+     return <></>
+    }
   }
   return (
     <PopoverContent
