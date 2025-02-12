@@ -31,13 +31,13 @@ interface MenuItemProps {
 }
 
 export const Connect: FC<MenuItemProps> = ({
+  containerStyle,
   customButtonStyle,
   customMenuListItemsContainerStyle,
   customMenuListItemStyle,
   fullWidth
 }) => {
-  const { wallet, connected, disconnect, connecting, disconnecting }
-    = useWallet()
+  const { wallet, connected, disconnect, connecting, disconnecting } = useWallet()
   const { base58PublicKey } = useWalletBalance()
   const isAttempting = connecting || disconnecting
   const { blacklisted } = useConnectionConfig()
@@ -49,9 +49,10 @@ export const Connect: FC<MenuItemProps> = ({
   const { pathname } = useLocation()
   const [geoBlocked, setGeoBlocked] = useState(false)
 
-  const canConnect = (!blacklisted ||
+  const canConnect =
+    !blacklisted ||
     (blacklisted && pathname === '/farm/temp-withdraw') ||
-    (blacklisted && ALLOWED_WALLETS.includes(base58PublicKey)))
+    (blacklisted && ALLOWED_WALLETS.includes(base58PublicKey))
 
   const { balance } = useWalletBalance()
 
@@ -59,7 +60,7 @@ export const Connect: FC<MenuItemProps> = ({
   const { name: adapterName, icon: adapterIcon } = adapter || {}
 
   useEffect(() => {
-    if ((geoBlocked) && visible) setWalletModalVisible(false)
+    if (geoBlocked && visible) setWalletModalVisible(false)
   }, [geoBlocked, base58PublicKey, visible])
 
   const connectLabel = useMemo(() => {
@@ -135,7 +136,8 @@ export const Connect: FC<MenuItemProps> = ({
             className={cn(
               `flex min-w-[120px] min-md:min-w-[143px] px-1 py-1.75 focus-visible:outline-none`,
               connected && !isAttempting ? 'justify-between' : 'justify-center',
-              customButtonStyle
+              customButtonStyle,
+              containerStyle
             )}
             fullWidth={fullWidth}
             onClick={() => (!connected || isAttempting) && handleConnect()}

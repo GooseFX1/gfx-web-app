@@ -10,9 +10,11 @@ import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import DocsBanner from './DocsBanner'
 import { CreatePool } from './CreatePool'
 import BigNumber from 'bignumber.js'
+import { TokenRewardsDrawer } from '@/components/token-rewards'
 
 export const FarmHeader: FC = () => {
-  const { stats,
+  const {
+    stats,
     viewRange: range,
     computedViewRange,
     setViewRange: setRange,
@@ -25,9 +27,10 @@ export const FarmHeader: FC = () => {
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
   const { isMobile } = useBreakPoint()
   const [isCreatePool, setIsCreatePool] = useState<boolean>(false)
+  const [openRewardsDrawer, setOpenRewardsDrawer] = useState<boolean>(false)
 
   const totalEarnings = useMemo(() => {
-    const number = 0.00
+    const number = 0.0
     return truncateBigNumber(number)
   }, [])
 
@@ -44,8 +47,8 @@ export const FarmHeader: FC = () => {
           range === 0
             ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats24h?.volume)))
             : range === 1
-              ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats7d?.volume)))
-              : bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats30d?.volume))),
+            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats7d?.volume)))
+            : bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats30d?.volume))),
         tooltip: ''
       },
       {
@@ -54,8 +57,8 @@ export const FarmHeader: FC = () => {
           range === 0
             ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats24h?.fees)))
             : range === 1
-              ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats7d?.fees)))
-              : bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats30d?.fees))),
+            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats7d?.fees)))
+            : bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats30d?.fees))),
         tooltip: ''
       }
     ]
@@ -92,6 +95,7 @@ export const FarmHeader: FC = () => {
 
   return (
     <div className="mt-[15px]">
+      <TokenRewardsDrawer isOpen={openRewardsDrawer} setOpen={setOpenRewardsDrawer} />
       <CreatePool isCreatePool={isCreatePool} setIsCreatePool={setIsCreatePool} />
       <DepositWithdrawSlider />
       <div className={'max-sm:px-2.5 px-5'}>
@@ -145,10 +149,18 @@ export const FarmHeader: FC = () => {
           alt="primary"
           height={35}
           width={35}
-          onClick={() =>
-            window.open('https://www.goosefx.io/gamma#faqs')}
+          onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
           className="cursor-pointer absolute right-28 top-0"
         />
+        <Button
+          className="pr-2 cursor-pointer absolute right-[9.5rem] top-0"
+          colorScheme={'blue'}
+          variant={'secondary'}
+          //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
+          onClick={() => setOpenRewardsDrawer(true)}
+        >
+          Token Rewards
+        </Button>
         <Button
           className="pr-2 cursor-pointer absolute right-5 max-sm:right-[8px] top-0"
           colorScheme={'blue'}
