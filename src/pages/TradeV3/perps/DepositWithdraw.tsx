@@ -19,6 +19,7 @@ import {
   DialogCloseDefault,
   DialogContent,
   DialogOverlay,
+  DialogPortal,
   DropdownMenu,
   DropdownMenuTrigger
 } from 'gfx-component-lib'
@@ -179,17 +180,16 @@ export const DepositWithdrawDialog: FC<{
 
   return (
     <Dialog open={depositWithdrawModal} onOpenChange={setDepositWithdrawModal}>
-      <DialogOverlay />
-      {/* <DialogClose onClick={() => setDepositWithdrawModal(false)} /> */}
-      <DialogContent size="md" placement={isMobile ? 'bottom' : 'default'} className={'h-[356px]'}>
-        <ModalHeader setTradeType={setTradeType} tradeType={tradeType} />
-
-        <DialogCloseDefault onClick={() => setDepositWithdrawModal(false)} />
-
-        <DialogBody>
-          <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
-        </DialogBody>
-      </DialogContent>
+      <DialogPortal>
+        <DialogOverlay />
+        <DialogContent size="md" placement={isMobile ? 'bottom' : 'default'} className={'h-[356px]'}>
+          <ModalHeader setTradeType={setTradeType} tradeType={tradeType} />
+          <DialogCloseDefault onClick={() => setDepositWithdrawModal(false)} />
+          <DialogBody>
+            <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
+          </DialogBody>
+        </DialogContent>
+      </DialogPortal>
     </Dialog>
   )
 }
@@ -316,7 +316,11 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
       </Dropdown> */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild={true}>
-          <Button variant="outline" colorScheme="default" className={cn('w-full mt-2 max-sm:mt-2.5 rounded-[100px]')}>
+          <Button
+            variant="outline"
+            colorScheme="default"
+            className={cn('w-full mt-2 max-sm:mt-2.5 rounded-[100px]')}
+          >
             <div className={cn('flex w-full items-center')}>
               {/* <img className={cn('h-[25px] w-[25px] left-0')} src={assetIcon} alt="coin-icon" /> */}
               <InfoLabel>

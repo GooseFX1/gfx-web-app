@@ -6,7 +6,15 @@ import { truncateBigNumber } from '../../utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
 import { TERMS_OF_SERVICE } from '../../constants'
-import { Button, Dialog, DialogBody, DialogCloseDefault, DialogContent, DialogOverlay } from 'gfx-component-lib'
+import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogCloseDefault,
+  DialogContent,
+  DialogOverlay,
+  DialogPortal
+} from 'gfx-component-lib'
 import { MIN_AMOUNT_CLAIM } from '@/pages/FarmV3/FarmTableComponents/FarmTableBalanceItem'
 import useTransaction from '@/hooks/useTransaction'
 
@@ -88,14 +96,16 @@ export const AllClaimModal: FC<{
   )
   return (
     <Dialog open={allClaimModal} onOpenChange={setAllClaimModal}>
-      <DialogOverlay />
-      <DialogContent
-        className={'p-2.5 w-full  max-sm:rounded-b-none'}
-        placement={breakpoint.isMobile ? 'bottom' : 'default'}
-      >
-        <DialogCloseDefault />
-        <DialogBody className={'w-full mx-auto flex-col'}>{Content}</DialogBody>
-      </DialogContent>
+      <DialogPortal>
+        <DialogOverlay />
+        <DialogContent
+          className={'p-2.5 w-full  max-sm:rounded-b-none'}
+          placement={breakpoint.isMobile ? 'bottom' : 'default'}
+        >
+          <DialogCloseDefault />
+          <DialogBody className={'w-full mx-auto flex-col'}>{Content}</DialogBody>
+        </DialogContent>
+      </DialogPortal>
     </Dialog>
   )
 }

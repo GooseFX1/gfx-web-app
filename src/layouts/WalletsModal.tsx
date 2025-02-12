@@ -14,7 +14,7 @@ import {
   DialogCloseDefault,
   DialogContent,
   DialogHeader,
-  DialogOverlay,
+  DialogOverlay, DialogPortal,
   DialogTitle
 } from 'gfx-component-lib'
 import useBoolean from '@/hooks/useBoolean'
@@ -104,6 +104,7 @@ export const WalletsModal: FC = () => {
     <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
   ) : (
     <Dialog onOpenChange={setVisible} open={visible}>
+      <DialogPortal>
       <DialogOverlay />
       <DialogContent
         className={`flex flex-col gap-0 max-h-[500px] border-1 border-solid z-[1001] overflow-hidden
@@ -168,6 +169,7 @@ export const WalletsModal: FC = () => {
           </div>
         </DialogBody>
       </DialogContent>
+      </DialogPortal>
     </Dialog>
   )
 }

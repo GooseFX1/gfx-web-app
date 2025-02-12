@@ -11,7 +11,8 @@ import {
   DialogCloseDefault,
   DialogContent,
   DialogHeader,
-  DialogOverlay
+  DialogOverlay,
+  DialogPortal
 } from 'gfx-component-lib'
 import { ContentLabel, GradientBorder, InfoLabel } from './perps/components/PerpsGenericComp'
 import useBreakPoint from '@/hooks/useBreakPoint'
@@ -140,7 +141,7 @@ const GRADIENT_BACKGROUND = styled.div`
 //   .btn {
 //     ${tw`flex flex-row justify-center items-center mr-6 text-regular font-semibold text-grey-2 w-[90px] h-9 mb-3.75`}
 //   }
-// 
+//
 //.active {
 //     ${tw`!text-white w-[90px] h-9 text-regular font-semibold rounded-[40px]`}
 //     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
@@ -211,20 +212,20 @@ const SelectCryptoModal: FC<{
   // }
   return (
     <Dialog open={showModal} onOpenChange={setShowModal}>
-      <DialogOverlay />
-
-      <DialogContent
-        size="md"
-        className={cn('h-[322px] pt-3 flex flex-col gap-0')}
-        placement={isMobile ? 'bottom' : 'default'}
-      >
-        <DialogCloseDefault onClick={() => setShowModal(false)} />
-
-        <DialogHeader
-          className={`space-y-0 flex flex-col w-full h-[58px] justify-between px-2.5 pb-1.25 border-b-1 border-solid
-        border-border-lightmode-secondary dark:border-border-darkmode-secondary`}
+      <DialogPortal>
+        <DialogOverlay />
+        <DialogContent
+          size="md"
+          className={cn('h-[322px] pt-3 flex flex-col gap-0')}
+          placement={isMobile ? 'bottom' : 'default'}
         >
-          {/* <InputGroup {...args} className={'w-11/12'}>
+          <DialogCloseDefault onClick={() => setShowModal(false)} />
+
+          <DialogHeader
+            className={`space-y-0 flex flex-col w-full h-[58px] justify-between px-2.5 pb-1.25 border-b-1 border-solid
+        border-border-lightmode-secondary dark:border-border-darkmode-secondary`}
+          >
+            {/* <InputGroup {...args} className={'w-11/12'}>
             <Input
               className={'text-left w-full'}
               // TODO Fix the trading view bug
@@ -232,46 +233,47 @@ const SelectCryptoModal: FC<{
               placeholder="Search by Token symbol"
             />
           </InputGroup> */}
-          <SearchBar
-            onChange={(e) => setSearchTokens(e.target.value)}
-            onClear={() => setSearchTokens('')}
-            value={searchTokens}
-            className={'min-w-[250px] max-sm:w-[95%] max-sm:!max-w-[400px] !max-w-[440px] min-h-[40px] '}
-          />
-        </DialogHeader>
-        <DialogBody
-          className={`flex flex-col w-full h-[210px] min-md:h-full 
+            <SearchBar
+              onChange={(e) => setSearchTokens(e.target.value)}
+              onClear={() => setSearchTokens('')}
+              value={searchTokens}
+              className={'min-w-[250px] max-sm:w-[95%] max-sm:!max-w-[400px] !max-w-[440px] min-h-[40px] '}
+            />
+          </DialogHeader>
+          <DialogBody
+            className={`flex flex-col w-full h-[210px] min-md:h-full 
             min-md:mb-[20px] min-md:rounded-b-[10px] bg-white dark:bg-black-2 flex-auto overflow-y-scroll gap-2.5
             min-md:gap-5 p-2.5
       `}
-        >
-          {filteredSearchPairs && filteredSearchPairs.length > 0 ? (
-            filteredSearchPairs.map((item, index) => (
-              <span onClick={() => handleSelection(item)} key={index}>
-                <PairComponents {...item} />
-              </span>
-            ))
-          ) : (
-            <div className="flex w-full items-center justify-center h-full">
-              <div className="flex flex-col items-center justify-center">
-                <img src={`/img/assets/noSearchResults${mode}.svg`} className="mb-4" alt="no-result-found" />
-                <InfoLabel>
-                  <h2 className="text-center"> Oops, no result found </h2>
-                </InfoLabel>
+          >
+            {filteredSearchPairs && filteredSearchPairs.length > 0 ? (
+              filteredSearchPairs.map((item, index) => (
+                <span onClick={() => handleSelection(item)} key={index}>
+                  <PairComponents {...item} />
+                </span>
+              ))
+            ) : (
+              <div className="flex w-full items-center justify-center h-full">
+                <div className="flex flex-col items-center justify-center">
+                  <img src={`/img/assets/noSearchResults${mode}.svg`} className="mb-4" alt="no-result-found" />
+                  <InfoLabel>
+                    <h2 className="text-center"> Oops, no result found </h2>
+                  </InfoLabel>
 
-                <div>
-                  <ContentLabel>
-                    <h4 className="mt-2 text-center">
-                      Don’t worry, there are more <br />
-                      pairs coming soon...
-                    </h4>
-                  </ContentLabel>
+                  <div>
+                    <ContentLabel>
+                      <h4 className="mt-2 text-center">
+                        Don’t worry, there are more <br />
+                        pairs coming soon...
+                      </h4>
+                    </ContentLabel>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-        </DialogBody>
-      </DialogContent>
+            )}
+          </DialogBody>
+        </DialogContent>
+      </DialogPortal>
     </Dialog>
   )
   // return (

@@ -5,7 +5,7 @@ import {
   DialogBody,
   DialogCloseDefault,
   DialogContent,
-  DialogOverlay,
+  DialogOverlay, DialogPortal,
   DialogTrigger,
   Icon,
   IconTooltip,
@@ -44,7 +44,7 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
     if (RPC === 'Custom') {
       testRPC(rpcUrl).then((isValid: boolean) => {
         if (isValid) {
-          updateUserCache({endpoint: rpcUrl, endpointName: "Custom"})
+          updateUserCache({ endpoint: rpcUrl, endpointName: 'Custom' })
           setEndpointName(RPC)
           setError('')
           setIsOpen.off()
@@ -67,7 +67,7 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
     setRpcUrl('')
   }, [])
 
-  const saveDisabled = endpointName == RPC || (RPC == 'Custom' && (rpcUrl.trim() === ''))
+  const saveDisabled = endpointName == RPC || (RPC == 'Custom' && rpcUrl.trim() === '')
 
   const content = useMemo(() => {
     const trigger = (
@@ -97,8 +97,8 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
           defaultValue={RPC}
           onChange={(v) => setRPC(v as EndPointName)}
           options={Object.values(RPCs).map((rpc) => ({
-              label: <RPCLineItem title={rpc.name} endpoint={rpc.name} />,
-              value: rpc.name
+            label: <RPCLineItem title={rpc.name} endpoint={rpc.name} />,
+            value: rpc.name
           }))}
         />
         {RPC == 'Custom' && (
@@ -140,23 +140,25 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
     if (isMobile) {
       return (
         <Dialog open={isOpen} onOpenChange={setIsOpen.set}>
-          <DialogOverlay />
           <DialogTrigger>{trigger}</DialogTrigger>
-          <DialogContent
-            placement={'bottom'}
-            className={'w-screen rounded-t-[10px]'}
-            onOpenAutoFocus={(event) => {
-              event.preventDefault()
-            }}
-          >
-            <DialogCloseDefault className={'top-2'} />
-            <DialogBody
-              className={`border-1 border-solid border-border-lightmode-primary 
-          dark:border-border-darkmode-primary rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5 max-sm:gap-3.75`}
+          <DialogPortal>
+            <DialogOverlay />
+            <DialogContent
+              placement={'bottom'}
+              className={'w-screen rounded-t-[10px]'}
+              onOpenAutoFocus={(event) => {
+                event.preventDefault()
+              }}
             >
-              {renderContent}
-            </DialogBody>
-          </DialogContent>
+              <DialogCloseDefault className={'top-2'} />
+              <DialogBody
+                className={`border-1 border-solid border-border-lightmode-primary 
+          dark:border-border-darkmode-primary rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5 max-sm:gap-3.75`}
+              >
+                {renderContent}
+              </DialogBody>
+            </DialogContent>
+          </DialogPortal>
         </Dialog>
       )
     }
