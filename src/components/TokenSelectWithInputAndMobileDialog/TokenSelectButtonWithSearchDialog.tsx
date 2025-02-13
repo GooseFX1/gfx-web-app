@@ -15,7 +15,8 @@ import {
   DialogTrigger,
   Icon,
   PopoverContent,
-  PopoverTrigger, Skeleton
+  PopoverTrigger,
+  Skeleton
 } from 'gfx-component-lib'
 import { loadIconImage } from '@/utils'
 import { TokenListToken, useDarkMode } from '@/context'
@@ -40,8 +41,7 @@ type TokenSelectButtonWithDialogProps = TokenSelectProps &
     setIsOpen: UseBooleanSetter
     isOpen: boolean
   }
-const SearchTrigger = ({ children }: { children: React.ReactNode }) => {
-  const { isMobile } = useBreakPoint()
+const SearchTrigger = ({ children, isMobile }: { isMobile: boolean; children: React.ReactNode }) => {
   if (isMobile) {
     return <DialogTrigger>{children}</DialogTrigger>
   }
@@ -54,7 +54,8 @@ const SearchContent = ({
   setIsOpen,
   token,
   isLoadingTokenList,
-  tokenListLength
+  tokenListLength,
+  isMobile
 }: {
   searchBar: React.ReactNode
   infiniteTokenLoader: React.ReactNode
@@ -63,9 +64,9 @@ const SearchContent = ({
   token?: TokenListToken
   isLoadingTokenList: boolean
   tokenListLength: number
+  isMobile: boolean
 }) => {
   const { mode } = useDarkMode()
-  const { isMobile } = useBreakPoint()
   const [loadingPopularTokens, setLoadingPopularTokens] = useBoolean(false)
   const [popularTokens, setPopularTokens] = useState<TokenListToken[]>([])
   useEffect(() => {
@@ -80,15 +81,18 @@ const SearchContent = ({
       .finally(() => setLoadingPopularTokens.off())
   }, [isMobile])
   if (isMobile) {
-    try {
       return (
         <DialogPortal>
           <DialogOverlay />
           <DialogContent
             className={`flex flex-col gap-0 h-[370px] max-h-screen max-w-[100dvw] p-0 pt-3 border-1 border-solid border-border-lightmode-secondary
-           dark:border-border-darkmode-secondary `} placement={'bottom'}>
-            <DialogHeader className={`flex-row px-2.5 pb-2.5 border-b-1 border-solid border-border-lightmode-secondary
-           dark:border-border-darkmode-secondary max-w-[100dvw] h-max`}>
+           dark:border-border-darkmode-secondary `}
+            placement={'bottom'}
+          >
+            <DialogHeader
+              className={`flex-row px-2.5 pb-2.5 border-b-1 border-solid border-border-lightmode-secondary
+           dark:border-border-darkmode-secondary max-w-[100dvw] h-max`}
+            >
               {searchBar}
               <DialogClose className={'inline-flex justify-items-start'}>
                 <Icon src={`/img/assets/close-${mode}.svg`} size={'xs'} />
@@ -97,7 +101,7 @@ const SearchContent = ({
             <DialogBody className={'flex flex-col px-2.5'}>
               <div
                 className={cn(
-                  `flex flex-col overflow-auto border-b-1 border-solid dark:border-black-4 border-grey-4 h-max`,
+                  `flex flex-col overflow-auto border-b-1 border-solid dark:border-black-4 border-grey-4 h-max`
                 )}
               >
                 <h5
@@ -133,12 +137,12 @@ const SearchContent = ({
                           />
                         }
                       >
-                      <span
-                        className={`font-bold dark:text-text-darkmode-secondary 
+                        <span
+                          className={`font-bold dark:text-text-darkmode-secondary 
                                         text-text-lightmode-secondary`}
-                      >
-                        {popularToken?.symbol}
-                      </span>
+                        >
+                          {popularToken?.symbol}
+                        </span>
                       </Button>
                     ))
                   )}
@@ -156,9 +160,6 @@ const SearchContent = ({
           </DialogContent>
         </DialogPortal>
       )
-    } catch(e) {
-     return <></>
-    }
   }
   return (
     <PopoverContent
@@ -175,13 +176,14 @@ const SearchContent = ({
 const DialogWrapper = ({
   isOpen,
   setIsOpen,
-  children
+  children,
+  isMobile
 }: {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
   children: React.ReactNode
+  isMobile: boolean
 }) => {
-  const { isMobile } = useBreakPoint()
 
   if (isMobile) {
     return (
@@ -206,11 +208,12 @@ function TokenSelectButtonWithSearchDialog({
   isOpen,
   ...rest
 }: TokenSelectButtonWithDialogProps) {
+  const {isMobile} = useBreakPoint()
   const { mode } = useDarkMode()
   const clearSearch = useCallback(() => onSearchValueChange(''), [onSearchValueChange])
   return (
-    <DialogWrapper isOpen={isOpen} setIsOpen={setIsOpen.set}>
-      <SearchTrigger>
+    <DialogWrapper isOpen={isOpen} setIsOpen={setIsOpen.set} isMobile={isMobile}>
+      <SearchTrigger isMobile={isMobile}>
         <Button
           variant={'outline'}
           colorScheme={'secondaryGradient'}
@@ -228,6 +231,7 @@ function TokenSelectButtonWithSearchDialog({
         </Button>
       </SearchTrigger>
       <SearchContent
+        isMobile={isMobile}
         isLoadingTokenList={rest.isLoadingTokenList}
         setToken={onSelectToken}
         setIsOpen={setIsOpen.set}
@@ -242,10 +246,14 @@ function TokenSelectButtonWithSearchDialog({
           />
         }
         infiniteTokenLoader={
-          <InfiniteTokenLoaderForSearchWithDialog token={token} onSelectToken={(t)=>{
-            onSelectToken(t)
-            setIsOpen.off()
-          }} {...rest} />
+          <InfiniteTokenLoaderForSearchWithDialog
+            token={token}
+            onSelectToken={(t) => {
+              onSelectToken(t)
+              setIsOpen.off()
+            }}
+            {...rest}
+          />
         }
         tokenListLength={rest.tokenList.length}
       />
