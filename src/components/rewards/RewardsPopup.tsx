@@ -4,7 +4,7 @@ import 'styled-components/macro'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
 import useRewards from '../../context/rewardsContext'
-import { Button, cn, Dialog, DialogBody, DialogContent, DialogOverlay } from 'gfx-component-lib'
+import { Button, cn, Dialog, DialogBody, DialogContent, DialogOverlay, DialogPortal } from 'gfx-component-lib'
 import Rewards from './v2/Rewards'
 import Refer from './Refer'
 import Raffle from './raffle/Raffle'
@@ -39,12 +39,7 @@ export const RewardsButton: FC = () => {
   }, [])
 
   return (
-    <Button
-      onClick={handleClick}
-      variant={'ghost'}
-      size={'sm'}
-      className={'p-0 w-[30px] relative'}
-    >
+    <Button onClick={handleClick} variant={'ghost'} size={'sm'} className={'p-0 w-[30px] relative'}>
       {riveComponent}
     </Button>
   )
@@ -57,34 +52,36 @@ export const RewardsPopup: FC = () => {
   const isMobile = breakpoint.isMobile
   return (
     <Dialog open={rewardModal} onOpenChange={rewardToggle}>
-      <DialogOverlay />
-      <DialogContent
-        className={`w-full h-max max-h-[100dvh] overflow-y-scroll rounded-b-none 
+      <DialogPortal>
+        <DialogOverlay />
+        <DialogContent
+          className={`w-full h-max max-h-[100dvh] overflow-y-scroll rounded-b-none 
         `}
-        fullScreen={!isMobile}
-        placement={'bottom'}
-      >
-        <Button
-          onClick={() => rewardToggle(false)}
-          variant={'ghost'}
-          className={`hidden min-md:inline-block absolute p-[inherit] right-3.75 top-3 min-md:right-5
+          fullScreen={!isMobile}
+          placement={'bottom'}
+        >
+          <Button
+            onClick={() => rewardToggle(false)}
+            variant={'ghost'}
+            className={`hidden min-md:inline-block absolute p-[inherit] right-3.75 top-3 min-md:right-5
                    min-md:top-2.5 z-[1] w-max p-0`}
-          size={'sm'}
-        >
-          <RewardsClose
-            className={`h-3 w-3 min-md:h-5 min-md:w-5 stroke-border-lightmode-primary 
+            size={'sm'}
+          >
+            <RewardsClose
+              className={`h-3 w-3 min-md:h-5 min-md:w-5 stroke-border-lightmode-primary 
           min-md:stroke-border-darkmode-primary min-md:dark:stroke-border-darkmode-primary`}
-          />
-        </Button>
-        <DialogBody
-          className={`bg-white dark:bg-black-2 relative min-md:min-h-[441px]
+            />
+          </Button>
+          <DialogBody
+            className={`bg-white dark:bg-black-2 relative min-md:min-h-[441px]
          w-full flex flex-row max-md:flex-col rounded-t-[10px]`}
-        >
-          {panelIndex == REWARD_PANEL_INDEX && <Rewards />}
-          {panelIndex == REFER_PANEL_INDEX && <Refer />}
-          {panelIndex == RAFFLE_PANEL_INDEX && <Raffle />}
-        </DialogBody>
-      </DialogContent>
+          >
+            {panelIndex == REWARD_PANEL_INDEX && <Rewards />}
+            {panelIndex == REFER_PANEL_INDEX && <Refer />}
+            {panelIndex == RAFFLE_PANEL_INDEX && <Raffle />}
+          </DialogBody>
+        </DialogContent>
+      </DialogPortal>
     </Dialog>
   )
 }

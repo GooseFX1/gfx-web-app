@@ -7,6 +7,7 @@ import {
   DialogCloseDefault,
   DialogContent,
   DialogOverlay,
+  DialogPortal,
   DialogTrigger,
   Icon,
   IconTooltip,
@@ -103,23 +104,25 @@ const PriorityFee: FC = () => {
     if (isMobile) {
       return (
         <Dialog open={isOpen} onOpenChange={setIsOpen.set}>
-          <DialogOverlay />
           <DialogTrigger>{trigger}</DialogTrigger>
-          <DialogContent
-            placement={'bottom'}
-            className={'w-screen rounded-t-[10px]'}
-            onOpenAutoFocus={(event) => {
-              event.preventDefault()
-            }}
-          >
-            <DialogCloseDefault className={'top-2'} />
-            <DialogBody
-              className={`border-1 border-solid border-border-lightmode-primary 
-          dark:border-border-darkmode-primary rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5 max-sm:gap-3.75`}
+          <DialogPortal>
+            <DialogOverlay />
+            <DialogContent
+              placement={'bottom'}
+              className={'w-screen rounded-t-[10px]'}
+              onOpenAutoFocus={(event) => {
+                event.preventDefault()
+              }}
             >
-              {renderContent}
-            </DialogBody>
-          </DialogContent>
+              <DialogCloseDefault className={'top-2'} />
+              <DialogBody
+                className={`border-1 border-solid border-border-lightmode-primary 
+          dark:border-border-darkmode-primary rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5 max-sm:gap-3.75`}
+              >
+                {renderContent}
+              </DialogBody>
+            </DialogContent>
+          </DialogPortal>
         </Dialog>
       )
     }
