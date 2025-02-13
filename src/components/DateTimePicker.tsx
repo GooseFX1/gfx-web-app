@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Calendar, TimeInput, TimeInputValue, CalendarProps } from 'gfx-component-lib'
 import dayjs from 'dayjs'
 
-type DateTimePickerProps = {
+export type DateTimePickerProps = {
   value: dayjs.Dayjs
   onChange: (date: dayjs.Dayjs) => void
 } & Omit<CalendarProps, 'mode'>
@@ -44,7 +44,7 @@ function DateTimePicker({ value, onChange, ...props }: DateTimePickerProps) {
         setDate(newDate)
       }}
       footer={
-        <div className={`flex flex-col w-full gap-2`}>
+        <div className={`flex flex-col w-full gap-2 mt-2`}>
           <p className={`text-b2 font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary`}>
             Select Time:
           </p>
