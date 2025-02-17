@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 import { 
   decreaseLiquidityQuoteByLiquidityWithParams,
   WhirlpoolContext, 
@@ -95,9 +95,10 @@ export const getOrcaCLMMPositionsForUser = async (
   if (!userTokenAccounts) {
     positionMints = await getLikelyPositionMintsForUser(connection, user);
   } else {
+
     positionMints = Object.entries(userTokenAccounts)
-    .filter(([_, accountInfo]) => accountInfo.amount === '1')
-    .map(([mint, _]) => new PublicKey(mint))
+      .filter(([_, accountInfo]) => accountInfo.amount === '1')
+      .map(([mint, _]) => new PublicKey(mint))
   }
 
   return await getOrcaPositionAccountsForMints(whirlpoolCtx, positionMints);

@@ -63,7 +63,7 @@ export const FarmContainer: FC = () => {
     setTokenList,
     isPortfolio,
     isCardMode,
-    setIsCardMode,
+    setIsCardMode
   } = useGamma()
   const { wallet, publicKey } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
