@@ -412,8 +412,8 @@ export const FarmContainer: FC = () => {
                             </div>
                             <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
                             <div className={'grid grid-cols-2 gap-3'}>
-                              {GAMMA_SORT_CONFIG.map((s) => (
-                                <label className={`flex items-center`} key={s.id}>
+                              {GAMMA_SORT_CONFIG.map((s) => {
+                                const component = <label className={`flex items-center`} key={s.id}>
                                   <Badge
                                     className={cn(
                                       currentSort !== s.id &&
@@ -451,7 +451,12 @@ export const FarmContainer: FC = () => {
                                     </span>
                                   </Badge>
                                 </label>
-                              ))}
+                                if ((!isPortfolio && +s.id < 9) || isPortfolio) {
+                                  return component
+                                } else {
+                                  return null
+                                }
+                              })}
                             </div>
                           </DialogBody>
                         </DialogContent>
