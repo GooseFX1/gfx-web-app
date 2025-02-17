@@ -102,8 +102,10 @@
     ">0.2%",
     "not dead",
     "not op_mini all",
-    "not firefox < 78",
-    "not chrome < 83"
+    "Chrome >= 89",
+    "Firefox >= 89",
+    "Edge >= 89",
+    "Safari >= 15.4"
   ],
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",

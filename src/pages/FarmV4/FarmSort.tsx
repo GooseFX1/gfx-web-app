@@ -86,18 +86,20 @@ function FarmSort({ isOpen, setIsOpen }: {
             size={'md'}
             className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
           />
-          {(currentSort !== '1' || showCreatedPools || showDeposited) ? <img
-            className={`absolute top-0.5 left-0 border-1 border-solid w-2.5 h-2.5
+          {currentSort !== '1' || showCreatedPools || showDeposited ? (
+            <img
+              className={`absolute top-0.5 left-0 border-1 border-solid w-2.5 h-2.5
                         border-background-lightmode-primary dark:border-background-darkmode-primary rounded-full`}
-            src={'/img/assets/red-notification-circle.svg'}
-          /> : null}
+              src={'/img/assets/red-notification-circle.svg'}
+            />
+          ) : null}
         </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent portal={false} align={'end'}>
         <>
           <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
-          {!isPortfolio &&
+          {!isPortfolio && (
             <div className="flex items-center justify-between mb-2">
               <span className="h-full text-regular text-left dark:text-grey-2 text-grey-1 font-semibold mr-3">
                 Layout
@@ -109,17 +111,20 @@ function FarmSort({ isOpen, setIsOpen }: {
                 iconLeft={
                   <Icon
                     size={'xs'}
-                    src={isCardMode === 'card' ? "/img/assets/list.svg" : "/img/assets/list-active.svg"}
-                  />}
+                    src={isCardMode === 'card' ? '/img/assets/list.svg' : '/img/assets/list-active.svg'}
+                  />
+                }
                 iconRight={
                   <Icon
                     size={'xs'}
-                    src={isCardMode === 'card' ? "/img/assets/grid-active.svg" : "/img/assets/grid.svg"} />}
+                    src={isCardMode === 'card' ? '/img/assets/grid-active.svg' : '/img/assets/grid.svg'}
+                  />
+                }
                 checked={isCardMode === 'card'}
                 onClick={handleLayoutToggle}
               />
             </div>
-          }
+          )}
           {connected && (
             <>
               {!isPortfolio && (
@@ -137,8 +142,7 @@ function FarmSort({ isOpen, setIsOpen }: {
                 </div>
               )}
               <div className="flex items-center justify-between">
-                <span
-                  className="h-full text-regular text-left dark:text-grey-2 text-grey-1 font-semibold mr-3">
+                <span className="h-full text-regular text-left dark:text-grey-2 text-grey-1 font-semibold mr-3">
                   Show Created pools
                 </span>
                 <Switch
@@ -150,14 +154,13 @@ function FarmSort({ isOpen, setIsOpen }: {
                 />
               </div>
             </>
-          )
-          }
+          )}
         </>
         <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
         <DropdownMenuRadioGroup asChild value={currentSort} onValueChange={(id) => handlePoolSort(id)}>
           <div className={'grid grid-cols-2 gap-1.5 items-center'}>
-            {GAMMA_SORT_CONFIG.map((s) => (isPortfolio && +s.id >= 5 || (!isPortfolio)) && (
-              <DropdownMenuItem isActive={currentSort == s.id} asChild key={s.id}>
+            {GAMMA_SORT_CONFIG.map((s) => {
+              const component = <DropdownMenuItem isActive={currentSort == s.id} asChild key={s.id}>
                 <DropdownMenuRadioItem value={s.id}>
                   <DropdownMenuItemIndicator asChild forceMount className={'hidden'}>
                     <RadioGroup value={currentSort}>
@@ -169,7 +172,12 @@ function FarmSort({ isOpen, setIsOpen }: {
                   </div>
                 </DropdownMenuRadioItem>
               </DropdownMenuItem>
-            ))}
+              if ((!isPortfolio && +s.id < 9) || isPortfolio) {
+                return component
+              } else {
+                return null
+              }
+            })}
           </div>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
