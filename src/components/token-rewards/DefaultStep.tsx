@@ -2,7 +2,7 @@ import { useDarkMode } from '@/context'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { DialogClose } from 'gfx-component-lib'
 
-export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number) => void }) => {
+export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number) => void; key: string }) => {
   const { isMobile } = useBreakPoint()
   const { mode } = useDarkMode()
 

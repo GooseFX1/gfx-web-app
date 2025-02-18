@@ -6,26 +6,29 @@ import { POOL_LIST_PAGE_SIZE } from './constants'
 import { FarmRowLoaderText } from './FarmRow'
 import { CSSProperties } from 'styled-components'
 
-type InfiniteProPoolListProps<T> = {
+type InfiniteProPoolListScrollViewProps<T> = {
   render: (item: T, index: number) => JSX.Element
   itemPadding?: number
+  items: T[]
+  currentSort: string
+  poolsHasMoreData: boolean
+  updatePools: (params: { page: number; pageSize: number }) => void
+  poolPage: number
+  isLoadingPools: boolean
+  totalPoolCount: number
 } & HTMLAttributes<HTMLDivElement>
 
-const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
+export const InfiniteProPoolScrollView: FC<InfiniteProPoolListScrollViewProps<unknown>> = ({
   render,
-  itemPadding: ITEM_PADDING = 8
+  itemPadding: ITEM_PADDING = 8,
+  items,
+  currentSort,
+  poolsHasMoreData,
+  updatePools,
+  poolPage,
+  isLoadingPools,
+  totalPoolCount
 }): JSX.Element => {
-  const {
-    filteredPools: items,
-    currentSort,
-    poolsHasMoreData,
-    updatePools,
-    poolPage,
-
-    isLoadingPools,
-    totalPoolCount
-  } = useGamma()
-
   const itemCount = totalPoolCount
 
   const infiniteLoaderRef = useRef(null)
@@ -64,10 +67,13 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
     return <div style={style}>{content}</div>
   }
 
-  const windowHeight = (Math.min(10, totalPoolCount) * 60) + (Math.min(10, totalPoolCount) * ITEM_PADDING)
+  const windowHeight = Math.min(10, totalPoolCount) * 60 + Math.min(10, totalPoolCount) * ITEM_PADDING
 
   return (
-    <InfiniteLoader isItemLoaded={isItemLoaded} itemCount={itemCount} loadMoreItems={loadMoreItems}
+    <InfiniteLoader
+      isItemLoaded={isItemLoaded}
+      itemCount={itemCount}
+      loadMoreItems={loadMoreItems}
       threshold={0}
       ref={infiniteLoaderRef}
     >
@@ -84,6 +90,40 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
         </FixedSizeList>
       )}
     </InfiniteLoader>
+  )
+}
+
+type InfiniteProPoolListProps<T> = {
+  render: (item: T, index: number) => JSX.Element
+  itemPadding?: number
+} & HTMLAttributes<HTMLDivElement>
+
+const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
+  render,
+  itemPadding: ITEM_PADDING = 8
+}): JSX.Element => {
+  const {
+    filteredPools: items,
+    currentSort,
+    poolsHasMoreData,
+    updatePools,
+    poolPage,
+    isLoadingPools,
+    totalPoolCount
+  } = useGamma()
+
+  return (
+    <InfiniteProPoolScrollView
+      items={items}
+      currentSort={currentSort}
+      poolsHasMoreData={poolsHasMoreData}
+      updatePools={updatePools}
+      poolPage={poolPage}
+      isLoadingPools={isLoadingPools}
+      totalPoolCount={totalPoolCount}
+      render={render}
+      itemPadding={ITEM_PADDING}
+    />
   )
 }
 
