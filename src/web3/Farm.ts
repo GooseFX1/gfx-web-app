@@ -14,6 +14,8 @@ import {
   AUTHORITY_PREFIX,
   GAMMA_FEE_ACCOUNT,
   GAMMA_PROGRAM_ID,
+  GLOBAL_REWARD_INFO_SEED,
+  GLOBAL_USER_LP_RECENT_CHANGE_SEED,
   MEMO_ID,
   OBSERVATION_PREFIX,
   POOL_SEED_PRFIX,
@@ -138,6 +140,32 @@ export const getpoolId = async (selectedCard: any): Promise<PublicKey> => {
   const poolIdKey = await getPoolIdKey(configIdKey, mintA, mintB)
   return poolIdKey
 }
+const getGlobalRewardInfoKey = async (poolIdKey: PublicKey): Promise<undefined | PublicKey> => {
+  try {
+    const getGlobalRewardInfoKey: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [Buffer.from(GLOBAL_REWARD_INFO_SEED), poolIdKey.toBuffer()],
+      toPublicKey(GAMMA_PROGRAM_ID)
+    )
+    return getGlobalRewardInfoKey[0]
+  } catch (err) {
+    return undefined
+  }
+}
+
+const getGlobalUserLpChangeInfoKey = async (
+  poolIdKey: PublicKey,
+  userPublicKey: PublicKey
+): Promise<undefined | PublicKey> => {
+  try {
+    const getGlobalUserLpChangeInfoKey: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [Buffer.from(GLOBAL_USER_LP_RECENT_CHANGE_SEED), poolIdKey.toBuffer(), userPublicKey.toBuffer()],
+      toPublicKey(GAMMA_PROGRAM_ID)
+    )
+    return getGlobalUserLpChangeInfoKey[0]
+  } catch (err) {
+    return undefined
+  }
+}
 
 const createLiquidityAccountIX = async (
   userPublicKey: PublicKey,
@@ -145,11 +173,13 @@ const createLiquidityAccountIX = async (
   liquidityAccountKey: PublicKey,
   program: Program<Idl>
 ): Promise<TransactionInstruction> => {
+  const globalUserLpRecentChangeKey = await getGlobalUserLpChangeInfoKey(poolIdKey, userPublicKey)
   const createLiquidityInstructionAccount = {
     user: userPublicKey,
     poolState: poolIdKey,
     userPoolLiquidity: liquidityAccountKey,
-    systemProgram: SYSTEM
+    systemProgram: SYSTEM,
+    globalUserLpRecentChange: globalUserLpRecentChangeKey
   }
   const createLiquidityIX: TransactionInstruction = await program.instruction.initUserPoolLiquidity(null, {
     accounts: createLiquidityInstructionAccount
@@ -184,6 +214,8 @@ const getAccountsForDepositWithdraw = async (
     null,
     userTargetTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
   )
+  const globalRewardInfoKey = await getGlobalRewardInfoKey(poolIdKey)
+  const globalUserLpRecentChangeKey = await getGlobalUserLpChangeInfoKey(poolIdKey, userPublicKey)
 
   const accountObj = {
     owner: userPublicKey,
@@ -197,7 +229,10 @@ const getAccountsForDepositWithdraw = async (
     tokenProgram: TOKEN_PROGRAM_ID,
     tokenProgram2022: TOKEN_2022_PROGRAM_ID,
     vault0Mint: mintA,
-    vault1Mint: mintB
+    vault1Mint: mintB,
+    globalRewardInfo: globalRewardInfoKey,
+    globalUserLpRecentChange: globalUserLpRecentChangeKey,
+    systemProgram: SYSTEM
   }
 
   if (!isDeposit) accountObj['memoProgram'] = MEMO_ID
@@ -288,6 +323,8 @@ const getAccountsForCreatePool = async (
   const poolVaultKeyB = await getPoolVaultKey(poolIdKey, token1?.toBase58())
   const poolFeeAcc = new PublicKey(GAMMA_FEE_ACCOUNT)
   const userPoolLiquidityAcc = await getLiquidityPoolKey(poolIdKey, userPubKey)
+  const globalRewardInfoKey = await getGlobalRewardInfoKey(poolIdKey)
+  const globalUserLpRecentChangeKey = await getGlobalUserLpChangeInfoKey(poolIdKey, userPubKey)
 
   const accountObj = {
     creator: userPubKey,
@@ -308,6 +345,8 @@ const getAccountsForCreatePool = async (
     token1Program: token1Type === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID,
     associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
     systemProgram: SYSTEM,
+    globalRewardInfo: globalRewardInfoKey,
+    globalUserLpRecentChange: globalUserLpRecentChangeKey,
     rent: SYS_VAR_RENT
   }
 
@@ -691,19 +730,16 @@ export const getPriceQuotes = async (
         poolState: any
         observationState: any
         tokenAccountInfo0: any
-        tokenAccountInfo1: any,
-        mintAAddress: string,
+        tokenAccountInfo1: any
+        mintAAddress: string
         mintBAddress: string
       }
     | null
     | undefined
 ) => {
-  let prefetchedValues = _prefetchedValues;
-  
-  if (
-    mintA.address !== prefetchedValues?.mintAAddress ||
-    mintB.address !== prefetchedValues?.mintBAddress
-  ) {
+  let prefetchedValues = _prefetchedValues
+
+  if (mintA.address !== prefetchedValues?.mintAAddress || mintB.address !== prefetchedValues?.mintBAddress) {
     prefetchedValues = null
   }
 
