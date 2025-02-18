@@ -4,29 +4,40 @@ import { TERMS_OF_SERVICE } from '../../constants'
 import { truncateBigNumber, truncateBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
-import { Button, cn, Dialog, DialogBody, DialogContent, DialogOverlay, IconTooltip } from 'gfx-component-lib'
+import {
+  Button,
+  cn,
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogOverlay,
+  DialogPortal,
+  IconTooltip
+} from 'gfx-component-lib'
 import BigNumber from 'bignumber.js'
 import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
 //milliseconds in 5 minutes to be used to update the countdown every 5 minutes
 const TIMER = 300 * 1000
 
-export const ActionModal: FC<PropsWithKey<{
-  actionModal: boolean
-  setActionModal: Dispatch<SetStateAction<boolean>>
-  handleWithdraw: (BigNumber) => void
-  handleDeposit: () => void
-  handleClaim: () => void
-  handleCancel: () => void
-  isButtonLoading: boolean
-  withdrawAmount: string
-  depositAmount: string
-  claimAmount: BigNumber
-  actionType: string
-  token: SSLToken
-  earlyWithdrawFee: number
-  diffTimer: number
-  setDiffTimer: Dispatch<SetStateAction<number>>
-}>> = ({
+export const ActionModal: FC<
+  PropsWithKey<{
+    actionModal: boolean
+    setActionModal: Dispatch<SetStateAction<boolean>>
+    handleWithdraw: (BigNumber) => void
+    handleDeposit: () => void
+    handleClaim: () => void
+    handleCancel: () => void
+    isButtonLoading: boolean
+    withdrawAmount: string
+    depositAmount: string
+    claimAmount: BigNumber
+    actionType: string
+    token: SSLToken
+    earlyWithdrawFee: number
+    diffTimer: number
+    setDiffTimer: Dispatch<SetStateAction<number>>
+  }>
+> = ({
   actionModal,
   setActionModal,
   handleWithdraw,
@@ -191,23 +202,25 @@ export const ActionModal: FC<PropsWithKey<{
   }, [breakpoint, mode, isButtonLoading, diffTimer])
   return (
     <Dialog open={actionModal}>
-      <DialogOverlay />
-      <DialogContent
-        size={'md'}
-        className={cn(
-          'w-full max-sm:rounded-t-[10px] max-sm:rounded-b-none p-6',
-          breakpoint.isMobile
-            ? actionType === 'withdraw'
-              ? 'h-[320px]'
-              : actionType === 'claim'
+      <DialogPortal>
+        <DialogOverlay />
+        <DialogContent
+          size={'md'}
+          className={cn(
+            'w-full max-sm:rounded-t-[10px] max-sm:rounded-b-none p-6',
+            breakpoint.isMobile
+              ? actionType === 'withdraw'
+                ? 'h-[320px]'
+                : actionType === 'claim'
                 ? 'h-[250px]'
                 : 'h-[275px]'
-            : 'h-[250px]'
-        )}
-        placement={breakpoint.isMobile ? 'bottom' : 'default'}
-      >
-        <DialogBody className={'w-full mx-auto'}>{Content}</DialogBody>
-      </DialogContent>
+              : 'h-[250px]'
+          )}
+          placement={breakpoint.isMobile ? 'bottom' : 'default'}
+        >
+          <DialogBody className={'w-full mx-auto'}>{Content}</DialogBody>
+        </DialogContent>
+      </DialogPortal>
     </Dialog>
   )
 }

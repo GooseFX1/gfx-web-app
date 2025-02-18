@@ -5,7 +5,7 @@ import {
   DialogBody,
   DialogCloseDefault,
   DialogContent,
-  DialogOverlay,
+  DialogOverlay, DialogPortal,
   DialogTrigger,
   Icon,
   IconTooltip,
@@ -24,13 +24,15 @@ import { testRPC } from '@/utils/requests'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import useBoolean from '@/hooks/useBoolean'
 import { RPCs } from '@/context/settings'
+
 type RPCToggleProps = Omit<FooterItemProps, 'title'>
+
 const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
   const { mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
-  const { endpointName, setEndpointName, latency, updateUserCache } = useConnectionConfig()
+  const { endpoint, endpointName, setEndpointName, latency, updateUserCache } = useConnectionConfig()
   const [RPC, setRPC] = useState<EndPointName>(endpointName)
-  const [rpcUrl, setRpcUrl] = useState('')
+  const [rpcUrl, setRpcUrl] = useState(endpointName === 'Custom' ? endpoint : '')
   const [error, setError] = useState('')
   const [isOpen, setIsOpen] = useBoolean(false)
 
@@ -40,9 +42,9 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
   )
   const handleSave = useCallback(() => {
     if (RPC === 'Custom') {
-      testRPC(rpcUrl).then((res) => {
-        if (res) {
-          updateUserCache({endpoint: rpcUrl, endpointName: "Custom"})
+      testRPC(rpcUrl).then((isValid: boolean) => {
+        if (isValid) {
+          updateUserCache({ endpoint: rpcUrl, endpointName: 'Custom' })
           setEndpointName(RPC)
           setError('')
           setIsOpen.off()
@@ -52,17 +54,21 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
       })
 
       return
+    } else {
+      updateUserCache({ endpointName: RPC, endpoint: null })
     }
     setError('')
     setIsOpen.off()
     setEndpointName(RPC)
   }, [RPC, setEndpointName, rpcUrl])
+
   const onCustomRPCClear = useCallback(() => {
     setError('')
     setRpcUrl('')
   }, [])
 
-  const saveDisabled = endpointName == RPC || (RPC == 'Custom' && (rpcUrl.trim() === ''))
+  const saveDisabled = endpointName == RPC || (RPC == 'Custom' && rpcUrl.trim() === '')
+
   const content = useMemo(() => {
     const trigger = (
       <FooterItemContent className={'gap-0 cursor-pointer'}>
@@ -91,8 +97,8 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
           defaultValue={RPC}
           onChange={(v) => setRPC(v as EndPointName)}
           options={Object.values(RPCs).map((rpc) => ({
-              label: <RPCLineItem title={rpc.name} endpoint={rpc.name} />,
-              value: rpc.name
+            label: <RPCLineItem title={rpc.name} endpoint={rpc.name} />,
+            value: rpc.name
           }))}
         />
         {RPC == 'Custom' && (
@@ -115,7 +121,7 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
                 className={
                   Boolean(error) &&
                   `border-border-red focus:border-border-red dark:border-border-red 
-            dark:focus:border-border-red`
+                    dark:focus:border-border-red`
                 }
                 value={rpcUrl}
                 placeholder={'Enter custom RPC'}
@@ -134,23 +140,25 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
     if (isMobile) {
       return (
         <Dialog open={isOpen} onOpenChange={setIsOpen.set}>
-          <DialogOverlay />
           <DialogTrigger>{trigger}</DialogTrigger>
-          <DialogContent
-            placement={'bottom'}
-            className={'w-screen rounded-t-[10px]'}
-            onOpenAutoFocus={(event) => {
-              event.preventDefault()
-            }}
-          >
-            <DialogCloseDefault className={'top-2'} />
-            <DialogBody
-              className={`border-1 border-solid border-border-lightmode-primary 
-          dark:border-border-darkmode-primary rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5 max-sm:gap-3.75`}
+          <DialogPortal>
+            <DialogOverlay />
+            <DialogContent
+              placement={'bottom'}
+              className={'w-screen rounded-t-[10px]'}
+              onOpenAutoFocus={(event) => {
+                event.preventDefault()
+              }}
             >
-              {renderContent}
-            </DialogBody>
-          </DialogContent>
+              <DialogCloseDefault className={'top-2'} />
+              <DialogBody
+                className={`border-1 border-solid border-border-lightmode-primary 
+          dark:border-border-darkmode-primary rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5 max-sm:gap-3.75`}
+              >
+                {renderContent}
+              </DialogBody>
+            </DialogContent>
+          </DialogPortal>
         </Dialog>
       )
     }

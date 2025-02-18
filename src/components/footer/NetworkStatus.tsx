@@ -6,6 +6,7 @@ import {
   DialogCloseDefault,
   DialogContent,
   DialogOverlay,
+  DialogPortal,
   DialogTrigger,
   Popover,
   PopoverContent,
@@ -15,6 +16,7 @@ import { FooterItem, FooterItemContent } from '@/components/footer/FooterItem'
 import { Circle } from '@/components/common/Circle'
 import useNetworkStatus from '@/hooks/useNetworkStatus'
 import useBreakPoint from '@/hooks/useBreakPoint'
+
 const STATUS = {
   CONGESTED: `The Solana network is very busy right now, your transactions might  take longer and sometimes they
    might not go through at all.`,
@@ -67,27 +69,29 @@ const NetworkStatus: FC = () => {
     if (isMobile) {
       return (
         <Dialog>
-          <DialogOverlay />
           <DialogTrigger>{footerItemContent}</DialogTrigger>
-          <DialogContent placement={'bottom'} className={'w-screen rounded-t-[10px]'}>
-            <DialogCloseDefault className={'top-2'} />
-            <DialogBody
-              className={`border-1 border-solid border-border-lightmode-primary dark:border-border-darkmode-primary
+          <DialogPortal>
+            <DialogOverlay />
+            <DialogContent placement={'bottom'} className={'w-screen rounded-t-[10px]'}>
+              <DialogCloseDefault className={'top-2'} />
+              <DialogBody
+                className={`border-1 border-solid border-border-lightmode-primary dark:border-border-darkmode-primary
              rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5 max-sm:gap-3.75`}
-            >
-              <div className={'inline-flex items-center gap-1'}>
-                <h3 className={cn('text-h3 font-bold', textColor)}>{networkStatus}</h3>
-                <Circle className={`${bgColor} w-2 h-2`} />
-              </div>
-              <p
-                className={
-                  'text-justify font-semibold text-text-lightmode-secondary dark:text-text-darkmode-secondary'
-                }
               >
-                {description}
-              </p>
-            </DialogBody>
-          </DialogContent>
+                <div className={'inline-flex items-center gap-1'}>
+                  <h3 className={cn('text-h3 font-bold', textColor)}>{networkStatus}</h3>
+                  <Circle className={`${bgColor} w-2 h-2`} />
+                </div>
+                <p
+                  className={
+                    'text-justify font-semibold text-text-lightmode-secondary dark:text-text-darkmode-secondary'
+                  }
+                >
+                  {description}
+                </p>
+              </DialogBody>
+            </DialogContent>
+          </DialogPortal>
         </Dialog>
       )
     }

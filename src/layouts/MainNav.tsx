@@ -24,6 +24,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogPortal,
   DialogTrigger,
   DropdownMenu,
   DropdownMenuContent,
@@ -149,131 +150,133 @@ const MobileNav: FC = () => {
         <DialogTrigger onClick={setIsOpen.on}>
           <img className={`h-[35px]`} src={`/img/mainnav/menu-${mode}.svg`} alt={'open drawer'} />
         </DialogTrigger>
-        <DialogContent fullScreen={true} className={'flex flex-col gap-0 '}>
-          <DialogHeader className={'items-center'}>
-            <DialogClose className={'ml-auto mr-3.75 mt-3.75'} onClick={setIsOpen.off}>
-              <Icon src={`/img/assets/close-${mode}.svg`} size={'sm'} />
-            </DialogClose>
-            <ThemeToggle />
-          </DialogHeader>
-          <DialogBody
-            className={`mx-auto my-auto justify-center items-center flex flex-col flex-1 gap-[15px] w-full px-[15px]
+        <DialogPortal>
+          <DialogContent fullScreen={true} className={'flex flex-col gap-0 '}>
+            <DialogHeader className={'items-center'}>
+              <DialogClose className={'ml-auto mr-3.75 mt-3.75'} onClick={setIsOpen.off}>
+                <Icon src={`/img/assets/close-${mode}.svg`} size={'sm'} />
+              </DialogClose>
+              <ThemeToggle />
+            </DialogHeader>
+            <DialogBody
+              className={`mx-auto my-auto justify-center items-center flex flex-col flex-1 gap-[15px] w-full px-[15px]
               overflow-y-scroll`}
-          >
-            <ListItem
-              variant={pathname.includes('swap') && 'primary'}
-              className={cn(
-                `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
-                         dark:text-text-darkmode-tertiary h-[43px]`,
-                pathname.includes('ssl') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-              )}
-              onClick={() => {
-                setIsOpen.off()
-                history.push('/swap')
-              }}
             >
-              <img
-                className="h-[35px]"
-                src={`/img/mainnav/swap-${mode}${pathname.includes('swap') ? '-active' : '-inactive'}.svg`}
-                alt="dark"
-              />
-              &nbsp;Swap
-            </ListItem>
-            <ListItem
-              variant={pathname.includes('gamma') && 'primary'}
-              className={cn(
-                `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
+              <ListItem
+                variant={pathname.includes('swap') && 'primary'}
+                className={cn(
+                  `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
                          dark:text-text-darkmode-tertiary h-[43px]`,
-                pathname.includes('gamma') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-              )}
-              onClick={() => {
-                setIsOpen.off()
-                history.push('/gamma')
-              }}
-            >
-              <img
-                className="h-[35px] w-[35px]"
-                src={`/img/mainnav/pool-${mode}${pathname.includes('gamma') ? '-active' : '-inactive'}.svg`}
-                alt="dark"
-              />
-              &nbsp;Pools
-            </ListItem>
-            <ListItem
-              variant={pathname.includes('ssl') && 'primary'}
-              className={cn(
-                `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
+                  pathname.includes('ssl') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+                )}
+                onClick={() => {
+                  setIsOpen.off()
+                  history.push('/swap')
+                }}
+              >
+                <img
+                  className="h-[35px]"
+                  src={`/img/mainnav/swap-${mode}${pathname.includes('swap') ? '-active' : '-inactive'}.svg`}
+                  alt="dark"
+                />
+                &nbsp;Swap
+              </ListItem>
+              <ListItem
+                variant={pathname.includes('gamma') && 'primary'}
+                className={cn(
+                  `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
                          dark:text-text-darkmode-tertiary h-[43px]`,
-                pathname.includes('ssl') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-              )}
-              onClick={() => {
-                setIsOpen.off()
-                history.push('/ssl')
-              }}
-            >
-              <img
-                className="h-[35px]"
-                src={`/img/mainnav/farm-${mode}${pathname.includes('ssl') ? '-active' : ''}.svg`}
-                alt="dark"
-              />
-              &nbsp;SSL
-            </ListItem>
+                  pathname.includes('gamma') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+                )}
+                onClick={() => {
+                  setIsOpen.off()
+                  history.push('/gamma')
+                }}
+              >
+                <img
+                  className="h-[35px] w-[35px]"
+                  src={`/img/mainnav/pool-${mode}${pathname.includes('gamma') ? '-active' : '-inactive'}.svg`}
+                  alt="dark"
+                />
+                &nbsp;Pools
+              </ListItem>
+              <ListItem
+                variant={pathname.includes('ssl') && 'primary'}
+                className={cn(
+                  `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
+                         dark:text-text-darkmode-tertiary h-[43px]`,
+                  pathname.includes('ssl') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+                )}
+                onClick={() => {
+                  setIsOpen.off()
+                  history.push('/ssl')
+                }}
+              >
+                <img
+                  className="h-[35px]"
+                  src={`/img/mainnav/farm-${mode}${pathname.includes('ssl') ? '-active' : ''}.svg`}
+                  alt="dark"
+                />
+                &nbsp;SSL
+              </ListItem>
 
-            <Accordion type={'single'} collapsible variant={'unset'}>
-              <AccordionItem value={'bridge'} variant={'unset'}>
-                <AccordionTrigger variant={'primary'} isSelected={isMoreOpen} className={'text-h3  px-1.25'}>
-                  <span className={'inline-flex items-center font-poppins font-inherit text-inherit'}>
-                    <img
-                      className="h-[35px]"
-                      src={`/img/mainnav/more-${mode}${isMoreOpen ? '-active' : ''}.svg`}
-                      alt="dark"
+              <Accordion type={'single'} collapsible variant={'unset'}>
+                <AccordionItem value={'bridge'} variant={'unset'}>
+                  <AccordionTrigger variant={'primary'} isSelected={isMoreOpen} className={'text-h3  px-1.25'}>
+                    <span className={'inline-flex items-center font-poppins font-inherit text-inherit'}>
+                      <img
+                        className="h-[35px]"
+                        src={`/img/mainnav/more-${mode}${isMoreOpen ? '-active' : ''}.svg`}
+                        alt="dark"
+                      />
+                      &nbsp;More
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent variant={'unset'} className={'flex flex-col gap-1.5 pt-2.5'}>
+                    <MobileAccordionContent
+                      title={'Bridge'}
+                      description={'Bridge your assets to and from other chains'}
+                      onClick={() => {
+                        setIsOpen.off()
+                        history.push('/bridge')
+                      }}
+                      isActive={pathname.includes('bridge')}
                     />
-                    &nbsp;More
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent variant={'unset'} className={'flex flex-col gap-1.5 pt-2.5'}>
-                  <MobileAccordionContent
-                    title={'Bridge'}
-                    description={'Bridge your assets to and from other chains'}
-                    onClick={() => {
-                      setIsOpen.off()
-                      history.push('/bridge')
-                    }}
-                    isActive={pathname.includes('bridge')}
-                  />
-                  <MobileAccordionContent
-                    title={'Blog'}
-                    description={'Stay up to date with the latest updates and industry news!'}
-                    onClick={() => {
-                      setIsOpen.off()
-                      navigateTo(NAV_LINKS.blog, '_blank')
-                    }}
-                  />
-                  <MobileAccordionContent
-                    title={'Docs'}
-                    description={'Learn about GOOSEFX and how we work in depth.'}
-                    onClick={() => {
-                      setIsOpen.off()
-                      navigateTo(NAV_LINKS.docs, '_blank')
-                    }}
-                  />
-                  <div className={'inline-flex items-center justify-center gap-8 my-1'}>
-                    <SocialLinks />
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </DialogBody>
-          <DialogFooter
-            className={`border-t-1 border-solid border-t-border-lightmode-secondary px-3.75 py-2.5 
+                    <MobileAccordionContent
+                      title={'Blog'}
+                      description={'Stay up to date with the latest updates and industry news!'}
+                      onClick={() => {
+                        setIsOpen.off()
+                        navigateTo(NAV_LINKS.blog, '_blank')
+                      }}
+                    />
+                    <MobileAccordionContent
+                      title={'Docs'}
+                      description={'Learn about GOOSEFX and how we work in depth.'}
+                      onClick={() => {
+                        setIsOpen.off()
+                        navigateTo(NAV_LINKS.docs, '_blank')
+                      }}
+                    />
+                    <div className={'inline-flex items-center justify-center gap-8 my-1'}>
+                      <SocialLinks />
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </DialogBody>
+            <DialogFooter
+              className={`border-t-1 border-solid border-t-border-lightmode-secondary px-3.75 py-2.5 
           dark:border-t-border-darkmode-secondary h-[75px] items-center justify-between flex-row`}
-          >
-            <NetworkStatus />
-            <FooterDivider className={'h-[30px]'} />
-            <RPCToggle />
-            <FooterDivider className={'h-[30px]'} />
-            <PriorityFee />
-          </DialogFooter>
-        </DialogContent>
+            >
+              <NetworkStatus />
+              <FooterDivider className={'h-[30px]'} />
+              <RPCToggle />
+              <FooterDivider className={'h-[30px]'} />
+              <PriorityFee />
+            </DialogFooter>
+          </DialogContent>
+        </DialogPortal>
       </Dialog>
     </>
   )

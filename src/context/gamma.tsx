@@ -145,6 +145,7 @@ interface GAMMADataModel {
   setIsPortfolio: { toggle: () => void; on: () => void; off: () => void; set: (value: boolean) => void }
   isCardMode: string
   setIsCardMode: Dispatch<SetStateAction<string>>
+  maxTokens: number
 }
 
 export type TokenListToken = {
@@ -178,6 +179,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [selectedCardPool, setSelectedCardPool] = useState<any>({})
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [maxTokensReached, setMaxTokensReached] = useState(false)
+  const [maxTokens, setMaxTokens] = useState(0)
   const [sendingTransaction, setSendingTransaction] = useState<boolean>(false)
   const [searchTokens, setSearchTokens] = useState<string>('')
   const [showCreatedPools, setShowCreatedPools] = useState<boolean>(userCache.gamma.showCreatedFilter)
@@ -346,6 +348,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setMaxTokensReached(
       (response.data.totalPages == 0 || response.data.tokens.length == 0)
       || response.data.totalPages == response.data.currentPage)
+    setMaxTokens(response.data.totalItems)
     const currentTokenList = append ? [...tokenList] : []
     const hasSetOfTokens = new Set(currentTokenList.map((token) => token.address))
     for (const token of response.data.tokens) {
@@ -758,7 +761,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isPortfolio,
         setIsPortfolio,
         isCardMode,
-        setIsCardMode
+        setIsCardMode,
+        maxTokens
       }}
     >
       {children}

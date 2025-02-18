@@ -22,7 +22,7 @@ import {
   DialogBody,
   DialogCloseDefault,
   DialogContent,
-  DialogOverlay,
+  DialogOverlay, DialogPortal,
   Input,
   Tabs,
   TabsList,
@@ -61,8 +61,9 @@ export const ClosePositionDialog: FC<{
   setPerpsEndModal: React.Dispatch<React.SetStateAction<any>>
 }> = ({ closePositionModal, setVisibleState, setSummaryData, setPerpsEndModal }) => (
   <Dialog open={closePositionModal} onOpenChange={setVisibleState}>
-    <DialogOverlay />
     {/* <DialogClose onClick={() => setDepositWithdrawModal(false)} /> */}
+    <DialogPortal>
+      <DialogOverlay />
     <DialogContent size={'md'} placement={checkMobile() ? 'bottom' : 'default'} className={'h-[356px] max-sm:px-0'}>
       <DialogCloseDefault />
 
@@ -74,6 +75,7 @@ export const ClosePositionDialog: FC<{
         />
       </DialogBody>
     </DialogContent>
+    </DialogPortal>
   </Dialog>
 )
 
