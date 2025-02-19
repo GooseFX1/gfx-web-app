@@ -14,15 +14,18 @@ function useTokenInput() {
   const clear = useCallback(() => setValue(''), [])
   const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value
+    // cleanup alphanumeric input e.g 13.411A -> 13.411
     value = value.replace(/[^0-9.]/g, '');
 
     const cursorPosition: number | null = e.target.selectionStart
     const mantissas = value.match(new RegExp(/\./g, "g"));
     const mantissaCount = mantissas?.length ?? 0
+    // clear input if it is empty
     if (value === '') {
       setValue('')
       return
     }
+
     // prepend 0 if value starts with . and its first input to prevent EXPLOSION
     if (value.startsWith('.') && mantissaCount <= 1 && cursorPosition != null && cursorPosition > 0) {
       value = '0' + value
