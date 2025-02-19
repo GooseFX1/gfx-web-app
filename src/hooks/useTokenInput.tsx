@@ -8,37 +8,7 @@ export type useTokenInputCommands = {
   set: (value: string) => void
 }
 type ReturnValue = [string, useTokenInputCommands]
-function fixNumberString(input) {
-  // Split the input on dots.
-  const parts = input.split('.');
-  let integerPart = parts[0];
-  const fractionalParts = parts.slice(1);
 
-  // Remove leading zeros from the integer part.
-  // If the integer part is empty or becomes empty after removal, default to "0".
-  if (integerPart === '') {
-    integerPart = '0';
-  } else {
-    integerPart = integerPart.replace(/^0+/, '');
-    if (integerPart === '') {
-      integerPart = '0';
-    }
-  }
-
-  // If the input starts with a dot, we want the integer part to be "0".
-  // Also, if the first fractional part is a "0", remove it.
-  if (parts[0] === '' && fractionalParts[0] === '0') {
-    fractionalParts.shift();
-  }
-
-  // Join the remaining fractional parts to remove extra dots.
-  let fractional = fractionalParts.join('');
-  if (fractional === '') {
-    fractional = '0';
-  }
-
-  return integerPart + '.' + fractional;
-}
 function useTokenInput() {
   const [value, setValue] = useState('')
   const clear = useCallback(() => setValue(''), [])
@@ -83,7 +53,6 @@ function useTokenInput() {
     // compress out duplicate dots
     value = partA + '.' + values.slice(1).join('')
 
-    console.log({value, newProposedFix: fixNumberString(e.target.value)})
     setValue(value)
   }, [])
 
