@@ -1,5 +1,5 @@
 import { useGamma } from '@/context'
-import React, { FC, HTMLAttributes, useEffect, useRef } from 'react'
+import React, { FC, HTMLAttributes, useEffect, useRef, useState } from 'react'
 import InfiniteLoader from 'react-window-infinite-loader'
 import { FixedSizeList } from 'react-window'
 import { POOL_LIST_PAGE_SIZE } from './constants'
@@ -21,17 +21,21 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
     poolsHasMoreData,
     updatePools,
     poolPage,
-
     isLoadingPools,
     totalPoolCount
   } = useGamma()
 
-  const itemCount = totalPoolCount
-
+  const [showingLoader, setShowingLoader] = useState(false)
+  
+  const effectiveItemCount = items.length + (poolsHasMoreData ? 1 : 0)
+  
   const infiniteLoaderRef = useRef(null)
   const hasMountedRef = useRef(false)
 
-  const isItemLoaded = (index) => !!items[index]
+  const isItemLoaded = (index) => {
+    if (index < items.length) return true
+    return false
+  }
 
   // Each time the sort prop changed we called the method resetloadMoreItemsCache to clear the cache
   useEffect(() => {
@@ -41,34 +45,47 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
       if (infiniteLoaderRef.current) {
         infiniteLoaderRef.current.resetloadMoreItemsCache()
       }
+      setShowingLoader(false)
     }
     hasMountedRef.current = true
   }, [currentSort])
 
   const loadMoreItems = () => {
     if (isLoadingPools) return
+    setShowingLoader(true)
     updatePools({
       page: poolPage + 1,
       pageSize: POOL_LIST_PAGE_SIZE
     })
   }
 
+  useEffect(() => {
+    if (!isLoadingPools && showingLoader) {
+      setShowingLoader(false)
+    }
+  }, [isLoadingPools, items.length])
+
   // Render an item or a loading indicator.
   const Item = ({ index, style }: { index: number; style: CSSProperties }) => {
-    let content
-    if (!isItemLoaded(index)) {
-      content = poolsHasMoreData ? <FarmRowLoaderText /> : null
-    } else {
-      content = render(items[index], index)
+    if (index === items.length && poolsHasMoreData) {
+      return <div style={style}><FarmRowLoaderText /></div>
     }
-    return <div style={style}>{content}</div>
+    
+    if (index < items.length) {
+      return <div style={style}>{render(items[index], index)}</div>
+    }
+    
+    return <div style={style} />
   }
 
-  const windowHeight = (Math.min(10, totalPoolCount) * 60) + (Math.min(10, totalPoolCount) * ITEM_PADDING)
+  const windowHeight = (Math.min(10, effectiveItemCount) * 60) + (Math.min(10, effectiveItemCount) * ITEM_PADDING)
 
   return (
-    <InfiniteLoader isItemLoaded={isItemLoaded} itemCount={itemCount} loadMoreItems={loadMoreItems}
-      threshold={0}
+    <InfiniteLoader 
+      isItemLoaded={isItemLoaded} 
+      itemCount={totalPoolCount} 
+      loadMoreItems={loadMoreItems}
+      threshold={1}
       ref={infiniteLoaderRef}
     >
       {({ onItemsRendered, ref }) => (
@@ -76,7 +93,7 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
           height={windowHeight}
           itemSize={60 + ITEM_PADDING}
           className="List"
-          itemCount={itemCount}
+          itemCount={effectiveItemCount}
           onItemsRendered={onItemsRendered}
           ref={ref}
         >
