@@ -8,7 +8,7 @@ export type useTokenInputCommands = {
   set: (value: string) => void
 }
 type ReturnValue = [string, useTokenInputCommands]
-
+const MantissaRegex = new RegExp(/\./g, "g");
 function useTokenInput() {
   const [value, setValue] = useState('')
   const clear = useCallback(() => setValue(''), [])
@@ -18,7 +18,7 @@ function useTokenInput() {
     value = value.replace(/[^0-9.]/g, '');
 
     const cursorPosition: number | null = e.target.selectionStart
-    const mantissas = value.match(new RegExp(/\./g, "g"));
+    const mantissas = value.match(MantissaRegex);
     const mantissaCount = mantissas?.length ?? 0
     // clear input if it is empty
     if (value === '') {
