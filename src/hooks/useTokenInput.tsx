@@ -9,54 +9,54 @@ export type useTokenInputCommands = {
 }
 type ReturnValue = [string, useTokenInputCommands]
 const MantissaRegex = new RegExp(/\./g, "g");
+export function fixNumberString(input: string, cursorPosition?: number | null, useCursor?: boolean): string {
+  // cleanup alphanumeric input e.g 13.411A -> 13.411
+  let value = input.replace(/[^0-9.]/g, '');
+
+  const mantissas = value.match(MantissaRegex);
+  const mantissaCount = mantissas?.length ?? 0
+  // clear input if it is empty
+  if (value === '') {
+    return ''
+  }
+
+  // prepend 0 if value starts with . and its first input to prevent EXPLOSION
+  if (value.startsWith('.') && mantissaCount <= 1 && (useCursor && cursorPosition != null && cursorPosition > 0)) {
+    value = '0' + value
+  }
+
+  // remove trailing dot if we have digits after it
+  if (value.endsWith('.') && mantissaCount > 1) {
+    value = value.slice(0, -1)
+  }
+
+  // remove leading dot if it is the first character - only
+  if (mantissaCount > 1 && value.startsWith('.')) {
+    value = value.slice(1)
+  }
+
+  // 2 or more dots in a row - replace with one
+  value = value.replace(/\.{2,}/g, '.');
+  // prepare to fix bunch of edge cases e.g 0.33.3.3..3
+  const values = value.split('.')
+
+  // remove leading zeros more than 1
+  let partA = values[0];
+  partA = partA.replace(/^0+/, '');
+  if (partA === '' && values[0].length > 0) {
+    partA = '0';
+  }
+
+  // compress out duplicate dots
+  value = partA + '.' + values.slice(1).join('')
+
+  return value;
+}
 function useTokenInput() {
   const [value, setValue] = useState('')
   const clear = useCallback(() => setValue(''), [])
   const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value
-    // cleanup alphanumeric input e.g 13.411A -> 13.411
-    value = value.replace(/[^0-9.]/g, '');
-
-    const cursorPosition: number | null = e.target.selectionStart
-    const mantissas = value.match(MantissaRegex);
-    const mantissaCount = mantissas?.length ?? 0
-    // clear input if it is empty
-    if (value === '') {
-      setValue('')
-      return
-    }
-
-    // prepend 0 if value starts with . and its first input to prevent EXPLOSION
-    if (value.startsWith('.') && mantissaCount <= 1 && cursorPosition != null && cursorPosition > 0) {
-      value = '0' + value
-    }
-
-    // remove trailing dot if we have digits after it
-    if (value.endsWith('.') && mantissaCount > 1) {
-      value = value.slice(0, -1)
-    }
-
-    // remove leading dot if it is the first character - only
-    if (mantissaCount > 1 && value.startsWith('.')) {
-      value = value.slice(1)
-    }
-
-    // 2 or more dots in a row - replace with one
-    value = value.replace(/\.{2,}/g, '.');
-    // prepare to fix bunch of edge cases e.g 0.33.3.3..3
-    const values = value.split('.')
-
-    // remove leading zeros more than 1
-    let partA = values[0];
-    partA = partA.replace(/^0+/, '');
-    if (partA === '') {
-      partA = '0';
-    }
-
-    // compress out duplicate dots
-    value = partA + '.' + values.slice(1).join('')
-
-    setValue(value)
+    setValue(fixNumberString(e.target.value, e.target.selectionStart, true))
   }, [])
 
   const onBlur = useCallback((e) => {
