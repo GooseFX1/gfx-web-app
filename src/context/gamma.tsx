@@ -87,11 +87,10 @@ interface GAMMADataModel {
   totalPoolCount: number,
   tokenList: TokenListToken[]
   isLoadingTokenList: boolean
-  updateTokenList: ({ page, pageSize, searchValue }: {
+  updateTokenList: ({ page, pageSize }: {
     page: number
     pageSize: number
     tokenType?: Pool['type']
-    searchValue?: string,
     signal?: AbortSignal
   }, append?: boolean) => Promise<void>
   maxTokensReached: boolean
@@ -114,7 +113,6 @@ interface GAMMADataModel {
     data: {
       page: number
       pageSize: number
-      searchTokens?: string
     },
     append?: boolean
   ) => void
@@ -146,6 +144,10 @@ interface GAMMADataModel {
   isCardMode: string
   setIsCardMode: Dispatch<SetStateAction<string>>
   maxTokens: number
+  tokenListSearchValue: string
+  setTokenListSearchValue: Dispatch<SetStateAction<string>>
+  nextPage: number
+  nextPoolPage: number
 }
 
 export type TokenListToken = {
@@ -184,15 +186,18 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [maxTokens, setMaxTokens] = useState(0)
   const [sendingTransaction, setSendingTransaction] = useState<boolean>(false)
   const [searchTokens, setSearchTokens] = useState<string>('')
+  const [tokenListSearchValue, setTokenListSearchValue] = useState<string>('')
   const [showCreatedPools, setShowCreatedPools] = useState<boolean>(userCache.gamma.showCreatedFilter)
   const [currentSort, setCurrentSort] = useState<string>(userCache.gamma.currentSort)
   const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
   const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
   const [tokenList, setTokenList] = useState<TokenListToken[]>([])
   const [page, setPage] = useState(1)
+  const nextPage = useMemo(() => page + 1, [page])
   const [isLoadingTokenList, setIsLoadingTokenList] = useBoolean(false)
   const [isLoadingPools, setIsLoadingPools] = useBoolean(false)
   const [poolPage, setPoolPage] = useState(1)
+  const nextPoolPage = useMemo(() => poolPage + 1, [poolPage])
   const [totalPoolCount, setTotalPoolCount] = useState(0)
   const [poolsHasMoreData, setPoolsHasMoreData] = useState(true)
   const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
@@ -245,7 +250,16 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     uniqueValueSelector: (token) => token.address
   })
   const isFirstRender = useFirstRender()
-
+  useEffect(() => {
+    if (!tokenListSearchValue) {
+      setPage(1)
+    }
+  }, [tokenListSearchValue])
+  useEffect(() => {
+    if (!searchTokens) {
+      setPoolPage(1)
+    }
+  }, [searchTokens])
   const handlePoolSort = useCallback(
     (id: string) => {
       // persists current sort in local storage
@@ -320,12 +334,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       page,
       pageSize,
       tokenType = 'all',
-      searchValue = ''
     }: {
       page: number
       pageSize: number
       tokenType?: Pool['type']
-      searchValue?: string
     }, append = true) => {
     setIsLoadingTokenList.on()
     if (aborter.getSignal(tokenListAbortTokenGamma)) {
@@ -337,7 +349,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       page,
       pageSize,
       tokenType,
-      searchValue,
+      tokenListSearchValue,
       signal
     )) as GAMMAListTokenResponse | null
     if (!response.success && response.data == null) {
@@ -368,12 +380,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     {
       page,
       pageSize,
-      searchTokens = '',
       signal
     }: {
       page: number
       pageSize: number
-      searchTokens?: string
       signal?: AbortSignal
     },
     append = true
@@ -399,7 +409,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           page,
           pageSize,
           poolType: currentPoolType.type,
-          mintA: selectedTokens[0]?.address,
+          mintA: selectedTokens[0].address,
           mintB: selectedTokens[1]?.address,
         })
         : fetchProfilePools({
@@ -408,8 +418,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         sortBy: key,
         page,
         pageSize,
-        poolType: currentPoolType.type,
-        search: searchTokens
+        poolType: currentPoolType.type
       });
     } else {
       result = selectedTokens.length > 0 ?
@@ -778,7 +787,11 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setIsPortfolio,
         isCardMode,
         setIsCardMode,
-        maxTokens
+        maxTokens,
+        setTokenListSearchValue,
+        tokenListSearchValue,
+        nextPage,
+        nextPoolPage
       }}
     >
       {children}

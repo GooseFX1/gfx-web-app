@@ -28,6 +28,7 @@ interface ISwapConfig {
   setSlippage: (slippage: number) => void
   topBalancesWithTokenList: JupToken[]
   setTokenPage: (page: number) => void
+  nextPage: number
 }
 
 const SwapContext = createContext<ISwapConfig | null>(null)
@@ -37,6 +38,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { userCache, updateUserCache } = useConnectionConfig()
   const [tokens, setTokens] = useState<JupToken[]>([])
   const [tokenPage, setTokenPage] = useState<number>(1)
+  const nextPage = useMemo(() => tokenPage + 1, [tokenPage])
   const [maxTokensReached, setMaxTokensReached] = useBoolean(true)
   const [isLoadingTokenList, setIsLoadingTokenList] = useBoolean(false)
   const [searchValue, setSearchValue] = useState<string>('')
@@ -180,7 +182,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSlippage,
         topBalancesWithTokenList,
         searchValue,
-        setTokenPage
+        setTokenPage,
+        nextPage
       }}
     >
       {children}

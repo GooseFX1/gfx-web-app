@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Badge, Button, cn, Popover, PopoverAnchor, PopoverContent } from 'gfx-component-lib'
 import SearchBar from '@/components/common/SearchBar'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import { aborter, loadIconImage } from '@/utils'
 import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
-import { tokenListAbortTokenGamma, TokenListToken, useDarkMode, useGamma } from '@/context'
-import { POOL_TYPE, TOKEN_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
+import { tokenListAbortTokenGamma, useDarkMode, useGamma } from '@/context'
+import { TOKEN_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
 import useFirstRender from '@/hooks/useFirstRender'
 import useDebounce from '@/hooks/useDebounce'
 import useBoolean from '@/hooks/useBoolean'
@@ -13,7 +13,6 @@ import { useWalletBalance } from '@/context/walletBalanceContext'
 
 function TokenSearchBar({ poolType }: { poolType: string }) {
   const searchBarRef = useRef(null)
-  const [tokenListSearchValue, setTokenListSearchValue] = useState('')
   const [focusOnSearch, setFocusOnSearch] = useBoolean(false)
 
   const isFirstRender = useFirstRender()
@@ -31,8 +30,10 @@ function TokenSearchBar({ poolType }: { poolType: string }) {
     hasSelectedToken,
     topBalancesWithTokenList,
     tokenList,
-    setCurrentPoolType,
-    currentPoolType
+    // setCurrentPoolType,
+    // currentPoolType,
+    tokenListSearchValue,
+    setTokenListSearchValue
   } = useGamma()
 
   useEffect(() => {
@@ -51,7 +52,6 @@ function TokenSearchBar({ poolType }: { poolType: string }) {
             page: 1,
             pageSize: TOKEN_LIST_PAGE_SIZE,
             tokenType: 'all',
-            searchValue: tokenListSearchValue
           },
           false
         ),
@@ -61,16 +61,17 @@ function TokenSearchBar({ poolType }: { poolType: string }) {
       abortDebounce()
     }
   }, [tokenListSearchValue, poolType])
-  const checkAndSetPoolType = useCallback((t: TokenListToken)=>{
-    // current selections are in selectedTokens - t is the token that is being added and visible on next render
-    const isHyperInSelectedTokens = selectedTokens.some((token) => !token.isPrimary)
-    // if the token being added is not primary or there is already a hyper token in the selected tokens
-    if (isHyperInSelectedTokens || !t.isPrimary) {
-      setCurrentPoolType(POOL_TYPE.hyper)
-    } else {
-      setCurrentPoolType(POOL_TYPE.primary)
-    }
-  },[selectedTokens, currentPoolType])
+  // const checkAndSetPoolType = useCallback((t: TokenListToken)=>{
+  //   // TODO: comment this back once isPrimary is added to token object
+  //   // // current selections are in selectedTokens - t is the token that is being added and visible on next render
+  //   // const isHyperInSelectedTokens = selectedTokens.some((token) => !token.isPrimary)
+  //   // // if the token being added is not primary or there is already a hyper token in the selected tokens
+  //   // if (isHyperInSelectedTokens || !t.isPrimary) {
+  //   //   setCurrentPoolType(POOL_TYPE.hyper)
+  //   // } else {
+  //   //   setCurrentPoolType(POOL_TYPE.primary)
+  //   // }
+  // },[selectedTokens, currentPoolType])
   const isExpandedSearchOpen = tokenListSearchValue.length > 0
   const tokenRenderList =
     tokenListSearchValue.length > 0 || poolType === 'primary' || !publicKey ? tokenList : topBalancesWithTokenList
@@ -152,7 +153,7 @@ function TokenSearchBar({ poolType }: { poolType: string }) {
             onTokenSelect={(t) => {
               setTokenListSearchValue('')
               addSelectedToken(t)
-              checkAndSetPoolType(t)
+              // checkAndSetPoolType(t)
             }}
             checkDisabled={(t) => hasSelectedToken(t) || isLoadingTokenList || selectedTokens.length == 2}
             RenderAs={({ children, className, ...props }) => (

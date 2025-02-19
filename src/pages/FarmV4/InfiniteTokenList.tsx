@@ -26,7 +26,7 @@ export function InfiniteTokenList({
   const hasMountedRef = useRef(false)
   const { balance } = useWalletBalance()
   const { mode } = useDarkMode()
-  const { maxTokensReached, isLoadingTokenList, setPage, page, tokenList } = useGamma()
+  const { maxTokensReached, isLoadingTokenList, setPage, nextPage, tokenList } = useGamma()
 
   useEffect(() => {
     if (hasMountedRef.current) {
@@ -44,8 +44,9 @@ export function InfiniteTokenList({
     // empty func to prevent re-calls
   } : () => {
     if (isLoadingTokenList || maxTokensReached) return
+    console.log('LOADING NEX TOKENS', {nextPage})
     // triggers the update for the tokenListEndpoint
-    setPage(page + 1)
+    setPage(nextPage)
   }
 
   const isItemLoaded = index => maxTokensReached || index < tokenListLength

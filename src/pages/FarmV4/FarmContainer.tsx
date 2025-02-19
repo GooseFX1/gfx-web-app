@@ -1,7 +1,6 @@
 import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import {
-  tokenListAbortTokenGamma,
   useConnectionConfig,
   useDarkMode,
   useGamma
