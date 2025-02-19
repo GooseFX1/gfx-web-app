@@ -8,20 +8,25 @@ export type useTokenInputCommands = {
   set: (value: string) => void
 }
 type ReturnValue = [string, useTokenInputCommands]
-const MantissaRegex = new RegExp(/\./g, "g");
-export function fixNumberString(input: string, cursorPosition?: number | null, useCursor?: boolean): string {
-  // cleanup alphanumeric input e.g 13.411A -> 13.411
-  let value = input.replace(/[^0-9.]/g, '');
+const MantissaRegex = new RegExp(/\./g, 'g')
 
-  const mantissas = value.match(MantissaRegex);
+export function fixNumberString(
+  input: string,
+  cursorPosition?: number | null,
+  inputType?: HTMLInputElement['type']
+): string {
+  // cleanup alphanumeric input e.g 13.411A -> 13.411
+  let value = input.replace(/[^0-9.]/g, '')
+
+  const mantissas = value.match(MantissaRegex)
   const mantissaCount = mantissas?.length ?? 0
   // clear input if it is empty
   if (value === '') {
     return ''
   }
-
+  const useCursor = inputType !== 'number'
   // prepend 0 if value starts with . and its first input to prevent EXPLOSION
-  if (value.startsWith('.') && mantissaCount <= 1 && (useCursor && cursorPosition != null && cursorPosition > 0)) {
+  if (value.startsWith('.') && mantissaCount <= 1 && useCursor && cursorPosition != null && cursorPosition > 0) {
     value = '0' + value
   }
 
@@ -36,32 +41,33 @@ export function fixNumberString(input: string, cursorPosition?: number | null, u
   }
 
   // 2 or more dots in a row - replace with one
-  value = value.replace(/\.{2,}/g, '.');
+  value = value.replace(/\.{2,}/g, '.')
   // prepare to fix bunch of edge cases e.g 0.33.3.3..3
   const values = value.split('.')
 
   // remove leading zeros more than 1
-  let partA = values[0];
-  partA = partA.replace(/^0+/, '');
+  let partA = values[0]
+  partA = partA.replace(/^0+/, '')
   if (partA === '' && values[0].length > 0) {
-    partA = '0';
+    partA = '0'
   }
 
   // compress out duplicate dots
-  value = partA + '.' + values.slice(1).join('')
+  value = `${partA}${values.length > 1 ? '.' : ''}${values.slice(1).join('')}`
 
-  return value;
+  return value
 }
+
 function useTokenInput() {
   const [value, setValue] = useState('')
   const clear = useCallback(() => setValue(''), [])
   const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setValue(fixNumberString(e.target.value, e.target.selectionStart, true))
+    setValue(fixNumberString(e.target.value, e.target.selectionStart, e.target.type))
   }, [])
 
   const onBlur = useCallback((e) => {
     let value = e.target.value
-    const mantissas = value.match(new RegExp(/\./g, "g"));
+    const mantissas = value.match(new RegExp(/\./g, 'g'))
     const mantissaCount = mantissas?.length ?? 0
     // prepend 0 if value starts with . and its first input to prevent EXPLOSION
     if (value.startsWith('.') && mantissaCount <= 1) {
@@ -71,7 +77,7 @@ function useTokenInput() {
     if (value.endsWith('.')) {
       value = value + '0'
     }
-
+    console.log('blur',value)
     setValue(value)
   }, [])
   const set = useCallback((value: string) => setValue(value), [])
