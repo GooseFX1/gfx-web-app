@@ -7,6 +7,7 @@ import { useConnectionConfig } from '@/context/settings'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import useFirstRender from '@/hooks/useFirstRender'
 import { useHistory } from 'react-router-dom'
+import useTokenInput, { useTokenInputCommands } from '@/hooks/useTokenInput'
 
 interface ISwapConfig {
   tokens: JupToken[]
@@ -19,8 +20,8 @@ interface ISwapConfig {
   maxTokensReached: boolean
   isLoadingTokenList: boolean
   searchValue: string
-  setAmountTokenA: (amount: string) => void
-  setAmountTokenB: (amount: string) => void
+  amountTokenACommands: useTokenInputCommands
+  amountTokenBCommands: useTokenInputCommands
   setSearchValue: (value: string) => void
   setSelectedTokenA: (token: JupToken) => void
   setSelectedTokenB: (token: JupToken) => void
@@ -41,8 +42,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [searchValue, setSearchValue] = useState<string>('')
   const [selectedTokenA, setSelectedTokenA] = useState<JupToken | null>(null)
   const [selectedTokenB, setSelectedTokenB] = useState<JupToken | null>(null)
-  const [amountTokenA, setAmountTokenA] = useState<string>('')
-  const [amountTokenB, setAmountTokenB] = useState<string>('')
+  const [amountTokenA, amountTokenACommands] = useTokenInput()
+  const [amountTokenB, amountTokenBCommands] = useTokenInput()
   const [slippage, setSlippage] = useState<number>(userCache?.swap?.slippage ?? 1.0)
   const firstMount = useFirstRender()
   // external hooks
@@ -171,8 +172,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         tokenPage,
         maxTokensReached,
         isLoadingTokenList,
-        setAmountTokenA,
-        setAmountTokenB,
+        amountTokenACommands,
+        amountTokenBCommands,
         setSearchValue,
         setSelectedTokenA,
         setSelectedTokenB,
