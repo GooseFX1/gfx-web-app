@@ -12,7 +12,8 @@ import {
   cn,
   DropdownMenuContent,
   Input,
-  DropdownMenuItem
+  DropdownMenuItem,
+  Icon
 } from 'gfx-component-lib'
 import SearchBar from '../common/SearchBar'
 import { GAMMAPool, GAMMAPoolWithUserLiquidity } from '@/types/gamma'
@@ -24,7 +25,6 @@ import { loadIconImage, numberFormatter, truncateAddress } from '@/utils'
 import { CSSProperties, ElementType, useMemo, useState } from 'react'
 import { InfiniteProPoolScrollView } from '@/pages/FarmV4/InfiniteProPoolList'
 import { usePools } from '@/hooks/usePools'
-import { Image } from 'antd'
 
 interface SelectPoolStepProps {
   setCurrentStep: (step: number) => void
@@ -62,14 +62,14 @@ export const SelectPoolStep = ({ setCurrentStep, summary, pool, setPool }: Selec
           </h1>
           {isMobile && (
             <div className="flex flex-row items-center gap-3">
-              <Image
+              <Icon
                 src="/img/assets/question-icn.svg"
                 alt="help"
                 className="w-[30px] h-[30px] cursor-pointer"
                 onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
               />
               <DialogClose>
-                <Image src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
+                <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
               </DialogClose>
             </div>
           )}
@@ -165,7 +165,7 @@ export const SelectPoolStep = ({ setCurrentStep, summary, pool, setPool }: Selec
       {!isMobile && (
         <div className="py-6 px-10 flex flex-col items-center col-span-2 bg-grey-5 dark:bg-black-1">
           <DialogClose>
-            <Image src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
+            <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
           </DialogClose>
           {summary}
         </div>

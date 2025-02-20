@@ -1,7 +1,6 @@
 import { useDarkMode } from '@/context'
 import useBreakPoint from '@/hooks/useBreakPoint'
-import { Image } from 'antd';
-import { DialogClose } from 'gfx-component-lib'
+import { DialogClose, Icon } from 'gfx-component-lib'
 
 export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number) => void; key: string }) => {
   const { isMobile } = useBreakPoint()
@@ -18,7 +17,7 @@ export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number)
           </h1>
           {isMobile && (
             <div className="flex flex-row items-center gap-3">
-              <Image
+              <Icon
                 src="img/assets/question-icn.svg"
                 alt="primary"
                 height={30}
@@ -27,7 +26,7 @@ export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number)
                 className="cursor-pointer"
               />
               <DialogClose>
-                <Image src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
+                <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
               </DialogClose>
             </div>
           )}
@@ -43,7 +42,7 @@ export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number)
             onClick={() => setCurrentStep(1)}
           >
             <div className="flex items-center gap-3 mb-2">
-              <Image src={`/img/assets/token-rewards-${mode}.svg`} alt="Rewards" className="w-6 h-6" />
+              <Icon src={`/img/assets/token-rewards-${mode}.svg`} alt="Rewards" className="w-6 h-6" />
               <h3
                 className="text-base font-semibold font-sans 
               text-text-lightmode-primary dark:text-text-darkmode-primary"
@@ -64,12 +63,12 @@ export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number)
             Not sure what to create?
           </h2>
           <DialogClose>
-            <Image src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
+            <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
           </DialogClose>
-          <Image
+          <Icon
             src={`/img/assets/help-token-rewards-${mode}.svg`}
             alt="Rewards"
-            className="mt-10 w-full max-w-[300px]"
+            className="mt-10 h-full w-full max-w-[300px] max-h-[300px]"
           />
           <div className="mt-8 text-center text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
             See our{' '}
