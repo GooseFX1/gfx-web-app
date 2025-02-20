@@ -11,6 +11,16 @@ export const fetchIsUnderMaintenance = async (): Promise<boolean> => {
   }
 }
 
+export const fetchGammaBoostedRewards = async (): Promise<boolean> => {
+  try {
+    const { data } = await customClient(WEBAPP_CONFIG_URL).get(WEBAPP_CONFIG_ENDPOINTS.GAMMA_BOOSTED_REWARDS)
+    return data
+  } catch (err) {
+    console.error(err)
+    return false
+  }
+}
+
 export const fetchGlobalBanner = async (): Promise<string | null> => {
   try {
     const response = await await customClient(WEBAPP_CONFIG_URL).get(WEBAPP_CONFIG_ENDPOINTS.GLOBAL_BANNER)

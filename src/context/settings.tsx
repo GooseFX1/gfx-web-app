@@ -19,7 +19,7 @@ import {
   VersionedTransaction
 } from '@solana/web3.js'
 import { fetchBrowserCountryCode } from '../api/analytics'
-import { fetchIsUnderMaintenance } from '../api/config'
+import { fetchIsUnderMaintenance, fetchGammaBoostedRewards } from '../api/config'
 import { ENVS } from '../constants'
 import useActivityTracker from '@/hooks/useActivityTracker'
 import { axiosFetchWithRetries } from '../api'
@@ -221,6 +221,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
   const [blacklisted, setBlacklisted] = useState<boolean>(false)
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false)
+  const [gammaBoostedRewardsIsActive, setGammaBoostedRewardsIsActive] = useState<boolean>(false)
   const [userCache, setUserCache] = useState<USER_CONFIG_CACHE>(getOrCreateCache())
   const [endpointName, setEndpointName] = useState<EndPointName>(
     userCache.endpointName !== DEFAULT_ENDPOINT_NAME && userCache.endpointName !== 'Custom'
@@ -377,6 +378,9 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       // sets isUnderMaintenance flag
       fetchIsUnderMaintenance().then((maintenanceStatus: boolean) => setIsUnderMaintenance(maintenanceStatus))
+
+      // sets gammaBoostedRewardsIsActive flag
+      fetchGammaBoostedRewards().then((gammaBoostedRewardsIsActive: boolean) => setGammaBoostedRewardsIsActive(gammaBoostedRewardsIsActive))
     }
   }, [])
 
