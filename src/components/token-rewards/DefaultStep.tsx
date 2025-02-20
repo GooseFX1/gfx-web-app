@@ -1,7 +1,7 @@
 import { useDarkMode } from '@/context'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { Image } from 'antd';
-import { Button, DialogClose } from 'gfx-component-lib'
+import { DialogClose } from 'gfx-component-lib'
 
 export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number) => void; key: string }) => {
   const { isMobile } = useBreakPoint()
@@ -36,10 +36,10 @@ export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number)
           Let's start by selecting what would you prefer to create
         </p>
         <div className="space-y-4">
-          <Button
+          <div
             className={`w-full p-4 rounded-sm border bg-grey-5 dark:bg-black-1 border-border-lightmode-primary 
     dark:border-border-darkmode-primary hover:bg-background-lightmode-secondary 
-    dark:hover:bg-background-darkmode-secondary transition-colors text-left`}
+    dark:hover:bg-background-darkmode-secondary transition-colors text-left cursor-pointer`}
             onClick={() => setCurrentStep(1)}
           >
             <div className="flex items-center gap-3 mb-2">
@@ -55,7 +55,7 @@ export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number)
               You can additional token emissions as rewards to LPs in any pool. These boosted rewards accrue extra
               yield for LPs.
             </p>
-          </Button>
+          </div>
         </div>
       </div>
       {!isMobile && (
