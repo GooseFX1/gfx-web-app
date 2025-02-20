@@ -1,6 +1,7 @@
 import { useDarkMode } from '@/context'
 import useBreakPoint from '@/hooks/useBreakPoint'
-import { DialogClose } from 'gfx-component-lib'
+import { Image } from 'antd';
+import { Button, DialogClose } from 'gfx-component-lib'
 
 export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number) => void; key: string }) => {
   const { isMobile } = useBreakPoint()
@@ -17,7 +18,7 @@ export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number)
           </h1>
           {isMobile && (
             <div className="flex flex-row items-center gap-3">
-              <img
+              <Image
                 src="img/assets/question-icn.svg"
                 alt="primary"
                 height={30}
@@ -26,7 +27,7 @@ export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number)
                 className="cursor-pointer"
               />
               <DialogClose>
-                <img src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
+                <Image src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
               </DialogClose>
             </div>
           )}
@@ -35,14 +36,14 @@ export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number)
           Let's start by selecting what would you prefer to create
         </p>
         <div className="space-y-4">
-          <button
+          <Button
             className={`w-full p-4 rounded-sm border bg-grey-5 dark:bg-black-1 border-border-lightmode-primary 
     dark:border-border-darkmode-primary hover:bg-background-lightmode-secondary 
     dark:hover:bg-background-darkmode-secondary transition-colors text-left`}
             onClick={() => setCurrentStep(1)}
           >
             <div className="flex items-center gap-3 mb-2">
-              <img src={`/img/assets/token-rewards-${mode}.svg`} alt="Rewards" className="w-6 h-6" />
+              <Image src={`/img/assets/token-rewards-${mode}.svg`} alt="Rewards" className="w-6 h-6" />
               <h3
                 className="text-base font-semibold font-sans 
               text-text-lightmode-primary dark:text-text-darkmode-primary"
@@ -54,7 +55,7 @@ export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number)
               You can additional token emissions as rewards to LPs in any pool. These boosted rewards accrue extra
               yield for LPs.
             </p>
-          </button>
+          </Button>
         </div>
       </div>
       {!isMobile && (
@@ -63,9 +64,9 @@ export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number)
             Not sure what to create?
           </h2>
           <DialogClose>
-            <img src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
+            <Image src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
           </DialogClose>
-          <img
+          <Image
             src={`/img/assets/help-token-rewards-${mode}.svg`}
             alt="Rewards"
             className="mt-10 w-full max-w-[300px]"

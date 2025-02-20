@@ -1,5 +1,5 @@
 import { FC, useMemo, useState } from 'react'
-import { useGamma } from '../../context'
+import { useConnectionConfig, useGamma } from '../../context'
 import { bigNumberFormatter, truncateBigNumber } from '../../utils'
 import { POOL_TYPE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -28,6 +28,7 @@ export const FarmHeader: FC = () => {
   const { isMobile } = useBreakPoint()
   const [isCreatePool, setIsCreatePool] = useState<boolean>(false)
   const [openRewardsDrawer, setOpenRewardsDrawer] = useState<boolean>(false)
+  const { gammaBoostedRewardsIsActive } = useConnectionConfig()
 
   const totalEarnings = useMemo(() => {
     const number = 0.0
@@ -152,15 +153,17 @@ export const FarmHeader: FC = () => {
           onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
           className="cursor-pointer absolute right-28 top-0"
         />
-        <Button
-          className="pr-2 cursor-pointer absolute right-[9.5rem] top-0"
-          colorScheme={'blue'}
-          variant={'secondary'}
-          //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
-          onClick={() => setOpenRewardsDrawer(true)}
-        >
-          Token Rewards
-        </Button>
+        {(gammaBoostedRewardsIsActive === null || gammaBoostedRewardsIsActive === true) && (
+          <Button
+            className="pr-2 cursor-pointer absolute right-[9.5rem] top-0"
+            colorScheme={'blue'}
+            variant={'secondary'}
+            //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
+            onClick={() => setOpenRewardsDrawer(true)}
+          >
+            Token Rewards
+          </Button>
+        )}
         <Button
           className="pr-2 cursor-pointer absolute right-5 max-sm:right-[8px] top-0"
           colorScheme={'blue'}

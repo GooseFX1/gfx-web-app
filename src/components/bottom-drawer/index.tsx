@@ -1,5 +1,5 @@
 import useBreakPoint from '@/hooks/useBreakPoint'
-import { Dialog, DialogBody, DialogContent, DialogOverlay } from 'gfx-component-lib'
+import { Dialog, DialogBody, DialogContent, DialogOverlay, DialogPortal } from 'gfx-component-lib'
 
 export const BottomDrawer = ({
   isOpen,
@@ -19,20 +19,22 @@ export const BottomDrawer = ({
         setOpen(open)
       }}
     >
-      <DialogOverlay />
-      <DialogContent
-        className={`w-full h-max max-h-[100dvh] overflow-y-scroll rounded-b-none 
+      <DialogPortal>
+        <DialogOverlay />
+        <DialogContent
+          className={`w-full h-max max-h-[100dvh] overflow-y-scroll rounded-b-none 
           `}
-        fullScreen={!isMobile}
-        placement={'bottom'}
-      >
-        <DialogBody
-          className={`bg-white dark:bg-black-2 relative min-md:min-h-[441px]
-           w-full flex flex-row max-md:flex-col rounded-t-[10px]`}
+          fullScreen={!isMobile}
+          placement={'bottom'}
         >
-          {children}
-        </DialogBody>
-      </DialogContent>
+          <DialogBody
+            className={`bg-white dark:bg-black-2 relative min-md:min-h-[441px]
+           w-full flex flex-row max-md:flex-col rounded-t-[10px]`}
+          >
+            {children}
+          </DialogBody>
+        </DialogContent>
+      </DialogPortal>
     </Dialog>
   )
 }

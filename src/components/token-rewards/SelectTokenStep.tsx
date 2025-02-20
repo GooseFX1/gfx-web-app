@@ -22,6 +22,7 @@ import { loadIconImage, numberFormatter } from '@/utils'
 import { JupToken } from '@/pages/FarmV4/constants'
 import { InfiniteTokenListScrollView } from '@/pages/Swap/InfiniteTokenListSwap'
 import { useTokens } from '@/hooks/useTokens'
+import { Image } from 'antd'
 
 interface SelectTokenStepProps {
   setCurrentStep: (step: number) => void
@@ -64,14 +65,14 @@ export const SelectTokenStep = ({
           </h1>
           {isMobile && (
             <div className="flex flex-row items-center gap-3">
-              <img
+              <Image
                 src="/img/assets/question-icn.svg"
                 alt="help"
                 className="w-[30px] h-[30px] cursor-pointer"
                 onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
               />
               <DialogClose>
-                <img src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
+                <Image src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
               </DialogClose>
             </div>
           )}
@@ -84,7 +85,7 @@ export const SelectTokenStep = ({
         {connected ? (
           <>
             <div className="flex flex-row items-center gap-1 mb-2">
-              <img src="/img/assets/wallet-lite-enabled.svg" alt="balance" className="w-5 h-5" />
+              <Image src="/img/assets/wallet-lite-enabled.svg" alt="balance" className="w-5 h-5" />
               <p
                 className={cn(
                   `text-b2 cursor-pointer text-text-lightmode-primary dark:text-text-darkmode-primary`,
@@ -111,12 +112,12 @@ export const SelectTokenStep = ({
         )}
 
         <div className="flex justify-between pt-8 mt-auto">
-          <button
+          <Button
             onClick={() => setCurrentStep(0)}
             className="px-4 py-2 text-text-lightmode-primary dark:text-text-darkmode-primary"
           >
             Back
-          </button>
+          </Button>
           {selectedToken && (
             <Button
               className="px-4 py-2 cursor-pointer"
@@ -133,7 +134,7 @@ export const SelectTokenStep = ({
       {!isMobile && (
         <div className="py-6 px-10 flex flex-col items-center col-span-2 bg-grey-5 dark:bg-black-1">
           <DialogClose>
-            <img src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
+            <Image src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
           </DialogClose>
           {summary}
         </div>

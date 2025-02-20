@@ -24,6 +24,7 @@ import { loadIconImage, numberFormatter, truncateAddress } from '@/utils'
 import { CSSProperties, ElementType, useMemo, useState } from 'react'
 import { InfiniteProPoolScrollView } from '@/pages/FarmV4/InfiniteProPoolList'
 import { usePools } from '@/hooks/usePools'
+import { Image } from 'antd'
 
 interface SelectPoolStepProps {
   setCurrentStep: (step: number) => void
@@ -61,14 +62,14 @@ export const SelectPoolStep = ({ setCurrentStep, summary, pool, setPool }: Selec
           </h1>
           {isMobile && (
             <div className="flex flex-row items-center gap-3">
-              <img
+              <Image
                 src="/img/assets/question-icn.svg"
                 alt="help"
                 className="w-[30px] h-[30px] cursor-pointer"
                 onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
               />
               <DialogClose>
-                <img src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
+                <Image src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
               </DialogClose>
             </div>
           )}
@@ -91,7 +92,7 @@ export const SelectPoolStep = ({ setCurrentStep, summary, pool, setPool }: Selec
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[300px] overflow-y-auto">
               {createdPools.length === 0 && <div className="text-red-600">No pools created</div>}
               {createdPools.map((createdPool, index) => (
-                <button
+                <Button
                   key={index}
                   className={`p-3 rounded-sm border dark:bg-black-1 border-border-lightmode-primary 
               dark:border-border-darkmode-primary hover:bg-background-lightmode-secondary 
@@ -128,7 +129,7 @@ export const SelectPoolStep = ({ setCurrentStep, summary, pool, setPool }: Selec
                         : '0.00'}
                     </div>
                   </div>
-                </button>
+                </Button>
               ))}
               {poolsHasMoreDataCreatedPools && (
                 <Button className="w-full h-full" onClick={() => loadMoreCreatedPools()}>
@@ -142,12 +143,12 @@ export const SelectPoolStep = ({ setCurrentStep, summary, pool, setPool }: Selec
         )}
 
         <div className="flex justify-between pt-8 mt-auto">
-          <button
+          <Button
             onClick={() => setCurrentStep(0)}
             className="px-4 py-2 text-text-lightmode-primary dark:text-text-darkmode-primary"
           >
             Back
-          </button>
+          </Button>
           {pool && (
             <Button
               className="px-4 py-2 cursor-pointer"
@@ -164,7 +165,7 @@ export const SelectPoolStep = ({ setCurrentStep, summary, pool, setPool }: Selec
       {!isMobile && (
         <div className="py-6 px-10 flex flex-col items-center col-span-2 bg-grey-5 dark:bg-black-1">
           <DialogClose>
-            <img src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
+            <Image src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
           </DialogClose>
           {summary}
         </div>
