@@ -1,13 +1,14 @@
 import { FC, useMemo } from 'react'
-import { Badge, 
-  Button, 
-  cn, 
-  Skeleton, 
-  Tooltip, 
-  TooltipContent, 
-  TooltipTrigger, 
-  Loader, 
-  loaders 
+import {
+  Badge,
+  Button,
+  cn,
+  Skeleton,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  Loader,
+  loaders
 } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import useBreakpoint from '../../hooks/useBreakPoint'
@@ -17,7 +18,13 @@ import { loadIconImage, numberFormatter } from '@/utils'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import BigNumber from 'bignumber.js'
 
-const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): JSX.Element => {
+type FarmRowProps = {
+  pool: GAMMAPoolWithUserLiquidity
+  props?: any
+  key?: string
+}
+
+const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
   const { setSelectedCard, setOpenDepositWithdrawSlider, viewRange } = useGamma()
   const { isMobile, isTablet, isDesktop } = useBreakpoint()
   const { base58PublicKey } = useWalletBalance()
@@ -48,8 +55,8 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
             Math.max(
               0,
               pool.stats.daily.feesAprUSD +
-              pool.stats.daily.withdrawnKaminoProfitTokenA +
-              pool.stats.daily.withdrawnKaminoProfitTokenB
+                pool.stats.daily.withdrawnKaminoProfitTokenA +
+                pool.stats.daily.withdrawnKaminoProfitTokenB
             )
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD)),
@@ -70,8 +77,8 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
             Math.max(
               0,
               pool.stats.daily.feesAprUSD +
-              pool.stats.daily.withdrawnKaminoProfitTokenA +
-              pool.stats.daily.withdrawnKaminoProfitTokenB
+                pool.stats.daily.withdrawnKaminoProfitTokenA +
+                pool.stats.daily.withdrawnKaminoProfitTokenB
             )
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.weekly.feesAprUSD)),
@@ -92,8 +99,8 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
             Math.max(
               0,
               pool.stats.monthly.feesAprUSD +
-              pool.stats.monthly.withdrawnKaminoProfitTokenA +
-              pool.stats.monthly.withdrawnKaminoProfitTokenB
+                pool.stats.monthly.withdrawnKaminoProfitTokenA +
+                pool.stats.monthly.withdrawnKaminoProfitTokenB
             )
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUSD)),
@@ -264,6 +271,6 @@ export const FarmRowLoader: FC = () => {
 export const FarmRowLoaderText: FC = () => (
   <div className="flex flex-row items-center justify-center">
     <Loader animationData={loaders.loader_generic} className={'w-15 h-15'} />
-    <span className='font-bold text-regular dark:text-grey-8 text-black-4'>Loading more...</span>
+    <span className="font-bold text-regular dark:text-grey-8 text-black-4">Loading more...</span>
   </div>
 )

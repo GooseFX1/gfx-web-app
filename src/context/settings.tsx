@@ -19,7 +19,7 @@ import {
   VersionedTransaction
 } from '@solana/web3.js'
 import { fetchBrowserCountryCode } from '../api/analytics'
-import { fetchIsUnderMaintenance } from '../api/config'
+import { fetchIsUnderMaintenance, fetchGammaBoostedRewards } from '../api/config'
 import { ENVS } from '../constants'
 import useActivityTracker from '@/hooks/useActivityTracker'
 import { axiosFetchWithRetries } from '../api'
@@ -102,6 +102,7 @@ interface ISettingsConfig {
   userCache: USER_CONFIG_CACHE
   setUserCache: (cache: USER_CONFIG_CACHE) => void
   updateUserCache: (cache: Partial<USER_CONFIG_CACHE>) => void
+  gammaBoostedRewardsIsActive: boolean | null
 }
 
 const SettingsContext = React.createContext<ISettingsConfig | null>(null)
@@ -148,9 +149,12 @@ function migrateCache(cache: USER_CONFIG_CACHE): USER_CONFIG_CACHE {
   const migratedCache = structuredClone(cache)
   const opCache = newCache()
   for (const key in opCache) {
-    if (!(key in migratedCache) || (typeof migratedCache[key] !== typeof opCache[key] && shouldMatchOpCache(key))) {
+    if (
+      !(key in migratedCache) ||
+      (typeof migratedCache[key] !== typeof opCache[key] && shouldMatchOpCache(key))
+    ) {
       console.log('MIGRATING CACHE KEY', key, {
-        inMigrated: (key in migratedCache),
+        inMigrated: key in migratedCache,
         typeMatch: typeof migratedCache[key] !== typeof opCache[key]
       })
       migratedCache[key] = opCache[key]
@@ -221,6 +225,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
   const [blacklisted, setBlacklisted] = useState<boolean>(false)
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false)
+  const [gammaBoostedRewardsIsActive, setGammaBoostedRewardsIsActive] = useState<boolean | null>(null)
   const [userCache, setUserCache] = useState<USER_CONFIG_CACHE>(getOrCreateCache())
   const [endpointName, setEndpointName] = useState<EndPointName>(
     userCache.endpointName !== DEFAULT_ENDPOINT_NAME && userCache.endpointName !== 'Custom'
@@ -293,23 +298,20 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const chainId = useMemo(() => RPCs[endpointName ?? DEFAULT_ENDPOINT_NAME].chainId, [endpointName])
   const network = useMemo(() => RPCs[endpointName ?? DEFAULT_ENDPOINT_NAME].network, [endpointName])
   const endpoint = useMemo(
-    () => userCache.endpoint !== null ? userCache.endpoint : RPCs[endpointName].endpoint,
+    () => (userCache.endpoint !== null ? userCache.endpoint : RPCs[endpointName].endpoint),
     [endpointName, userCache]
   )
 
-  useEffect(
-    () => {
-      const payload: Partial<USER_CONFIG_CACHE> = {}
-      // WHY?! -_- .. need smarter way to handle this
-      if (priorityFee !== userCache.priorityFee) {
-        payload.priorityFee = priorityFee
-      }
-      if (Object.keys(payload).length > 0) {
-        updateUserCache(payload)
-      }
-    },
-    [priorityFee]
-  )
+  useEffect(() => {
+    const payload: Partial<USER_CONFIG_CACHE> = {}
+    // WHY?! -_- .. need smarter way to handle this
+    if (priorityFee !== userCache.priorityFee) {
+      payload.priorityFee = priorityFee
+    }
+    if (Object.keys(payload).length > 0) {
+      updateUserCache(payload)
+    }
+  }, [priorityFee])
 
   const { connection, perpsConnection } = useMemo(() => {
     const perpsConnection = new Connection(endpoint, {
@@ -359,9 +361,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     if (endpointName === null) {
       setEndpointName(
-        userCache.endpointName === null || userCache.endpoint === null
-          ? RPCs[endpointName].name
-          : 'Custom'
+        userCache.endpointName === null || userCache.endpoint === null ? RPCs[endpointName].name : 'Custom'
       )
     }
   }, [userCache])
@@ -377,6 +377,11 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       // sets isUnderMaintenance flag
       fetchIsUnderMaintenance().then((maintenanceStatus: boolean) => setIsUnderMaintenance(maintenanceStatus))
+
+      // sets gammaBoostedRewardsIsActive flag
+      fetchGammaBoostedRewards().then((gammaBoostedRewardsIsActive: boolean) =>
+        setGammaBoostedRewardsIsActive(gammaBoostedRewardsIsActive)
+      )
     }
   }, [])
 
@@ -401,14 +406,14 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         priorityFeeValue,
         userCache,
         setUserCache: setCache,
-        updateUserCache
+        updateUserCache,
+        gammaBoostedRewardsIsActive
       }}
     >
       {children}
     </SettingsContext.Provider>
   )
 }
-
 
 export async function getLatestPriorityFees(txn: Transaction | VersionedTransaction) {
   const response = await fetch(HELIUS_RPC.endpoint, {
@@ -429,19 +434,16 @@ export async function getLatestPriorityFees(txn: Transaction | VersionedTransact
     })
   })
   const data = await response.json()
-  console.log(
-    'Fee in function for ',
-    data.result
-  )
+  console.log('Fee in function for ', data.result)
   return data.result.priorityFeeLevels as PriorityFeeLevelsFromHelius
 }
 
 type PriorityFeeLevelsFromHelius = {
-  min: number,
-  low: number,
-  medium: number,
-  high: number,
-  veryHigh: number,
+  min: number
+  low: number
+  medium: number
+  high: number
+  veryHigh: number
   unsafeMax: number
 }
 
@@ -451,12 +453,12 @@ export function getPriorityFeeFromLevel(
 ) {
   switch (priorityFee) {
     case 'Default':
-      return priorityFeeLevels.low;
+      return priorityFeeLevels.low
     case 'Fast':
-      return priorityFeeLevels.medium;
+      return priorityFeeLevels.medium
     case 'Turbo':
-      return priorityFeeLevels.high;
+      return priorityFeeLevels.high
     default:
-      return priorityFeeLevels.min;
+      return priorityFeeLevels.min
   }
 }

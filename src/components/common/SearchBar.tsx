@@ -32,9 +32,7 @@ const SearchBar = ({
       className={cn('min-w-[200px] w-full max-h-max', groupClassName)}
       leftItem={
         <InputElementLeft className={'flex gap-1.25'}>
-          <Icon
-            size={'sm'} src={`/img/assets/searchbar_${mode}${focus ? '_active' : ''}.svg`}
-            alt="search-icon" />
+          <Icon size={'sm'} src={`/img/assets/searchbar_${mode}${focus ? '_active' : ''}.svg`} alt="search-icon" />
           {additionalInputElementLeft}
         </InputElementLeft>
       }
@@ -59,13 +57,13 @@ const SearchBar = ({
     >
       <Input
         disabled={disabled}
-        {...rest}
         value={value}
         className={cn('min-w-[200px] w-full', className)}
         placeholder={placeholder ?? 'Search by token name symbol or address'}
         onChange={onChange}
         onFocus={setFocus.on}
         onBlur={setFocus.off}
+        {...rest}
       />
     </InputGroup>
   )
