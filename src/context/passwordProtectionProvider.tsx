@@ -1,4 +1,3 @@
-import { PASSWORD_BETA_ACCESS } from '@/pages/FarmV4/constants'
 import { PasswordProtectionPage } from '@/pages/FarmV4/PasswordProtection'
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { toast } from 'sonner'
@@ -12,7 +11,7 @@ type PasswordProviderProps = {
 }
 
 const PW_KEY = 'gfx-beta-access'
-
+const PASSWORD_BETA_ACCESS = 'goosegang'
 const PasswordContext = createContext<PasswordContextType | undefined>(undefined)
 
 export const PasswordProvider: React.FC<PasswordProviderProps> = ({ children }) => {
@@ -28,7 +27,7 @@ export const PasswordProvider: React.FC<PasswordProviderProps> = ({ children }) 
   }
 
   if (!hasAccess) {
-    return <PasswordProtectionPage onSubmit={handlePasswordSubmit} />
+    return <PasswordProtectionPage accessPassword={PASSWORD_BETA_ACCESS} onSubmit={handlePasswordSubmit} />
   }
 
   return <PasswordContext.Provider value={{ isAuthenticated: hasAccess }}>{children}</PasswordContext.Provider>

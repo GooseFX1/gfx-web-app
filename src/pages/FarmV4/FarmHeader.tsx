@@ -38,7 +38,7 @@ export const FarmHeader: FC = () => {
   const infoCards = useMemo(() => {
     const data = [
       {
-        name: 'TVLeeeeee',
+        name: 'TVL',
         value: bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.tvl))),
         tooltip: 'TVL represents the total USD value of all assets deposited in our pools'
       },
@@ -99,10 +99,11 @@ export const FarmHeader: FC = () => {
       <TokenRewardsDrawer isOpen={openRewardsDrawer} setOpen={setOpenRewardsDrawer} />
       <CreatePool isCreatePool={isCreatePool} setIsCreatePool={setIsCreatePool} />
       <DepositWithdrawSlider />
+
       <div className={'max-sm:px-2.5 px-5'}>
         <DocsBanner />
       </div>
-      <div className="relative mb-3.75 max-sm:px-2.5 px-5">
+      <div className="mb-3.75 max-sm:px-2.5 px-5 relative">
         {/* <div className="flex flex-row items-center mb-1.5">
           <Icon
             src={`img/assets/${isCardMode ? `pro_${mode}` : `lite_${mode}`}.svg`}
@@ -111,69 +112,78 @@ export const FarmHeader: FC = () => {
           ></Icon>
           <h4 className="text-tiny font-semibold dark:text-grey-8 text-black-4">{isCardMode ? 'PRO' : 'LITE'}</h4>
         </div> */}
-        <div className="flex flex-row items-center mb-1.5">
-          <RadioOptionGroup
-            defaultValue={'Pools'}
-            value={isPortfolio ? 'Portfolio' : 'Pools'}
-            className={`w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-3 
-              sm-lg:gap-0 sm-lg:grid-cols-3 min-md:mr-2 items-center`}
-            optionClassName={`min-md:w-[85px]`}
-            options={[
-              {
-                value: 'Pools',
-                label: 'Pools',
-                onClick: () => {
-                  setCurrentSort('1')
-                  setCurrentPoolType(POOL_TYPE.primary)
-                  setIsPortfolio.off()
+        <div>
+          <div className="flex flex-row items-center mb-1.5">
+            <RadioOptionGroup
+              defaultValue={'Pools'}
+              value={isPortfolio ? 'Portfolio' : 'Pools'}
+              className={`w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-3 
+                sm-lg:gap-0 sm-lg:grid-cols-3 min-md:mr-2 items-center`}
+              optionClassName={`min-md:w-[85px]`}
+              options={[
+                {
+                  value: 'Pools',
+                  label: 'Pools',
+                  onClick: () => {
+                    setCurrentSort('1')
+                    setCurrentPoolType(POOL_TYPE.primary)
+                    setIsPortfolio.off()
+                  }
+                },
+                {
+                  value: 'Portfolio',
+                  label: 'Portfolio',
+                  onClick: () => {
+                    setCurrentSort('5')
+                    setCurrentPoolType(POOL_TYPE.all)
+                    setIsPortfolio.on()
+                  }
                 }
-              },
-              {
-                value: 'Portfolio',
-                label: 'Portfolio',
-                onClick: () => {
-                  setCurrentSort('5')
-                  setCurrentPoolType(POOL_TYPE.all)
-                  setIsPortfolio.on()
-                }
-              }
-            ]}
-          />
+              ]}
+            />
+          </div>
+
+          <div className="mb-1.5 dark:text-grey-2 text-grey-1 text-regular font-semibold">
+            {!isPortfolio
+              ? 'Provide liquidity and earn fees'
+              : 'All your deposits, rewards and advance metrics in one place.'}
+          </div>
         </div>
-        <div className="mb-1.5 dark:text-grey-2 text-grey-1 text-regular font-semibold">
-          {!isPortfolio
-            ? 'Provide liquidity and earn fees'
-            : 'All your deposits, rewards and advance metrics in one place.'}
-        </div>
-        <img
-          src="img/assets/question-icn.svg"
-          alt="primary"
-          height={35}
-          width={35}
-          onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
-          className="cursor-pointer absolute right-28 top-0"
-        />
-        {(gammaBoostedRewardsIsActive === null || gammaBoostedRewardsIsActive === true) && (
-          <Button
-            className="pr-2 cursor-pointer absolute right-[9.5rem] top-0"
-            colorScheme={'blue'}
-            variant={'secondary'}
-            //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
-            onClick={() => setOpenRewardsDrawer(true)}
-          >
-            Token Rewards
-          </Button>
+
+        {!isMobile && (
+          <div className="flex flex-row items-center absolute right-[20px] top-0 max-sm:right-[6px]">
+            {(gammaBoostedRewardsIsActive === null || gammaBoostedRewardsIsActive === true) && (
+              <Button
+                className="cursor-pointer mr-2"
+                colorScheme={'blue'}
+                variant={'secondary'}
+                //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
+                onClick={() => setOpenRewardsDrawer(true)}
+              >
+                Token Rewards
+              </Button>
+            )}
+            <Button
+              className="cursor-pointer mr-2"
+              colorScheme={'blue'}
+              variant={'secondary'}
+              //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
+              onClick={() => setIsCreatePool(true)}
+            >
+              New Pool
+            </Button>
+            <img
+              src="img/assets/question-icn.svg"
+              alt="primary"
+              height={35}
+              width={35}
+              onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
+              className="cursor-pointer "
+            />
+          </div>
         )}
-        <Button
-          className="pr-2 cursor-pointer absolute right-5 max-sm:right-[8px] top-0"
-          colorScheme={'blue'}
-          variant={'secondary'}
-          //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
-          onClick={() => setIsCreatePool(true)}
-        >
-          New Pool
-        </Button>
       </div>
+
       {!isPortfolio && (
         <div
           className={`flex flex-row relative items-center no-scrollbar gap-2.5 
@@ -232,6 +242,40 @@ export const FarmHeader: FC = () => {
           </div>
         </div>
       )}
+
+      {isMobile &&
+        !isPortfolio && (
+          <div className="flex flex-row items-center justify-between mt-5 px-2">
+            {(gammaBoostedRewardsIsActive === null || gammaBoostedRewardsIsActive === true) && (
+              <Button
+                className="cursor-pointer mr-2 w-full"
+                colorScheme={'blue'}
+                variant={'secondary'}
+                //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
+                onClick={() => setOpenRewardsDrawer(true)}
+              >
+                Token Rewards
+              </Button>
+            )}
+            <Button
+              className="cursor-pointer mr-2 w-full"
+              colorScheme={'blue'}
+              variant={'secondary'}
+              //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
+              onClick={() => setIsCreatePool(true)}
+            >
+              New Pool
+            </Button>
+            <img
+              src="img/assets/question-icn.svg"
+              alt="primary"
+              height={35}
+              width={35}
+              onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
+              className="cursor-pointer "
+            />
+          </div>
+        )}
     </div>
   )
 }

@@ -4,15 +4,15 @@ import passwordProtectionLight from '@/animations/passwordProtectionLight.json'
 import passwordProtectionDark from '@/animations/passwordProtectionDark.json'
 import { useDarkMode } from '@/context'
 import { Button } from 'gfx-component-lib'
-import { PASSWORD_BETA_ACCESS } from '@/pages/FarmV4/constants'
 import { SOCIAL_MEDIAS } from '@/constants'
 import { navigateToCurried } from '@/utils/requests'
 
 type PasswordScreenProps = {
   onSubmit: (password: string) => void
+  accessPassword: string
 }
 
-export const PasswordProtectionPage: React.FC<PasswordScreenProps> = ({ onSubmit }) => {
+export const PasswordProtectionPage: React.FC<PasswordScreenProps> = ({ onSubmit, accessPassword }) => {
   const [password, setPassword] = useState<string>('')
   const { isDarkMode } = useDarkMode()
 
@@ -36,9 +36,7 @@ export const PasswordProtectionPage: React.FC<PasswordScreenProps> = ({ onSubmit
         <Button
           variant={'link'}
           onClick={navigateToCurried(SOCIAL_MEDIAS.twitter, '_blank')}
-          className={
-            'px-0 dark:text-text-darkmode-primary text-text-blue hover:opacity-75'
-          }
+          className={'px-0 dark:text-text-darkmode-primary text-text-blue hover:opacity-75'}
         >
           send us a message on X
         </Button>{' '}
@@ -64,7 +62,7 @@ export const PasswordProtectionPage: React.FC<PasswordScreenProps> = ({ onSubmit
           variant={'primary'}
           className="w-full"
           colorScheme={'blue'}
-          disabled={password.length !== PASSWORD_BETA_ACCESS.length}
+          disabled={password.length !== accessPassword.length}
         >
           Submit
         </Button>
