@@ -34,7 +34,7 @@ export const Summary = ({
     if (!selectedPool || !selectedToken || !startDate || !endDate) return null
 
     const days = dayjs(endDate).diff(dayjs(startDate), 'days')
-    if (days === 0) return amountToken
+    if (days <= 1) return amountToken
 
     const totalRewards = numberFormatter(new Decimal(amountToken).div(days).toNumber())
     return totalRewards
