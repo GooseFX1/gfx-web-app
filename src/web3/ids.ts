@@ -607,10 +607,14 @@ export const POOL_VAULT_SEED_PREFIX = 'pool_vault'
 
 export const AUTHORITY_PREFIX = 'vault_and_lp_mint_auth_seed'
 
-export const USER_POOL_LIQUIDITY_PREFIX =  "user-pool-liquidity"
+export const USER_POOL_LIQUIDITY_PREFIX = 'user-pool-liquidity'
 
 export const AMM_CONFIG = 'amm_config'
 
 export const POOL_SEED_PRFIX = 'pool'
 
 export const OBSERVATION_PREFIX = 'observation'
+
+export const REWARD_INFO_SEED = 'reward_info_seed'
+
+export const REWARD_VAULT_SEED = 'reward_vault_seed'
