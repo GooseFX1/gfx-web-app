@@ -1,24 +1,47 @@
-import { useState } from 'react'
-import { BottomDrawer } from '../bottom-drawer'
+import { useEffect, useState } from 'react'
 import { DefaultStep } from './DefaultStep'
 import { SelectPoolStep } from './SelectPoolStep'
 import { Summary } from './Summary'
 import { GAMMAPool } from '@/types/gamma'
 import { SelectTokenStep } from './SelectTokenStep'
 import { JupToken } from '@/pages/FarmV4/constants'
+import { AddTimeframeStep } from './AddTimeframeStep'
+import dayjs from 'dayjs'
+import { SummaryWrapper } from './SummaryWrapper'
+import { BottomDrawer } from '../bottom-drawer'
+import useBreakPoint from '@/hooks/useBreakPoint'
 
 export const TokenRewardsDrawer = ({ isOpen, setOpen }: { isOpen: boolean; setOpen: (b: boolean) => void }) => {
   const [currentStep, setCurrentStep] = useState(0)
   const [pool, setPool] = useState<GAMMAPool | null>(null)
   const [selectedToken, setSelectedToken] = useState<JupToken | null>(null)
   const [amountToken, setAmountToken] = useState<string>('')
+  const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs())
+  const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs())
+  const { isMobile } = useBreakPoint()
 
-  const summary = <Summary selectedPool={pool} selectedToken={selectedToken} amountToken={amountToken} />
+  useEffect(() => {
+    if (currentStep === 4 && !isMobile) {
+      setCurrentStep(3)
+    }
+  }, [isMobile])
+
+  const summary = (
+    <Summary
+      key="summary"
+      selectedPool={pool}
+      selectedToken={selectedToken}
+      amountToken={amountToken}
+      startDate={startDate}
+      endDate={endDate}
+    />
+  )
 
   const steps = [
-    <DefaultStep setCurrentStep={setCurrentStep} key="default" />,
+    <DefaultStep currentStep={currentStep} setCurrentStep={setCurrentStep} key="default" />,
     <SelectPoolStep
       key="select-pool"
+      currentStep={currentStep}
       setCurrentStep={setCurrentStep}
       summary={summary}
       pool={pool}
@@ -26,13 +49,36 @@ export const TokenRewardsDrawer = ({ isOpen, setOpen }: { isOpen: boolean; setOp
     />,
     <SelectTokenStep
       key="select-token"
+      currentStep={currentStep}
       setCurrentStep={setCurrentStep}
       summary={summary}
       selectedToken={selectedToken}
       setSelectedToken={setSelectedToken}
       amountToken={amountToken}
       setAmountToken={setAmountToken}
-    />
+    />,
+    <AddTimeframeStep
+      key="add-timeframe"
+      currentStep={currentStep}
+      setCurrentStep={setCurrentStep}
+      summary={summary}
+      selectedToken={selectedToken}
+      startDate={startDate}
+      endDate={endDate}
+      setStartDate={setStartDate}
+      setEndDate={setEndDate}
+    />,
+    <SummaryWrapper key="summary-wrapper">
+      <Summary
+        key="summary"
+        selectedPool={pool}
+        selectedToken={selectedToken}
+        amountToken={amountToken}
+        startDate={startDate}
+        endDate={endDate}
+        hideTitle={true}
+      />
+    </SummaryWrapper>
   ]
 
   return (

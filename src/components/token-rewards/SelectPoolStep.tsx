@@ -27,6 +27,7 @@ import { InfiniteProPoolScrollView } from '@/pages/FarmV4/InfiniteProPoolList'
 import { usePools } from '@/hooks/usePools'
 
 interface SelectPoolStepProps {
+  currentStep: number
   setCurrentStep: (step: number) => void
   summary: React.ReactNode
   pool: GAMMAPool | null
@@ -34,7 +35,13 @@ interface SelectPoolStepProps {
   key: string
 }
 
-export const SelectPoolStep = ({ setCurrentStep, summary, pool, setPool }: SelectPoolStepProps) => {
+export const SelectPoolStep = ({
+  currentStep,
+  setCurrentStep,
+  summary,
+  pool,
+  setPool
+}: SelectPoolStepProps) => {
   const { isMobile } = useBreakPoint()
   const { connected } = useWallet()
   const { mode } = useDarkMode()
@@ -144,7 +151,7 @@ export const SelectPoolStep = ({ setCurrentStep, summary, pool, setPool }: Selec
 
         <div className="flex justify-between pt-8 mt-auto">
           <Button
-            onClick={() => setCurrentStep(0)}
+            onClick={() => setCurrentStep(currentStep - 1)}
             className="px-4 py-2 text-text-lightmode-primary dark:text-text-darkmode-primary"
           >
             Back
@@ -154,7 +161,7 @@ export const SelectPoolStep = ({ setCurrentStep, summary, pool, setPool }: Selec
               className="px-4 py-2 cursor-pointer"
               colorScheme={'blue'}
               variant={'secondary'}
-              onClick={() => setCurrentStep(2)}
+              onClick={() => setCurrentStep(currentStep + 1)}
             >
               Next
             </Button>
@@ -163,7 +170,7 @@ export const SelectPoolStep = ({ setCurrentStep, summary, pool, setPool }: Selec
       </div>
 
       {!isMobile && (
-        <div className="py-6 px-10 flex flex-col items-center col-span-2 bg-grey-5 dark:bg-black-1">
+        <div className="py-6 px-5 flex flex-col items-center col-span-2 bg-grey-5 dark:bg-black-1">
           <DialogClose>
             <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
           </DialogClose>

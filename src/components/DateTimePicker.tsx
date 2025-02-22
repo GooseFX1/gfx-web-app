@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react'
 import { Calendar, TimeInput, TimeInputValue, CalendarProps } from 'gfx-component-lib'
 import dayjs from 'dayjs'
@@ -48,7 +49,14 @@ function DateTimePicker({ value, onChange, ...props }: DateTimePickerProps) {
           <p className={`text-b2 font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary`}>
             Select Time:
           </p>
-          <TimeInput value={time} onValueChange={setTime} />
+          <TimeInput
+            value={time}
+            onValueChange={setTime}
+            classNames={{
+              container: 'text-text-lightmode-primary dark:text-text-darkmode-primary',
+              content: 'z-[1002]'
+            }}
+          />
         </div>
       }
       {...props}

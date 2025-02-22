@@ -25,6 +25,7 @@ import { InfiniteTokenListScrollView } from '@/pages/Swap/InfiniteTokenListSwap'
 import { useTokens } from '@/hooks/useTokens'
 
 interface SelectTokenStepProps {
+  currentStep: number
   setCurrentStep: (step: number) => void
   summary: React.ReactNode
   selectedToken: JupToken
@@ -35,6 +36,7 @@ interface SelectTokenStepProps {
 }
 
 export const SelectTokenStep = ({
+  currentStep,
   setCurrentStep,
   summary,
   selectedToken,
@@ -113,17 +115,17 @@ export const SelectTokenStep = ({
 
         <div className="flex justify-between pt-8 mt-auto">
           <Button
-            onClick={() => setCurrentStep(0)}
+            onClick={() => setCurrentStep(currentStep - 1)}
             className="px-4 py-2 text-text-lightmode-primary dark:text-text-darkmode-primary"
           >
             Back
           </Button>
-          {selectedToken && (
+          {selectedToken && amountToken && (
             <Button
               className="px-4 py-2 cursor-pointer"
               colorScheme={'blue'}
               variant={'secondary'}
-              onClick={() => setCurrentStep(3)}
+              onClick={() => setCurrentStep(currentStep + 1)}
             >
               Next
             </Button>
@@ -132,7 +134,7 @@ export const SelectTokenStep = ({
       </div>
 
       {!isMobile && (
-        <div className="py-6 px-10 flex flex-col items-center col-span-2 bg-grey-5 dark:bg-black-1">
+        <div className="py-6 px-5 flex flex-col items-center col-span-2 bg-grey-5 dark:bg-black-1">
           <DialogClose>
             <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
           </DialogClose>
@@ -154,7 +156,7 @@ function TokenSelectInput({
 }: {
   token: JupToken | null
   setToken: (token: JupToken) => void
-  handleChange?: (e: React.ChangeEvent<HTMLInputElement>, isTokenA: boolean) => void
+  handleChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   amountToken: string
   setAmountToken: (token: string) => void
   disableInput?: boolean
@@ -262,7 +264,7 @@ function TokenSelectInput({
       <Input
         type="text"
         placeholder={`0.00 ${token ? token?.symbol : ''}`}
-        onChange={(e) => handleChange(e, true)}
+        onChange={(e) => handleChange(e)}
         value={amountToken}
         className={cn(
           'h-[45px] text-right',

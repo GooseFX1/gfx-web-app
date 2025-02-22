@@ -2,11 +2,16 @@ import { useDarkMode } from '@/context'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { DialogClose, Icon } from 'gfx-component-lib'
 
-export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number) => void; key: string }) => {
+export const DefaultStep = ({
+  currentStep,
+  setCurrentStep
+}: {
+  currentStep: number
+  setCurrentStep: (step: number) => void
+  key: string
+}) => {
   const { isMobile } = useBreakPoint()
   const { mode } = useDarkMode()
-
-  console.log(mode)
 
   return (
     <div className="grid grid-cols-5 gap-10 w-full">
@@ -39,7 +44,7 @@ export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number)
             className={`w-full p-4 rounded-sm border bg-grey-5 dark:bg-black-1 border-border-lightmode-primary 
     dark:border-border-darkmode-primary hover:bg-background-lightmode-secondary 
     dark:hover:bg-background-darkmode-secondary transition-colors text-left cursor-pointer`}
-            onClick={() => setCurrentStep(1)}
+            onClick={() => setCurrentStep(currentStep + 1)}
           >
             <div className="flex items-center gap-3 mb-2">
               <Icon src={`/img/assets/token-rewards-${mode}.svg`} alt="Rewards" className="w-6 h-6" />
