@@ -25,7 +25,12 @@ export const TokenRewardsDrawer = ({ isOpen, setOpen }: { isOpen: boolean; setOp
       setCurrentStep(3)
     }
   }, [isMobile])
-
+  useEffect(()=>{
+    const diff = startDate.diff(endDate, 'days')
+    if (diff === 0){
+      setEndDate(endDate.add(1, 'day'))
+    }
+  },[startDate, endDate])
   const summary = (
     <Summary
       key="summary"

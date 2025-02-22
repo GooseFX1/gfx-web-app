@@ -8,6 +8,7 @@ import { loadIconImage } from '@/utils'
 import { JupToken } from '@/pages/FarmV4/constants'
 import dayjs from 'dayjs'
 import DateTimeInputWithDialog from '../DateTimeInputWithDialog'
+import { useMemo } from 'react'
 
 interface AddTimeframeStepProps {
   currentStep: number
@@ -34,6 +35,7 @@ export const AddTimeframeStep = ({
   const { isMobile } = useBreakPoint()
   const { connected } = useWallet()
   const { mode } = useDarkMode()
+  const endBefore = useMemo(()=>startDate.add(1, 'day').toDate(),[startDate])
 
   return (
     <div className="grid grid-cols-5 gap-10 w-full">
@@ -78,7 +80,9 @@ export const AddTimeframeStep = ({
                 </div>
                 <DateTimeInputWithDialog value={startDate} onChange={setStartDate} />
                 <p>to</p>
-                <DateTimeInputWithDialog value={endDate} onChange={setEndDate} />
+                <DateTimeInputWithDialog value={endDate} onChange={setEndDate} disabled={{
+                  before: endBefore
+                }} />
               </div>
             ) : (
               <Button
