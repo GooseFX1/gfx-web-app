@@ -51,21 +51,9 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
             Math.max(0, pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD)
           ),
           formattedFees: numberFormatter(Math.max(0, pool.stats.daily.feesUSD)),
-          formattedAPR: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.daily.feesAprUSD +
-                pool.stats.daily.withdrawnKaminoProfitTokenAUsd +
-                pool.stats.daily.withdrawnKaminoProfitTokenBUsd
-            )
-          ),
+          formattedAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD)),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD)),
-          kaminoAPR: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.daily.withdrawnKaminoProfitTokenAUsd + pool.stats.daily.withdrawnKaminoProfitTokenBUsd
-            )
-          )
+          kaminoAPR: numberFormatter(Math.max(0))
         }
       case 1:
         return {
@@ -73,21 +61,9 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
             Math.max(0, pool.stats.weekly.volumeTokenAUSD + pool.stats.weekly.volumeTokenBUSD)
           ),
           formattedFees: numberFormatter(Math.max(0, pool.stats.weekly.feesUSD)),
-          formattedAPR: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.daily.feesAprUSD +
-                pool.stats.daily.withdrawnKaminoProfitTokenAUsd +
-                pool.stats.daily.withdrawnKaminoProfitTokenBUsd
-            )
-          ),
+          formattedAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD)),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.weekly.feesAprUSD)),
-          kaminoAPR: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.daily.withdrawnKaminoProfitTokenAUsd + pool.stats.daily.withdrawnKaminoProfitTokenBUsd
-            )
-          )
+          kaminoAPR: numberFormatter(Math.max(0))
         }
       case 2:
         return {
@@ -95,21 +71,9 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
             Math.max(0, pool.stats.monthly.volumeTokenAUSD + pool.stats.monthly.volumeTokenBUSD)
           ),
           formattedFees: numberFormatter(Math.max(0, pool.stats.monthly.feesUSD)),
-          formattedAPR: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.monthly.feesAprUSD +
-                pool.stats.monthly.withdrawnKaminoProfitTokenAUsd +
-                pool.stats.monthly.withdrawnKaminoProfitTokenBUsd
-            )
-          ),
+          formattedAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUSD)),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUSD)),
-          kaminoAPR: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.monthly.withdrawnKaminoProfitTokenAUsd + pool.stats.monthly.withdrawnKaminoProfitTokenBUsd
-            )
-          )
+          kaminoAPR: numberFormatter(Math.max(0))
         }
     }
   }, [pool.stats, viewRange])
