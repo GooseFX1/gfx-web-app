@@ -2,7 +2,7 @@ import React, { createContext, FC, ReactNode, useContext, useEffect, useLayoutEf
 import { JupToken, TOKEN_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
 import useBoolean from '@/hooks/useBoolean'
 import { fetchTokenList, fetchTokensByPublicKey } from '@/api/gamma'
-import { aborter } from '@/utils'
+import { aborter, clamp } from '@/utils'
 import { useConnectionConfig } from '@/context/settings'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import useFirstRender from '@/hooks/useFirstRender'
@@ -29,6 +29,7 @@ interface ISwapConfig {
   topBalancesWithTokenList: JupToken[]
   setTokenPage: (page: number) => void
   nextPage: number
+  loadNextPage: ()=>void
 }
 
 const SwapContext = createContext<ISwapConfig | null>(null)
@@ -38,7 +39,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { userCache, updateUserCache } = useConnectionConfig()
   const [tokens, setTokens] = useState<JupToken[]>([])
   const [tokenPage, setTokenPage] = useState<number>(1)
-  const nextPage = useMemo(() => tokenPage + 1, [tokenPage])
+  const [nextPage, setNextPage] = useState<number>(2)
   const [maxTokensReached, setMaxTokensReached] = useBoolean(true)
   const [isLoadingTokenList, setIsLoadingTokenList] = useBoolean(false)
   const [searchValue, setSearchValue] = useState<string>('')
@@ -108,6 +109,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
         setTokenPage(res.data.currentPage)
         setMaxTokensReached.set(res.data.totalPages == res.data.currentPage)
+        setNextPage(clamp(res.data.currentPage + 1, 1, res.data.totalPages))
       })
       .finally(() => {
         setIsLoadingTokenList.off()
@@ -162,6 +164,10 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       clearTimeout(timeout)
     }
   }, [searchValue])
+  const loadNextPage = async () => {
+    if (isLoadingTokenList || maxTokensReached) return
+    await updateTokens({ page: nextPage })
+  }
   return (
     <SwapContext.Provider
       value={{
@@ -183,7 +189,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         topBalancesWithTokenList,
         searchValue,
         setTokenPage,
-        nextPage
+        nextPage,
+        loadNextPage
       }}
     >
       {children}

@@ -3,16 +3,19 @@ import { JupToken, TOKEN_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
 import { fetchTokenList } from '@/api/gamma'
 import useFirstRender from './useFirstRender'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+import { clamp } from '@/utils'
+import useDebounce from '@/hooks/useDebounce'
 
 export function useTokens({ searchValue: initialSearchValue }: { searchValue: string }) {
   const [tokens, setTokens] = useState<JupToken[]>([])
   const [tokenPage, setTokenPage] = useState<number>(1)
+  const [nextTokenPage, setNextTokenPage] = useState<number>(2)
   const [maxTokensReached, setMaxTokensReached] = useState<boolean>(false)
   const [isLoadingTokenList, setIsLoadingTokenList] = useState<boolean>(false)
   const { balance, topBalances, publicKey } = useWalletBalance()
   const [searchValue, setSearchValue] = useState<string>(initialSearchValue)
   const firstMount = useFirstRender()
-
+  const { debounce, abortDebounce } = useDebounce()
   const updateTokens = ({ page }) => {
     setIsLoadingTokenList(true)
 
@@ -24,6 +27,7 @@ export function useTokens({ searchValue: initialSearchValue }: { searchValue: st
         }
         setTokenPage(res.data.currentPage)
         setMaxTokensReached(res.data.totalPages == res.data.currentPage)
+        setNextTokenPage(clamp(res.data.currentPage + 1, 1, res.data.totalPages))
       })
       .finally(() => {
         setIsLoadingTokenList(false)
@@ -36,7 +40,12 @@ export function useTokens({ searchValue: initialSearchValue }: { searchValue: st
       })
     }
   }, [])
-
+  useEffect(() => {
+    debounce(() => updateTokens({ page: 1 }), 333)
+    return () => {
+      abortDebounce()
+    }
+  }, [searchValue])
   const topBalancesWithTokenList: JupToken[] = useMemo(() => {
     if (!tokens.length || !publicKey) return []
     const data = []
@@ -57,7 +66,10 @@ export function useTokens({ searchValue: initialSearchValue }: { searchValue: st
     }
     return data.sort((a, b) => (balance[a.address].value.gt(balance[b.address].value) ? -1 : 1))
   }, [topBalances, tokens, balance, publicKey])
-
+  const loadNextPage = async () => {
+    if (isLoadingTokenList || maxTokensReached) return
+    await updateTokens({ page: nextTokenPage })
+  }
   return {
     searchValue,
     setSearchValue,
@@ -67,6 +79,8 @@ export function useTokens({ searchValue: initialSearchValue }: { searchValue: st
     maxTokensReached,
     isLoadingTokenList,
     updateTokens,
-    topBalancesWithTokenList
+    topBalancesWithTokenList,
+    nextTokenPage,
+    loadNextPage
   }
 }
