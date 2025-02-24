@@ -55,15 +55,15 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
             Math.max(
               0,
               pool.stats.daily.feesAprUSD +
-                pool.stats.daily.withdrawnKaminoProfitTokenA +
-                pool.stats.daily.withdrawnKaminoProfitTokenB
+                pool.stats.daily.withdrawnKaminoProfitTokenAUsd +
+                pool.stats.daily.withdrawnKaminoProfitTokenBUsd
             )
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD)),
           kaminoAPR: numberFormatter(
             Math.max(
               0,
-              pool.stats.daily.withdrawnKaminoProfitTokenA + pool.stats.daily.withdrawnKaminoProfitTokenB
+              pool.stats.daily.withdrawnKaminoProfitTokenAUsd + pool.stats.daily.withdrawnKaminoProfitTokenBUsd
             )
           )
         }
@@ -77,15 +77,15 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
             Math.max(
               0,
               pool.stats.daily.feesAprUSD +
-                pool.stats.daily.withdrawnKaminoProfitTokenA +
-                pool.stats.daily.withdrawnKaminoProfitTokenB
+                pool.stats.daily.withdrawnKaminoProfitTokenAUsd +
+                pool.stats.daily.withdrawnKaminoProfitTokenBUsd
             )
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.weekly.feesAprUSD)),
           kaminoAPR: numberFormatter(
             Math.max(
               0,
-              pool.stats.daily.withdrawnKaminoProfitTokenA + pool.stats.daily.withdrawnKaminoProfitTokenB
+              pool.stats.daily.withdrawnKaminoProfitTokenAUsd + pool.stats.daily.withdrawnKaminoProfitTokenBUsd
             )
           )
         }
@@ -99,15 +99,15 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
             Math.max(
               0,
               pool.stats.monthly.feesAprUSD +
-                pool.stats.monthly.withdrawnKaminoProfitTokenA +
-                pool.stats.monthly.withdrawnKaminoProfitTokenB
+                pool.stats.monthly.withdrawnKaminoProfitTokenAUsd +
+                pool.stats.monthly.withdrawnKaminoProfitTokenBUsd
             )
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUSD)),
           kaminoAPR: numberFormatter(
             Math.max(
               0,
-              pool.stats.monthly.withdrawnKaminoProfitTokenA + pool.stats.monthly.withdrawnKaminoProfitTokenB
+              pool.stats.monthly.withdrawnKaminoProfitTokenAUsd + pool.stats.monthly.withdrawnKaminoProfitTokenBUsd
             )
           )
         }
