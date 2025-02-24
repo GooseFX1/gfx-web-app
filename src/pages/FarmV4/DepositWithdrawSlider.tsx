@@ -34,6 +34,60 @@ import { blob, publicKey as pbk, struct, u128, u64, u8 } from '@/utils/marshmall
 //import useBoolean from '@/hooks/useBoolean'
 //import LottieConfetti from '@/pages/FarmV4/LottieConfetti'
 import { u16 } from '@solana/buffer-layout'
+import useDebounce from '@/hooks/useDebounce'
+
+const POOL_STATE_LAYOUT = struct([
+  blob(8, 'discriminator'),
+  pbk('amm_config'),
+  pbk('pool_creator'),
+  pbk('token_0_vault'),
+  pbk('token_1_vault'),
+  blob(32, '_padding1'),
+  pbk('token_0_mint'),
+  pbk('token_1_mint'),
+  pbk('token_0_program'),
+  pbk('token_1_program'),
+  pbk('observation_key'),
+  u8('auth_bump'),
+  u8('status'),
+  u8('_padding2'),
+  u8('mint_0_decimals'),
+  u8('mint_1_decimals'),
+  u64('lp_supply'),
+  u64('protocol_fees_token_0'),
+  u64('protocol_fees_token_1'),
+  u64('fund_fees_token_0'),
+  u64('fund_fees_token_1'),
+  u64('open_time'),
+  u64('recent_epoch'),
+  u128('cumulative_trade_fees_token_0'),
+  u128('cumulative_trade_fees_token_1'),
+  u128('cumulative_volume_token_0'),
+  u128('cumulative_volume_token_1'),
+  u64('latest_dynamic_fee_rate'),
+  u64('max_trade_fee_rate'),
+  u64('volatility_factor')
+])
+
+const USER_POOL_LIQUIDITY_LAYOUT = struct([
+  blob(8, 'discriminator'),
+  pbk('user'),
+  pbk('pool_state'),
+  u128('token_0_deposited'),
+  u128('token_1_deposited'),
+  u128('token_0_withdrawn'),
+  u128('token_1_withdrawn'),
+  u128('lp_tokens_owned'),
+  pbk('referrer')
+])
+
+const AMM_CONFIG_LAYOUT = struct([
+  blob(8, 'discriminator'),
+  u8('bump'),
+  u8('disable_create_pool'),
+  u16('index'),
+  u64('trade_fee_rate')
+])
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
@@ -81,59 +135,7 @@ export const DepositWithdrawSlider: FC = () => {
   const [userTargetTokenType, setUserTargetTokenType] = useState<'spl-token' | 'native' | 'spl-token-2022' | ''>(
     ''
   )
-
-  const POOL_STATE_LAYOUT = struct([
-    blob(8, 'discriminator'),
-    pbk('amm_config'),
-    pbk('pool_creator'),
-    pbk('token_0_vault'),
-    pbk('token_1_vault'),
-    blob(32, '_padding1'),
-    pbk('token_0_mint'),
-    pbk('token_1_mint'),
-    pbk('token_0_program'),
-    pbk('token_1_program'),
-    pbk('observation_key'),
-    u8('auth_bump'),
-    u8('status'),
-    u8('_padding2'),
-    u8('mint_0_decimals'),
-    u8('mint_1_decimals'),
-    u64('lp_supply'),
-    u64('protocol_fees_token_0'),
-    u64('protocol_fees_token_1'),
-    u64('fund_fees_token_0'),
-    u64('fund_fees_token_1'),
-    u64('open_time'),
-    u64('recent_epoch'),
-    u128('cumulative_trade_fees_token_0'),
-    u128('cumulative_trade_fees_token_1'),
-    u128('cumulative_volume_token_0'),
-    u128('cumulative_volume_token_1'),
-    u64('latest_dynamic_fee_rate'),
-    u64('max_trade_fee_rate'),
-    u64('volatility_factor')
-  ])
-
-  const USER_POOL_LIQUIDITY_LAYOUT = struct([
-    blob(8, 'discriminator'),
-    pbk('user'),
-    pbk('pool_state'),
-    u128('token_0_deposited'),
-    u128('token_1_deposited'),
-    u128('token_0_withdrawn'),
-    u128('token_1_withdrawn'),
-    u128('lp_tokens_owned'),
-    pbk('referrer')
-  ])
-
-  const AMM_CONFIG_LAYOUT = struct([
-    blob(8, 'discriminator'),
-    u8('bump'),
-    u8('disable_create_pool'),
-    u16('index'),
-    u64('trade_fee_rate')
-  ])
+  const {debounce, abortDebounce} = useDebounce()
 
   useEffect(() => {
     ;(async () => {
@@ -316,6 +318,7 @@ export const DepositWithdrawSlider: FC = () => {
   }
 
   const handleInputChange = async (input: string, sourceToken: boolean) => {
+    abortDebounce();
     setIsUserTyping(true)
     setIsSolMaxDeposit(false)
     if (input === '') {
@@ -329,64 +332,51 @@ export const DepositWithdrawSlider: FC = () => {
       setIsUserTyping(false)
       return
     }
-
-    const inputValue = +input
-    if (!isNaN(inputValue)) {
-      if (isDeposit) {
-        if (sourceToken) {
-          setUserSourceDepositAmount(input)
-          if (Object.keys(selectedCardPool)?.length) {
-            const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
-              input,
-              0,
-              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
-              connection
-            )
-            setTransactionLPAmount(lpTokenAmount)
-            setUserTargetDepositAmount(otherTokenAmountInString)
-          }
-        } else {
-          setUserTargetDepositAmount(input)
-          if (Object.keys(selectedCardPool)?.length) {
-            const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
-              input,
-              1,
-              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
-              connection
-            )
-            setTransactionLPAmount(lpTokenAmount)
-            setUserSourceDepositAmount(otherTokenAmountInString)
-          }
-        }
-      } else {
-        if (sourceToken) {
-          setUserSourceWithdrawAmount(input)
-          if (Object.keys(selectedCardPool)?.length) {
-            const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
-              input,
-              0,
-              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
-              connection
-            )
-            setTransactionLPAmount(lpTokenAmount)
-            setUserTargetWithdrawAmount(otherTokenAmountInString)
-          }
-        } else {
-          setUserTargetWithdrawAmount(input)
-          if (Object.keys(selectedCardPool)?.length) {
-            const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
-              input,
-              1,
-              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
-              connection
-            )
-            setTransactionLPAmount(lpTokenAmount)
-            setUserSourceWithdrawAmount(otherTokenAmountInString)
-          }
-        }
-      }
+    if (isNaN(+input)) {
       setIsUserTyping(false)
+      return
     }
+    let funcToCallInDebounce
+    const debouncedFunc = async () => {
+      if (Object.keys(selectedCardPool)?.length) {
+        const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
+          input,
+          sourceToken ? 0 : 1,
+          Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
+          connection
+        )
+        setTransactionLPAmount(lpTokenAmount)
+        funcToCallInDebounce(otherTokenAmountInString)
+      }
+    }
+
+    switch (true) {
+      case isDeposit && sourceToken: // deposit source
+        setUserSourceDepositAmount(input)
+        funcToCallInDebounce = setUserTargetDepositAmount
+        console.log('deposit source')
+        break;
+      case isDeposit && !sourceToken: // deposit target
+        setUserTargetDepositAmount(input)
+        funcToCallInDebounce = setUserSourceDepositAmount
+        console.log('deposit target')
+        break;
+      case !isDeposit && sourceToken: // withdraw source
+        setUserSourceWithdrawAmount(input)
+        funcToCallInDebounce = setUserTargetWithdrawAmount
+        console.log('withdraw source')
+        break;
+      case !isDeposit && !sourceToken: // withdraw target
+        setUserTargetWithdrawAmount(input)
+        funcToCallInDebounce = setUserSourceWithdrawAmount
+        console.log('withdraw target')
+        break;
+      default:
+        break;
+    }
+
+    debounce(debouncedFunc, 333)
+
     setIsUserTyping(false)
   }
 
