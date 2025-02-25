@@ -151,7 +151,7 @@ export const FarmContainer: FC = () => {
               ]}
             />
             <div className="flex items-center w-full justify-between relative">
-              <TokenSearchBar poolType={currentPoolType.type} />
+              <TokenSearchBar />
               <div className="flex justify-between items-center">
                 {breakpoint.isMobile ? (
                   <div>

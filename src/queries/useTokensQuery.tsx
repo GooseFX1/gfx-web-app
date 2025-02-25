@@ -56,14 +56,19 @@ function useTokensQuery({
 
       return result as unknown as InfiniteData<TokenQueryResult>
     },
-    getNextPageParam: (lastPage: TokenQueryItem) => lastPage.nextPage,
-    getPreviousPageParam: (firstPage: TokenQueryItem) => firstPage.nextPage,
-    staleTime: 1000 * 60,
-    keepPreviousData: true
+    getNextPageParam: (lastPage: TokenQueryItem) => lastPage?.nextPage,
+    getPreviousPageParam: (firstPage: TokenQueryItem) => firstPage?.nextPage,
+    staleTime: 1000 * 60
   })
 
   return useMemo(() => {
-    const data = query.data as unknown as TokenQueryResult
+
+    const data = (query?.data ?? {
+      pages: [],
+      allPages: [],
+      pageParams: [],
+      maxTokensReached: false
+    }) as TokenQueryResult
 
     return {
       ...query,
