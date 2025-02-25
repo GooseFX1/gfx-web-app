@@ -39,10 +39,9 @@ function TokenSearchBar() {
   )
 
   const tokenList = query.data?.allPages ?? [];
-  const isExpandedSearchOpen = query.data?.allPages?.length > 0
 
   return (
-    <Popover open={isExpandedSearchOpen || focusOnSearch}>
+    <Popover open={focusOnSearch}>
       <PopoverAnchor className={'w-[550px] mr-auto'} ref={searchBarRef}>
         <SearchBar
           onChange={(e) => setSearchValue(e?.target?.value)}
