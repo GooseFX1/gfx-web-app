@@ -5,28 +5,31 @@ import { Badge, Icon } from 'gfx-component-lib'
 import { bigNumberFormatter, clamp, loadIconImage, numberFormatter, truncateAddress } from '@/utils'
 import BigNumber from 'bignumber.js'
 import { TokenListSkeleton } from '@/pages/FarmV4/Step2'
-import { TokenListToken, useDarkMode, useGamma } from '@/context'
+import { TokenListToken, useDarkMode } from '@/context'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 
 export function InfiniteTokenList({
-                                    useRenderListLength,
-                                    tokenRenderList,
+  tokenList,
                                     onTokenSelect,
                                     checkDisabled,
-                                    RenderAs
+                                    RenderAs,
+  maxTokensReached,
+  isLoading,
+  fetchNextPage,
                                   }: {
-  useRenderListLength: boolean,
-  tokenRenderList: TokenListToken[]
+  tokenList: TokenListToken[],
   onTokenSelect: (token: TokenListToken) => void
   checkDisabled: (currToken: TokenListToken) => boolean,
-  RenderAs: ElementType
+  RenderAs: ElementType,
+  maxTokensReached: boolean,
+  isLoading: boolean,
+  fetchNextPage: () => void
 }) {
   const infiniteLoaderRef = useRef(null)
   const hasMountedRef = useRef(false)
   const { balance } = useWalletBalance()
   const { mode } = useDarkMode()
-  const { maxTokensReached, isLoadingTokenList, setPage, nextPage, tokenList } = useGamma()
 
   useEffect(() => {
     if (hasMountedRef.current) {
@@ -35,37 +38,38 @@ export function InfiniteTokenList({
       }
     }
     hasMountedRef.current = true
-  }, [RenderAs, tokenList, tokenRenderList])
-  const tokenListLength = useRenderListLength ? tokenRenderList.length : tokenList.length
-  const itemCount = !maxTokensReached ? tokenListLength + 1 : tokenListLength
+  }, [RenderAs, tokenList])
+  const itemCount = !maxTokensReached ? tokenList.length + 1 : tokenList.length
   // Only load 1 page of items at a time.
   // Pass an empty callback to InfiniteLoader in case it asks us to load more than once.
-  const loadMoreItems = isLoadingTokenList ? () => {
+  const loadMoreItems = isLoading ? () => {
     // empty func to prevent re-calls
   } : () => {
-    if (isLoadingTokenList || maxTokensReached) return
-    console.log('LOADING NEX TOKENS', {nextPage})
-    // triggers the update for the tokenListEndpoint
-    setPage(nextPage)
+    if (isLoading || maxTokensReached) return
+    fetchNextPage()
   }
 
-  const isItemLoaded = index => maxTokensReached || index < tokenListLength
+  const isItemLoaded = index => maxTokensReached || index < tokenList.length
 
   const Item = ({ index, style }: { index: number, style: CSSProperties }) => {
-    if (!isItemLoaded(index)||isLoadingTokenList) {
-      if (index > 0) return null
-      return <div style={style} className={`flex flex-col gap-2`}>
-        <TokenListSkeleton RenderAs={RenderAs} />
-        <TokenListSkeleton RenderAs={RenderAs} />
-        <TokenListSkeleton RenderAs={RenderAs} />
-        <TokenListSkeleton RenderAs={RenderAs} />
-        <TokenListSkeleton RenderAs={RenderAs} />
-        <TokenListSkeleton RenderAs={RenderAs} />
-        <TokenListSkeleton RenderAs={RenderAs} />
-      </div>
+    if (!isItemLoaded(index)) {
+     if(isLoading) {
+       return (
+         <div style={style} className={`flex flex-col gap-2`}>
+           <TokenListSkeleton RenderAs={RenderAs} />
+           <TokenListSkeleton RenderAs={RenderAs} />
+           <TokenListSkeleton RenderAs={RenderAs} />
+           <TokenListSkeleton RenderAs={RenderAs} />
+           <TokenListSkeleton RenderAs={RenderAs} />
+           <TokenListSkeleton RenderAs={RenderAs} />
+           <TokenListSkeleton RenderAs={RenderAs} />
+         </div>
+       )
+     }
+     return null;
     }
 
-    const curToken = tokenRenderList[index]
+    const curToken = tokenList[index]
     // this className on RenderAs is cursed binding - it is the render but also gets propagated to the RenderAs function
     // if a Button is used e.g FarmContainer
     return <div style={style}>
@@ -162,7 +166,7 @@ export function InfiniteTokenList({
         itemCount={itemCount}
         onItemsRendered={onItemsRendered}
         ref={ref}
-        height={clamp(tokenListLength * 58, isLoadingTokenList ? 58 * 5 : 0, 396)}
+        height={clamp(tokenList.length * 58, isLoading ? 58 * 5 : 0, 396)}
         itemSize={58}
       >
         {Item}

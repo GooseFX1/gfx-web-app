@@ -1,90 +1,57 @@
-import React, { useEffect, useRef, useCallback } from 'react'
+import React, { useRef, useCallback, useState } from 'react'
 import { Badge, Button, cn, Popover, PopoverAnchor, PopoverContent } from 'gfx-component-lib'
 import SearchBar from '@/components/common/SearchBar'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
-import { aborter, loadIconImage } from '@/utils'
+import { loadIconImage } from '@/utils'
 import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
-import { tokenListAbortTokenGamma, TokenListToken, useDarkMode, useGamma } from '@/context'
-import { TOKEN_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
-import useFirstRender from '@/hooks/useFirstRender'
-import useDebounce from '@/hooks/useDebounce'
+import { TokenListToken, useDarkMode, useGamma } from '@/context'
 import useBoolean from '@/hooks/useBoolean'
-import { useWalletBalance } from '@/context/walletBalanceContext'
 import { POOL_TYPE } from './constants'
+import useTokensQuery from '@/queries/useTokensQuery'
 
-function TokenSearchBar({ poolType }: { poolType: string }) {
+function TokenSearchBar() {
   const searchBarRef = useRef(null)
   const [focusOnSearch, setFocusOnSearch] = useBoolean(false)
+  const [searchValue, setSearchValue] = useState('')
 
-  const isFirstRender = useFirstRender()
-  const { debounce, abortDebounce } = useDebounce()
-
-  const {publicKey} = useWalletBalance()
   const { mode } = useDarkMode()
   const {
-    setTokenList,
-    updateTokenList,
-    isLoadingTokenList,
     selectedTokens,
     removeSelectedToken,
     addSelectedToken,
     hasSelectedToken,
-    topBalancesWithTokenList,
-    tokenList,
     setCurrentPoolType,
-    tokenListSearchValue,
-    setTokenListSearchValue
   } = useGamma()
 
-  useEffect(() => {
-    if (isFirstRender) return
-    console.log('farmTrigger')
-    // faking search
-    if (tokenListSearchValue.trim().length == 0) {
-      aborter.abortSignal(tokenListAbortTokenGamma)
-      setTokenList([])
-      return
-    }
-    debounce(
-      () =>
-        updateTokenList(
-          {
-            page: 1,
-            pageSize: TOKEN_LIST_PAGE_SIZE,
-            tokenType: 'all'
-          },
-          false
-        ),
-      250
-    )
-    return () => {
-      abortDebounce()
-    }
-  }, [tokenListSearchValue, poolType])
-  const checkAndSetPoolType = useCallback((t: TokenListToken)=>{
-    // current selections are in selectedTokens - t is the token that is being added and visible on next render
-    const isHyperInSelectedTokens = selectedTokens.some((token) => !token.isPrimary)
-    // if the token being added is not primary or there is already a hyper token in the selected tokens
-    if (isHyperInSelectedTokens || !t.isPrimary) {
-      setCurrentPoolType(POOL_TYPE.hyper)
-    } else {
-      setCurrentPoolType(POOL_TYPE.primary)
-    }
-  },[selectedTokens, setCurrentPoolType])
-  const isExpandedSearchOpen = tokenListSearchValue.length > 0
-  const tokenRenderList =
-    tokenListSearchValue.length > 0 || poolType === 'primary' || !publicKey ? tokenList : topBalancesWithTokenList
+  const query = useTokensQuery({ searchValue, poolType: 'all' })
+  const checkAndSetPoolType = useCallback(
+    (t: TokenListToken) => {
+      // current selections are in selectedTokens - t is the token that is being added and visible on next render
+      const isHyperInSelectedTokens = selectedTokens.some((token) => !token.isPrimary)
+      // if the token being added is not primary or there is already a hyper token in the selected tokens
+      if (isHyperInSelectedTokens || !t.isPrimary) {
+        setCurrentPoolType(POOL_TYPE.hyper)
+      } else {
+        setCurrentPoolType(POOL_TYPE.primary)
+      }
+    },
+    [selectedTokens, setCurrentPoolType]
+  )
+
+  const tokenList = query.data?.allPages ?? [];
+  const isExpandedSearchOpen = query.data?.allPages?.length > 0
+
   return (
     <Popover open={isExpandedSearchOpen || focusOnSearch}>
       <PopoverAnchor className={'w-[550px] mr-auto'} ref={searchBarRef}>
         <SearchBar
-          onChange={(e) => setTokenListSearchValue(e?.target?.value)}
-          onClear={() => setTokenListSearchValue('')}
-          value={tokenListSearchValue}
+          onChange={(e) => setSearchValue(e?.target?.value)}
+          onClear={() => setSearchValue('')}
+          value={searchValue}
           className={'flex-1 bg-white dark:bg-black-2'}
           onFocusCapture={setFocusOnSearch.on}
           onBlurCapture={setFocusOnSearch.off}
-          isLoading={tokenListSearchValue.trim().length > 0 && isLoadingTokenList}
+          isLoading={searchValue.trim().length > 0 && query.isFetching}
           additionalInputElementLeft={
             <div className={'inline-flex gap-2'}>
               {selectedTokens.map((token) => (
@@ -127,7 +94,7 @@ function TokenSearchBar({ poolType }: { poolType: string }) {
         side={'bottom'}
         avoidCollisions={false}
       >
-        {tokenListSearchValue && tokenRenderList.length == 0 && !isLoadingTokenList ? (
+        {searchValue && tokenList.length == 0 && !query.isFetching ? (
           <div
             className={`mb-auto p-2
                   text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
@@ -136,7 +103,7 @@ function TokenSearchBar({ poolType }: { poolType: string }) {
             No Tokens Found..
           </div>
         ) : null}
-        {!tokenListSearchValue && focusOnSearch ? (
+        {!searchValue && focusOnSearch ? (
           <div
             className={`mb-auto p-2
                   text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
@@ -145,16 +112,18 @@ function TokenSearchBar({ poolType }: { poolType: string }) {
             Search for token or paste mint address
           </div>
         ) : null}
-        {tokenListSearchValue && (
+        {searchValue && (
           <InfiniteTokenList
-            useRenderListLength={tokenListSearchValue.trim().length > 0}
-            tokenRenderList={tokenRenderList}
+            tokenList={tokenList}
+            isLoading={query.isFetching}
+            fetchNextPage={query.fetchNextPage}
+            maxTokensReached={query.data.maxTokensReached}
             onTokenSelect={(t) => {
-              setTokenListSearchValue('')
+              setSearchValue('')
               addSelectedToken(t)
               checkAndSetPoolType(t)
             }}
-            checkDisabled={(t) => hasSelectedToken(t) || isLoadingTokenList || selectedTokens.length == 2}
+            checkDisabled={(t) => hasSelectedToken(t) || query.isFetching || selectedTokens.length == 2}
             RenderAs={({ children, className, ...props }) => (
               <Button
                 {...props}

@@ -45,6 +45,7 @@
     "@solana/wallet-adapter-wallets": "^0.19.32",
     "@solana/web3.js": "^1.95.8",
     "@solflare-wallet/metamask-wallet-standard": "^1.0.7",
+    "@tanstack/react-query": "4",
     "@walletconnect/solana-adapter": "^0.0.1-alpha.3",
     "antd": "^4.21.6",
     "axios": "1.6.0",
@@ -109,6 +110,7 @@
   ],
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@tanstack/eslint-plugin-query": "4",
     "@types/bn.js": "^5.1.0",
     "@types/bs58": "^4.0.1",
     "@types/echarts": "^4.9.10",
