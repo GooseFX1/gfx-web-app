@@ -11,5 +11,6 @@ export enum GAMMA_ENDPOINTS_V1 {
   LP_POSITIONS = `/v1/user-liquidity`,
   TOKEN_LIST = '/v1/token-list',
   FORCE_CRON = '/v1/force-cron',
-  PORTFOLIO_POOLS = '/v1/portfolio'
+  PORTFOLIO_POOLS = '/v1/portfolio',
+  PORTFOLIO_POOLS_SEARCH = '/v1/portfolio/search'
 }

@@ -19,8 +19,7 @@ export function InfiniteTokenListScrollView({
   RenderAs,
   maxTokensReached,
   isLoadingTokenList,
-  setTokenPage: setPage,
-  tokenPage: page,
+  loadNextPage,
   tokenList
 }: {
   useRenderListLength: boolean
@@ -30,8 +29,7 @@ export function InfiniteTokenListScrollView({
   RenderAs: ElementType
   maxTokensReached: boolean
   isLoadingTokenList: boolean
-  setTokenPage: (page: number) => void
-  tokenPage: number
+  loadNextPage: ()=>void
   tokenList: JupToken[]
 }) {
   const infiniteLoaderRef = useRef(null)
@@ -58,25 +56,27 @@ export function InfiniteTokenListScrollView({
     : () => {
         if (isLoadingTokenList || maxTokensReached) return
         // triggers the update for the tokenListEndpoint
-        setPage(page + 1)
+        loadNextPage()
       }
 
   const isItemLoaded = (index) => maxTokensReached || index < tokenListLength
 
   const Item = ({ index, style }: { index: number; style: CSSProperties }) => {
-    if (!isItemLoaded(index) || isLoadingTokenList) {
-      if (index > 0) return null
-      return (
-        <RenderAs style={style} className={`flex flex-col gap-2`}>
-          <TokenListSkeleton RenderAs={RenderAs} />
-          <TokenListSkeleton RenderAs={RenderAs} />
-          <TokenListSkeleton RenderAs={RenderAs} />
-          <TokenListSkeleton RenderAs={RenderAs} />
-          <TokenListSkeleton RenderAs={RenderAs} />
-          <TokenListSkeleton RenderAs={RenderAs} />
-          <TokenListSkeleton RenderAs={RenderAs} />
-        </RenderAs>
-      )
+    if (!isItemLoaded(index)) {
+      if (isLoadingTokenList) {
+        return (
+          <RenderAs style={style} className={`flex flex-col gap-2`}>
+            <TokenListSkeleton RenderAs={RenderAs} />
+            <TokenListSkeleton RenderAs={RenderAs} />
+            <TokenListSkeleton RenderAs={RenderAs} />
+            <TokenListSkeleton RenderAs={RenderAs} />
+            <TokenListSkeleton RenderAs={RenderAs} />
+            <TokenListSkeleton RenderAs={RenderAs} />
+            <TokenListSkeleton RenderAs={RenderAs} />
+          </RenderAs>
+        )
+      }
+     return null
     }
 
     const curToken = tokenRenderList[index]
@@ -201,17 +201,15 @@ export function InfiniteTokenListSwap({
   const {
     maxTokensReached,
     isLoadingTokenList,
-    setTokenPage: setPage,
-    tokenPage: page,
-    tokens: tokenList
+    tokens: tokenList,
+    loadNextPage
   } = useSwap()
 
   return (
     <InfiniteTokenListScrollView
       maxTokensReached={maxTokensReached}
       isLoadingTokenList={isLoadingTokenList}
-      setTokenPage={setPage}
-      tokenPage={page}
+      loadNextPage={loadNextPage}
       tokenList={tokenList}
       useRenderListLength={useRenderListLength}
       tokenRenderList={tokenRenderList}

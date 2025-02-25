@@ -5,8 +5,7 @@ import { Badge, Icon } from 'gfx-component-lib'
 import { bigNumberFormatter, clamp, loadIconImage, numberFormatter, truncateAddress } from '@/utils'
 import BigNumber from 'bignumber.js'
 import { TokenListSkeleton } from '@/pages/FarmV4/Step2'
-import { JupToken } from './constants'
-import { useDarkMode, useGamma } from '@/context'
+import { TokenListToken, useDarkMode, useGamma } from '@/context'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 
@@ -18,16 +17,16 @@ export function InfiniteTokenList({
                                     RenderAs
                                   }: {
   useRenderListLength: boolean,
-  tokenRenderList: JupToken[]
-  onTokenSelect: (token: JupToken) => void
-  checkDisabled: (currToken: JupToken) => boolean,
+  tokenRenderList: TokenListToken[]
+  onTokenSelect: (token: TokenListToken) => void
+  checkDisabled: (currToken: TokenListToken) => boolean,
   RenderAs: ElementType
 }) {
   const infiniteLoaderRef = useRef(null)
   const hasMountedRef = useRef(false)
   const { balance } = useWalletBalance()
   const { mode } = useDarkMode()
-  const { maxTokensReached, isLoadingTokenList, setPage, page, tokenList } = useGamma()
+  const { maxTokensReached, isLoadingTokenList, setPage, nextPage, tokenList } = useGamma()
 
   useEffect(() => {
     if (hasMountedRef.current) {
@@ -45,8 +44,9 @@ export function InfiniteTokenList({
     // empty func to prevent re-calls
   } : () => {
     if (isLoadingTokenList || maxTokensReached) return
+    console.log('LOADING NEX TOKENS', {nextPage})
     // triggers the update for the tokenListEndpoint
-    setPage(page + 1)
+    setPage(nextPage)
   }
 
   const isItemLoaded = index => maxTokensReached || index < tokenListLength

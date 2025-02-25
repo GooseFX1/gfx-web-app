@@ -58,8 +58,7 @@ function TokenSelectWithInputAndMobileDialog({
   inputProps,
   searchValue,
   onSearchValueChange,
-  page,
-  setPage,
+  loadNextPage,
   tokenList,
   maxTokens,
   isLoadingTokenList
@@ -77,8 +76,7 @@ function TokenSelectWithInputAndMobileDialog({
               onSelectToken={onSelectToken}
               searchValue={searchValue}
               onSearchValueChange={onSearchValueChange}
-              page={page}
-              setPage={setPage}
+              loadNextPage={loadNextPage}
               tokenList={tokenList}
               maxTokens={maxTokens}
               isLoadingTokenList={isLoadingTokenList}
