@@ -1,37 +1,38 @@
-import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query'
+import {
+  InfiniteData,
+  useInfiniteQuery
+} from '@tanstack/react-query'
 import { GAMMA_API_BASE, GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
 import { TOKEN_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
 import { GAMMAListTokenResponse } from '@/types/gamma'
 import { clamp } from '@/utils'
 import { IWalletBalanceContext, useWalletBalance } from '@/context/walletBalanceContext'
 import { TokenListToken } from '@/context'
-import { useMemo } from 'react'
+import { UseInfiniteQueryResponseFix } from '@/queries/types'
 
 type TokenQueryProps = {
   searchValue?: string
   poolType?: string
 }
-type TokenQueryItem = {
+type TokenListAPIResponse = {
   tokens: TokenListToken[]
   totalPages: number
   totalItems: number
   currentPage: number
   nextPage: number
 }
-export type TokenQueryResult = {
-  allPages?: TokenListToken[]
-  pages?: TokenQueryItem[]
-  pageParams: unknown[]
+
+interface InfiniteTokenData extends InfiniteData<TokenListAPIResponse> {
+  allPages: TokenListToken[]
   maxTokensReached: boolean
 }
-
 function useTokensQuery({
   searchValue = '',
   poolType = 'all'
                         }: TokenQueryProps) {
   const { base58PublicKey, topBalances, balance, publicKey } = useWalletBalance()
 
-  const query = useInfiniteQuery<TokenQueryItem, unknown, TokenQueryResult, string[]>({
+  return useInfiniteQuery({
     queryKey: ['GAMMA-tokens', searchValue, base58PublicKey, poolType],
     queryFn: async ({ pageParam, signal, queryKey }) =>
       getTokens({
@@ -43,7 +44,7 @@ function useTokensQuery({
     select: (data) => {
       const flatData = data.pages.map((page) => page.tokens).flat()
       const lastPage = data.pages[data.pages.length - 1]
-      const result: TokenQueryResult = {
+      const result = {
         pages: data.pages,
         allPages: flatData,
         pageParams: data.pageParams,
@@ -54,27 +55,19 @@ function useTokensQuery({
         result.allPages = getTopBalancesWithTokenList(flatData, balance, topBalances)
       }
 
-      return result as unknown as InfiniteData<TokenQueryResult>
+      return result;
     },
-    getNextPageParam: (lastPage: TokenQueryItem) => lastPage?.nextPage,
-    getPreviousPageParam: (firstPage: TokenQueryItem) => firstPage?.nextPage,
-    staleTime: 1000 * 60
-  })
-
-  return useMemo(() => {
-
-    const data = (query?.data ?? {
+    getNextPageParam: (lastPage: TokenListAPIResponse) => lastPage?.nextPage,
+    getPreviousPageParam: (firstPage: TokenListAPIResponse) => firstPage?.nextPage,
+    staleTime: 1000 * 60,
+    placeholderData: {
       pages: [],
+      pageParams: [1],
       allPages: [],
-      pageParams: [],
       maxTokensReached: false
-    }) as TokenQueryResult
-
-    return {
-      ...query,
-      data
-    }
-  }, [query])
+    } as InfiniteData<TokenListAPIResponse>, // fixes type issue, but ugly :/
+  }) as UseInfiniteQueryResponseFix<TokenListAPIResponse, Error, InfiniteTokenData>
+  // ^ TypeCasting to fix the query.data access to get intellisense working
 }
 
 export default useTokensQuery
@@ -103,7 +96,7 @@ function getTopBalancesWithTokenList(
   return data.sort((a, b) => (balance[a.address].value.gt(balance[b.address].value) ? -1 : 1))
 }
 
-async function getTokens({ searchValue, signal, pageParam = 1, poolType = 'all' }): Promise<TokenQueryItem> {
+async function getTokens({ searchValue, signal, pageParam = 1, poolType = 'all' }): Promise<TokenListAPIResponse> {
   const searchQuery = searchValue ? `&search=${searchValue}` : ''
   const poolTypeQuery = poolType ? `&tokenType=${poolType}` : ''
   const pageQuery = `?&page=${pageParam}&pageSize=${TOKEN_LIST_PAGE_SIZE}`

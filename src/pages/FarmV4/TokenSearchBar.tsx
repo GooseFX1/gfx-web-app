@@ -38,7 +38,7 @@ function TokenSearchBar({poolType = 'all'}:{poolType?:Pool['type']}) {
     [selectedTokens, setCurrentPoolType]
   )
 
-  const tokenList = query.data?.allPages ?? [];
+  const tokenList = query.data.allPages
 
   return (
     <Popover open={focusOnSearch}>
@@ -102,7 +102,7 @@ function TokenSearchBar({poolType = 'all'}:{poolType?:Pool['type']}) {
             No Tokens Found..
           </div>
         ) : null}
-        {!searchValue && focusOnSearch ? (
+        {searchValue.length == 0 && focusOnSearch ? (
           <div
             className={`mb-auto p-2
                   text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
