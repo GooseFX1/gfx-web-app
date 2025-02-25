@@ -6,10 +6,10 @@ import { loadIconImage } from '@/utils'
 import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
 import { TokenListToken, useDarkMode, useGamma } from '@/context'
 import useBoolean from '@/hooks/useBoolean'
-import { POOL_TYPE } from './constants'
+import { Pool, POOL_TYPE } from './constants'
 import useTokensQuery from '@/queries/useTokensQuery'
 
-function TokenSearchBar() {
+function TokenSearchBar({poolType = 'all'}:{poolType?:Pool['type']}) {
   const searchBarRef = useRef(null)
   const [focusOnSearch, setFocusOnSearch] = useBoolean(false)
   const [searchValue, setSearchValue] = useState('')
@@ -23,7 +23,7 @@ function TokenSearchBar() {
     setCurrentPoolType,
   } = useGamma()
 
-  const query = useTokensQuery({ searchValue, poolType: 'all' })
+  const query = useTokensQuery({ searchValue, poolType })
   const checkAndSetPoolType = useCallback(
     (t: TokenListToken) => {
       // current selections are in selectedTokens - t is the token that is being added and visible on next render
