@@ -51,7 +51,7 @@ function TokenSearchBar({ poolType }: { poolType: string }) {
           {
             page: 1,
             pageSize: TOKEN_LIST_PAGE_SIZE,
-            tokenType: 'all',
+            tokenType: 'all'
           },
           false
         ),
