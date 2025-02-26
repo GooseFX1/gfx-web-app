@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useState } from 'react'
+import React, { useRef, useCallback, useState, useMemo } from 'react'
 import { Badge, Button, cn, Popover, PopoverAnchor, PopoverContent } from 'gfx-component-lib'
 import SearchBar from '@/components/common/SearchBar'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
@@ -38,7 +38,27 @@ function TokenSearchBar({poolType = 'all'}:{poolType?:Pool['type']}) {
     [selectedTokens, setCurrentPoolType]
   )
 
-  const tokenList = query.data.allPages
+  const tokenList = query.data?.allPages ?? [];
+
+  const content = useMemo(()=>{
+   let stringContent = ''
+    if (query.isError) {
+      stringContent = 'An error occurred well searching for tokens, please try again.'
+    } else {
+      if (searchValue && tokenList.length == 0 && !query.isFetching) {
+        stringContent = 'No Tokens Found..'
+      } else if (searchValue.length == 0 && focusOnSearch) {
+        stringContent = 'Search for token or paste mint address'
+      }
+    }
+    return <div
+      className={`mb-auto p-2
+                  text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
+                  `}
+    >
+      {stringContent}
+    </div>
+  },[query, searchValue])
 
   return (
     <Popover open={focusOnSearch}>
@@ -93,25 +113,35 @@ function TokenSearchBar({poolType = 'all'}:{poolType?:Pool['type']}) {
         side={'bottom'}
         avoidCollisions={false}
       >
-        {searchValue && tokenList.length == 0 && !query.isFetching ? (
-          <div
-            className={`mb-auto p-2
-                  text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
-                  `}
-          >
-            No Tokens Found..
-          </div>
-        ) : null}
-        {searchValue.length == 0 && focusOnSearch ? (
-          <div
-            className={`mb-auto p-2
-                  text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
-                  `}
-          >
-            Search for token or paste mint address
-          </div>
-        ) : null}
-        {searchValue && (
+        {content}
+        {/*{searchValue && tokenList.length == 0 && !query.isFetching ? (*/}
+        {/*  <div*/}
+        {/*    className={`mb-auto p-2*/}
+        {/*          text-text-lightmode-tertiary dark:text-text-darkmode-tertiary*/}
+        {/*          `}*/}
+        {/*  >*/}
+        {/*    No Tokens Found..*/}
+        {/*  </div>*/}
+        {/*) : null}*/}
+        {/*{searchValue.length == 0 && focusOnSearch ? (*/}
+        {/*  <div*/}
+        {/*    className={`mb-auto p-2*/}
+        {/*          text-text-lightmode-tertiary dark:text-text-darkmode-tertiary*/}
+        {/*          `}*/}
+        {/*  >*/}
+        {/*    Search for token or paste mint address*/}
+        {/*  </div>*/}
+        {/*) : null}*/}
+        {/*{query.isError ? (*/}
+        {/*  <div*/}
+        {/*    className={`mb-auto p-2*/}
+        {/*          text-text-lightmode-tertiary dark:text-text-darkmode-tertiary*/}
+        {/*          `}*/}
+        {/*  >*/}
+        {/*    An error occurred well searching for tokens, please try again.*/}
+        {/*  </div>*/}
+        {/*) : null}*/}
+        {searchValue && !query.isError && (
           <InfiniteTokenList
             tokenList={tokenList}
             isLoading={query.isFetching}
