@@ -65,7 +65,7 @@ function useTokensQuery({
       pageParams: [1],
       allPages: [],
       maxTokensReached: false
-    } as InfiniteData<TokenListAPIResponse>, // fixes type issue, but ugly :/
+    } as InfiniteData<TokenListAPIResponse> // fixes type issue, but ugly :/
   }) as UseInfiniteQueryResponseFix<TokenListAPIResponse, Error, InfiniteTokenData>
   // ^ TypeCasting to fix the query.data access to get intellisense working
 }

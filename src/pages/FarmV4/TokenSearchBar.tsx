@@ -20,7 +20,7 @@ function TokenSearchBar({poolType = 'all'}:{poolType?:Pool['type']}) {
     removeSelectedToken,
     addSelectedToken,
     hasSelectedToken,
-    setCurrentPoolType,
+    setCurrentPoolType
   } = useGamma()
 
   const query = useTokensQuery({ searchValue, poolType })

@@ -43,7 +43,7 @@ import {
   ModeOfOperation,
   Pool,
   POOL_LIST_PAGE_SIZE,
-  POOL_TYPE,
+  POOL_TYPE
 } from '@/pages/FarmV4/constants'
 import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
@@ -328,7 +328,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           pageSize,
           poolType: currentPoolType.type,
           mintA: selectedTokens[0].address,
-          mintB: selectedTokens[1]?.address,
+          mintB: selectedTokens[1]?.address
         })
         : fetchProfilePools({
         publicKey: publicKey.toBase58(),
