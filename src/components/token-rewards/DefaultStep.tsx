@@ -41,9 +41,10 @@ export const DefaultStep = ({
         </p>
         <div className="space-y-4">
           <div
-            className={`w-full p-4 rounded-sm border bg-grey-5 dark:bg-black-1 border-border-lightmode-primary 
-    dark:border-border-darkmode-primary hover:bg-background-lightmode-secondary 
-    dark:hover:bg-background-darkmode-secondary transition-colors text-left cursor-pointer`}
+            className={`w-full p-4 rounded-sm border bg-grey-5 dark:bg-black-1 
+              border-border-lightmode-secondary hover:border-border-lightmode-primary 
+    dark:border-border-darkmode-secondary dark:hover:border-border-darkmode-primary 
+    transition-colors text-left cursor-pointer`}
             onClick={() => setCurrentStep(currentStep + 1)}
           >
             <div className="flex items-center gap-3 mb-2">

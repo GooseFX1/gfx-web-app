@@ -35,13 +35,7 @@ interface SelectPoolStepProps {
   key: string
 }
 
-export const SelectPoolStep = ({
-  currentStep,
-  setCurrentStep,
-  summary,
-  pool,
-  setPool
-}: SelectPoolStepProps) => {
+export const SelectPoolStep = ({ currentStep, setCurrentStep, summary, pool, setPool }: SelectPoolStepProps) => {
   const { isMobile } = useBreakPoint()
   const { connected } = useWallet()
   const { mode } = useDarkMode()
@@ -55,104 +49,107 @@ export const SelectPoolStep = ({
     sortKey: 'volume24h',
     searchTokens: '',
     showDeposited: false,
-    showCreated: true,
+    showCreated: false,
     pageSize: 10,
     sortOrder: 'desc'
   })
 
   return (
-    <div className="grid grid-cols-5 gap-10 w-full">
-      <div className={`p-6 flex flex-col ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
-        <div className="flex flex-row items-center justify-between gap-3 mb-2">
-          <h1 className="text-lg font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary">
-            Select Pool
-          </h1>
-          {isMobile && (
-            <div className="flex flex-row items-center gap-3">
-              <Icon
-                src="/img/assets/question-icn.svg"
-                alt="help"
-                className="w-[30px] h-[30px] cursor-pointer"
-                onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
-              />
-              <DialogClose>
-                <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
-              </DialogClose>
-            </div>
-          )}
-        </div>
+    <div className="grid grid-cols-5 w-full">
+      <div className={`flex flex-col ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
+        <div className="py-2.5 px-6 flex flex-col">
+          <div className="flex flex-row items-center justify-between gap-3 mb-2">
+            <h1 className="text-lg font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary">
+              Select Pool
+            </h1>
+            {isMobile && (
+              <div className="flex flex-row items-center gap-3">
+                <Icon
+                  src="/img/assets/question-icn.svg"
+                  alt="help"
+                  className="w-[30px] h-[30px] cursor-pointer"
+                  onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
+                />
+                <DialogClose>
+                  <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
+                </DialogClose>
+              </div>
+            )}
+          </div>
 
-        <p className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary mb-6">
-          Connect your wallet and select the pool you would like to add boosted rewards to:
-        </p>
+          <p className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary mb-6">
+            Connect your wallet and select the pool you would like to add boosted rewards to:
+          </p>
 
-        {connected ? (
-          <>
-            <div className="relative mb-6">
-              <PoolSelectInput pool={pool} setPool={setPool} />
-            </div>
+          {connected ? (
+            <>
+              <div className="relative mb-6">
+                <PoolSelectInput pool={pool} setPool={setPool} />
+              </div>
 
-            <p className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary mb-4">
-              Or select from the pools you already created
-            </p>
+              <p className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary mb-4">
+                Or select from the pools you already created
+              </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[300px] overflow-y-auto">
-              {createdPools.length === 0 && <div className="text-red-600">No pools created</div>}
-              {createdPools.map((createdPool, index) => (
-                <Button
-                  key={index}
-                  className={`p-3 rounded-sm border dark:bg-black-1 border-border-lightmode-primary 
+              <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 max-h-[300px] overflow-y-auto">
+                {createdPools.length === 0 && <div className="text-red-600">No pools created</div>}
+                {createdPools.map((createdPool, index) => (
+                  <Button
+                    key={index}
+                    className={`h-[44px] p-3 rounded-sm border 
+                      dark:bg-black-1 border-border-lightmode-primary 
               dark:border-border-darkmode-primary hover:bg-background-lightmode-secondary 
               dark:hover:bg-background-darkmode-secondary transition-colors ${
                 pool?.id === createdPool.id ? 'border-2' : ''
               }`}
-                  onClick={() => setPool(createdPool)}
-                >
-                  <div className="flex justify-between items-center gap-2">
-                    <div className="flex items-center gap-2">
-                      <div className="flex flex-row items-center">
-                        <IconWithFallback
-                          src={loadIconImage(createdPool.mintA.logoURI, mode)}
-                          className="border-solid dark:border-black-2 border-white
+                    onClick={() => setPool(createdPool)}
+                  >
+                    <div className="flex justify-between items-center gap-1">
+                      <div className="flex items-center">
+                        <div className="flex flex-row items-center">
+                          <IconWithFallback
+                            src={loadIconImage(createdPool.mintA.logoURI, mode)}
+                            className="border-solid dark:border-black-2 border-white
                           border-[2px] rounded-full h-[25px] w-[25px]"
-                        />
-                        <IconWithFallback
-                          src={loadIconImage(createdPool.mintB.logoURI, mode)}
-                          className="relative right-[10px] border-solid dark:border-black-2
+                          />
+                          <IconWithFallback
+                            src={loadIconImage(createdPool.mintB.logoURI, mode)}
+                            className="relative right-[5px] border-solid dark:border-black-2
                           border-white border-[2px] rounded-full h-[25px] w-[25px]"
-                        />
-                      </div>
-                      <span
-                        className="text-start font-poppins font-semibold 
+                          />
+                        </div>
+                        <span
+                          className="text-start text-sm font-poppins font-semibold 
                       dark:text-grey-8 text-black-4 max-sm:text-tiny"
-                      >
-                        {createdPool.mintA.symbol} - {createdPool.mintB.symbol}
-                      </span>
+                        >
+                          {createdPool.mintA.symbol} - {createdPool.mintB.symbol}
+                        </span>
+                      </div>
+                      <div className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
+                        Liq. $
+                        {parseFloat(createdPool?.tvl || '0')
+                          ? numberFormatter(Math.max(0, parseFloat(createdPool?.tvl || '0')))
+                          : '0.00'}
+                      </div>
                     </div>
-                    <div className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
-                      Liq. $
-                      {parseFloat(createdPool?.tvl || '0')
-                        ? numberFormatter(Math.max(0, parseFloat(createdPool?.tvl || '0')))
-                        : '0.00'}
-                    </div>
-                  </div>
-                </Button>
-              ))}
-              {poolsHasMoreDataCreatedPools && (
-                <Button className="w-full h-full" onClick={() => loadMoreCreatedPools()}>
-                  Load more
-                </Button>
-              )}
-            </div>
-          </>
-        ) : (
-          <Connect containerStyle="w-max" />
-        )}
+                  </Button>
+                ))}
+                {poolsHasMoreDataCreatedPools && (
+                  <Button className="w-full h-full" onClick={() => loadMoreCreatedPools()}>
+                    Load more
+                  </Button>
+                )}
+              </div>
+            </>
+          ) : (
+            <Connect containerStyle="w-max" />
+          )}
+        </div>
 
-        <div className="flex justify-between pt-8 mt-auto">
+        <div className="px-6 py-2.5 flex justify-between mt-auto border-t-1">
           <Button
             onClick={() => setCurrentStep(currentStep - 1)}
-            className="px-4 py-2 text-text-lightmode-primary dark:text-text-darkmode-primary"
+            className="px-4 py-2 text-text-lightmode-primary dark:text-text-darkmode-primary underline"
           >
             Back
           </Button>

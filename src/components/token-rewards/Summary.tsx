@@ -84,12 +84,15 @@ export const Summary = ({
                           border-white border-[2px] rounded-full h-[25px] w-[25px]"
                   />
                 </div>
-                <span className="text-sm font-medium text-text-lightmode-primary dark:text-text-darkmode-primary">
+                <span className="w-max text-sm font-medium text-text-lightmode-primary dark:text-text-darkmode-primary">
                   {selectedPool?.mintA.symbol} - {selectedPool?.mintB.symbol}
                 </span>
               </div>
             ) : (
-              <span className="text-sm font-medium text-text-lightmode-primary dark:text-text-darkmode-primary">
+              <span
+                className="w-max text-sm 
+              font-medium text-text-lightmode-primary dark:text-text-darkmode-primary"
+              >
                 No pool selected
               </span>
             )}
