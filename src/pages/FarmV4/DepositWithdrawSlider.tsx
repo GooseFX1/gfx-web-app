@@ -66,7 +66,9 @@ const POOL_STATE_LAYOUT = struct([
   u128('cumulative_volume_token_1'),
   u64('latest_dynamic_fee_rate'),
   u64('max_trade_fee_rate'),
-  u64('volatility_factor')
+  u64('volatility_factor'),
+  u64('token_0_vault_amount'),
+  u64('token_1_vault_amount')
 ])
 
 const USER_POOL_LIQUIDITY_LAYOUT = struct([
