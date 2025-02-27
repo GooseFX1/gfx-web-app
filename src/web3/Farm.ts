@@ -700,9 +700,7 @@ export const getPriceQuotes = async (
   ])
 
   const [observationState] = await Promise.all([
-    prefetchedValues?.observationState ?? program.account.observationState.fetch(poolState.observationKey),
-    prefetchedValues?.tokenAccountInfo0 ?? connection.getParsedAccountInfo(poolState?.token0Vault),
-    prefetchedValues?.tokenAccountInfo1 ?? connection.getParsedAccountInfo(poolState?.token1Vault)
+    prefetchedValues?.observationState ?? program.account.observationState.fetch(poolState.observationKey)
   ])
 
   const inputToken0Amount = convertToNativeValue(amountToken, mintA?.decimals)
