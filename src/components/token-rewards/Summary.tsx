@@ -17,6 +17,7 @@ interface SummaryProps {
   endDate?: dayjs.Dayjs
   key: string
   hideTitle?: boolean
+  activeStep?: number
 }
 
 export const Summary = ({
@@ -25,7 +26,8 @@ export const Summary = ({
   amountToken,
   startDate,
   endDate,
-  hideTitle
+  hideTitle,
+  activeStep
 }: SummaryProps) => {
   const { mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
@@ -67,8 +69,22 @@ export const Summary = ({
       <div className="space-y-4">
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
-              1. Select Pool
+            <span
+              className={`flex items-center gap-2 text-[15px] ${
+                activeStep >= 1
+                  ? 'text-text-lightmode-primary dark:text-text-darkmode-primary'
+                  : 'text-text-lightmode-tertiary dark:text-text-darkmode-tertiary'
+              }`}
+            >
+              <div
+                className={`flex items-center justify-center w-[22px] h-[22px] 
+              text-[15px] rounded-full ${
+                activeStep >= 1 ? 'bg-[#A846FF]' : 'bg-text-lightmode-tertiary dark:bg-text-darkmode-tertiary'
+              }  text-white text-sm`}
+              >
+                1
+              </div>
+              Select Pool
             </span>
             {selectedPool ? (
               <div className="flex items-center">
@@ -84,14 +100,20 @@ export const Summary = ({
                           border-white border-[2px] rounded-full h-[25px] w-[25px]"
                   />
                 </div>
-                <span className="w-max text-sm font-medium text-text-lightmode-primary dark:text-text-darkmode-primary">
+                <span
+                  className={`w-max text-[15px] font-medium ${
+                    activeStep >= 1
+                      ? 'text-text-lightmode-primary dark:text-text-darkmode-primary'
+                      : 'text-text-lightmode-tertiary dark:text-text-darkmode-tertiary'
+                  }`}
+                >
                   {selectedPool?.mintA.symbol} - {selectedPool?.mintB.symbol}
                 </span>
               </div>
             ) : (
               <span
-                className="w-max text-sm 
-              font-medium text-text-lightmode-primary dark:text-text-darkmode-primary"
+                className="w-max text-[15px] 
+              font-medium text-text-lightmode-tertiary dark:text-text-darkmode-tertiary"
               >
                 No pool selected
               </span>
@@ -101,8 +123,22 @@ export const Summary = ({
 
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
-              2. Select Reward Tokens
+            <span
+              className={`flex items-center gap-2 text-[15px] ${
+                activeStep >= 2
+                  ? 'text-text-lightmode-primary dark:text-text-darkmode-primary'
+                  : 'text-text-lightmode-tertiary dark:text-text-darkmode-tertiary'
+              }`}
+            >
+              <div
+                className={`flex items-center justify-center w-[22px] h-[22px] 
+              text-[15px] rounded-full ${
+                activeStep >= 2 ? 'bg-[#A846FF]' : 'bg-text-lightmode-tertiary dark:bg-text-darkmode-tertiary'
+              }  text-white text-sm`}
+              >
+                2
+              </div>
+              Select Reward Tokens
             </span>
             {selectedToken ? (
               <div className="flex items-center gap-1">
@@ -112,14 +148,17 @@ export const Summary = ({
                           border-[2px] rounded-full h-[25px] w-[25px]"
                 />
                 <span
-                  className="text-sm text-text-lightmode-secondary
-                 dark:text-text-darkmode-secondary whitespace-nowrap"
+                  className={`text-[15px] ${
+                    activeStep >= 2
+                      ? 'text-text-lightmode-primary dark:text-text-darkmode-primary'
+                      : 'text-text-lightmode-tertiary dark:text-text-darkmode-tertiary'
+                  }`}
                 >
                   {amountToken} {selectedToken?.symbol}
                 </span>
               </div>
             ) : (
-              <span className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
+              <span className="text-[15px] text-text-lightmode-tertiary dark:text-text-darkmode-tertiary">
                 No token selected
               </span>
             )}
@@ -128,15 +167,35 @@ export const Summary = ({
 
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
-              3. Add Timeframe
+            <span
+              className={`flex items-center gap-2 text-[15px] ${
+                activeStep >= 3
+                  ? 'text-text-lightmode-primary dark:text-text-darkmode-primary'
+                  : 'text-text-lightmode-tertiary dark:text-text-darkmode-tertiary'
+              }`}
+            >
+              <div
+                className={`flex items-center justify-center w-[22px] h-[22px] 
+              text-[15px] rounded-full ${
+                activeStep >= 3 ? 'bg-[#A846FF]' : 'bg-text-lightmode-tertiary dark:bg-text-darkmode-tertiary'
+              }  text-white text-sm`}
+              >
+                3
+              </div>
+              Add Timeframe
             </span>
             {startDate && endDate ? (
-              <span className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
+              <span
+                className={`text-[15px] ${
+                  activeStep >= 3
+                    ? 'text-text-lightmode-primary dark:text-text-darkmode-primary'
+                    : 'text-text-lightmode-tertiary dark:text-text-darkmode-tertiary'
+                }`}
+              >
                 {dayjs(endDate).diff(dayjs(startDate), 'days')} days
               </span>
             ) : (
-              <span className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
+              <span className="text-[15px] text-text-lightmode-tertiary dark:text-text-darkmode-tertiary">
                 No timeframe selected
               </span>
             )}
@@ -147,10 +206,10 @@ export const Summary = ({
           <>
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
+                <span className="text-[15px]  text-text-lightmode-secondary dark:text-text-darkmode-secondary">
                   Est. Rewards / day
                 </span>
-                <span className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
+                <span className="text-[15px]  text-text-lightmode-secondary dark:text-text-darkmode-secondary">
                   {estimatedRewardsPerDay} {selectedToken?.symbol}
                 </span>
               </div>
@@ -158,10 +217,10 @@ export const Summary = ({
             {usdValue && (
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
+                  <span className="text-[15px]  text-text-lightmode-secondary dark:text-text-darkmode-secondary">
                     Est. Total USD Value
                   </span>
-                  <span className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
+                  <span className="text-[15px]  text-text-lightmode-secondary dark:text-text-darkmode-secondary">
                     ~${usdValue}
                   </span>
                 </div>

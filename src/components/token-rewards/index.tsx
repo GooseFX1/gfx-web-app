@@ -25,13 +25,13 @@ export const TokenRewardsDrawer = ({ isOpen, setOpen }: { isOpen: boolean; setOp
       setCurrentStep(3)
     }
   }, [isMobile])
-  useEffect(()=>{
+  useEffect(() => {
     const diff = startDate.diff(endDate, 'days')
-    if (diff === 0){
+    if (diff === 0) {
       setEndDate(endDate.add(1, 'day'))
     }
-  },[startDate, endDate])
-  const summary = (
+  }, [startDate, endDate])
+  const summary = (currentStep: number) => (
     <Summary
       key="summary"
       selectedPool={pool}
@@ -39,6 +39,7 @@ export const TokenRewardsDrawer = ({ isOpen, setOpen }: { isOpen: boolean; setOp
       amountToken={amountToken}
       startDate={startDate}
       endDate={endDate}
+      activeStep={currentStep}
     />
   )
 
@@ -48,7 +49,7 @@ export const TokenRewardsDrawer = ({ isOpen, setOpen }: { isOpen: boolean; setOp
       key="select-pool"
       currentStep={currentStep}
       setCurrentStep={setCurrentStep}
-      summary={summary}
+      summary={summary(1)}
       pool={pool}
       setPool={setPool}
     />,
@@ -56,7 +57,7 @@ export const TokenRewardsDrawer = ({ isOpen, setOpen }: { isOpen: boolean; setOp
       key="select-token"
       currentStep={currentStep}
       setCurrentStep={setCurrentStep}
-      summary={summary}
+      summary={summary(2)}
       selectedToken={selectedToken}
       setSelectedToken={setSelectedToken}
       amountToken={amountToken}
@@ -66,7 +67,7 @@ export const TokenRewardsDrawer = ({ isOpen, setOpen }: { isOpen: boolean; setOp
       key="add-timeframe"
       currentStep={currentStep}
       setCurrentStep={setCurrentStep}
-      summary={summary}
+      summary={summary(3)}
       selectedToken={selectedToken}
       startDate={startDate}
       endDate={endDate}
@@ -82,6 +83,7 @@ export const TokenRewardsDrawer = ({ isOpen, setOpen }: { isOpen: boolean; setOp
         startDate={startDate}
         endDate={endDate}
         hideTitle={true}
+        activeStep={4}
       />
     </SummaryWrapper>
   ]
