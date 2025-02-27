@@ -317,7 +317,7 @@ const getAccountsForCreatePool = async (
 export const calculateOtherTokenAndLPAmount = async (
   givenTokenAmount: string,
   tokenType: TokenType,
-  poolState: any,
+  poolState: any
 ): Promise<{ lpTokenAmount: BN; otherTokenAmountInString: string }> => {
   try {
     if (!givenTokenAmount || +givenTokenAmount <= 0) {
@@ -376,7 +376,7 @@ export const calculateOtherTokenAndLPAmount = async (
 
 export const lpTokensToTradingTokens = async (
   lpTokenAmount: BN,
-  poolState: any,
+  poolState: any
 ): Promise<{ tokenAmount0: BN; tokenAmount1: BN }> => {
   try {
     const lpTokenSupply = poolState?.lpSupply
