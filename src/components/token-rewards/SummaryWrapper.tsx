@@ -1,3 +1,4 @@
+import { useDarkMode } from '@/context'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { Connect } from '@/layouts'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -11,7 +12,7 @@ interface SummaryWrapperProps {
 export const SummaryWrapper = ({ children }: SummaryWrapperProps) => {
   const { isMobile } = useBreakPoint()
   const { connected } = useWallet()
-
+  const { mode } = useDarkMode()
   return (
     <div className="grid grid-cols-5 gap-10 w-full">
       <div className={`p-6 flex flex-col ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
@@ -28,7 +29,11 @@ export const SummaryWrapper = ({ children }: SummaryWrapperProps) => {
                 onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
               />
               <DialogClose>
-                <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
+                <Icon
+                  src={`/img/assets/rewards_close-${mode}.svg`}
+                  alt="Close"
+                  className="w-4 h-4 min-w-[25px] min-h-[25px]"
+                />
               </DialogClose>
             </div>
           )}

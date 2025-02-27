@@ -47,6 +47,7 @@ export const SelectTokenStep = ({
   const { isMobile } = useBreakPoint()
   const { connected } = useWallet()
   const { balance } = useWalletBalance()
+  const { mode } = useDarkMode()
 
   const handleChange = async (e) => {
     const inputNumber = e?.target?.value
@@ -75,7 +76,11 @@ export const SelectTokenStep = ({
                   onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
                 />
                 <DialogClose>
-                  <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
+                  <Icon
+                    src={`/img/assets/rewards_close-${mode}.svg`}
+                    alt="Close"
+                    className="w-4 h-4 min-w-[25px] min-h-[25px]"
+                  />
                 </DialogClose>
               </div>
             )}
@@ -137,7 +142,11 @@ export const SelectTokenStep = ({
       {!isMobile && (
         <div className="py-6 px-5 flex flex-col items-center col-span-2 bg-grey-5 dark:bg-black-1">
           <DialogClose>
-            <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
+            <Icon
+              src={`/img/assets/rewards_close-${mode}.svg`}
+              alt="Close"
+              className="w-4 h-4 absolute right-5 top-5 min-w-[25px] min-h-[25px]"
+            />
           </DialogClose>
           {summary}
         </div>

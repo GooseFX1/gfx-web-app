@@ -70,9 +70,13 @@ export const SelectPoolStep = ({ currentStep, setCurrentStep, summary, pool, set
                   className="w-[30px] h-[30px] cursor-pointer"
                   onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
                 />
-                <DialogClose>
-                  <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
-                </DialogClose>
+              <DialogClose>
+                <Icon
+                  src={`/img/assets/rewards_close-${mode}.svg`}
+                  alt="Close"
+                  className="w-4 h-4 min-w-[25px] min-h-[25px]"
+                />
+              </DialogClose>
               </div>
             )}
           </div>
@@ -169,7 +173,11 @@ export const SelectPoolStep = ({ currentStep, setCurrentStep, summary, pool, set
       {!isMobile && (
         <div className="py-6 px-5 flex flex-col items-center col-span-2 bg-grey-5 dark:bg-black-1">
           <DialogClose>
-            <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
+            <Icon
+              src={`/img/assets/rewards_close-${mode}.svg`}
+              alt="Close"
+              className="w-4 h-4 absolute right-5 top-5 min-w-[25px] min-h-[25px]"
+            />
           </DialogClose>
           {summary}
         </div>

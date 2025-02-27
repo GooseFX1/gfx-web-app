@@ -31,7 +31,11 @@ export const DefaultStep = ({
                 className="cursor-pointer"
               />
               <DialogClose>
-                <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
+                <Icon
+                  src={`/img/assets/rewards_close-${mode}.svg`}
+                  alt="Close"
+                  className="w-4 h-4 min-w-[25px] min-h-[25px]"
+                />
               </DialogClose>
             </div>
           )}
@@ -69,7 +73,11 @@ export const DefaultStep = ({
             Not sure what to create?
           </h2>
           <DialogClose>
-            <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
+            <Icon
+              src={`/img/assets/rewards_close-${mode}.svg`}
+              alt="Close"
+              className="w-4 h-4 absolute right-5 top-5 min-w-[25px] min-h-[25px]"
+            />
           </DialogClose>
           <Icon
             src={`/img/assets/help-token-rewards-${mode}.svg`}
