@@ -16,7 +16,9 @@ export const DefaultStep = ({
   return (
     <div className="grid grid-cols-5 gap-10 w-full">
       <div className={`p-6 flex flex-col ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
-        <div className="flex flex-row items-center justify-between gap-3 mb-2">
+        <div
+          className={`flex flex-row items-center justify-between gap-3 mb-2 pt-4 ${isMobile ? 'pb-2 border-b-1' : ''}`}
+        >
           <h1 className="text-lg font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary">
             Create
           </h1>
@@ -31,7 +33,11 @@ export const DefaultStep = ({
                 className="cursor-pointer"
               />
               <DialogClose>
-                <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
+                <Icon
+                  src={`/img/assets/rewards_close-${mode}.svg`}
+                  alt="Close"
+                  className="w-4 h-4 min-w-[25px] min-h-[25px]"
+                />
               </DialogClose>
             </div>
           )}
@@ -41,9 +47,10 @@ export const DefaultStep = ({
         </p>
         <div className="space-y-4">
           <div
-            className={`w-full p-4 rounded-sm border bg-grey-5 dark:bg-black-1 border-border-lightmode-primary 
-    dark:border-border-darkmode-primary hover:bg-background-lightmode-secondary 
-    dark:hover:bg-background-darkmode-secondary transition-colors text-left cursor-pointer`}
+            className={`w-full p-4 rounded-sm border bg-grey-5 dark:bg-black-1 
+              border-border-lightmode-secondary hover:border-border-lightmode-primary 
+    dark:border-border-darkmode-secondary dark:hover:border-border-darkmode-primary 
+    transition-colors text-left cursor-pointer`}
             onClick={() => setCurrentStep(currentStep + 1)}
           >
             <div className="flex items-center gap-3 mb-2">
@@ -68,7 +75,11 @@ export const DefaultStep = ({
             Not sure what to create?
           </h2>
           <DialogClose>
-            <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
+            <Icon
+              src={`/img/assets/rewards_close-${mode}.svg`}
+              alt="Close"
+              className="w-4 h-4 absolute right-5 top-5 min-w-[25px] min-h-[25px]"
+            />
           </DialogClose>
           <Icon
             src={`/img/assets/help-token-rewards-${mode}.svg`}

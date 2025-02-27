@@ -23,6 +23,7 @@ import { loadIconImage, numberFormatter } from '@/utils'
 import { JupToken } from '@/pages/FarmV4/constants'
 import { InfiniteTokenListScrollView } from '@/pages/Swap/InfiniteTokenListSwap'
 import { useTokens } from '@/hooks/useTokens'
+import { StepCounter, totalSteps } from './StepCounter'
 
 interface SelectTokenStepProps {
   currentStep: number
@@ -47,6 +48,7 @@ export const SelectTokenStep = ({
   const { isMobile } = useBreakPoint()
   const { connected } = useWallet()
   const { balance } = useWalletBalance()
+  const { mode } = useDarkMode()
 
   const handleChange = async (e) => {
     const inputNumber = e?.target?.value
@@ -59,64 +61,84 @@ export const SelectTokenStep = ({
   }
 
   return (
-    <div className="grid grid-cols-5 gap-10 w-full">
-      <div className={`p-6 flex flex-col ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
-        <div className="flex flex-row items-center justify-between gap-3 mb-2">
-          <h1 className="text-lg font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary">
-            Select Token
-          </h1>
-          {isMobile && (
-            <div className="flex flex-row items-center gap-3">
-              <Icon
-                src="/img/assets/question-icn.svg"
-                alt="help"
-                className="w-[30px] h-[30px] cursor-pointer"
-                onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
+    <div className="grid grid-cols-5 w-full">
+      <div className={`flex flex-col ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
+        <div className="py-2.5 px-6 flex flex-col">
+          <div
+            className={`flex flex-row items-center justify-between gap-3 mb-2 pt-4 ${
+              isMobile ? 'pb-2 border-b-1' : ''
+            }`}
+          >
+            <h1 className="text-lg font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary">
+              Select Token
+            </h1>
+            {isMobile ? (
+              <div className="flex flex-row items-center gap-3">
+                <StepCounter currentStep={2} totalSteps={totalSteps()} />
+                <Icon
+                  src="/img/assets/question-icn.svg"
+                  alt="help"
+                  className="w-[30px] h-[30px] cursor-pointer"
+                  onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
+                />
+                <DialogClose>
+                  <Icon
+                    src={`/img/assets/rewards_close-${mode}.svg`}
+                    alt="Close"
+                    className="w-4 h-4 min-w-[25px] min-h-[25px]"
+                  />
+                </DialogClose>
+              </div>
+            ) : (
+              <div className="flex flex-row items-center gap-3">
+                <StepCounter currentStep={2} totalSteps={totalSteps()} />
+                <Icon
+                  src="/img/assets/question-icn.svg"
+                  alt="help"
+                  className="w-[30px] h-[30px] cursor-pointer"
+                  onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
+                />
+              </div>
+            )}
+          </div>
+
+          <p className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary mb-6">
+            Select the token and add the amount you will like to be distributed.
+          </p>
+
+          {connected ? (
+            <>
+              <div className="flex flex-row items-center gap-1 mb-2">
+                <Icon src="/img/assets/wallet-lite-enabled.svg" alt="balance" className="w-5 h-5" />
+                <p
+                  className={cn(
+                    `text-b2 cursor-pointer text-text-lightmode-primary dark:text-text-darkmode-primary`,
+                    balance[selectedToken?.address].tokenAmount.uiAmount == 0 &&
+                      `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
+                  )}
+                  onClick={() => {
+                    setAmountToken(balance[selectedToken?.address].tokenAmount.uiAmountString)
+                  }}
+                >
+                  {numberFormatter(balance[selectedToken?.address].tokenAmount.uiAmount)} {selectedToken?.symbol}
+                </p>
+              </div>
+              <TokenSelectInput
+                token={selectedToken}
+                setToken={setSelectedToken}
+                handleChange={(e) => handleChange(e)}
+                amountToken={amountToken}
+                setAmountToken={setAmountToken}
               />
-              <DialogClose>
-                <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
-              </DialogClose>
-            </div>
+            </>
+          ) : (
+            <Connect containerStyle="w-max" />
           )}
         </div>
-
-        <p className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary mb-6">
-          Select the token and add the amount you will like to be distributed.
-        </p>
-
-        {connected ? (
-          <>
-            <div className="flex flex-row items-center gap-1 mb-2">
-              <Icon src="/img/assets/wallet-lite-enabled.svg" alt="balance" className="w-5 h-5" />
-              <p
-                className={cn(
-                  `text-b2 cursor-pointer text-text-lightmode-primary dark:text-text-darkmode-primary`,
-                  balance[selectedToken?.address].tokenAmount.uiAmount == 0 &&
-                    `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
-                )}
-                onClick={() => {
-                  setAmountToken(balance[selectedToken?.address].tokenAmount.uiAmountString)
-                }}
-              >
-                {numberFormatter(balance[selectedToken?.address].tokenAmount.uiAmount)} {selectedToken?.symbol}
-              </p>
-            </div>
-            <TokenSelectInput
-              token={selectedToken}
-              setToken={setSelectedToken}
-              handleChange={(e) => handleChange(e)}
-              amountToken={amountToken}
-              setAmountToken={setAmountToken}
-            />
-          </>
-        ) : (
-          <Connect containerStyle="w-max" />
-        )}
-
-        <div className="flex justify-between pt-8 mt-auto">
+        <div className="px-6 py-2.5 flex justify-between mt-auto border-t-1">
           <Button
             onClick={() => setCurrentStep(currentStep - 1)}
-            className="px-4 py-2 text-text-lightmode-primary dark:text-text-darkmode-primary"
+            className="px-4 py-2 text-text-lightmode-primary dark:text-text-darkmode-primary underline"
           >
             Back
           </Button>
@@ -136,7 +158,11 @@ export const SelectTokenStep = ({
       {!isMobile && (
         <div className="py-6 px-5 flex flex-col items-center col-span-2 bg-grey-5 dark:bg-black-1">
           <DialogClose>
-            <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
+            <Icon
+              src={`/img/assets/rewards_close-${mode}.svg`}
+              alt="Close"
+              className="w-4 h-4 absolute right-5 top-5 min-w-[25px] min-h-[25px]"
+            />
           </DialogClose>
           {summary}
         </div>
