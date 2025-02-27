@@ -16,7 +16,9 @@ export const DefaultStep = ({
   return (
     <div className="grid grid-cols-5 gap-10 w-full">
       <div className={`p-6 flex flex-col ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
-        <div className="flex flex-row items-center justify-between gap-3 mb-2">
+        <div
+          className={`flex flex-row items-center justify-between gap-3 mb-2 pt-4 ${isMobile ? 'pb-2 border-b-1' : ''}`}
+        >
           <h1 className="text-lg font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary">
             Create
           </h1>

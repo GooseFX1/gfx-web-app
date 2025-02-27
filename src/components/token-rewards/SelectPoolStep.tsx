@@ -25,6 +25,7 @@ import { loadIconImage, numberFormatter, truncateAddress } from '@/utils'
 import { CSSProperties, ElementType, useMemo, useState } from 'react'
 import { InfiniteProPoolScrollView } from '@/pages/FarmV4/InfiniteProPoolList'
 import { usePools } from '@/hooks/usePools'
+import { StepCounter, totalSteps } from './StepCounter'
 
 interface SelectPoolStepProps {
   currentStep: number
@@ -58,25 +59,40 @@ export const SelectPoolStep = ({ currentStep, setCurrentStep, summary, pool, set
     <div className="grid grid-cols-5 w-full">
       <div className={`flex flex-col ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
         <div className="py-2.5 px-6 flex flex-col">
-          <div className="flex flex-row items-center justify-between gap-3 mb-2">
+          <div
+            className={`flex flex-row items-center justify-between gap-3 mb-2 pt-4 ${
+              isMobile ? 'pb-2 border-b-1' : ''
+            }`}
+          >
             <h1 className="text-lg font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary">
               Select Pool
             </h1>
-            {isMobile && (
+            {isMobile ? (
               <div className="flex flex-row items-center gap-3">
+                <StepCounter currentStep={1} totalSteps={totalSteps()} />
                 <Icon
                   src="/img/assets/question-icn.svg"
                   alt="help"
                   className="w-[30px] h-[30px] cursor-pointer"
                   onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
                 />
-              <DialogClose>
+                <DialogClose>
+                  <Icon
+                    src={`/img/assets/rewards_close-${mode}.svg`}
+                    alt="Close"
+                    className="w-4 h-4 min-w-[25px] min-h-[25px]"
+                  />
+                </DialogClose>
+              </div>
+            ) : (
+              <div className="flex flex-row items-center gap-3">
+                <StepCounter currentStep={1} totalSteps={totalSteps()} />
                 <Icon
-                  src={`/img/assets/rewards_close-${mode}.svg`}
-                  alt="Close"
-                  className="w-4 h-4 min-w-[25px] min-h-[25px]"
+                  src="/img/assets/question-icn.svg"
+                  alt="help"
+                  className="w-[30px] h-[30px] cursor-pointer"
+                  onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
                 />
-              </DialogClose>
               </div>
             )}
           </div>
