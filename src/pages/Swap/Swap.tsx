@@ -55,8 +55,8 @@ export const Swap: FC = () => {
     selectedTokenB,
     setSelectedTokenA,
     setSelectedTokenB,
-    setAmountTokenA,
-    setAmountTokenB,
+    amountTokenACommands,
+    amountTokenBCommands,
     amountTokenA,
     amountTokenB
   } = useSwap()
@@ -147,7 +147,7 @@ export const Swap: FC = () => {
       setIsRefreshing.off()
       return
     }
-    if (+amountTokenA === 0) setAmountTokenB('')
+    if (+amountTokenA === 0) amountTokenBCommands.clear()
     if (amountTokenA !== '' && !isNaN(+amountTokenA) && +amountTokenA > 0 && selectedTokenA && selectedTokenB) {
       setLoadingPriceQuote(true)
 
@@ -160,7 +160,7 @@ export const Swap: FC = () => {
         prefetchedQuoteValues
       )
         .then(({ destinationAmountSwapped: price, tradeFee }) => {
-          setAmountTokenB(price)
+          amountTokenBCommands.set(price)
           setFee(tradeFee)
         })
         .catch((e) => {
@@ -176,13 +176,10 @@ export const Swap: FC = () => {
     setIsRefreshing.off()
   }
   const handleChange = async (e, isSource: boolean) => {
-    const inputNumber = e?.target?.value
     if (!e?.target?.value) {
-      isSource ? setAmountTokenA('') : setAmountTokenB('')
+      isSource ? amountTokenACommands.clear() : amountTokenBCommands.clear()
     }
-    if (!isNaN(+inputNumber)) {
-      isSource ? setAmountTokenA(inputNumber) : setAmountTokenB(inputNumber)
-    }
+    isSource ? amountTokenACommands.onChange(e) : amountTokenBCommands.onChange(e)
   }
   const handlePrefetchingAccounts = async () => {
     if (selectedTokenA && selectedTokenB) {
@@ -278,8 +275,8 @@ export const Swap: FC = () => {
         //off(connectionId)
         console.log('An error occurred while Swapping!')
       } else {
-        setAmountTokenA('')
-        setAmountTokenB('')
+        amountTokenACommands.clear()
+        amountTokenBCommands.clear()
         await forceCronUpdateWithConnectionAndTxSig(connection, txSig)
       }
     } catch (e) {
@@ -427,7 +424,7 @@ mt-8 flex items-center justify-center
                     `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
                 )}
                 onClick={() => {
-                  setAmountTokenA(balance[selectedTokenA?.address].tokenAmount.uiAmountString)
+                  amountTokenACommands.set(balance[selectedTokenA?.address].tokenAmount.uiAmountString)
                 }}
               >
                 Balance: {numberFormatter(balance[selectedTokenA?.address].tokenAmount.uiAmount)}{' '}
@@ -443,7 +440,8 @@ mt-8 flex items-center justify-center
                 amountToken={amountTokenA}
                 disableInput={sendingTransaction || !doesPoolExist}
                 disableTokenDropDown={sendingTransaction}
-                setAmountTokenB={setAmountTokenB}
+                setAmountTokenB={amountTokenBCommands.set}
+                onBlur={amountTokenACommands.onBlur}
               />
               {selectedTokenA ? (
                 <p
@@ -464,8 +462,8 @@ mt-8 flex items-center justify-center
             onClick={() => {
               setSelectedTokenB(selectedTokenA)
               setSelectedTokenA(selectedTokenB)
-              setAmountTokenA(amountTokenB)
-              setAmountTokenB(amountTokenA)
+              amountTokenACommands.set(amountTokenB)
+              amountTokenBCommands.set(amountTokenA)
             }}
           />
           <div className={'flex w-full flex-col gap-3.75'}>
@@ -492,7 +490,8 @@ mt-8 flex items-center justify-center
                 disableInput={true}
                 disableTokenDropDown={sendingTransaction}
                 isLocked={true}
-                setAmountTokenB={setAmountTokenB}
+                setAmountTokenB={amountTokenBCommands.set}
+                onBlur={amountTokenACommands.onBlur}
               />
               {selectedTokenB ? (
                 <p
@@ -621,7 +620,8 @@ function TokenSelectInput({
   disableInput,
   disableTokenDropDown,
   isLocked,
-  setAmountTokenB
+  setAmountTokenB,
+  onBlur
 }: {
   token: JupToken | null
   setToken: (token: JupToken) => void
@@ -632,6 +632,7 @@ function TokenSelectInput({
   disableTokenDropDown?: boolean
   isLocked?: boolean
   setAmountTokenB: (amount: string) => void
+  onBlur: (e: React.ChangeEvent<HTMLInputElement>)=>void
 }) {
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { isDarkMode, mode } = useDarkMode()
@@ -719,6 +720,7 @@ function TokenSelectInput({
         type="text"
         placeholder={`0.00 ${token ? token?.symbol : ''}`}
         onChange={(e) => handleChange(e, true)}
+        onBlur={onBlur}
         value={amountToken}
         className={cn(
           'h-[45px] text-right',

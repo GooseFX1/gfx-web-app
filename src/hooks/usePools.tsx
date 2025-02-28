@@ -2,6 +2,7 @@ import { fetchAllPools } from '@/api/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { GAMMAPool, GAMMAPoolsResponse } from '@/types/gamma'
 import { useEffect, useState } from 'react'
+import { clamp } from '@/utils'
 
 export function usePools({
   poolType,
@@ -25,6 +26,7 @@ export function usePools({
   const [poolsHasMoreData, setPoolsHasMoreData] = useState(false)
   const [totalPoolCount, setTotalPoolCount] = useState(0)
   const [poolPage, setPoolPage] = useState(1)
+  const [nextPage, setNextPage] = useState(2)
   const [isLoadingPools, setIsLoadingPools] = useState(false)
 
   const loadPools = (initialPoolPage?: number) => {
@@ -45,6 +47,7 @@ export function usePools({
           setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
           setTotalPoolCount(poolsData.data.totalItems)
           setPoolPage(poolsData.data.currentPage + 1)
+          setNextPage(clamp(poolsData.data.currentPage + 1, 1, poolsData.data.totalPages))
           const existingPools = pools
           const existingPoolsMap = new Map(
             existingPools.map((pool) => [`${pool.mintA.address}_${pool.mintB.address}`, pool])
@@ -79,9 +82,8 @@ export function usePools({
   }, [pageSize, sortKey, poolType, searchTokens, showCreated, showDeposited, base58PublicKey])
 
   const loadMorePools = () => {
-    if (poolsHasMoreData) {
-      loadPools()
-    }
+    if (isLoadingPools || !poolsHasMoreData) return
+    loadPools(nextPage)
   }
 
   return {

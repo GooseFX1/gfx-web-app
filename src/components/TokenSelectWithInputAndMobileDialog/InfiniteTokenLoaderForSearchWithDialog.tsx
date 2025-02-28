@@ -11,8 +11,7 @@ import BigNumber from 'bignumber.js'
 import { TokenListToken, useDarkMode } from '@/context'
 
 export type InfiniteTokenLoaderForSearchWithDialogProps = {
-  page: number
-  setPage: (page: number) => void
+  loadNextPage: () => void
   tokenList: Array<TokenListToken>
   maxTokens: number
   isLoadingTokenList: boolean
@@ -24,8 +23,7 @@ export type InfiniteTokenLoaderForSearchWithDialogProps = {
 function InfiniteTokenLoaderForSearchWithDialog({
   token,
   onSelectToken,
-  page,
-  setPage,
+  loadNextPage,
   tokenList,
   maxTokens,
   isLoadingTokenList
@@ -54,7 +52,7 @@ function InfiniteTokenLoaderForSearchWithDialog({
     : () => {
         if (isLoadingTokenList || maxTokensReached) return
         // triggers the update for the tokenListEndpoint
-        setPage(page + 1)
+        loadNextPage()
       }
   const isItemLoaded = (index) => maxTokensReached || index < tokenListLength
   const Item = ({ index, style }: { index: number; style: CSSProperties }) => {

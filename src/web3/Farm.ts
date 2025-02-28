@@ -320,24 +320,14 @@ const getAccountsForCreatePool = async (
 export const calculateOtherTokenAndLPAmount = async (
   givenTokenAmount: string,
   tokenType: TokenType,
-  poolState: any,
-  connection: Connection
+  poolState: any
 ): Promise<{ lpTokenAmount: BN; otherTokenAmountInString: string }> => {
   try {
     if (!givenTokenAmount || +givenTokenAmount <= 0) {
       return { lpTokenAmount: new BN(0), otherTokenAmountInString: '' }
     }
-    const tokenAccountInfo0 = await connection.getParsedAccountInfo(poolState?.token0Vault)
-    const amount0 = (tokenAccountInfo0?.value?.data as any).parsed?.info?.tokenAmount?.amount
-    const protocolFees0 = poolState?.protocolFeesToken0
-    const fundFees0 = poolState?.fundFeesToken0
-    const swapTokenAmount0 = new BN(amount0)?.sub(protocolFees0?.add(fundFees0))
-
-    const tokenAccountInfo1 = await connection.getParsedAccountInfo(poolState?.token1Vault)
-    const amount1 = (tokenAccountInfo1?.value?.data as any).parsed?.info?.tokenAmount?.amount
-    const protocolFees1 = poolState?.protocolFeesToken1
-    const fundFees1 = poolState?.fundFeesToken1
-    const swapTokenAmount1 = new BN(amount1)?.sub(protocolFees1?.add(fundFees1))
+    const swapTokenAmount0 = new BN(poolState?.token0VaultAmount)
+    const swapTokenAmount1 = new BN(poolState?.token1VaultAmount)
 
     const lpTokenSupply = poolState?.lpSupply
     let lpTokenAmount: BN
@@ -389,25 +379,15 @@ export const calculateOtherTokenAndLPAmount = async (
 
 export const lpTokensToTradingTokens = async (
   lpTokenAmount: BN,
-  poolState: any,
-  connection: Connection
+  poolState: any
 ): Promise<{ tokenAmount0: BN; tokenAmount1: BN }> => {
   try {
     const lpTokenSupply = poolState?.lpSupply
     if (lpTokenSupply.eq(new BN(0))) {
       return { tokenAmount0: new BN(0), tokenAmount1: new BN(0) }
     }
-    const tokenAccountInfo0 = await connection.getParsedAccountInfo(poolState?.token0Vault)
-    const amount0 = (tokenAccountInfo0?.value?.data as any).parsed?.info?.tokenAmount?.amount
-    const protocolFees0 = poolState?.protocolFeesToken0
-    const fundFees0 = poolState?.fundFeesToken0
-    const swapTokenAmount0 = new BN(amount0)?.sub(protocolFees0?.add(fundFees0))
-
-    const tokenAccountInfo1 = await connection.getParsedAccountInfo(poolState?.token1Vault)
-    const amount1 = (tokenAccountInfo1?.value?.data as any).parsed?.info?.tokenAmount?.amount
-    const protocolFees1 = poolState?.protocolFeesToken1
-    const fundFees1 = poolState?.fundFeesToken1
-    const swapTokenAmount1 = new BN(amount1)?.sub(protocolFees1?.add(fundFees1))
+    const swapTokenAmount0 = new BN(poolState?.token0VaultAmount)
+    const swapTokenAmount1 = new BN(poolState?.token1VaultAmount)
 
     const tokenAmount0 = lpTokenAmount.mul(swapTokenAmount0).div(lpTokenSupply)
     const tokenAmount1 = lpTokenAmount.mul(swapTokenAmount1).div(lpTokenSupply)
@@ -719,23 +699,14 @@ export const getPriceQuotes = async (
     prefetchedValues?.poolState ?? program.account.poolState.fetch(poolIdKey)
   ])
 
-  const [observationState, tokenAccountInfo0, tokenAccountInfo1] = await Promise.all([
-    prefetchedValues?.observationState ?? program.account.observationState.fetch(poolState.observationKey),
-    prefetchedValues?.tokenAccountInfo0 ?? connection.getParsedAccountInfo(poolState?.token0Vault),
-    prefetchedValues?.tokenAccountInfo1 ?? connection.getParsedAccountInfo(poolState?.token1Vault)
+  const [observationState] = await Promise.all([
+    prefetchedValues?.observationState ?? program.account.observationState.fetch(poolState.observationKey)
   ])
 
   const inputToken0Amount = convertToNativeValue(amountToken, mintA?.decimals)
 
-  const amount0 = (tokenAccountInfo0?.value?.data as any).parsed?.info?.tokenAmount?.amount
-  const protocolFees0 = poolState?.protocolFeesToken0
-  const fundFees0 = poolState?.fundFeesToken0
-  const swapTokenAmount0 = new BN(amount0)?.sub(protocolFees0?.add(fundFees0))
-
-  const amount1 = (tokenAccountInfo1?.value?.data as any).parsed?.info?.tokenAmount?.amount
-  const protocolFees1 = poolState?.protocolFeesToken1
-  const fundFees1 = poolState?.fundFeesToken1
-  const swapTokenAmount1 = new BN(amount1)?.sub(protocolFees1?.add(fundFees1))
+  const swapTokenAmount0 = new BN(poolState?.token0VaultAmount)
+  const swapTokenAmount1 = new BN(poolState?.token1VaultAmount)
 
   const swapResult = CurveCalculator.swap(
     new BN(inputToken0Amount),

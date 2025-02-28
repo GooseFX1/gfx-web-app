@@ -23,7 +23,6 @@ import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
 import { Toaster } from 'gfx-component-lib'
 import { RewardsProvider } from '@/context/rewardsContext'
 import { MarketProductGroupProvider } from './context/market_product_group'
-import { PasswordProvider } from './context/passwordProtectionProvider'
 import { Swap } from '@/pages/Swap'
 import { SwapProvider } from '@/context/newSwap'
 
@@ -125,14 +124,12 @@ export const Router: FC = () => {
                             </PriceFeedFarmProvider>
                           </Route>
                           <Route exact path={['/gamma']}>
-                            <PasswordProvider>
-                              <PriceFeedFarmProvider>
-                                <GammaProvider>
-                                  {/*<JupWidget />*/}
-                                  <FarmV4 />
-                                </GammaProvider>
-                              </PriceFeedFarmProvider>
-                            </PasswordProvider>
+                            <PriceFeedFarmProvider>
+                              <GammaProvider>
+                                {/*<JupWidget />*/}
+                                <FarmV4 />
+                              </GammaProvider>
+                            </PriceFeedFarmProvider>
                           </Route>
                           <Route exact path={['/swap']}>
                             <PriceFeedFarmProvider>

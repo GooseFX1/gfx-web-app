@@ -1,13 +1,4 @@
-import {
-  Dispatch,
-  ElementType,
-  FC,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from 'react'
+import { Dispatch, ElementType, FC, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Badge,
   Button,
@@ -79,262 +70,268 @@ const Step2: FC<{
   setIsCreatePool,
   poolType
 }) => {
-    const { mode } = useDarkMode()
-    const [priceSwitch, setPriceSwitch] = useState(false)
-    const [poolExistsText, setPoolExistsText] = useState<string>('')
-    const [existingPool, setExistingPool] = useState<GAMMAPool>()
-    const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
-    const { connected } = useWallet()
-    const { balance } = useWalletBalance()
-    const [aToBRatio, setAToBRatio] = useBoolean(true)
+  const { mode } = useDarkMode()
+  const [priceSwitch, setPriceSwitch] = useState(false)
+  const [poolExistsText, setPoolExistsText] = useState<string>('')
+  const [existingPool, setExistingPool] = useState<GAMMAPool>()
+  const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
+  const { connected } = useWallet()
+  const { balance } = useWalletBalance()
+  const [aToBRatio, setAToBRatio] = useBoolean(true)
 
-    useEffect(() => {
-      if (+amountTokenA && +amountTokenB) {
-        !priceSwitch
-          ? setInitialPrice((+amountTokenA / +amountTokenB)?.toString())
-          : setInitialPrice((+amountTokenB / +amountTokenA)?.toString())
-      } else {
-        setInitialPrice('')
-      }
-    }, [amountTokenA, amountTokenB, priceSwitch])
+  useEffect(() => {
+    if (+amountTokenA && +amountTokenB) {
+      !priceSwitch
+        ? setInitialPrice((+amountTokenA / +amountTokenB)?.toString())
+        : setInitialPrice((+amountTokenB / +amountTokenA)?.toString())
+    } else {
+      setInitialPrice('')
+    }
+  }, [amountTokenA, amountTokenB, priceSwitch])
 
-    const navigateToPool = useCallback(async () => {
-      if (!tokenA || !tokenB) return
-      setSelectedCard(existingPool)
-      setIsCreatePool(false)
-      setOpenDepositWithdrawSlider(true)
-    }, [tokenA, tokenB, existingPool, setSelectedCard])
-    const { priceAToB, priceBToA, priceError } = useMemo(() => {
-      if (!tokenA || !tokenB)
-        return {
-          priceAToB: '',
-          priceBToA: ''
-        }
-      if (new Decimal(tokenA.price).isZero() || new Decimal(tokenB.price).isZero()) {
-        return {
-          priceAToB: '0.00',
-          priceBToA: '0.00',
-          priceError: `Price Data Unavailable`
-        }
-      }
-      const priceAToB = new Decimal(tokenA.price).div(tokenB.price).toFixed(tokenA.decimals)
-      const priceBToA = new Decimal(tokenB.price).div(tokenA.price).toFixed(tokenB.decimals)
-
+  const navigateToPool = useCallback(async () => {
+    if (!tokenA || !tokenB) return
+    setSelectedCard(existingPool)
+    setIsCreatePool(false)
+    setOpenDepositWithdrawSlider(true)
+  }, [tokenA, tokenB, existingPool, setSelectedCard])
+  const { priceAToB, priceBToA, priceError } = useMemo(() => {
+    if (!tokenA || !tokenB)
       return {
-        priceAToB,
-        priceBToA
+        priceAToB: '',
+        priceBToA: ''
       }
-    }, [tokenA, tokenB])
+    if (new Decimal(tokenA.price).isZero() || new Decimal(tokenB.price).isZero()) {
+      return {
+        priceAToB: '0.00',
+        priceBToA: '0.00',
+        priceError: `Price Data Unavailable`
+      }
+    }
+    const priceAToB = new Decimal(tokenA.price).div(tokenB.price).toFixed(tokenA.decimals)
+    const priceBToA = new Decimal(tokenB.price).div(tokenA.price).toFixed(tokenB.decimals)
 
-    useEffect(() => {
-      if (!tokenA || !tokenB) return
-      const fetchPools = async () => {
-        console.log('fetching pools')
-        const response = await fetchAndConcatAllPoolsByMints({
-          mintA: tokenA?.address, mintB: tokenB?.address,
-          page: 1, pageSize: POOL_LIST_PAGE_SIZE
-        })
-        console.log('here', response)
-        if (
-          !response ||
-          !response.pools ||
-          !response.pools ||
-          response.pools.length <= 0
-        )
+    return {
+      priceAToB,
+      priceBToA
+    }
+  }, [tokenA, tokenB])
+
+  useEffect(() => {
+    if (!tokenA || !tokenB) return
+    const fetchPools = async () => {
+      console.log('fetching pools')
+      const response = await fetchAndConcatAllPoolsByMints({
+        mintA: tokenA?.address,
+        mintB: tokenB?.address,
+        page: 1,
+        pageSize: POOL_LIST_PAGE_SIZE
+      })
+      console.log('here', response)
+      if (!response || !response.pools || !response.pools || response.pools.length <= 0) return
+      for (const pool of response.pools) {
+        if (pool?.mintA?.address == tokenA?.address && pool?.mintB?.address == tokenB?.address) {
+          setPoolExists(true)
+          setPoolExistsText(`${tokenA?.symbol} - ${tokenB?.symbol}`)
+          setExistingPool(pool)
           return
-        for (const pool of response.pools) {
-          if (pool?.mintA?.address == tokenA?.address && pool?.mintB?.address == tokenB?.address) {
-            setPoolExists(true)
-            setPoolExistsText(`${tokenA?.symbol} - ${tokenB?.symbol}`)
-            setExistingPool(pool)
-            return
-          }
-          if (pool?.mintA?.address == tokenB?.address && pool?.mintB?.address == tokenA?.address) {
-            setPoolExists(true)
-            setPoolExistsText(`${tokenB?.symbol} - ${tokenA?.symbol}`)
-            setExistingPool(pool)
-            return
-          }
         }
-        setPoolExists(false)
+        if (pool?.mintA?.address == tokenB?.address && pool?.mintB?.address == tokenA?.address) {
+          setPoolExists(true)
+          setPoolExistsText(`${tokenB?.symbol} - ${tokenA?.symbol}`)
+          setExistingPool(pool)
+          return
+        }
       }
+      setPoolExists(false)
+    }
 
-      fetchPools()
-    }, [tokenA, tokenB, setPoolExists])
+    fetchPools()
+  }, [tokenA, tokenB, setPoolExists])
 
-    return (
-      <>
-        <div
-          className="text-regular !text-grey-2 dark:!text-grey-1 border-b border-solid dark:border-black-4
+  return (
+    <>
+      <div
+        className="text-regular !text-grey-2 dark:!text-grey-1 border-b border-solid dark:border-black-4
               border-grey-4 p-2.5 h-17"
-        >
-          <span className="text-purple-3">Step 1</span> of 2
-          <h2 className="dark:text-grey-8 text-black-4 font-semibold font-sans text-[18px] mt-2">Pool Settings</h2>
-        </div>
-        <div
-          className="p-3 flex flex-col overflow-scroll border-b-none border-solid
+      >
+        <span className="text-purple-3">Step 1</span> of 2
+        <h2 className="dark:text-grey-8 text-black-4 font-semibold font-sans text-[18px] mt-2">Pool Settings</h2>
+      </div>
+      <div
+        className="p-3 flex flex-col overflow-scroll border-b-none border-solid
           dark:border-black-4 border-grey-4 gap-5"
-        >
-          <div>
-            <div className="flex flex-row justify-between items-center mb-2.5">
-              <h4>1. Select Token A</h4>
-              <div className={cn('flex flex-row items-center', !tokenA && 'invisible')}
-                   onClick={() =>
-                     handleChange(
-                       {
-                         target: {
-                           value: walletTokenA
-                         }
-                       },
-                       true
-                     )
-                   }
-              >
-                <img
-                  src={`/img/assets/wallet-${mode}-${walletTokenA !== '0.00' ? 'enabled' : 'disabled'}.svg`}
-                  alt="wallet"
-                  className="mr-1.5"
-                />
-                <span
-                  className={cn(
-                    'text-regular font-semibold dark:text-grey-2 text-black-4',
-                    walletTokenA === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
-                  )}
-                >
-                  {numberFormatter(+walletTokenA)} {tokenA?.symbol}
-                </span>
-              </div>
-            </div>
-            <TokenSelectionInput
-              token={tokenA}
-              otherToken={tokenB}
-              handleChange={handleChange}
-              amountToken={amountTokenA}
-              setToken={setTokenA}
-            />
-          </div>
-          <div>
-            <div className="flex flex-row justify-between items-center mb-2.5">
-              <h4>2. Select Token B</h4>
-              <div className={cn('flex flex-row items-center', !tokenB && 'invisible')}
-                   onClick={() =>
-                     handleChange(
-                       {
-                         target: {
-                           value: walletTokenB
-                         }
-                       },
-                       false
-                     )
-                   }
-              >
-                <img
-                  src={`/img/assets/wallet-${mode}-${walletTokenB !== '0.00' ? 'enabled' : 'disabled'}.svg`}
-                  alt="wallet"
-                  className="mr-1.5"
-                />
-                <span
-                  className={cn(
-                    'text-regular font-semibold dark:text-grey-2 text-black-4',
-                    walletTokenB === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
-                  )}
-                >
-                  {numberFormatter(+walletTokenB)} {tokenB?.symbol}
-                </span>
-              </div>
-            </div>
-            <TokenSelectionInput
-              token={tokenB}
-              otherToken={tokenA}
-              handleChange={(e) => handleChange(e, false)}
-              amountToken={amountTokenB}
-              setToken={setTokenB}
-            />
-          </div>
-          <div>
-            <div className="flex flex-row justify-between items-center mb-2.5">
-              <Tooltip>
-                <TooltipTrigger className={`dark:text-grey-8 text-black-4 underline !decoration-dotted`}>
-                  <h4>3. Initial Price</h4>
-                </TooltipTrigger>
-                <TooltipContent className={'z-[1001]'} align={'start'}>
-                  The initial price is based on the ratio of tokens you deposit for initial liquidity.
-                </TooltipContent>
-              </Tooltip>
-              <div
-                className={cn('flex flex-row items-center cursor-pointer', (!tokenA || !tokenB) && 'invisible')}
-                onClick={() => {
-                  setPriceSwitch((prev) => !prev)
-                  setAToBRatio.toggle()
-                }}
-              >
-                <img src={`/img/assets/switch_${mode}.svg`} alt="switch" className="mr-1.5" />
-                <span
-                  className={cn(`text-regular font-bold dark:text-white
-                text-blue-1 underline cursor-pointer`)}
-                >
-                  {!priceSwitch
-                    ? `${tokenA?.symbol} per ${tokenB?.symbol}`
-                    : `${tokenB?.symbol} per ${tokenA?.symbol}`}
-                </span>
-              </div>
-            </div>
+      >
+        <div>
+          <div className="flex flex-row justify-between items-center mb-2.5">
+            <h4>1. Select Token A</h4>
             <div
-              className="h-[45px] dark:bg-black-1 bg-grey-5 flex p-2
-                    flex-row justify-between rounded-[3px] border border-solid dark:border-black-4
-                    border-grey-4 items-center"
+              className={cn('flex flex-row items-center', !tokenA && 'invisible')}
+              onClick={() =>
+                handleChange(
+                  {
+                    target: {
+                      value: walletTokenA
+                    }
+                  },
+                  true
+                )
+              }
             >
-              <span className="text-regular font-semibold dark:text-grey-8 text-black-4">{initialPrice}</span>
+              <img
+                src={`/img/assets/wallet-${mode}-${walletTokenA !== '0.00' ? 'enabled' : 'disabled'}.svg`}
+                alt="wallet"
+                className="mr-1.5"
+              />
               <span
                 className={cn(
-                  'text-regular font-semibold dark:text-grey-1 text-grey-9',
-                  (!tokenA || !tokenB) && 'invisible'
+                  'text-regular font-semibold dark:text-grey-2 text-black-4',
+                  walletTokenA === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
                 )}
               >
-                {!priceSwitch ? `${tokenA?.symbol} / ${tokenB?.symbol}` : `${tokenB?.symbol} / ${tokenA?.symbol}`}
+                {numberFormatter(+walletTokenA)} {tokenA?.symbol}
               </span>
             </div>
-            {priceAToB && priceBToA && (
-              <div className={'inline-flex justify-between items-center w-full'}>
-                <p className={`text-text-lightmode-secondary dark:text-text-darkmode-secondary text-h4 font-semibold`}>
-                  1.0 {aToBRatio ? tokenA?.symbol : tokenB?.symbol}
-                  <Button
-                    className={`cursor-pointer text-blue-1 dark:text-white text-[20px] font-bold p-1 h-max`}
-                    variant={'link'}
-                    onClick={setAToBRatio.toggle}
-                  >
-                    ≈
-                  </Button>
-                  {aToBRatio ? priceAToB : priceBToA} {aToBRatio ? tokenB?.symbol : tokenA?.symbol}
-                </p>
-                {priceError && (
-                  <span className={cn(`text-regular font-bold dark:text-text-red
-                text-text-red underline `)}>
-                    {priceError}
-                  </span>
-                )}
-              </div>
-            )}
-
           </div>
-          <div className="flex flex-row justify-between items-center">
+          <TokenSelectionInput
+            token={tokenA}
+            otherToken={tokenB}
+            handleChange={handleChange}
+            amountToken={amountTokenA}
+            setToken={setTokenA}
+          />
+        </div>
+        <div>
+          <div className="flex flex-row justify-between items-center mb-2.5">
+            <h4>2. Select Token B</h4>
+            <div
+              className={cn('flex flex-row items-center', !tokenB && 'invisible')}
+              onClick={() =>
+                handleChange(
+                  {
+                    target: {
+                      value: walletTokenB
+                    }
+                  },
+                  false
+                )
+              }
+            >
+              <img
+                src={`/img/assets/wallet-${mode}-${walletTokenB !== '0.00' ? 'enabled' : 'disabled'}.svg`}
+                alt="wallet"
+                className="mr-1.5"
+              />
+              <span
+                className={cn(
+                  'text-regular font-semibold dark:text-grey-2 text-black-4',
+                  walletTokenB === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
+                )}
+              >
+                {numberFormatter(+walletTokenB)} {tokenB?.symbol}
+              </span>
+            </div>
+          </div>
+          <TokenSelectionInput
+            token={tokenB}
+            otherToken={tokenA}
+            handleChange={(e) => handleChange(e, false)}
+            amountToken={amountTokenB}
+            setToken={setTokenB}
+          />
+        </div>
+        <div>
+          <div className="flex flex-row justify-between items-center mb-2.5">
             <Tooltip>
               <TooltipTrigger className={`dark:text-grey-8 text-black-4 underline !decoration-dotted`}>
-                <h4>4. Type</h4>
+                <h4>3. Initial Price</h4>
               </TooltipTrigger>
               <TooltipContent className={'z-[1001]'} align={'start'}>
-                Stable: Stablecoin to stablecoin token pools only <br />
-                Primary: Tokens such as SOL, LSTs and bluechips <br />
-                Hyper: Any other tokens or memecoins
+                The initial price is based on the ratio of tokens you deposit for initial liquidity.
               </TooltipContent>
             </Tooltip>
+            <div
+              className={cn('flex flex-row items-center cursor-pointer', (!tokenA || !tokenB) && 'invisible')}
+              onClick={() => {
+                setPriceSwitch((prev) => !prev)
+                setAToBRatio.toggle()
+              }}
+            >
+              <img src={`/img/assets/switch_${mode}.svg`} alt="switch" className="mr-1.5" />
+              <span
+                className={cn(`text-regular font-bold dark:text-white
+                text-blue-1 underline cursor-pointer`)}
+              >
+                {!priceSwitch
+                  ? `${tokenA?.symbol} per ${tokenB?.symbol}`
+                  : `${tokenB?.symbol} per ${tokenA?.symbol}`}
+              </span>
+            </div>
+          </div>
+          <div
+            className="h-[45px] dark:bg-black-1 bg-grey-5 flex p-2
+                    flex-row justify-between rounded-[3px] border border-solid dark:border-black-4
+                    border-grey-4 items-center"
+          >
+            <span className="text-regular font-semibold dark:text-grey-8 text-black-4">{initialPrice}</span>
+            <span
+              className={cn(
+                'text-regular font-semibold dark:text-grey-1 text-grey-9',
+                (!tokenA || !tokenB) && 'invisible'
+              )}
+            >
+              {!priceSwitch ? `${tokenA?.symbol} / ${tokenB?.symbol}` : `${tokenB?.symbol} / ${tokenA?.symbol}`}
+            </span>
+          </div>
+          {priceAToB && priceBToA && (
+            <div className={'inline-flex justify-between items-center w-full'}>
+              <p
+                className={`text-text-lightmode-secondary dark:text-text-darkmode-secondary text-h4 font-semibold`}
+              >
+                1.0 {aToBRatio ? tokenA?.symbol : tokenB?.symbol}
+                <Button
+                  className={`cursor-pointer text-blue-1 dark:text-white text-[20px] font-bold p-1 h-max`}
+                  variant={'link'}
+                  onClick={setAToBRatio.toggle}
+                >
+                  ≈
+                </Button>
+                {aToBRatio ? priceAToB : priceBToA} {aToBRatio ? tokenB?.symbol : tokenA?.symbol}
+              </p>
+              {priceError && (
+                <span
+                  className={cn(`text-regular font-bold dark:text-text-red
+                text-text-red underline `)}
+                >
+                  {priceError}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+        <div className="flex flex-row justify-between items-center">
+          <Tooltip>
+            <TooltipTrigger className={`dark:text-grey-8 text-black-4 underline !decoration-dotted`}>
+              <h4>4. Type</h4>
+            </TooltipTrigger>
+            <TooltipContent className={'z-[1001]'} align={'start'}>
+              Stable: Stablecoin to stablecoin token pools only <br />
+              Primary: Tokens such as SOL, LSTs and bluechips <br />
+              Hyper: Any other tokens or memecoins
+            </TooltipContent>
+          </Tooltip>
 
-            {poolType ? (
-              <Badge size={'lg'} className={`py-1.75 pl-1.75 pr-3 from-brand-secondaryGradient-primary/30
-                                 to-brand-secondaryGradient-secondary/30`}>
+          {poolType ? (
+            <Badge
+              size={'lg'}
+              className={`py-1.75 pl-1.75 pr-3 from-brand-secondaryGradient-primary/30
+                                 to-brand-secondaryGradient-secondary/30`}
+            >
               <img
-                src={poolType === 'Stable' ? `/img/assets/farm_primary.svg`
-                  : `/img/assets/farm_${poolType.toLowerCase()}.svg`
+                src={
+                  poolType === 'Stable'
+                    ? `/img/assets/farm_primary.svg`
+                    : `/img/assets/farm_${poolType.toLowerCase()}.svg`
                 }
                 alt={poolType}
                 height={20}
@@ -347,12 +344,12 @@ const Step2: FC<{
             <div
               className={`border border-solid dark:border-black-4 border-grey-4 rounded-[3px]
               py-1.75 px-3 bg-grey-5 dark:bg-black-1`}
-              >
-                <h5 className="text-grey-1">No Type</h5>
-              </div>
-            )}
-          </div>
-          {/* <div>
+            >
+              <h5 className="text-grey-1">No Type</h5>
+            </div>
+          )}
+        </div>
+        {/* <div>
             <div className="font-sans text-regular font-semibold dark:text-grey-8 text-black-4">
               4. Fee Tier
             </div>
@@ -385,37 +382,37 @@ const Step2: FC<{
               ]}
             />
           </div> */}
-          {/* We need the swap component here but later */}
-          {tokenA &&
-            tokenB &&
-            ((+amountTokenA && +amountTokenB && (+amountTokenA > +walletTokenA || +amountTokenB > +walletTokenB)) ||
-              balance[tokenA?.address].tokenAmount.uiAmount <= 0.0 ||
-              balance[tokenB?.address].tokenAmount.uiAmount <= 0.0) ? (
-            <span className="text-red-1 font-sembold text-regular">
-              {connected ? 'You don\'t have enough tokens in the wallet!' : 'Please connect your wallet to proceed!'}
-            </span>
-          ) : tokenA && tokenB && tokenA?.symbol === tokenB?.symbol ? (
-            <span className="text-red-1 font-sembold text-regular">
-              Token A and Token B cannot be same! Please create a pool with two different mints!
-            </span>
-          ) : (
-            <></>
-          )}
-          {poolExists && (
-            <div>
-              <Container className={'flex flex-col gap-2.5 p-2.5'}>
-                <Text as={'h3'}>Existing Pool!</Text>
-                <Text as={'p'}>The {poolExistsText} pool exists. Start adding your funds now!</Text>
-                <Button fullWidth colorScheme={'blue'} onClick={navigateToPool}>
-                  Go to {poolExistsText} Pool
-                </Button>
-              </Container>
-            </div>
-          )}
-        </div>
-      </>
-    )
-  }
+        {/* We need the swap component here but later */}
+        {tokenA &&
+        tokenB &&
+        ((+amountTokenA && +amountTokenB && (+amountTokenA > +walletTokenA || +amountTokenB > +walletTokenB)) ||
+          balance[tokenA?.address].tokenAmount.uiAmount <= 0.0 ||
+          balance[tokenB?.address].tokenAmount.uiAmount <= 0.0) ? (
+          <span className="text-red-1 font-sembold text-regular">
+            {connected ? "You don't have enough tokens in the wallet!" : 'Please connect your wallet to proceed!'}
+          </span>
+        ) : tokenA && tokenB && tokenA?.symbol === tokenB?.symbol ? (
+          <span className="text-red-1 font-sembold text-regular">
+            Token A and Token B cannot be same! Please create a pool with two different mints!
+          </span>
+        ) : (
+          <></>
+        )}
+        {poolExists && (
+          <div>
+            <Container className={'flex flex-col gap-2.5 p-2.5'}>
+              <Text as={'h3'}>Existing Pool!</Text>
+              <Text as={'p'}>The {poolExistsText} pool exists. Start adding your funds now!</Text>
+              <Button fullWidth colorScheme={'blue'} onClick={navigateToPool}>
+                Go to {poolExistsText} Pool
+              </Button>
+            </Container>
+          </div>
+        )}
+      </div>
+    </>
+  )
+}
 
 function TokenSelectionInput({
   token,
@@ -430,43 +427,51 @@ function TokenSelectionInput({
   amountToken: string
   setToken: Dispatch<SetStateAction<JupToken>>
 }) {
-  const { isLoadingTokenList, tokenList, updateTokenList, setPage, topBalancesWithTokenList, setTokenList } =
-    useGamma()
+  const {
+    isLoadingTokenList,
+    tokenList,
+    updateTokenList,
+    setPage,
+    topBalancesWithTokenList,
+    setTokenList,
+    tokenListSearchValue,
+    setTokenListSearchValue
+  } = useGamma()
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
   // const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
-  const [searchValue, setSearchValue] = useState<string>('')
   const [popularTokens, setPopularTokens] = useState<JupToken[]>([])
   const [loadingPopularTokens, setLoadingPopularTokens] = useBoolean(false)
   const { publicKey } = useWalletBalance()
   const isFirstRender = useFirstRender()
-  const tokenRenderList = searchValue.length > 0 || !publicKey ? tokenList : topBalancesWithTokenList
+  const tokenRenderList = tokenListSearchValue.length > 0 || !publicKey ? tokenList : topBalancesWithTokenList
   const { debounce, abortDebounce } = useDebounce()
   useEffect(() => {
     if (isFirstRender) return
     console.log('step2 trigger')
-    if (searchValue.trim().length == 0) {
+    if (tokenListSearchValue.trim().length == 0) {
       if (publicKey) {
-        updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE }, false).then(() =>
-          setPage(1)
-        )
+        updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE }, false).then(() => setPage(1))
       } else {
         setTokenList([])
       }
       return
     }
-    debounce(() => updateTokenList(
-      {
-        page: 1,
-        pageSize: TOKEN_LIST_PAGE_SIZE,
-        searchValue
-      },
-      false
-    ), 250)
+    debounce(
+      () =>
+        updateTokenList(
+          {
+            page: 1,
+            pageSize: TOKEN_LIST_PAGE_SIZE
+          },
+          false
+        ),
+      250
+    )
     return () => {
       abortDebounce()
     }
-  }, [searchValue, publicKey])
+  }, [tokenListSearchValue, publicKey])
 
   useEffect(() => {
     setLoadingPopularTokens.on()
@@ -491,8 +496,11 @@ function TokenSelectionInput({
                 className="min-w-[115px] h-[35px] rounded-full flex flex-row justify-between"
                 iconLeft={
                   token ? (
-                    <IconWithFallback src={loadIconImage(token?.logoURI, mode)} size={'sm'}
-                                      className={'rounded-circle'} />
+                    <IconWithFallback
+                      src={loadIconImage(token?.logoURI, mode)}
+                      size={'sm'}
+                      className={'rounded-circle'}
+                    />
                   ) : null
                 }
                 iconRight={
@@ -512,8 +520,9 @@ function TokenSelectionInput({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className={cn(`flex flex-col mt-1 z-[1001] h-auto max-h-[396px] w-[464px] max-sm:w-[338px] relative pb-0`,
-                (!publicKey && !searchValue.trim().length) && 'pb-2'
+              className={cn(
+                `flex flex-col mt-1 z-[1001] h-auto max-h-[396px] w-[464px] max-sm:w-[338px] relative pb-0`,
+                !publicKey && !tokenListSearchValue.trim().length && 'pb-2'
               )}
               portal={true}
               align={'start'}
@@ -521,18 +530,22 @@ function TokenSelectionInput({
               <SearchBar
                 groupClassName={'sticky'}
                 placeholder={'Search by token name symbol or address'}
-                value={searchValue}
+                value={tokenListSearchValue}
                 onKeyDown={(e) => e.stopPropagation()}
                 onChange={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
-                  setSearchValue(e.target.value)
+                  setTokenListSearchValue(e.target.value)
                 }}
-                onClear={() => setSearchValue('')}
+                onClear={() => setTokenListSearchValue('')}
                 isLoading={isLoadingTokenList}
               />
-              <div className={cn(`border-b border-solid dark:border-black-4 border-grey-4`,
-                ((!publicKey && !searchValue.trim().length) && 'border-none'))}>
+              <div
+                className={cn(
+                  `border-b border-solid dark:border-black-4 border-grey-4`,
+                  !publicKey && !tokenListSearchValue.trim().length && 'border-none'
+                )}
+              >
                 <h5
                   className={`my-2 dark:text-text-darkmode-secondary 
                                         text-text-lightmode-secondary`}
@@ -577,19 +590,21 @@ function TokenSelectionInput({
                   )}
                 </div>
               </div>
-              {searchValue && tokenRenderList.length == 0 && !isLoadingTokenList ? (
+              {tokenListSearchValue && tokenRenderList.length == 0 && !isLoadingTokenList ? (
                 <div className={'mb-auto p-2'}>No Tokens Found..</div>
               ) : null}
-              {tokenRenderList.length > 0 ? <InfiniteTokenList
-                useRenderListLength={searchValue.trim().length > 0}
-                tokenRenderList={tokenRenderList}
-                onTokenSelect={(token) => {
-                  setToken(token)
-                  setSearchValue('')
-                }}
-                RenderAs={DropdownMenuItem}
-                checkDisabled={(t) => t?.address == otherToken?.address || isLoadingTokenList}
-              /> : null}
+              {tokenRenderList.length > 0 ? (
+                <InfiniteTokenList
+                  useRenderListLength={tokenListSearchValue.trim().length > 0}
+                  tokenRenderList={tokenRenderList}
+                  onTokenSelect={(token) => {
+                    setToken(token)
+                    setTokenListSearchValue('')
+                  }}
+                  RenderAs={DropdownMenuItem}
+                  checkDisabled={(t) => t?.address == otherToken?.address || isLoadingTokenList}
+                />
+              ) : null}
             </DropdownMenuContent>
           </DropdownMenu>
         </InputElementLeft>
@@ -601,7 +616,7 @@ function TokenSelectionInput({
         onChange={(e) => handleChange(e, true)}
         value={amountToken}
         className={'h-[45px] text-right'}
-      // disabled={!token}
+        // disabled={!token}
       />
     </InputGroup>
   )
@@ -610,20 +625,22 @@ function TokenSelectionInput({
 export default Step2
 
 export function TokenListSkeleton({ RenderAs }: { RenderAs: ElementType }) {
-  return <RenderAs
-    disabled={false}
-    className={`
+  return (
+    <RenderAs
+      disabled={false}
+      className={`
                 cursor-wait p-1.5 border-1 border-transparent flex flex-row w-full gap-3 items-center
                         hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
-  >
-    <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
-    <div className={'flex flex-col gap-1'}>
-      <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
-      <Skeleton className={`w-[88px] h-[18px] rounded-[2px]`} />
-    </div>
-    <div className={'flex flex-col gap-1 ml-auto'}>
-      <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
-      <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
-    </div>
-  </RenderAs>
+    >
+      <Skeleton className={'w-[25px] h-[25px] rounded-full'} />
+      <div className={'flex flex-col gap-1'}>
+        <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
+        <Skeleton className={`w-[88px] h-[18px] rounded-[2px]`} />
+      </div>
+      <div className={'flex flex-col gap-1 ml-auto'}>
+        <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
+        <Skeleton className={`w-[56px] h-[20px] rounded-[2px]`} />
+      </div>
+    </RenderAs>
+  )
 }

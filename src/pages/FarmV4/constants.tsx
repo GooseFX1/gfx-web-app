@@ -211,7 +211,6 @@ export const POPULAR_TOKENS = new Set([
   'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
   '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'
 ])
-export const PASSWORD_BETA_ACCESS = 'goosegang'
 export const GAMMA_STABLE_TOKENS = [
    'USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA', //USDS
    'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', //USDT

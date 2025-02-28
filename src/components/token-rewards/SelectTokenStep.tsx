@@ -198,8 +198,7 @@ function TokenSelectInput({
     tokens,
     topBalancesWithTokenList,
     maxTokensReached,
-    tokenPage,
-    setTokenPage
+    loadNextPage
   } = useTokens({
     searchValue: ''
   })
@@ -278,8 +277,7 @@ function TokenSelectInput({
                 checkDisabled={() => isLoadingTokenList}
                 maxTokensReached={maxTokensReached}
                 isLoadingTokenList={isLoadingTokenList}
-                setTokenPage={setTokenPage}
-                tokenPage={tokenPage}
+                loadNextPage={loadNextPage}
                 tokenList={tokens}
               />
             </DropdownMenuContent>
