@@ -809,7 +809,9 @@ export const createTokenRewards = async (
 ) => {
   const startTimeBN = new BN(startTime.unix())
   const endTimeBN = new BN(endTime.unix())
-  const rewardAmountBN = new BN(rewardAmount)
+  const rewardAmountBN = new BN(
+    new BigNumber(rewardAmount).times(new BigNumber(10).pow(rewardMint.decimals)).toNumber()
+  )
   const authorityKey = await getAuthorityKey()
   const pool = new PublicKey(poolId)
   const rewardMintPublicKey = new PublicKey(rewardMint.address)
@@ -840,7 +842,12 @@ export const createTokenRewards = async (
 
 const getRewardInfoKey = async (startTime: BN, poolState: PublicKey, rewardMint: PublicKey) => {
   const [rewardInfoKey] = PublicKey.findProgramAddressSync(
-    [Buffer.from(REWARD_INFO_SEED), poolState.toBuffer(), startTime.toBuffer(), rewardMint.toBuffer()],
+    [
+      Buffer.from(REWARD_INFO_SEED),
+      poolState.toBuffer(),
+      startTime.toArrayLike(Buffer, 'le', 8),
+      rewardMint.toBuffer()
+    ],
     new PublicKey(GAMMA_PROGRAM_ID)
   )
   return rewardInfoKey
