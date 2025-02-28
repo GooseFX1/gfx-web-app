@@ -800,18 +800,21 @@ export const swapTokens = async (
 
 export const createTokenRewards = async (
   program: Program<Idl>,
-  pool: PublicKey,
+  poolId: string,
   startTime: dayjs.Dayjs,
   endTime: dayjs.Dayjs,
   rewardAmount: string,
-  rewardMint: PublicKey,
-  userPublicKey: PublicKey,
-  rewardInfo: PublicKey
+  rewardMint: JupToken,
+  userPublicKey: PublicKey
 ) => {
   const startTimeBN = new BN(startTime.unix())
   const endTimeBN = new BN(endTime.unix())
   const rewardAmountBN = new BN(rewardAmount)
   const authorityKey = await getAuthorityKey()
+  const pool = new PublicKey(poolId)
+  const rewardMintPublicKey = new PublicKey(rewardMint.address)
+
+  const rewardInfo = await getRewardInfoKey(startTimeBN, pool, rewardMintPublicKey)
 
   const tokenRewardsTxn: Transaction = new Transaction()
 
@@ -819,10 +822,10 @@ export const createTokenRewards = async (
     accounts: {
       poolState: pool,
       authority: authorityKey,
-      rewardMint,
+      rewardMint: rewardMintPublicKey,
       rewardProvider: userPublicKey,
-      rewardProvidersTokenAccount: await getAssociatedTokenAddress(rewardMint, userPublicKey),
-      rewardInfo: await getRewardInfoKey(startTimeBN, pool, rewardMint),
+      rewardProvidersTokenAccount: await getAssociatedTokenAddress(rewardMintPublicKey, userPublicKey),
+      rewardInfo: rewardInfo,
       rewardVault: await getRewardVaultKey(rewardInfo),
       systemProgram: SYSTEM,
       tokenProgram: TOKEN_PROGRAM_ID,
