@@ -1,13 +1,17 @@
 import { GAMMAPool } from '@/types/gamma'
 import { IconWithFallback } from '../common/IconWithFallback'
 import { loadIconImage, numberFormatter } from '@/utils'
-import { useDarkMode } from '@/context'
+import { useConnectionConfig, usePriceFeedFarm, useDarkMode } from '@/context'
 import { JupToken } from '@/pages/FarmV4/constants'
 import dayjs from 'dayjs'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import Decimal from 'decimal.js'
 import { Button, Icon } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
+import { createTokenRewards } from '@/web3/Farm'
+import useTransaction from '@/hooks/useTransaction'
+import { forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 interface SummaryProps {
   selectedPool?: GAMMAPool
@@ -31,6 +35,12 @@ export const Summary = ({
 }: SummaryProps) => {
   const { mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
+  const [sendingTransaction, setSendingTransaction] = useState(false)
+  const { sendTransaction, createTransactionBuilder } = useTransaction()
+  const { wallet } = useWallet()
+  const { connection } = useConnectionConfig()
+  const { GammaProgram } = usePriceFeedFarm()
+  const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
 
   const estimatedRewardsPerDay = useMemo(() => {
     if (!selectedPool || !selectedToken || !startDate || !endDate) return null
@@ -54,6 +64,38 @@ export const Summary = ({
 
     return returnValue
   }, [estimatedRewardsPerDay, selectedToken])
+
+  const handleAddTokenRewards = async () => {
+    try {
+      setSendingTransaction(true)
+      const txBuilder = createTransactionBuilder()
+      const tx = await createTokenRewards(
+        GammaProgram,
+        selectedPool.id,
+        startDate,
+        endDate,
+        amountToken,
+        selectedToken,
+        userPublicKey
+      )
+      txBuilder.add(tx)
+      // eslint-disable-next-line max-len
+      const { success, txSig } = await sendTransaction(txBuilder, {
+        // eslint-disable-next-line max-len
+        successMessage: `You successfully created token rewards`
+      })
+      console.log('SwapResponse', success)
+      if (!success) {
+        //off(connectionId)
+        console.log('An error occurred while Swapping!')
+      } else {
+        await forceCronUpdateWithConnectionAndTxSig(connection, txSig)
+      }
+    } catch (e) {
+      console.log('An error occurred while depositing.', e)
+    }
+    setSendingTransaction(false)
+  }
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -232,7 +274,13 @@ export const Summary = ({
         <>
           {isMobile && <div className="w-full mt-4 h-[1px] bg-grey-4"></div>}
           <div className="flex justify-end mt-auto">
-            <Button className=" w-max mt-4" colorScheme={'blue'} variant={'primary'}>
+            <Button
+              className=" w-max mt-4"
+              colorScheme={'blue'}
+              variant={'primary'}
+              onClick={handleAddTokenRewards}
+              isLoading={sendingTransaction}
+            >
               Token Rewards
             </Button>
           </div>
