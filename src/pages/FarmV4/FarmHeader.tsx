@@ -38,7 +38,7 @@ export const FarmHeader: FC = () => {
   const infoCards = useMemo(() => {
     const data = [
       {
-        name: 'TVLeeeeee',
+        name: 'TVL',
         value: bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.tvl))),
         tooltip: 'TVL represents the total USD value of all assets deposited in our pools'
       },
