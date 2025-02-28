@@ -50,7 +50,7 @@ export const SelectPoolStep = ({ currentStep, setCurrentStep, summary, pool, set
     sortKey: 'volume24h',
     searchTokens: '',
     showDeposited: false,
-    showCreated: false,
+    showCreated: true,
     pageSize: 10,
     sortOrder: 'desc'
   })
