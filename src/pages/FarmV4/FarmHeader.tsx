@@ -1,9 +1,22 @@
 import { FC, useMemo, useState } from 'react'
-import { useConnectionConfig, useGamma } from '../../context'
+import { useConnectionConfig, useDarkMode, useGamma } from '../../context'
 import { bigNumberFormatter, truncateBigNumber } from '../../utils'
 import { POOL_TYPE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Button, cn, Container, ContainerTitle, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
+import {
+  Button,
+  cn,
+  Container,
+  ContainerTitle,
+  DropdownMenuTrigger,
+  DropdownMenu,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  Icon
+} from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { DepositWithdrawSlider } from '../FarmV4/DepositWithdrawSlider'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
@@ -149,39 +162,11 @@ export const FarmHeader: FC = () => {
               : 'All your deposits, rewards and advance metrics in one place.'}
           </div>
         </div>
-
-        {!isMobile && (
-          <div className="flex flex-row items-center absolute right-[20px] top-0 max-sm:right-[6px]">
-            {(gammaBoostedRewardsIsActive === null || gammaBoostedRewardsIsActive === true) && (
-              <Button
-                className="cursor-pointer mr-2"
-                colorScheme={'blue'}
-                variant={'secondary'}
-                //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
-                onClick={() => setOpenRewardsDrawer(true)}
-              >
-                Token Rewards
-              </Button>
-            )}
-            <Button
-              className="cursor-pointer mr-2"
-              colorScheme={'blue'}
-              variant={'secondary'}
-              //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
-              onClick={() => setIsCreatePool(true)}
-            >
-              New Pool
-            </Button>
-            <img
-              src="img/assets/question-icn.svg"
-              alt="primary"
-              height={35}
-              width={35}
-              onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
-              className="cursor-pointer "
-            />
-          </div>
-        )}
+        <CreateDropdownMenu
+          gammaBoostedRewardsIsActive={gammaBoostedRewardsIsActive}
+          setOpenRewardsDrawer={setOpenRewardsDrawer}
+          setIsCreatePool={setIsCreatePool}
+        />
       </div>
 
       {!isPortfolio && (
@@ -243,39 +228,129 @@ export const FarmHeader: FC = () => {
         </div>
       )}
 
-      {isMobile &&
-        !isPortfolio && (
-          <div className="flex flex-row items-center justify-between mt-5 px-2">
-            {(gammaBoostedRewardsIsActive === null || gammaBoostedRewardsIsActive === true) && (
-              <Button
-                className="cursor-pointer mr-2 w-full"
-                colorScheme={'blue'}
-                variant={'secondary'}
-                //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
-                onClick={() => setOpenRewardsDrawer(true)}
-              >
-                Token Rewards
-              </Button>
-            )}
+      {isMobile && !isPortfolio && (
+        <div className="flex flex-row items-center justify-between mt-5 px-2">
+          {(gammaBoostedRewardsIsActive === null || gammaBoostedRewardsIsActive === true) && (
             <Button
               className="cursor-pointer mr-2 w-full"
               colorScheme={'blue'}
               variant={'secondary'}
               //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
-              onClick={() => setIsCreatePool(true)}
+              onClick={() => setOpenRewardsDrawer(true)}
             >
-              New Pool
+              Token Rewards
             </Button>
-            <img
-              src="img/assets/question-icn.svg"
-              alt="primary"
-              height={35}
-              width={35}
-              onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
-              className="cursor-pointer "
-            />
-          </div>
-        )}
+          )}
+          <Button
+            className="cursor-pointer mr-2 w-full"
+            colorScheme={'blue'}
+            variant={'secondary'}
+            //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
+            onClick={() => setIsCreatePool(true)}
+          >
+            New Pool
+          </Button>
+          <img
+            src="img/assets/question-icn.svg"
+            alt="primary"
+            height={35}
+            width={35}
+            onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
+            className="cursor-pointer "
+          />
+        </div>
+      )}
     </div>
+  )
+}
+
+const CreateDropdownMenu = ({
+  gammaBoostedRewardsIsActive,
+  setOpenRewardsDrawer,
+  setIsCreatePool
+}: {
+  gammaBoostedRewardsIsActive: boolean | null
+  setOpenRewardsDrawer: (open: boolean) => void
+  setIsCreatePool: (open: boolean) => void
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const { mode } = useDarkMode()
+
+  return (
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button
+          className="pr-2 cursor-pointer absolute right-5 max-sm:right-[8px] top-0"
+          colorScheme={'blue'}
+          variant={'secondary'}
+        >
+          Create
+          <Icon
+            className={`${isOpen ? '' : 'rotate-180'}`}
+            src="/img/assets/dropdown-chevron-white.svg"
+            alt="dropdown-icon"
+            size="sm"
+          />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-[258px]">
+        <DropdownMenuItem>
+          <div
+            className={`rounded-sm transition-colors text-left cursor-pointer flex flex-row gap-2`}
+            onClick={() => setIsCreatePool(true)}
+          >
+            <Icon
+              src={`/img/assets/create-pool-${mode}.svg`}
+              alt="Rewards"
+              className="w-[20px] h-[20px] max-w-[20px] max-h-[20px]"
+            />
+            <div className="flex flex-col gap-1">
+              <h3
+                className="text-base font-semibold font-sans 
+                        text-text-lightmode-primary dark:text-text-darkmode-primary"
+              >
+                Create a Pool
+              </h3>
+              <p
+                className="text-sm text-text-lightmode-secondary 
+                dark:text-text-darkmode-secondary whitespace-normal"
+              >
+                Easily create a new liquidity pool by depositing tokens. Pair assets, and earn trading fees from
+                every transaction.
+              </p>
+            </div>
+          </div>
+        </DropdownMenuItem>
+        {(gammaBoostedRewardsIsActive === null || gammaBoostedRewardsIsActive === true) && (
+          <DropdownMenuItem>
+            <div
+              className={`rounded-sm transition-colors text-left cursor-pointer flex flex-row gap-2`}
+              onClick={() => setOpenRewardsDrawer(true)}
+            >
+              <Icon
+                src={`/img/assets/token-rewards-${mode}.svg`}
+                alt="Rewards"
+                className="w-[20px] h-[20px] max-w-[20px] max-h-[20px]"
+              />
+              <div className="flex flex-col gap-1">
+                <h3
+                  className="text-base font-semibold font-sans 
+                        text-text-lightmode-primary dark:text-text-darkmode-primary"
+                >
+                  Add Token Rewards
+                </h3>
+                <p
+                  className="text-sm text-text-lightmode-secondary 
+                dark:text-text-darkmode-secondary whitespace-normal"
+                >
+                  You can additional token emissions as rewards to LPs in any pool. These boosted rewards accrue
+                  extra yield for LPs.
+                </p>
+              </div>
+            </div>
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
