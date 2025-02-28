@@ -102,7 +102,7 @@ interface ISettingsConfig {
   userCache: USER_CONFIG_CACHE
   setUserCache: (cache: USER_CONFIG_CACHE) => void
   updateUserCache: (cache: Partial<USER_CONFIG_CACHE>) => void
-  gammaBoostedRewardsIsActive: boolean | null
+  gammaBoostedRewardsIsActive: boolean
 }
 
 const SettingsContext = React.createContext<ISettingsConfig | null>(null)
@@ -225,7 +225,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
   const [blacklisted, setBlacklisted] = useState<boolean>(false)
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false)
-  const [gammaBoostedRewardsIsActive, setGammaBoostedRewardsIsActive] = useState<boolean | null>(null)
+  const [gammaBoostedRewardsIsActive, setGammaBoostedRewardsIsActive] = useState<boolean>(false)
   const [userCache, setUserCache] = useState<USER_CONFIG_CACHE>(getOrCreateCache())
   const [endpointName, setEndpointName] = useState<EndPointName>(
     userCache.endpointName !== DEFAULT_ENDPOINT_NAME && userCache.endpointName !== 'Custom'

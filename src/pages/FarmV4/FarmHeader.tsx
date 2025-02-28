@@ -269,12 +269,15 @@ const CreateDropdownMenu = ({
   setOpenRewardsDrawer,
   setIsCreatePool
 }: {
-  gammaBoostedRewardsIsActive: boolean | null
+  gammaBoostedRewardsIsActive: boolean
   setOpenRewardsDrawer: (open: boolean) => void
   setIsCreatePool: (open: boolean) => void
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const { mode } = useDarkMode()
+  const query = window.location.search
+  const urlParams = new URLSearchParams(query)
+  const isBoostedRewards = urlParams.get('boosted-rewards')
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -294,11 +297,12 @@ const CreateDropdownMenu = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[258px]">
-        <DropdownMenuItem>
-          <div
-            className={`rounded-sm transition-colors text-left cursor-pointer flex flex-row gap-2`}
-            onClick={() => setIsCreatePool(true)}
-          >
+        <DropdownMenuItem
+          onClick={() => {
+            setIsCreatePool(true)
+          }}
+        >
+          <div className={`rounded-sm transition-colors text-left cursor-pointer flex flex-row gap-2`}>
             <Icon
               src={`/img/assets/create-pool-${mode}.svg`}
               alt="Rewards"
@@ -321,12 +325,13 @@ const CreateDropdownMenu = ({
             </div>
           </div>
         </DropdownMenuItem>
-        {(gammaBoostedRewardsIsActive === null || gammaBoostedRewardsIsActive === true) && (
-          <DropdownMenuItem>
-            <div
-              className={`rounded-sm transition-colors text-left cursor-pointer flex flex-row gap-2`}
-              onClick={() => setOpenRewardsDrawer(true)}
-            >
+        {(gammaBoostedRewardsIsActive || isBoostedRewards) && (
+          <DropdownMenuItem
+            onClick={() => {
+              setOpenRewardsDrawer(true)
+            }}
+          >
+            <div className={`rounded-sm transition-colors text-left cursor-pointer flex flex-row gap-2`}>
               <Icon
                 src={`/img/assets/token-rewards-${mode}.svg`}
                 alt="Rewards"
