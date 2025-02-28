@@ -6,7 +6,7 @@ import { JupToken } from '@/pages/FarmV4/constants'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
 import Decimal from 'decimal.js'
-import { Button } from 'gfx-component-lib'
+import { Button, Icon } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 
 interface SummaryProps {
@@ -76,14 +76,7 @@ export const Summary = ({
                   : 'text-text-lightmode-tertiary dark:text-text-darkmode-tertiary'
               }`}
             >
-              <div
-                className={`flex items-center justify-center w-[22px] h-[22px] 
-              text-[15px] rounded-full ${
-                activeStep >= 1 ? 'bg-[#A846FF]' : 'bg-text-lightmode-tertiary dark:bg-text-darkmode-tertiary'
-              }  text-white text-sm`}
-              >
-                1
-              </div>
+              <Icon src={'/img/assets/Stepper-1.svg'} className="w-[22px] h-[22px] min-w-[22px] min-h-[22px]" />
               Select Pool
             </span>
             {selectedPool ? (
@@ -130,14 +123,14 @@ export const Summary = ({
                   : 'text-text-lightmode-tertiary dark:text-text-darkmode-tertiary'
               }`}
             >
-              <div
-                className={`flex items-center justify-center w-[22px] h-[22px] 
-              text-[15px] rounded-full ${
-                activeStep >= 2 ? 'bg-[#A846FF]' : 'bg-text-lightmode-tertiary dark:bg-text-darkmode-tertiary'
-              }  text-white text-sm`}
-              >
-                2
-              </div>
+              {activeStep >= 2 ? (
+                <Icon src={'/img/assets/Stepper-2.svg'} className="w-[22px] h-[22px] min-w-[22px] min-h-[22px]" />
+              ) : (
+                <Icon
+                  src={'/img/assets/Stepper-2-inactive.svg'}
+                  className="w-[22px] h-[22px] min-w-[22px] min-h-[22px]"
+                />
+              )}
               Select Reward Tokens
             </span>
             {selectedToken ? (
@@ -174,14 +167,14 @@ export const Summary = ({
                   : 'text-text-lightmode-tertiary dark:text-text-darkmode-tertiary'
               }`}
             >
-              <div
-                className={`flex items-center justify-center w-[22px] h-[22px] 
-              text-[15px] rounded-full ${
-                activeStep >= 3 ? 'bg-[#A846FF]' : 'bg-text-lightmode-tertiary dark:bg-text-darkmode-tertiary'
-              }  text-white text-sm`}
-              >
-                3
-              </div>
+              {activeStep >= 3 ? (
+                <Icon src={'/img/assets/Stepper-3.svg'} className="w-[22px] h-[22px] min-w-[22px] min-h-[22px]" />
+              ) : (
+                <Icon
+                  src={'/img/assets/Stepper-3-inactive.svg'}
+                  className="w-[22px] h-[22px] min-w-[22px] min-h-[22px]"
+                />
+              )}
               Add Timeframe
             </span>
             {startDate && endDate ? (
