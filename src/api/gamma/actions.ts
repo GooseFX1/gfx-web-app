@@ -6,9 +6,7 @@ import {
   GAMMAPoolsResponse,
   GAMMAPortfolioPoolResponse,
   GAMMAStats,
-  GAMMAUser,
   UserPortfolioLPPosition,
-  UserPortfolioStats
 } from '@/types/gamma'
 import { BlockheightBasedTransactionConfirmationStrategy, Connection } from '@solana/web3.js'
 import { aborter } from '@/utils'
@@ -159,29 +157,6 @@ export const fetchAndConcatAllPoolsByMints = async (
     return currentResponse?.data ?? response.data
   } catch (error) {
     console.error('Error fetching gamma pools:', error)
-    return null
-  }
-}
-const fetchUser = async (publicKey: string): Promise<GAMMAUser | null> => {
-  console.log(publicKey)
-  try {
-    // const response = await httpClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.USER}/${publicKey}`)
-    // return response.data
-    return null
-  } catch (error) {
-    console.error('Error fetching user:', error)
-    return null
-  }
-}
-
-const fetchPortfolioStats = async (userId: string): Promise<UserPortfolioStats | null> => {
-  console.log(userId)
-  try {
-    // const response = await httpClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.PORTFOLIO_STATS}/${userId}`)
-    // return response.data
-    return null
-  } catch (error) {
-    console.error('Error fetching portfolio stats:', error)
     return null
   }
 }
@@ -364,8 +339,6 @@ const fetchProfilePoolsByMints = async ({
 export {
   fetchGAMMAConfig,
   fetchAggregateStats,
-  fetchUser,
-  fetchPortfolioStats,
   fetchLpPositions,
   fetchAllPools,
   fetchTokenList,

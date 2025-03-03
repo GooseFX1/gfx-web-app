@@ -14,9 +14,7 @@ import {
   fetchAllPools,
   fetchGAMMAConfig,
   fetchPoolsByMints,
-  fetchPortfolioStats,
   fetchTokenList,
-  fetchUser,
   forceCronUpdate, forceCronUpdateWithConnectionAndTxSig,
   fetchProfilePools, fetchProfilePoolsByMints
 } from '@/api/gamma'
@@ -25,8 +23,7 @@ import {
   GAMMAPool,
   GAMMAPoolsResponse,
   GAMMAPoolWithUserLiquidity,
-  GAMMAUser,
-  UserPortfolioStats
+  GAMMAStats,
 } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
@@ -49,7 +46,7 @@ import BN from 'bn.js'
 import usePrevious from '@/hooks/usePrevious'
 import useMultiSelect from '@/hooks/useMultiSelect'
 import useFirstRender from '@/hooks/useFirstRender'
-import useUserLiquidityQuery from '@/queries/GAMMA/userLiquidity/useUserLiquidityQuery'
+import useUserLiquidityQuery from '@/queries/GAMMA/user/useUserLiquidityQuery'
 
 type ViewRange = 0 | 1 | 2
 
@@ -59,8 +56,6 @@ interface GAMMADataModel {
    * @deprecated use filteredPools instead - this is the raw response and should ideally not be used
    */
   pools: GAMMAPool[]
-  user: GAMMAUser
-  portfolioStats: UserPortfolioStats
   slippage: number
   setSlippage: Dispatch<SetStateAction<number>>
   isCustomSlippage: boolean
@@ -137,7 +132,6 @@ export type TokenListToken = {
   isLST: boolean
   isPrimary: boolean
 }
-export const tokenListAbortTokenGamma = 'tokenList-gamma' as const
 
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -145,8 +139,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { base58PublicKey, publicKey } = useWalletBalance()
   const [gammaConfig, setGammaConfig] = useState<GAMMAConfig | null>(null)
   const [pools, setPools] = useState<GAMMAPool[]>([])
-  const [user, setUser] = useState<GAMMAUser | null>(null)
-  const [portfolioStats, setPortfolioStats] = useState<UserPortfolioStats | null>(null)
 
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<any>({})
@@ -407,25 +399,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [selectedTokens])
 
-
-  useEffect(() => {
-    if (base58PublicKey) {
-      // user data and portfolio stat fetching
-      fetchUser(base58PublicKey).then((userData) => {
-        if (userData) {
-          setUser(userData)
-
-          fetchPortfolioStats(userData.id).then((s) => {
-            if (s) setPortfolioStats(s)
-          })
-        }
-      })
-    } else {
-      setUser(null)
-      setPortfolioStats(null)
-    }
-  }, [base58PublicKey])
-
   useEffect(() => {
     ;(async () => {
       if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
@@ -490,7 +463,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
         return 0
       })
-    console.log({newPools})
+
     return { filteredPools: newPools }
   }, [pools, userLiqQuery.data, showDeposited, base58PublicKey, showCreatedPools, selectedTokens, sortConfig])
 
@@ -518,8 +491,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       value={{
         gammaConfig,
         pools,
-        user,
-        portfolioStats,
         slippage,
         setSlippage,
         isCustomSlippage,

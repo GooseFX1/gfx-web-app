@@ -5,12 +5,12 @@ import ProPositions from './ProPositions'
 import Decimal from 'decimal.js-light'
 import { commafy } from '@/utils'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'gfx-component-lib'
-import useUserLiquidityQuery from '@/queries/GAMMA/userLiquidity/useUserLiquidityQuery'
+import useUserLiquidityQuery from '@/queries/GAMMA/user/useUserLiquidityQuery'
 
 const PortfolioScreen: FC = (): JSX.Element => {
   const userLiqQuery = useUserLiquidityQuery()
   const totalValue = useMemo(
-    () => userLiqQuery.data.reduce((acc, pos) => acc.add(Number(pos.totalValue)), new Decimal(0.0)),
+    () => userLiqQuery.data.reduce((acc, pos) => acc.add(Number(pos.totalValue)), new Decimal(0.0)).toNumber(),
     [userLiqQuery.data]
   )
 
