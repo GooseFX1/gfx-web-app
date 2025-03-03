@@ -9,6 +9,7 @@ import { clamp } from '@/utils'
 import { IWalletBalanceContext, useWalletBalance } from '@/context/walletBalanceContext'
 import { TokenListToken } from '@/context'
 import { UseInfiniteQueryResponseFix } from '@/queries/types'
+import { useEffect } from 'react'
 
 type TokenQueryProps = {
   searchValue?: string
@@ -30,10 +31,10 @@ function useTokensQuery({
   searchValue = '',
   poolType = 'all'
                         }: TokenQueryProps) {
-  const { base58PublicKey, topBalances, balance, publicKey } = useWalletBalance()
+  const { base58PublicKey, topBalances, balance } = useWalletBalance()
 
-  return useInfiniteQuery({
-    queryKey: ['GAMMA-tokens', searchValue, base58PublicKey, poolType],
+  const query =  useInfiniteQuery({
+    queryKey: ['GAMMA-tokens', searchValue, poolType],
     queryFn: async ({ pageParam, signal, queryKey }) =>
       getTokens({
         searchValue: queryKey[1],
@@ -44,18 +45,12 @@ function useTokensQuery({
     select: (data) => {
       const flatData = data.pages.map((page) => page.tokens).flat()
       const lastPage = data.pages[data.pages.length - 1]
-      const result = {
+      return {
         pages: data.pages,
         allPages: flatData,
         pageParams: data.pageParams,
         maxTokensReached: lastPage?.currentPage >= lastPage?.totalPages
       }
-
-      if (searchValue.length <= 0 && !publicKey && poolType == 'primary') {
-        result.allPages = getTopBalancesWithTokenList(flatData, balance, topBalances)
-      }
-
-      return result;
     },
     getNextPageParam: (lastPage: TokenListAPIResponse) => lastPage?.nextPage,
     getPreviousPageParam: (firstPage: TokenListAPIResponse) => firstPage?.nextPage,
@@ -68,6 +63,13 @@ function useTokensQuery({
     } as InfiniteData<TokenListAPIResponse> // fixes type issue, but ugly :/
   }) as UseInfiniteQueryResponseFix<TokenListAPIResponse, Error, InfiniteTokenData>
   // ^ TypeCasting to fix the query.data access to get intellisense working
+
+  useEffect(()=>{
+    if (!query.data || query.data.allPages.length == 0) return
+    query.data.allPages = getTopBalancesWithTokenList(query.data.allPages, balance, topBalances);
+  },[balance,base58PublicKey,topBalances,query.data])
+
+  return query;
 }
 
 export default useTokensQuery

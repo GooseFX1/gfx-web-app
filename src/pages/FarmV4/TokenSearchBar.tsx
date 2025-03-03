@@ -49,15 +49,20 @@ function TokenSearchBar({poolType = 'all'}:{poolType?:Pool['type']}) {
         stringContent = 'No Tokens Found..'
       } else if (searchValue.length == 0 && focusOnSearch) {
         stringContent = 'Search for token or paste mint address'
+      } else {
+        stringContent = ''
       }
     }
-    return <div
-      className={`mb-auto p-2
+    if (stringContent) {
+      return <div
+        className={`mb-auto p-2
                   text-text-lightmode-tertiary dark:text-text-darkmode-tertiary
                   `}
-    >
-      {stringContent}
-    </div>
+      >
+        {stringContent}
+      </div>
+    }
+    return null;
   },[query, searchValue])
 
   return (
