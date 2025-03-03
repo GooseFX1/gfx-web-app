@@ -3,6 +3,7 @@ import { useWalletBalance } from '@/context/walletBalanceContext'
 import { fetchLpPositions, fetchTokensByPublicKey } from '@/api/gamma'
 import Decimal from 'decimal.js-light'
 import { GAMMAUserLPPositionWithPrice } from '@/types/gamma'
+import { INTERVALS } from '@/utils/time'
 
 function useUserLiquidityQuery() {
  const {base58PublicKey} = useWalletBalance()
@@ -10,6 +11,7 @@ function useUserLiquidityQuery() {
     queryKey: ['GAMMA-user-liquidity', base58PublicKey],
     queryFn: async ()=> getLpPositions(base58PublicKey),
     placeholderData: [],
+    staleTime: INTERVALS.MINUTE * 5,
     enabled: !!base58PublicKey,
   })
 }
