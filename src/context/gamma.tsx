@@ -13,11 +13,9 @@ import {
 import {
   fetchAllPools,
   fetchGAMMAConfig,
-  fetchLpPositions,
   fetchPoolsByMints,
   fetchPortfolioStats,
   fetchTokenList,
-  fetchTokensByPublicKey,
   fetchUser,
   forceCronUpdate, forceCronUpdateWithConnectionAndTxSig,
   fetchProfilePools, fetchProfilePoolsByMints
@@ -28,8 +26,6 @@ import {
   GAMMAPoolsResponse,
   GAMMAPoolWithUserLiquidity,
   GAMMAUser,
-  GAMMAUserLPPositionWithPrice,
-  UserPortfolioLPPosition,
   UserPortfolioStats
 } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
@@ -53,6 +49,7 @@ import BN from 'bn.js'
 import usePrevious from '@/hooks/usePrevious'
 import useMultiSelect from '@/hooks/useMultiSelect'
 import useFirstRender from '@/hooks/useFirstRender'
+import useUserLiquidityQuery from '@/queries/GAMMA/userLiquidity/useUserLiquidityQuery'
 
 type ViewRange = 0 | 1 | 2
 
@@ -64,7 +61,6 @@ interface GAMMADataModel {
   pools: GAMMAPool[]
   user: GAMMAUser
   portfolioStats: UserPortfolioStats
-  lpPositions: GAMMAUserLPPositionWithPrice[]
   slippage: number
   setSlippage: Dispatch<SetStateAction<number>>
   isCustomSlippage: boolean
@@ -110,7 +106,6 @@ interface GAMMADataModel {
   isConfettiVisible: boolean
   setIsConfettiVisible: Dispatch<SetStateAction<boolean>>
   forceCronAndUpdateLocalData: (txSig?: string) => Promise<void>
-  updateUserLpPositions: () => Promise<void>
   viewRange: ViewRange
   setViewRange: Dispatch<SetStateAction<ViewRange>>
   computedViewRange: '24H' | '7D' | '30D'
@@ -152,7 +147,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [pools, setPools] = useState<GAMMAPool[]>([])
   const [user, setUser] = useState<GAMMAUser | null>(null)
   const [portfolioStats, setPortfolioStats] = useState<UserPortfolioStats | null>(null)
-  const [lpPositions, setLpPositions] = useState<GAMMAUserLPPositionWithPrice[]>([])
+
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<any>({})
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
@@ -174,6 +169,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
   const [selectedCardLiquidityAcc, setSelectedCardLiquidityAcc] = useState<any>({})
   const [calculatePoolType, setCalculatePoolType] = useState<Set<string>>(new Set())
+
+  const userLiqQuery = useUserLiquidityQuery();
 
   useLayoutEffect(() => {
     if (!publicKey) {
@@ -410,58 +407,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [selectedTokens])
 
-  const getUserLpPositions = async () =>
-    fetchLpPositions(base58PublicKey).then(async (positions: UserPortfolioLPPosition[] | null) => {
-      if (positions) {
-        let positionsToSet = []
-        const tokenListResponse = await fetchTokensByPublicKey(
-          positions
-            .reduce((acc, icc) => acc + icc.mintA.address + ',' + icc.mintB.address + ',', '')
-            .slice(0, -1)
-        )
-        if (tokenListResponse && tokenListResponse.success) {
-          const priceMap = new Map(tokenListResponse.data.tokens.map((token) => [token.address, token.price]))
-          positionsToSet = positions.map((position) => {
-            const tokenAPrice = priceMap.get(position.mintA.address)
-            const tokenBPrice = priceMap.get(position.mintB.address)
-            const uiValueA = new Decimal(position.tokenADeposited).sub(position.tokenAWithdrawn)
-              .div(Math.pow(10, parseInt(position.mintA.decimals)))
-            const valueA = uiValueA.mul(tokenAPrice)
-            const uiValueB = new Decimal(position.tokenBDeposited).sub(position.tokenBWithdrawn)
-              .div(Math.pow(10, parseInt(position.mintB.decimals)))
-            const valueB = uiValueB.mul(tokenBPrice)
-            const totalValue = valueA.add(valueB)
-            return {
-              ...position,
-              totalValue: totalValue.toString(),
-              valueA: valueA.toString(),
-              valueB: valueB.toString(),
-              uiValueA: uiValueA.toString(),
-              uiValueB: uiValueB.toString()
-            }
-          })
-        } else {
-          positionsToSet = positions.map((position) => ({
-            ...position,
-            totalValue: '0.0',
-            valueA: '0.0',
-            valueB: '0.0',
-            uiValueA: '0.0',
-            uiValueB: '0.0'
-          }))
-        }
-        setLpPositions(prev => {
-          console.log('setLpPositions', { positionsToSet, prev })
-
-          if (JSON.stringify(prev) !== JSON.stringify(positionsToSet)) {
-            console.log('setting new lp positions')
-            return positionsToSet
-          }
-          return prev
-        })
-      }
-    })
-
 
   useEffect(() => {
     if (base58PublicKey) {
@@ -475,12 +420,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           })
         }
       })
-      // lp position fet
-      getUserLpPositions()
     } else {
       setUser(null)
       setPortfolioStats(null)
-      setLpPositions([])
     }
   }, [base58PublicKey])
 
@@ -514,7 +456,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [GammaProgram, selectedCard, publicKey])
 
   const { filteredPools } = useMemo(() => {
-    const userLpPositions = new Map(lpPositions.map((lp) => [lp.poolStatePublicKey, lp]))
+    const userLpPositions = new Map(userLiqQuery.data.map((lp) => [lp.poolStatePublicKey, lp]))
     const mintA = selectedTokens[0]?.address
     const mintB = selectedTokens[1]?.address
     const newPools = pools
@@ -548,8 +490,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
         return 0
       })
+    console.log({newPools})
     return { filteredPools: newPools }
-  }, [pools, lpPositions, showDeposited, base58PublicKey, showCreatedPools, selectedTokens, sortConfig])
+  }, [pools, userLiqQuery.data, showDeposited, base58PublicKey, showCreatedPools, selectedTokens, sortConfig])
 
   useEffect(() => {
     if (!base58PublicKey || filteredPools.length == 0 || !selectedCard?.id) return
@@ -563,7 +506,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const result = txSig ? await forceCronUpdateWithConnectionAndTxSig(connection, txSig) : await forceCronUpdate();
 
     if (!result) return
-    getUserLpPositions()
+    userLiqQuery.refetch()
     // will trigger updatePool useEffect
     updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE }, false)
     setPoolPage(1)
@@ -577,7 +520,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         pools,
         user,
         portfolioStats,
-        lpPositions,
         slippage,
         setSlippage,
         isCustomSlippage,
@@ -617,7 +559,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isConfettiVisible,
         setIsConfettiVisible,
         forceCronAndUpdateLocalData,
-        updateUserLpPositions: getUserLpPositions,
         setViewRange,
         viewRange,
         computedViewRange,

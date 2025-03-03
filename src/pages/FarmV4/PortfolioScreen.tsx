@@ -2,16 +2,16 @@ import { FC, useMemo } from 'react'
 import UnusedTokens from './UnusedTokens'
 import ComingSoon from './ComingSoon'
 import ProPositions from './ProPositions'
-import { useGamma } from '@/context'
 import Decimal from 'decimal.js-light'
 import { commafy } from '@/utils'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'gfx-component-lib'
+import useUserLiquidityQuery from '@/queries/GAMMA/userLiquidity/useUserLiquidityQuery'
 
 const PortfolioScreen: FC = (): JSX.Element => {
-  const { lpPositions } = useGamma()
+  const userLiqQuery = useUserLiquidityQuery()
   const totalValue = useMemo(
-    () => lpPositions.reduce((acc, pos) => acc.add(Number(pos.totalValue)), new Decimal(0.0)),
-    [lpPositions]
+    () => userLiqQuery.data.reduce((acc, pos) => acc.add(Number(pos.totalValue)), new Decimal(0.0)),
+    [userLiqQuery.data]
   )
 
   return (
