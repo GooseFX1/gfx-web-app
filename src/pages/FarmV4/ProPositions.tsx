@@ -71,7 +71,7 @@ const ProPositions: FC = () => {
           ]}
         />
         <div className="flex w-full items-center justify-between">
-          <TokenSearchBar poolType={currentPoolType.name} />
+          <TokenSearchBar />
           <div className="mr-auto">
             <FarmSort isOpen={isOpen} setIsOpen={setIsOpen.set} />
           </div>

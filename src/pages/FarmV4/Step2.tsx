@@ -17,7 +17,7 @@ import {
   TooltipTrigger
 } from 'gfx-component-lib'
 import { TokenListToken, useDarkMode, useGamma } from '../../context'
-import { JupToken, POOL_LIST_PAGE_SIZE, POPULAR_TOKENS, TOKEN_LIST_PAGE_SIZE } from './constants'
+import { JupToken, POOL_LIST_PAGE_SIZE, POPULAR_TOKENS } from './constants'
 //import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
 import Text from '@/components/Text'
@@ -29,9 +29,8 @@ import SearchBar from '@/components/common/SearchBar'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import Decimal from 'decimal.js-light'
 import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
-import useFirstRender from '@/hooks/useFirstRender'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
-import useDebounce from '@/hooks/useDebounce'
+import useTokensQuery from '@/queries/useTokensQuery'
 
 const Step2: FC<{
   tokenA: TokenListToken
@@ -427,51 +426,14 @@ function TokenSelectionInput({
   amountToken: string
   setToken: Dispatch<SetStateAction<JupToken>>
 }) {
-  const {
-    isLoadingTokenList,
-    tokenList,
-    updateTokenList,
-    setPage,
-    topBalancesWithTokenList,
-    setTokenList,
-    tokenListSearchValue,
-    setTokenListSearchValue
-  } = useGamma()
+  const [searchValue, setSearchValue] = useState('')
+  const query = useTokensQuery({searchValue})
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
   // const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
   const [popularTokens, setPopularTokens] = useState<JupToken[]>([])
   const [loadingPopularTokens, setLoadingPopularTokens] = useBoolean(false)
   const { publicKey } = useWalletBalance()
-  const isFirstRender = useFirstRender()
-  const tokenRenderList = tokenListSearchValue.length > 0 || !publicKey ? tokenList : topBalancesWithTokenList
-  const { debounce, abortDebounce } = useDebounce()
-  useEffect(() => {
-    if (isFirstRender) return
-    console.log('step2 trigger')
-    if (tokenListSearchValue.trim().length == 0) {
-      if (publicKey) {
-        updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE }, false).then(() => setPage(1))
-      } else {
-        setTokenList([])
-      }
-      return
-    }
-    debounce(
-      () =>
-        updateTokenList(
-          {
-            page: 1,
-            pageSize: TOKEN_LIST_PAGE_SIZE
-          },
-          false
-        ),
-      250
-    )
-    return () => {
-      abortDebounce()
-    }
-  }, [tokenListSearchValue, publicKey])
 
   useEffect(() => {
     setLoadingPopularTokens.on()
@@ -483,7 +445,7 @@ function TokenSelectionInput({
       })
       .finally(() => setLoadingPopularTokens.off())
   }, [])
-
+  const tokenList = query.data.allPages ?? [];
   return (
     <InputGroup
       leftItem={
@@ -522,7 +484,7 @@ function TokenSelectionInput({
             <DropdownMenuContent
               className={cn(
                 `flex flex-col mt-1 z-[1001] h-auto max-h-[396px] w-[464px] max-sm:w-[338px] relative pb-0`,
-                !publicKey && !tokenListSearchValue.trim().length && 'pb-2'
+                !publicKey && !searchValue.trim().length && 'pb-2'
               )}
               portal={true}
               align={'start'}
@@ -530,20 +492,20 @@ function TokenSelectionInput({
               <SearchBar
                 groupClassName={'sticky'}
                 placeholder={'Search by token name symbol or address'}
-                value={tokenListSearchValue}
+                value={searchValue}
                 onKeyDown={(e) => e.stopPropagation()}
                 onChange={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
-                  setTokenListSearchValue(e.target.value)
+                  setSearchValue(e.target.value)
                 }}
-                onClear={() => setTokenListSearchValue('')}
-                isLoading={isLoadingTokenList}
+                onClear={() => setSearchValue('')}
+                isLoading={query.isFetching}
               />
               <div
                 className={cn(
                   `border-b border-solid dark:border-black-4 border-grey-4`,
-                  !publicKey && !tokenListSearchValue.trim().length && 'border-none'
+                  !publicKey && !searchValue.trim().length && 'border-none'
                 )}
               >
                 <h5
@@ -570,7 +532,7 @@ function TokenSelectionInput({
                           setToken(token)
                           setIsDropdownOpen.off()
                         }}
-                        disabled={otherToken?.address == token?.address || isLoadingTokenList}
+                        disabled={otherToken?.address == token?.address || query.isFetching}
                         iconLeft={
                           <IconWithFallback
                             src={loadIconImage(token?.logoURI, mode)}
@@ -590,19 +552,21 @@ function TokenSelectionInput({
                   )}
                 </div>
               </div>
-              {tokenListSearchValue && tokenRenderList.length == 0 && !isLoadingTokenList ? (
+              {searchValue && tokenList.length == 0 && !query.isFetching ? (
                 <div className={'mb-auto p-2'}>No Tokens Found..</div>
               ) : null}
-              {tokenRenderList.length > 0 ? (
+              {tokenList.length > 0 ? (
                 <InfiniteTokenList
-                  useRenderListLength={tokenListSearchValue.trim().length > 0}
-                  tokenRenderList={tokenRenderList}
+                  tokenList={tokenList}
+                  isLoading={query.isFetching}
+                  fetchNextPage={query.fetchNextPage}
+                  maxTokensReached={query.data.maxTokensReached}
                   onTokenSelect={(token) => {
                     setToken(token)
-                    setTokenListSearchValue('')
+                    setSearchValue('')
                   }}
                   RenderAs={DropdownMenuItem}
-                  checkDisabled={(t) => t?.address == otherToken?.address || isLoadingTokenList}
+                  checkDisabled={(t) => t?.address == otherToken?.address || query.isFetching}
                 />
               ) : null}
             </DropdownMenuContent>

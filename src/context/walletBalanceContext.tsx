@@ -36,10 +36,10 @@ export interface UserTokenAccounts {
   tokenType: 'spl-token' | 'native' | 'spl-token-2022'
 }
 
-type Balance = Record<string, UserTokenAccounts>
+export type Balance = Record<string, UserTokenAccounts>
 type CreateTokenAccountParams = { pda: PublicKey; mint: PublicKey }
 
-interface IWalletBalanceContext {
+export interface IWalletBalanceContext {
   balance: Balance
   topBalances: UserTokenAccounts[]
   publicKey: PublicKey | null
