@@ -49,7 +49,10 @@ const WRAPPER_STYLES: CSSProperties = {
 }
 
 const INNER_STYLES: CSSProperties = { width: '500px', height: '500px' }
-
+// route and used in query enabling
+export const ROUTES = {
+  GAMMA: '/gamma'
+} as const
 function PageLoader() {
   const { mode } = useDarkMode()
   const { RiveComponent } = useRive({
@@ -123,7 +126,7 @@ export const Router: FC = () => {
                               <Farm />
                             </PriceFeedFarmProvider>
                           </Route>
-                          <Route exact path={['/gamma']}>
+                          <Route exact path={[ROUTES.GAMMA]}>
                             <PriceFeedFarmProvider>
                               <GammaProvider>
                                 {/*<JupWidget />*/}

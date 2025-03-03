@@ -11,7 +11,6 @@ import {
   useState
 } from 'react'
 import {
-  fetchAggregateStats,
   fetchAllPools,
   fetchGAMMAConfig,
   fetchLpPositions,
@@ -28,7 +27,6 @@ import {
   GAMMAPool,
   GAMMAPoolsResponse,
   GAMMAPoolWithUserLiquidity,
-  GAMMAStats,
   GAMMAUser,
   GAMMAUserLPPositionWithPrice,
   UserPortfolioLPPosition,
@@ -109,7 +107,6 @@ interface GAMMADataModel {
   setSelectedCardLiquidityAcc: Dispatch<SetStateAction<any>>
   createPoolType: string
   setCreatePoolType: Dispatch<SetStateAction<string>>
-  stats: GAMMAStats
   isConfettiVisible: boolean
   setIsConfettiVisible: Dispatch<SetStateAction<boolean>>
   forceCronAndUpdateLocalData: (txSig?: string) => Promise<void>
@@ -177,21 +174,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
   const [selectedCardLiquidityAcc, setSelectedCardLiquidityAcc] = useState<any>({})
   const [calculatePoolType, setCalculatePoolType] = useState<Set<string>>(new Set())
-  const [stats, setStats] = useState<GAMMAStats>({
-    tvl: '0',
-    stats24h: {
-      volume: '0',
-      fees: '0'
-    },
-    stats7d: {
-      volume: '0',
-      fees: '0'
-    },
-    stats30d: {
-      volume: '0',
-      fees: '0'
-    }
-  })
+
   useLayoutEffect(() => {
     if (!publicKey) {
       if (GAMMA_SORT_CONFIG_PUBKEY_REQUIRED.includes(userCache.gamma.currentSort)) {
@@ -270,14 +253,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         if (config) setGammaConfig(config)
       })
     }
-    fetchAggregateStats().then((s) => {
-      if (s) setStats(s)
-    })
-    const statsInterval = setInterval(() => {
-      fetchAggregateStats().then((s) => {
-        if (s) setStats(s)
-      })
-    }, 60000)
+
 
     if (calculatePoolType.size == 0) {
       const abortSig = 'tokenListCalcPoolTypeGamma'
@@ -290,9 +266,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       })
     }
-
-    return () => clearInterval(statsInterval)
-  }, [])
+    }, [])
 
   const updatePools = (
     {
@@ -600,7 +574,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     <GAMMAContext.Provider
       value={{
         gammaConfig,
-        stats,
         pools,
         user,
         portfolioStats,

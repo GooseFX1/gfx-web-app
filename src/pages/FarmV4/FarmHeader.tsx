@@ -11,10 +11,10 @@ import DocsBanner from './DocsBanner'
 import { CreatePool } from './CreatePool'
 import BigNumber from 'bignumber.js'
 import { TokenRewardsDrawer } from '@/components/token-rewards'
+import useStatsQuery from '@/queries/GAMMA/useStatsQuery'
 
 export const FarmHeader: FC = () => {
   const {
-    stats,
     viewRange: range,
     computedViewRange,
     setViewRange: setRange,
@@ -23,6 +23,7 @@ export const FarmHeader: FC = () => {
     setCurrentPoolType,
     setCurrentSort
   } = useGamma()
+  const statsQuery = useStatsQuery()
   const { wallet } = useWallet()
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
   const { isMobile } = useBreakPoint()
@@ -39,27 +40,27 @@ export const FarmHeader: FC = () => {
     const data = [
       {
         name: 'TVL',
-        value: bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.tvl))),
+        value: bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.tvl))),
         tooltip: 'TVL represents the total USD value of all assets deposited in our pools'
       },
       {
         name: `${computedViewRange} Volume`,
         value:
           range === 0
-            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats24h?.volume)))
+            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.stats24h?.volume)))
             : range === 1
-            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats7d?.volume)))
-            : bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats30d?.volume))),
+            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.stats7d?.volume)))
+            : bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.stats30d?.volume))),
         tooltip: ''
       },
       {
         name: `${computedViewRange} Fees`,
         value:
           range === 0
-            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats24h?.fees)))
+            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.stats24h?.fees)))
             : range === 1
-            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats7d?.fees)))
-            : bigNumberFormatter(BigNumber.max(0, new BigNumber(stats?.stats30d?.fees))),
+            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.stats7d?.fees)))
+            : bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.stats30d?.fees))),
         tooltip: ''
       }
     ]
@@ -70,7 +71,7 @@ export const FarmHeader: FC = () => {
     //   })
     // }
     return data
-  }, [userPubKey, range, totalEarnings, computedViewRange, stats])
+  }, [userPubKey, range, totalEarnings, computedViewRange, statsQuery.data])
 
   const options = useMemo(
     () => [
