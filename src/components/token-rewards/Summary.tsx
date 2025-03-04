@@ -118,7 +118,10 @@ export const Summary = ({
                   : 'text-text-lightmode-tertiary dark:text-text-darkmode-tertiary'
               }`}
             >
-              <Icon src={'/img/assets/Stepper-1.svg'} className="w-[22px] h-[22px] min-w-[22px] min-h-[22px]" />
+              <Icon
+                src={`/img/assets/Stepper-1-active-${mode}.svg`}
+                className="w-[22px] h-[22px] min-w-[22px] min-h-[22px]"
+              />
               Select Pool
             </span>
             {selectedPool ? (
@@ -166,10 +169,13 @@ export const Summary = ({
               }`}
             >
               {activeStep >= 2 ? (
-                <Icon src={'/img/assets/Stepper-2.svg'} className="w-[22px] h-[22px] min-w-[22px] min-h-[22px]" />
+                <Icon
+                  src={`/img/assets/Stepper-2-active-${mode}.svg`}
+                  className="w-[22px] h-[22px] min-w-[22px] min-h-[22px]"
+                />
               ) : (
                 <Icon
-                  src={'/img/assets/Stepper-2-inactive.svg'}
+                  src={`/img/assets/Stepper-2-inactive-${mode}.svg`}
                   className="w-[22px] h-[22px] min-w-[22px] min-h-[22px]"
                 />
               )}
@@ -210,10 +216,13 @@ export const Summary = ({
               }`}
             >
               {activeStep >= 3 ? (
-                <Icon src={'/img/assets/Stepper-3.svg'} className="w-[22px] h-[22px] min-w-[22px] min-h-[22px]" />
+                <Icon
+                  src={`/img/assets/Stepper-3-active-${mode}.svg`}
+                  className="w-[22px] h-[22px] min-w-[22px] min-h-[22px]"
+                />
               ) : (
                 <Icon
-                  src={'/img/assets/Stepper-3-inactive.svg'}
+                  src={`/img/assets/Stepper-3-inactive-${mode}.svg`}
                   className="w-[22px] h-[22px] min-w-[22px] min-h-[22px]"
                 />
               )}
@@ -236,7 +245,10 @@ export const Summary = ({
             )}
           </div>
         </div>
-        <div className="w-full h-[1px] bg-grey-4"></div>
+        <div
+          className="w-full h-[1px] border-t-1 
+        border-border-lightmode-secondary dark:border-border-darkmode-secondary"
+        ></div>
         {estimatedRewardsPerDay !== null && (
           <>
             <div className="flex flex-col gap-2">
@@ -262,7 +274,7 @@ export const Summary = ({
               </div>
             )}
             {isMobile && (
-              <p className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
+              <p className="text-sm text-text-lightmode-tertiary dark:text-text-darkmode-tertiary">
                 Rewards are locked in once transaction is confirmed. New rewards appear on the platform after they
                 have been confirmed on the network.
               </p>
@@ -273,7 +285,7 @@ export const Summary = ({
       {estimatedRewardsPerDay && (
         <>
           {isMobile && <div className="w-full mt-4 h-[1px] bg-grey-4"></div>}
-          <div className="flex justify-end mt-auto">
+          <div className={`flex justify-end mt-auto ${!isMobile ? 'mb-[12px]' : ''}`}>
             <Button
               className=" w-max mt-4"
               colorScheme={'blue'}
@@ -281,11 +293,11 @@ export const Summary = ({
               onClick={handleAddTokenRewards}
               isLoading={sendingTransaction}
             >
-              Token Rewards
+              Add Token Rewards
             </Button>
           </div>
           {!isMobile && (
-            <p className="text-xs text-text-lightmode-secondary dark:text-text-darkmode-secondary">
+            <p className="text-xs text-text-lightmode-tertiary dark:text-text-darkmode-tertiary">
               Rewards are locked in once transaction is confirmed. New rewards appear on the platform after they
               have been confirmed on the network.
             </p>

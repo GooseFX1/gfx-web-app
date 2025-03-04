@@ -56,12 +56,14 @@ export const SelectPoolStep = ({ currentStep, setCurrentStep, summary, pool, set
   })
 
   return (
-    <div className="grid grid-cols-5 w-full">
-      <div className={`flex flex-col ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
+    <div className="grid grid-cols-5 w-full h-full">
+      <div className={`flex flex-col h-full ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
         <div className="py-2.5 px-6 flex flex-col">
           <div
             className={`flex flex-row items-center justify-between gap-3 mb-2 pt-4 ${
-              isMobile ? 'pb-2 border-b-1' : ''
+              isMobile
+                ? 'pb-2 border-b-1 border-border-lightmode-secondary dark:border-border-darkmode-secondary'
+                : ''
             }`}
           >
             <h1 className="text-lg font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary">
@@ -112,7 +114,7 @@ export const SelectPoolStep = ({ currentStep, setCurrentStep, summary, pool, set
               </p>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 max-h-[300px] overflow-y-auto">
-                {createdPools.length === 0 && <div className="text-red-600">No pools created</div>}
+                {createdPools.length === 0 && <div className="text-[#F35355]">No pools created</div>}
                 {createdPools.map((createdPool, index) => (
                   <Button
                     key={index}
@@ -166,7 +168,10 @@ export const SelectPoolStep = ({ currentStep, setCurrentStep, summary, pool, set
           )}
         </div>
 
-        <div className="px-6 py-2.5 flex justify-between mt-auto border-t-1">
+        <div
+          className="px-6 py-2.5 flex justify-between mt-auto border-t-1
+         border-border-lightmode-secondary dark:border-border-darkmode-secondary"
+        >
           <Button
             onClick={() => setCurrentStep(currentStep - 1)}
             className="px-4 py-2 text-text-lightmode-primary dark:text-text-darkmode-primary underline"
@@ -302,7 +307,7 @@ function PoolSelectInput({
             </DropdownMenuTrigger>
             <DropdownMenuContent
               className={cn(
-                `flex flex-col mt-1 z-[1001] h-auto max-h-[396px] w-[464px] max-sm:w-[338px] relative pb-0`,
+                `flex flex-col mt-1 z-[1001] h-auto max-h-[283px] w-[464px] max-sm:w-[338px] relative pb-0`,
                 !publicKey && !searchValue.trim().length && 'pb-2'
               )}
               portal={true}

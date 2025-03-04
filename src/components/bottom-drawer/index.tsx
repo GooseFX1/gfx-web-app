@@ -4,11 +4,13 @@ import { Dialog, DialogBody, DialogContent, DialogOverlay, DialogPortal } from '
 export const BottomDrawer = ({
   isOpen,
   setOpen,
-  children
+  children,
+  contentClassName
 }: {
   isOpen: boolean
   setOpen: (b: boolean) => void
   children: React.ReactNode
+  contentClassName?: string
 }) => {
   const breakpoint = useBreakPoint()
   const isMobile = breakpoint.isMobile
@@ -22,8 +24,7 @@ export const BottomDrawer = ({
       <DialogPortal>
         <DialogOverlay />
         <DialogContent
-          className={`w-full h-max max-h-[100dvh] overflow-y-scroll rounded-b-none 
-          `}
+          className={`w-full h-max max-h-[100dvh] overflow-y-scroll rounded-b-none ${contentClassName}`}
           fullScreen={!isMobile}
           placement={'bottom'}
         >

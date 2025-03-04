@@ -17,8 +17,8 @@ interface AddTimeframeStepProps {
   summary: React.ReactNode
   selectedToken: JupToken
   key: string
-  startDate: dayjs.Dayjs
-  endDate: dayjs.Dayjs
+  startDate: dayjs.Dayjs | null
+  endDate: dayjs.Dayjs | null
   setStartDate: (date: dayjs.Dayjs) => void
   setEndDate: (date: dayjs.Dayjs) => void
 }
@@ -36,15 +36,17 @@ export const AddTimeframeStep = ({
   const { isMobile } = useBreakPoint()
   const { connected } = useWallet()
   const { mode } = useDarkMode()
-  const endBefore = useMemo(() => startDate.add(1, 'day').toDate(), [startDate])
+  const endBefore = useMemo(() => startDate?.add(1, 'day').toDate(), [startDate])
 
   return (
-    <div className="grid grid-cols-5 w-full">
-      <div className={`flex flex-col ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
+    <div className="grid grid-cols-5 w-full h-full">
+      <div className={`flex flex-col h-full ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
         <div className="py-2.5 px-6 flex flex-col">
           <div
             className={`flex flex-row items-center justify-between gap-3 mb-2 pt-4 ${
-              isMobile ? 'pb-2 border-b-1' : ''
+              isMobile
+                ? 'pb-2 border-b-1 border-border-lightmode-secondary dark:border-border-darkmode-secondary'
+                : ''
             }`}
           >
             <h1 className="text-lg font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary">
@@ -87,27 +89,42 @@ export const AddTimeframeStep = ({
           {connected ? (
             <>
               {selectedToken ? (
-                <div className="grid grid-cols-[auto_auto_auto] w-max gap-1 items-center">
-                  <div className="flex flex-row items-center gap-3 mb-2">
-                    <IconWithFallback
-                      src={loadIconImage(selectedToken?.logoURI, mode)}
-                      size={'sm'}
-                      className={'rounded-circle'}
-                    />
-                    <p>{selectedToken?.symbol}</p>
+                <div className="flex flex-col w-full gap-1">
+                  <div className="flex flex-row justify-between items-center gap-1">
+                    <div className="flex flex-row items-center gap-3 mb-2">
+                      <IconWithFallback
+                        src={loadIconImage(selectedToken?.logoURI, mode)}
+                        size={'sm'}
+                        className={'rounded-circle'}
+                      />
+                      <p>{selectedToken?.symbol}</p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="text-end">
+                        {endDate && startDate ? dayjs(endDate).diff(startDate, 'days') : 0} Days
+                      </p>
+                    </div>
                   </div>
-                  <div className="col-span-2">
-                    <p className="text-end"> {dayjs(endDate).diff(startDate, 'days')} Days</p>
+                  <div className="grid grid-cols-[auto_14px_auto] items-center gap-1 *:w-full">
+                    <div className="col-span-1">
+                      <DateTimeInputWithDialog
+                        value={startDate}
+                        onChange={setStartDate}
+                        triggerClassName={'w-full'}
+                      />
+                    </div>
+                    <p className="w-max">to</p>
+                    <div className="col-span-1">
+                      <DateTimeInputWithDialog
+                        value={endDate}
+                        onChange={setEndDate}
+                        disabled={{
+                          before: endBefore
+                        }}
+                        triggerClassName={'w-full'}
+                      />
+                    </div>
                   </div>
-                  <DateTimeInputWithDialog value={startDate} onChange={setStartDate} />
-                  <p>to</p>
-                  <DateTimeInputWithDialog
-                    value={endDate}
-                    onChange={setEndDate}
-                    disabled={{
-                      before: endBefore
-                    }}
-                  />
                 </div>
               ) : (
                 <Button
@@ -123,7 +140,10 @@ export const AddTimeframeStep = ({
           )}
         </div>
 
-        <div className="px-6 py-2.5 flex justify-between mt-auto border-t-1">
+        <div
+          className="px-6 py-2.5 flex justify-between mt-auto border-t-1 
+        border-border-lightmode-secondary dark:border-border-darkmode-secondary"
+        >
           <Button
             onClick={() => setCurrentStep(currentStep - 1)}
             className="px-4 py-2 text-text-lightmode-primary dark:text-text-darkmode-primary underline"
