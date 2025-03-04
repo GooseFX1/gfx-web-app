@@ -10,6 +10,8 @@ import { IWalletBalanceContext, useWalletBalance } from '@/context/walletBalance
 import { TokenListToken } from '@/context'
 import { UseInfiniteQueryResponseFix } from '@/queries/types'
 import { useEffect } from 'react'
+import useQueryWrapperWithError from '@/queries/useQueryWrapperWithError'
+import { getQueryKeys } from '@/queries/query.helper'
 
 type TokenQueryProps = {
   searchValue?: string
@@ -27,14 +29,20 @@ interface InfiniteTokenData extends InfiniteData<TokenListAPIResponse> {
   allPages: TokenListToken[]
   maxTokensReached: boolean
 }
+const DEFAULT = {
+  pages: [],
+  pageParams: [1],
+  allPages: [],
+  maxTokensReached: false
+} as InfiniteData<TokenListAPIResponse>
 function useTokensQuery({
   searchValue = '',
   poolType = 'all'
                         }: TokenQueryProps) {
   const { base58PublicKey, topBalances, balance } = useWalletBalance()
-
+  const keys = getQueryKeys('GAMMA-tokens', searchValue, poolType)
   const query =  useInfiniteQuery({
-    queryKey: ['GAMMA-tokens', searchValue, poolType],
+    queryKey: keys,
     queryFn: async ({ pageParam, signal, queryKey }) =>
       getTokens({
         searchValue: queryKey[1],
@@ -55,12 +63,7 @@ function useTokensQuery({
     getNextPageParam: (lastPage: TokenListAPIResponse) => lastPage?.nextPage,
     getPreviousPageParam: (firstPage: TokenListAPIResponse) => firstPage?.nextPage,
     staleTime: 1000 * 60,
-    placeholderData: {
-      pages: [],
-      pageParams: [1],
-      allPages: [],
-      maxTokensReached: false
-    } as InfiniteData<TokenListAPIResponse> // fixes type issue, but ugly :/
+    placeholderData: DEFAULT // fixes type issue, but ugly :/
   }) as UseInfiniteQueryResponseFix<TokenListAPIResponse, Error, InfiniteTokenData>
   // ^ TypeCasting to fix the query.data access to get intellisense working
 
@@ -69,7 +72,7 @@ function useTokensQuery({
     query.data.allPages = getTopBalancesWithTokenList(query.data.allPages, balance, topBalances);
   },[balance,base58PublicKey,topBalances,query.data])
 
-  return query;
+  return useQueryWrapperWithError(query, DEFAULT, keys);
 }
 
 export default useTokensQuery

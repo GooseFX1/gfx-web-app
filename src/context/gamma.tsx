@@ -23,7 +23,6 @@ import {
   GAMMAPool,
   GAMMAPoolsResponse,
   GAMMAPoolWithUserLiquidity,
-  GAMMAStats,
 } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
