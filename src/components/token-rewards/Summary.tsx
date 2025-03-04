@@ -287,7 +287,7 @@ export const Summary = ({
           {isMobile && <div className="w-full mt-4 h-[1px] bg-grey-4"></div>}
           <div className={`flex justify-end mt-auto ${!isMobile ? 'mb-[12px]' : ''}`}>
             <Button
-              className=" w-max mt-4"
+              className=" w-full mt-4"
               colorScheme={'blue'}
               variant={'primary'}
               onClick={handleAddTokenRewards}
