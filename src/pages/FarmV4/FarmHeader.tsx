@@ -227,39 +227,6 @@ export const FarmHeader: FC = () => {
           </div>
         </div>
       )}
-
-      {isMobile && !isPortfolio && (
-        <div className="flex flex-row items-center justify-between mt-5 px-2">
-          {(gammaBoostedRewardsIsActive === null || gammaBoostedRewardsIsActive === true) && (
-            <Button
-              className="cursor-pointer mr-2 w-full"
-              colorScheme={'blue'}
-              variant={'secondary'}
-              //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
-              onClick={() => setOpenRewardsDrawer(true)}
-            >
-              Token Rewards
-            </Button>
-          )}
-          <Button
-            className="cursor-pointer mr-2 w-full"
-            colorScheme={'blue'}
-            variant={'secondary'}
-            //iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
-            onClick={() => setIsCreatePool(true)}
-          >
-            New Pool
-          </Button>
-          <img
-            src="img/assets/question-icn.svg"
-            alt="primary"
-            height={35}
-            width={35}
-            onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
-            className="cursor-pointer "
-          />
-        </div>
-      )}
     </div>
   )
 }

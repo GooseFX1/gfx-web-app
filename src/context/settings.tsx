@@ -225,7 +225,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
   const [blacklisted, setBlacklisted] = useState<boolean>(false)
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false)
-  const [gammaBoostedRewardsIsActive, setGammaBoostedRewardsIsActive] = useState<boolean>(false)
+  const [gammaBoostedRewardsIsActive, setGammaBoostedRewardsIsActive] = useState<boolean>(true)
   const [userCache, setUserCache] = useState<USER_CONFIG_CACHE>(getOrCreateCache())
   const [endpointName, setEndpointName] = useState<EndPointName>(
     userCache.endpointName !== DEFAULT_ENDPOINT_NAME && userCache.endpointName !== 'Custom'

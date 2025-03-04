@@ -1,6 +1,7 @@
 import { useDarkMode } from '@/context'
 import useBreakPoint from '@/hooks/useBreakPoint'
-import { DialogClose, Icon } from 'gfx-component-lib'
+import { DialogClose, Icon, Button } from 'gfx-component-lib'
+import { NAV_LINKS, navigateToCurried } from '@/utils/requests'
 
 export const DefaultStep = ({
   currentStep,
@@ -93,13 +94,29 @@ export const DefaultStep = ({
           />
           <div className="mt-8 text-center text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
             See our{' '}
-            <a href="#" className="text-primary-lightmode hover:underline">
-              Pool Guide
-            </a>{' '}
+            <Button
+              variant={'ghost'}
+              onClick={navigateToCurried(`${NAV_LINKS.docs}/gamma`, '_blank')}
+              size={'sm'}
+              className={
+                `p-2 dark:text-text-darkmode-primary text-text-blue font-semibold
+                 max-sm:h-[26px] underline`
+              }
+            >
+              Pool Guide  
+            </Button>{' '}
             Or{' '}
-            <a href="#" className="text-primary-lightmode hover:underline">
+            <Button
+              variant={'ghost'}
+              onClick={navigateToCurried(`${NAV_LINKS.docs}/farm`, '_blank')}
+              size={'sm'}
+              className={
+                `p-2 dark:text-text-darkmode-primary text-text-blue font-semibold
+                 max-sm:h-[26px] underline`
+              }
+            >
               Farm Guide
-            </a>
+            </Button>
           </div>
         </div>
       )}

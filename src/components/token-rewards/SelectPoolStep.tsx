@@ -51,7 +51,7 @@ export const SelectPoolStep = ({ currentStep, setCurrentStep, summary, pool, set
     searchTokens: '',
     showDeposited: false,
     showCreated: true,
-    pageSize: 10,
+    pageSize: 8,
     sortOrder: 'desc'
   })
 
@@ -99,7 +99,7 @@ export const SelectPoolStep = ({ currentStep, setCurrentStep, summary, pool, set
             )}
           </div>
 
-          <p className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary mb-6">
+          <p className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary mb-6 max-sm:mb-2">
             Connect your wallet and select the pool you would like to add boosted rewards to:
           </p>
 
@@ -109,21 +109,21 @@ export const SelectPoolStep = ({ currentStep, setCurrentStep, summary, pool, set
                 <PoolSelectInput pool={pool} setPool={setPool} />
               </div>
 
-              <p className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary mb-4">
+              <p className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary mb-4 max-sm:mb-2">
                 Or select from the pools you already created
               </p>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 max-h-[300px] overflow-y-auto">
-                {createdPools.length === 0 && <div className="text-[#F35355]">No pools created</div>}
+              <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 overflow-y-scroll h-[220px]">
+                {createdPools.length === 0 && <div className="text-red-2">No pools created</div>}
                 {createdPools.map((createdPool, index) => (
                   <Button
                     key={index}
                     className={`h-[44px] p-3 rounded-sm border 
                       dark:bg-black-1 border-border-lightmode-primary 
-              dark:border-border-darkmode-primary hover:bg-background-lightmode-secondary 
-              dark:hover:bg-background-darkmode-secondary transition-colors ${
-                pool?.id === createdPool.id ? 'border-2' : ''
-              }`}
+                      dark:border-border-darkmode-primary hover:bg-background-lightmode-secondary 
+                      dark:hover:bg-background-darkmode-secondary transition-colors ${
+                        pool?.id === createdPool.id ? 'border-2' : ''
+                      }`}
                     onClick={() => setPool(createdPool)}
                   >
                     <div className="flex justify-between items-center gap-1">
@@ -156,8 +156,9 @@ export const SelectPoolStep = ({ currentStep, setCurrentStep, summary, pool, set
                     </div>
                   </Button>
                 ))}
+
                 {poolsHasMoreDataCreatedPools && (
-                  <Button className="w-full h-full" onClick={() => loadMoreCreatedPools()}>
+                  <Button className="w-full h-full underline" onClick={() => loadMoreCreatedPools()}>
                     Load more
                   </Button>
                 )}
