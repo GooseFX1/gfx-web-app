@@ -6,9 +6,7 @@ import {
   GAMMAPoolsResponse,
   GAMMAPortfolioPoolResponse,
   GAMMAStats,
-  GAMMAUser,
   UserPortfolioLPPosition,
-  UserPortfolioStats
 } from '@/types/gamma'
 import { BlockheightBasedTransactionConfirmationStrategy, Connection } from '@solana/web3.js'
 import { aborter } from '@/utils'
@@ -25,13 +23,8 @@ const fetchGAMMAConfig = async (): Promise<GAMMAConfig | null> => {
 }
 
 const fetchAggregateStats = async (): Promise<GAMMAStats | null> => {
-  try {
-    const response = await httpClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.STATS)
-    return response.data.data.stats as GAMMAStats
-  } catch (error) {
-    console.error('Error fetching aggregate stats:', error)
-    return null
-  }
+  const response = await httpClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.STATS)
+  return response.data.data.stats as GAMMAStats
 }
 
 const fetchAllPools = async ({
@@ -162,39 +155,11 @@ export const fetchAndConcatAllPoolsByMints = async (
     return null
   }
 }
-const fetchUser = async (publicKey: string): Promise<GAMMAUser | null> => {
-  console.log(publicKey)
-  try {
-    // const response = await httpClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.USER}/${publicKey}`)
-    // return response.data
-    return null
-  } catch (error) {
-    console.error('Error fetching user:', error)
-    return null
-  }
-}
-
-const fetchPortfolioStats = async (userId: string): Promise<UserPortfolioStats | null> => {
-  console.log(userId)
-  try {
-    // const response = await httpClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.PORTFOLIO_STATS}/${userId}`)
-    // return response.data
-    return null
-  } catch (error) {
-    console.error('Error fetching portfolio stats:', error)
-    return null
-  }
-}
 
 const fetchLpPositions = async (userId: string): Promise<UserPortfolioLPPosition[] | null> => {
-  if (!userId) return null
-  try {
-    const response = await httpClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.LP_POSITIONS}/${userId}`)
-    return response.status === 200 ? response.data.data.accounts : []
-  } catch (error) {
-    console.error('Error fetching LP positions:', error)
-    return null
-  }
+  if (!userId) return []
+  const response = await httpClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.LP_POSITIONS}/${userId}`)
+  return response.status === 200 ? response.data.data.accounts : []
 }
 
 const fetchTokenList = async (
@@ -364,8 +329,6 @@ const fetchProfilePoolsByMints = async ({
 export {
   fetchGAMMAConfig,
   fetchAggregateStats,
-  fetchUser,
-  fetchPortfolioStats,
   fetchLpPositions,
   fetchAllPools,
   fetchTokenList,

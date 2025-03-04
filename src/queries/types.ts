@@ -1,4 +1,4 @@
-import { UseInfiniteQueryResult } from '@tanstack/react-query'
+import { UseInfiniteQueryResult, UseQueryResult } from '@tanstack/react-query'
 
 /**
  * Fix for UseInfiniteQueryResponse
@@ -6,3 +6,7 @@ import { UseInfiniteQueryResult } from '@tanstack/react-query'
 export type UseInfiniteQueryResponseFix<T, U, K> = UseInfiniteQueryResult<T, U> & {
   data: K
 };
+
+export type UseQueryResponseFix<T, U, K = T> = UseQueryResult<T, U> & {
+  data: K
+}

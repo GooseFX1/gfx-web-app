@@ -3,9 +3,11 @@ import { INTERVALS } from '@/utils/time'
 import { fetchAggregateStats } from '@/api/gamma'
 import { useLocation } from 'react-router-dom'
 import { ROUTES } from '@/Router'
-import useQueryWrapperWithError from '../useQueryWrapperWithError'
+import { GAMMAStats } from '@/types/gamma'
+import useQueryWrapperWithError from '@/queries/useQueryWrapperWithError'
+import { getQueryKeys } from '../query.helper'
 
-const DEFAULT = {
+const DEFAULT: GAMMAStats = {
   tvl: '0',
   stats24h: {
     volume: '0',
@@ -23,13 +25,14 @@ const DEFAULT = {
 
 function useStatsQuery() {
   const { pathname } = useLocation()
+  const keys = getQueryKeys('GAMMA-stats')
   return useQueryWrapperWithError(useQuery({
-    queryKey: ['GAMMA-stats'],
+    queryKey: keys,
     queryFn: fetchAggregateStats,
     staleTime: INTERVALS.MINUTE,
     placeholderData: DEFAULT,
-    enabled: pathname.startsWith(ROUTES.GAMMA)
-  }), DEFAULT)
+    enabled: pathname.startsWith(ROUTES.GAMMA),
+  }), DEFAULT, keys);
 }
 
 export default useStatsQuery
