@@ -2,7 +2,8 @@
 import {
   cn,
   Dialog,
-  DialogBody, DialogCloseDefault,
+  DialogBody,
+  DialogCloseDefault,
   DialogContent,
   DialogOverlay,
   DialogPortal,
@@ -42,17 +43,27 @@ const RootWrapper = ({
     </Popover>
   )
 }
-const TriggerWrapper = ({ children, isMobile }: { isMobile: boolean, children: React.ReactNode }) => {
+const TriggerWrapper = ({
+  children,
+  isMobile,
+  triggerClassName
+}: {
+  isMobile: boolean
+  children: React.ReactNode
+  triggerClassName?: string
+}) => {
   if (isMobile) {
-    return <DialogTrigger>{children}</DialogTrigger>
+    return (
+        <DialogTrigger className={triggerClassName}>{children}</DialogTrigger>
+    )
   }
   return (
     <PopoverAnchor>
-      <PopoverTrigger>{children}</PopoverTrigger>
+        <PopoverTrigger className={triggerClassName}>{children}</PopoverTrigger>
     </PopoverAnchor>
   )
 }
-const ContentWrapper = ({ children, isMobile }: { isMobile: boolean, children: React.ReactNode }) => {
+const ContentWrapper = ({ children, isMobile }: { isMobile: boolean; children: React.ReactNode }) => {
   if (isMobile) {
     return (
       <DialogPortal>
@@ -67,9 +78,16 @@ const ContentWrapper = ({ children, isMobile }: { isMobile: boolean, children: R
 }
 type DateTimeInputWithDialog = DateTimePickerProps & {
   placeholder?: string
+  triggerClassName?: string
 }
 
-function DateTimeInputWithDialog({ value, onChange, placeholder, ...rest }: DateTimeInputWithDialog) {
+function DateTimeInputWithDialog({
+  value,
+  onChange,
+  placeholder,
+  triggerClassName,
+  ...rest
+}: DateTimeInputWithDialog) {
   const [isOpen, setIsOpen] = useBoolean(false)
   const { isMobile } = useBreakPoint()
   const computedValue = useMemo(() => {
@@ -79,22 +97,23 @@ function DateTimeInputWithDialog({ value, onChange, placeholder, ...rest }: Date
 
   return (
     <RootWrapper isOpen={isOpen} setIsOpen={setIsOpen.set} isMobile={isMobile}>
-        <TriggerWrapper isMobile={isMobile}>
-          <div
-            className={cn(`
+      <TriggerWrapper isMobile={isMobile} triggerClassName={triggerClassName}>
+        <div
+          className={cn(
+            `
         px-2.5 py-[3.5px] border-1 border-solid border-border-lightmode-secondary dark:border-border-darkmode-secondary
         bg-background-lightmode-primary dark:bg-background-darkmode-primary text-text-lightmode-tertiary
          dark:text-text-darkmode-tertiary rounded-0.75 min-h-[35px] min-w-[160px] w-full 
          text-b2 font-semibold flex items-center justify-center
-        `, computedValue && `text-text-lightmode-primary dark:text-text-darkmode-primary 
+        `,
+            computedValue &&
+              `text-text-lightmode-primary dark:text-text-darkmode-primary 
         border-border-lightmode-primary dark:border-border-darkmode-primary`
-            )}
-          >
-            <p className={'my-auto'}>
-              {computedValue ? computedValue : placeholder ?? 'Select a dates'}
-            </p>
-          </div>
-        </TriggerWrapper>
+          )}
+        >
+          <p className={'my-auto'}>{computedValue ? computedValue : placeholder ?? 'Select a dates'}</p>
+        </div>
+      </TriggerWrapper>
       <ContentWrapper isMobile={isMobile}>
         <DateTimePicker
           className={cn(``, isMobile && 'w-full border-none p-0 pb-2.5 px-2.5')}
@@ -104,7 +123,8 @@ function DateTimeInputWithDialog({ value, onChange, placeholder, ...rest }: Date
             head_row: 'flex w-full justify-between',
             row: 'flex w-full justify-between',
             day: 'text-b2',
-            nav: 'ml-4'
+            nav: 'ml-4',
+            button: 'w-full'
           }}
           {...rest}
         />

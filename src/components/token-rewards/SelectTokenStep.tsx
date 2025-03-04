@@ -61,12 +61,14 @@ export const SelectTokenStep = ({
   }
 
   return (
-    <div className="grid grid-cols-5 w-full">
-      <div className={`flex flex-col ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
+    <div className="grid grid-cols-5 w-full h-full">
+      <div className={`flex flex-col h-full ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
         <div className="py-2.5 px-6 flex flex-col">
           <div
             className={`flex flex-row items-center justify-between gap-3 mb-2 pt-4 ${
-              isMobile ? 'pb-2 border-b-1' : ''
+              isMobile
+                ? 'pb-2 border-b-1 border-border-lightmode-secondary dark:border-border-darkmode-secondary'
+                : ''
             }`}
           >
             <h1 className="text-lg font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary">
@@ -109,7 +111,11 @@ export const SelectTokenStep = ({
           {connected ? (
             <>
               <div className="flex flex-row items-center gap-1 mb-2">
-                <Icon src="/img/assets/wallet-lite-enabled.svg" alt="balance" className="w-5 h-5" />
+                <Icon
+                  src={`/img/assets/wallet-${mode}-enabled.svg`}
+                  alt="balance"
+                  className="w-[20px] h-[20px] min-w-[20px] min-h-[20px]"
+                />
                 <p
                   className={cn(
                     `text-b2 cursor-pointer text-text-lightmode-primary dark:text-text-darkmode-primary`,
@@ -135,7 +141,10 @@ export const SelectTokenStep = ({
             <Connect containerStyle="w-max" />
           )}
         </div>
-        <div className="px-6 py-2.5 flex justify-between mt-auto border-t-1">
+        <div
+          className="px-6 py-2.5 flex justify-between mt-auto border-t-1
+         border-border-lightmode-secondary dark:border-border-darkmode-secondary"
+        >
           <Button
             onClick={() => setCurrentStep(currentStep - 1)}
             className="px-4 py-2 text-text-lightmode-primary dark:text-text-darkmode-primary underline"
@@ -243,7 +252,7 @@ function TokenSelectInput({
             </DropdownMenuTrigger>
             <DropdownMenuContent
               className={cn(
-                `flex flex-col mt-1 z-[1001] h-auto max-h-[396px] w-[464px] max-sm:w-[338px] relative pb-0`,
+                `flex flex-col mt-1 z-[1001] h-auto max-h-[283px] w-[464px] max-sm:w-[338px] relative pb-0`,
                 !publicKey && !searchValue.trim().length && 'pb-2'
               )}
               portal={true}
