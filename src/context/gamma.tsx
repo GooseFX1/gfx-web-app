@@ -6,7 +6,8 @@ import {
   SetStateAction,
   useCallback,
   useContext,
-  useEffect, useLayoutEffect,
+  useEffect,
+  useLayoutEffect,
   useMemo,
   useState
 } from 'react'
@@ -15,20 +16,17 @@ import {
   fetchGAMMAConfig,
   fetchPoolsByMints,
   fetchTokenList,
-  forceCronUpdate, forceCronUpdateWithConnectionAndTxSig,
-  fetchProfilePools, fetchProfilePoolsByMints
+  forceCronUpdate,
+  forceCronUpdateWithConnectionAndTxSig
 } from '@/api/gamma'
-import {
-  GAMMAConfig,
-  GAMMAPool,
-  GAMMAPoolsResponse,
-  GAMMAPoolWithUserLiquidity,
-} from '@/types/gamma'
+import { GAMMAConfig, GAMMAPool, GAMMAPoolsResponse, GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   BASE_SLIPPAGE,
   GAMMA_SORT_CONFIG,
-  GAMMA_SORT_CONFIG_MAP, GAMMA_SORT_CONFIG_PUBKEY_REQUIRED,
+  GAMMA_SORT_CONFIG_MAP,
+  GAMMA_SORT_CONFIG_PUBKEY_REQUIRED,
+  GAMMASortConfig,
   JupToken,
   ModeOfOperation,
   Pool,
@@ -68,7 +66,7 @@ interface GAMMADataModel {
   setSelectedCardPool: Dispatch<SetStateAction<any>>
   modeOfOperation: string
   setModeOfOperation: Dispatch<SetStateAction<string>>
-  totalPoolCount: number,
+  totalPoolCount: number
   sendingTransaction: boolean
   setSendingTransaction: Dispatch<SetStateAction<boolean>>
   searchTokens: string
@@ -92,7 +90,7 @@ interface GAMMADataModel {
     append?: boolean
   ) => void
   poolsHasMoreData: boolean
-  sortConfig: { id: string; name: string; direction: string; key: string }
+  sortConfig: GAMMASortConfig
   selectedCardLiquidityAcc: any
   setSelectedCardLiquidityAcc: Dispatch<SetStateAction<any>>
   createPoolType: string
@@ -161,7 +159,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [selectedCardLiquidityAcc, setSelectedCardLiquidityAcc] = useState<any>({})
   const [calculatePoolType, setCalculatePoolType] = useState<Set<string>>(new Set())
 
-  const userLiqQuery = useUserLiquidityQuery();
+  const userLiqQuery = useUserLiquidityQuery()
 
   useLayoutEffect(() => {
     if (!publicKey) {
@@ -242,7 +240,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
     }
 
-
     if (calculatePoolType.size == 0) {
       const abortSig = 'tokenListCalcPoolTypeGamma'
       const signal = aborter.addSignal(abortSig)
@@ -254,7 +251,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       })
     }
-    }, [])
+  }, [])
 
   const updatePools = (
     {
@@ -273,37 +270,15 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     let key = `${sortConfig.key.toLowerCase()}`
     if ((sortConfig.id == '9' || sortConfig.id == '10') && !isPortfolio) {
-      return;
+      return
     }
     if (sortConfig.id !== '1' && sortConfig.id !== '2' && sortConfig.id !== '9' && sortConfig.id !== '10') {
       key = `${key}${computedViewRange.toLowerCase()}`
     }
-    setIsLoadingPools.on();
-    let result;
-    if (isPortfolio && publicKey) {
-      result = selectedTokens.length > 0 ?
-        fetchProfilePoolsByMints({
-          publicKey: publicKey.toBase58(),
-          sortOrder: sortConfig.direction.toLowerCase() as 'desc' | 'asc',
-          sortBy: key,
-          page,
-          pageSize,
-          poolType: currentPoolType.type,
-          mintA: selectedTokens[0].address,
-          mintB: selectedTokens[1]?.address
-        })
-        : fetchProfilePools({
-        publicKey: publicKey.toBase58(),
-        sortOrder: sortConfig.direction.toLowerCase() as 'desc' | 'asc',
-        sortBy: key,
-        page,
-        pageSize,
-        poolType: currentPoolType.type
-      });
-    } else {
-      result = selectedTokens.length > 0 ?
-        fetchPoolsByMints(
-          {
+    setIsLoadingPools.on()
+    const result =
+      selectedTokens.length > 0
+        ? fetchPoolsByMints({
             mintA: selectedTokens[0]?.address,
             mintB: selectedTokens[1]?.address,
             poolType: currentPoolType.type,
@@ -315,10 +290,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
             userPublicKey: base58PublicKey,
             showDeposited,
             showCreated: showCreatedPools
-          }
-        )
-        : fetchAllPools(
-          {
+          })
+        : fetchAllPools({
             page,
             pageSize,
             poolType: currentPoolType.type,
@@ -329,12 +302,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
             userPublicKey: base58PublicKey,
             showDeposited,
             showCreated: showCreatedPools
-          }
-        )
-    }
-
-
-      result.then((poolsData: GAMMAPoolsResponse) => {
+          })
+    result
+      .then((poolsData: GAMMAPoolsResponse) => {
         if (poolsData && poolsData.success) {
           setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
           setPoolPage(poolsData.data.currentPage)
@@ -366,11 +336,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       .finally(() => setIsLoadingPools.off())
   }
 
-
   useEffect(() => {
-    if (isFirstRender) return
+    if (isFirstRender || isPortfolio) return
     updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE }, false)
-  }, [currentPoolType, showDeposited, showCreatedPools,sortConfig, viewRange])
+  }, [currentPoolType, showDeposited, showCreatedPools, sortConfig, viewRange, isPortfolio])
 
   useEffect(() => {
     if (!isPortfolio) {
@@ -426,8 +395,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
     })()
   }, [GammaProgram, selectedCard, publicKey])
-
-  const { filteredPools } = useMemo(() => {
+  const [filteredPools, setFilteredPools] = useState<GAMMAPoolWithUserLiquidity[]>([])
+  useEffect(() => {
+    if (isPortfolio) return
     const userLpPositions = new Map(userLiqQuery.data.map((lp) => [lp.poolStatePublicKey, lp]))
     const mintA = selectedTokens[0]?.address
     const mintB = selectedTokens[1]?.address
@@ -437,11 +407,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         return {
           ...pool,
           userLpPosition: userLpPosition ? structuredClone(userLpPosition) : undefined,
-          hasDeposit: userLpPosition
-            ? new BN(userLpPosition?.lpTokensOwned)?.gt(new BN(0))
-            : false
+          hasDeposit: userLpPosition ? new BN(userLpPosition?.lpTokensOwned)?.gt(new BN(0)) : false
         }
-      }).sort((a, b) => {
+      })
+      .sort((a, b) => {
         if (sortConfig.id === '9' || sortConfig.id === '10') {
           const aValue = new Decimal(a.userLpPosition.totalValue)
           const bValue = new Decimal(b.userLpPosition.totalValue)
@@ -451,20 +420,34 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           }
           return aValue.lte(bValue) ? -1 : 1
         }
-        if (mintA && mintB) { // don't have both so keep current sort
-          if ((a.mintA.address === mintA && a.mintB.address === mintB) ||
-            (a.mintB.address === mintA && a.mintA.address === mintB)) {
+        if (mintA && mintB) {
+          // don't have both so keep current sort
+          if (
+            (a.mintA.address === mintA && a.mintB.address === mintB) ||
+            (a.mintB.address === mintA && a.mintA.address === mintB)
+          ) {
             return -1
-          } else if ((b.mintA.address === mintA && b.mintB.address === mintB) ||
-            (b.mintB.address === mintA && b.mintA.address === mintB)) {
+          } else if (
+            (b.mintA.address === mintA && b.mintB.address === mintB) ||
+            (b.mintB.address === mintA && b.mintA.address === mintB)
+          ) {
             return 1
           }
         }
         return 0
       })
 
-    return { filteredPools: newPools }
-  }, [pools, userLiqQuery.data, showDeposited, base58PublicKey, showCreatedPools, selectedTokens, sortConfig])
+    setFilteredPools(newPools)
+  }, [
+    pools,
+    userLiqQuery.data,
+    showDeposited,
+    base58PublicKey,
+    showCreatedPools,
+    selectedTokens,
+    sortConfig,
+    isPortfolio
+  ])
 
   useEffect(() => {
     if (!base58PublicKey || filteredPools.length == 0 || !selectedCard?.id) return
@@ -475,7 +458,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const isSearchActive = searchTokens.trim().length > 0
   const forceCronAndUpdateLocalData = async (txSig?: string) => {
-    const result = txSig ? await forceCronUpdateWithConnectionAndTxSig(connection, txSig) : await forceCronUpdate();
+    const result = txSig ? await forceCronUpdateWithConnectionAndTxSig(connection, txSig) : await forceCronUpdate()
 
     if (!result) return
     userLiqQuery.refetch()

@@ -15,7 +15,7 @@ function useUserLiquidityQuery() {
     queryFn: async ()=> getLpPositions(base58PublicKey),
     placeholderData: [],
     staleTime: INTERVALS.MINUTE * 5,
-    enabled: !!base58PublicKey,
+    enabled: !!base58PublicKey
   });
 
  return useQueryWrapperWithError(query, [], keys)

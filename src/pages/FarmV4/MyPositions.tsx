@@ -11,6 +11,8 @@ import { FarmRowLoader } from '@/pages/FarmV4/FarmRow'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import BigNumber from 'bignumber.js'
+import useUserPortfolioPools from '@/queries/GAMMA/pools/useUserPortfolioPools'
+import { getSortKey } from '@/queries/GAMMA/gammaQueries.helpers'
 
 const renderPosition = (p: GAMMAPoolWithUserLiquidity) => {
   const liq = p.userLpPosition
@@ -24,23 +26,25 @@ const renderTokenBalance = (p: GAMMAPortfolioPool) => {
   return `${ratioA} / ${ratioB}`
 }
 
-const MyPositions: FC = () => {
+const MyPositions: FC<{
+  queryPositions: GAMMAPortfolioPool[]
+}> = ({queryPositions}) => {
   const {
     setSelectedCard,
     setOpenDepositWithdrawSlider,
     setModeOfOperation,
     isSearchActive,
     showCreatedPools,
-    filteredPools,
     sortConfig
   } = useGamma()
+
   const { isTablet, isDesktop, isMobile } = useBreakPoint()
   const { mode } = useDarkMode()
   const { base58PublicKey } = useWalletBalance()
 
   const positions = useMemo(
-    () => filteredPools.filter((pool) => pool.userLpPosition) as GAMMAPortfolioPool[],
-    [filteredPools]
+    () => queryPositions.filter((pool) => pool.userLpPosition),
+    [queryPositions]
   )
 
   let noResultsTitle = ''
@@ -77,7 +81,7 @@ const MyPositions: FC = () => {
               isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
             )}
             key={`${pool.id}_${sortConfig.id}`}
-            onClick={()=>{
+            onClick={() => {
               setSelectedCard(pool)
               setOpenDepositWithdrawSlider(true)
               setModeOfOperation(ModeOfOperation.DEPOSIT)
@@ -102,7 +106,7 @@ const MyPositions: FC = () => {
                 {pool.mintA.symbol} - {pool.mintB.symbol}
               </div>
               {pool.poolCreator == base58PublicKey && !isMobile && (
-                <Badge size="sm" variant="default" className='h-5.5'>
+                <Badge size="sm" variant="default" className="h-5.5">
                   Owner
                 </Badge>
               )}
@@ -201,17 +205,29 @@ const MyPositions: FC = () => {
   )
 }
 const MyPositionItems: FC = () => {
-  const { isLoadingPools } = useGamma()
+  const { selectedTokens, sortConfig, showDeposited, showCreatedPools, currentPoolType, isPortfolio, viewRange } =
+    useGamma()
+  const query = useUserPortfolioPools({
+    mintA: selectedTokens[0]?.address,
+    mintB: selectedTokens[1]?.address,
+    poolType: currentPoolType.type,
+    sortBy: getSortKey(sortConfig, isPortfolio, viewRange),
+    sortDirection: sortConfig.direction.toLowerCase(),
+    showCreated: showCreatedPools,
+    showDeposited
+  })
 
-  if (isLoadingPools) {
-    return <div className={'flex flex-col gap-[15px] mt-[15px]'}>
-      <FarmRowLoader />
-      <FarmRowLoader />
-      <FarmRowLoader />
-      <FarmRowLoader />
-    </div>
+  if (query.isFetching) {
+    return (
+      <div className={'flex flex-col gap-[15px] mt-[15px]'}>
+        <FarmRowLoader />
+        <FarmRowLoader />
+        <FarmRowLoader />
+        <FarmRowLoader />
+      </div>
+    )
   }
 
-  return <MyPositions />
+  return <MyPositions queryPositions={query.data.allPages}/>
 }
 export default MyPositionItems
