@@ -607,9 +607,12 @@
       "discriminator": [67, 131, 93, 236, 56, 6, 40, 77],
       "accounts": [
         {
+          "name": "admin",
+          "docs": ["Admin signer for this operation"],
+          "signer": true
+        },
+        {
           "name": "owner",
-          "docs": ["Address to be set as protocol owner."],
-          "signer": true,
           "address": "9QcHinaHcJFdzSHeiF1yGchcuQk3qPFNV13q6dZJbAny"
         },
         {
@@ -623,7 +626,8 @@
           "writable": true
         },
         {
-          "name": "project"
+          "name": "project",
+          "writable": true
         },
         {
           "name": "system_program",
@@ -3077,6 +3081,10 @@
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "pool",
+            "type": "pubkey"
+          },
           {
             "name": "start_at",
             "type": "u64"

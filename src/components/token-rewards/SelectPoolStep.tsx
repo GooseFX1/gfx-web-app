@@ -25,8 +25,10 @@ import { loadIconImage, numberFormatter, truncateAddress } from '@/utils'
 import { CSSProperties, ElementType, useMemo, useState } from 'react'
 import { InfiniteProPoolScrollView } from '@/pages/FarmV4/InfiniteProPoolList'
 import { usePools } from '@/hooks/usePools'
+import { StepCounter, totalSteps } from './StepCounter'
 
 interface SelectPoolStepProps {
+  currentStep: number
   setCurrentStep: (step: number) => void
   summary: React.ReactNode
   pool: GAMMAPool | null
@@ -34,7 +36,7 @@ interface SelectPoolStepProps {
   key: string
 }
 
-export const SelectPoolStep = ({ setCurrentStep, summary, pool, setPool }: SelectPoolStepProps) => {
+export const SelectPoolStep = ({ currentStep, setCurrentStep, summary, pool, setPool }: SelectPoolStepProps) => {
   const { isMobile } = useBreakPoint()
   const { connected } = useWallet()
   const { mode } = useDarkMode()
@@ -49,103 +51,131 @@ export const SelectPoolStep = ({ setCurrentStep, summary, pool, setPool }: Selec
     searchTokens: '',
     showDeposited: false,
     showCreated: true,
-    pageSize: 10,
+    pageSize: 8,
     sortOrder: 'desc'
   })
 
   return (
-    <div className="grid grid-cols-5 gap-10 w-full">
-      <div className={`p-6 flex flex-col ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
-        <div className="flex flex-row items-center justify-between gap-3 mb-2">
-          <h1 className="text-lg font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary">
-            Select Pool
-          </h1>
-          {isMobile && (
-            <div className="flex flex-row items-center gap-3">
-              <Icon
-                src="/img/assets/question-icn.svg"
-                alt="help"
-                className="w-[30px] h-[30px] cursor-pointer"
-                onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
-              />
-              <DialogClose>
-                <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
-              </DialogClose>
-            </div>
+    <div className="grid grid-cols-5 w-full h-full">
+      <div className={`flex flex-col h-full ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
+        <div className="py-2.5 px-6 flex flex-col">
+          <div
+            className={`flex flex-row items-center justify-between gap-3 mb-2 pt-4 ${
+              isMobile
+                ? 'pb-2 border-b-1 border-border-lightmode-secondary dark:border-border-darkmode-secondary'
+                : ''
+            }`}
+          >
+            <h1 className="text-lg font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary">
+              Select Pool
+            </h1>
+            {isMobile ? (
+              <div className="flex flex-row items-center gap-3">
+                <StepCounter currentStep={1} totalSteps={totalSteps()} />
+                <Icon
+                  src="/img/assets/question-icn.svg"
+                  alt="help"
+                  className="w-[30px] h-[30px] cursor-pointer"
+                  onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
+                />
+                <DialogClose>
+                  <Icon
+                    src={`/img/assets/rewards_close-${mode}.svg`}
+                    alt="Close"
+                    className="w-4 h-4 min-w-[25px] min-h-[25px]"
+                  />
+                </DialogClose>
+              </div>
+            ) : (
+              <div className="flex flex-row items-center gap-3">
+                <StepCounter currentStep={1} totalSteps={totalSteps()} />
+                <Icon
+                  src="/img/assets/question-icn.svg"
+                  alt="help"
+                  className="w-[30px] h-[30px] cursor-pointer"
+                  onClick={() => window.open('https://www.goosefx.io/gamma#faqs')}
+                />
+              </div>
+            )}
+          </div>
+
+          <p className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary mb-6 max-sm:mb-2">
+            Connect your wallet and select the pool you would like to add boosted rewards to:
+          </p>
+
+          {connected ? (
+            <>
+              <div className="relative mb-6">
+                <PoolSelectInput pool={pool} setPool={setPool} />
+              </div>
+
+              <p className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary mb-4 max-sm:mb-2">
+                Or select from the pools you already created
+              </p>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 overflow-y-scroll h-[220px]">
+                {createdPools.length === 0 && <div className="text-red-2">No pools created</div>}
+                {createdPools.map((createdPool, index) => (
+                  <Button
+                    key={index}
+                    className={`h-[44px] p-3 rounded-sm border 
+                      dark:bg-black-1 border-border-lightmode-primary 
+                      dark:border-border-darkmode-primary hover:bg-background-lightmode-secondary 
+                      dark:hover:bg-background-darkmode-secondary transition-colors ${
+                        pool?.id === createdPool.id ? 'border-2' : ''
+                      }`}
+                    onClick={() => setPool(createdPool)}
+                  >
+                    <div className="flex justify-between items-center gap-1">
+                      <div className="flex items-center">
+                        <div className="flex flex-row items-center">
+                          <IconWithFallback
+                            src={loadIconImage(createdPool.mintA.logoURI, mode)}
+                            className="border-solid dark:border-black-2 border-white
+                          border-[2px] rounded-full h-[25px] w-[25px]"
+                          />
+                          <IconWithFallback
+                            src={loadIconImage(createdPool.mintB.logoURI, mode)}
+                            className="relative right-[5px] border-solid dark:border-black-2
+                          border-white border-[2px] rounded-full h-[25px] w-[25px]"
+                          />
+                        </div>
+                        <span
+                          className="text-start text-sm font-poppins font-semibold 
+                      dark:text-grey-8 text-black-4 max-sm:text-tiny"
+                        >
+                          {createdPool.mintA.symbol} - {createdPool.mintB.symbol}
+                        </span>
+                      </div>
+                      <div className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
+                        Liq. $
+                        {parseFloat(createdPool?.tvl || '0')
+                          ? numberFormatter(Math.max(0, parseFloat(createdPool?.tvl || '0')))
+                          : '0.00'}
+                      </div>
+                    </div>
+                  </Button>
+                ))}
+
+                {poolsHasMoreDataCreatedPools && (
+                  <Button className="w-full h-full underline" onClick={() => loadMoreCreatedPools()}>
+                    Load more
+                  </Button>
+                )}
+              </div>
+            </>
+          ) : (
+            <Connect containerStyle="w-max" />
           )}
         </div>
 
-        <p className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary mb-6">
-          Connect your wallet and select the pool you would like to add boosted rewards to:
-        </p>
-
-        {connected ? (
-          <>
-            <div className="relative mb-6">
-              <PoolSelectInput pool={pool} setPool={setPool} />
-            </div>
-
-            <p className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary mb-4">
-              Or select from the pools you already created
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[300px] overflow-y-auto">
-              {createdPools.length === 0 && <div className="text-red-600">No pools created</div>}
-              {createdPools.map((createdPool, index) => (
-                <Button
-                  key={index}
-                  className={`p-3 rounded-sm border dark:bg-black-1 border-border-lightmode-primary 
-              dark:border-border-darkmode-primary hover:bg-background-lightmode-secondary 
-              dark:hover:bg-background-darkmode-secondary transition-colors ${
-                pool?.id === createdPool.id ? 'border-2' : ''
-              }`}
-                  onClick={() => setPool(createdPool)}
-                >
-                  <div className="flex justify-between items-center gap-2">
-                    <div className="flex items-center gap-2">
-                      <div className="flex flex-row items-center">
-                        <IconWithFallback
-                          src={loadIconImage(createdPool.mintA.logoURI, mode)}
-                          className="border-solid dark:border-black-2 border-white
-                          border-[2px] rounded-full h-[25px] w-[25px]"
-                        />
-                        <IconWithFallback
-                          src={loadIconImage(createdPool.mintB.logoURI, mode)}
-                          className="relative right-[10px] border-solid dark:border-black-2
-                          border-white border-[2px] rounded-full h-[25px] w-[25px]"
-                        />
-                      </div>
-                      <span
-                        className="text-start font-poppins font-semibold 
-                      dark:text-grey-8 text-black-4 max-sm:text-tiny"
-                      >
-                        {createdPool.mintA.symbol} - {createdPool.mintB.symbol}
-                      </span>
-                    </div>
-                    <div className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
-                      Liq. $
-                      {parseFloat(createdPool?.tvl || '0')
-                        ? numberFormatter(Math.max(0, parseFloat(createdPool?.tvl || '0')))
-                        : '0.00'}
-                    </div>
-                  </div>
-                </Button>
-              ))}
-              {poolsHasMoreDataCreatedPools && (
-                <Button className="w-full h-full" onClick={() => loadMoreCreatedPools()}>
-                  Load more
-                </Button>
-              )}
-            </div>
-          </>
-        ) : (
-          <Connect containerStyle="w-max" />
-        )}
-
-        <div className="flex justify-between pt-8 mt-auto">
+        <div
+          className="px-6 py-2.5 flex justify-between mt-auto border-t-1
+         border-border-lightmode-secondary dark:border-border-darkmode-secondary"
+        >
           <Button
-            onClick={() => setCurrentStep(0)}
-            className="px-4 py-2 text-text-lightmode-primary dark:text-text-darkmode-primary"
+            onClick={() => setCurrentStep(currentStep - 1)}
+            className="px-4 py-2 text-text-lightmode-primary dark:text-text-darkmode-primary underline"
           >
             Back
           </Button>
@@ -154,7 +184,7 @@ export const SelectPoolStep = ({ setCurrentStep, summary, pool, setPool }: Selec
               className="px-4 py-2 cursor-pointer"
               colorScheme={'blue'}
               variant={'secondary'}
-              onClick={() => setCurrentStep(2)}
+              onClick={() => setCurrentStep(currentStep + 1)}
             >
               Next
             </Button>
@@ -163,9 +193,13 @@ export const SelectPoolStep = ({ setCurrentStep, summary, pool, setPool }: Selec
       </div>
 
       {!isMobile && (
-        <div className="py-6 px-10 flex flex-col items-center col-span-2 bg-grey-5 dark:bg-black-1">
+        <div className="py-6 px-5 flex flex-col items-center col-span-2 bg-grey-5 dark:bg-black-1">
           <DialogClose>
-            <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
+            <Icon
+              src={`/img/assets/rewards_close-${mode}.svg`}
+              alt="Close"
+              className="w-4 h-4 absolute right-5 top-5 min-w-[25px] min-h-[25px]"
+            />
           </DialogClose>
           {summary}
         </div>
@@ -274,7 +308,7 @@ function PoolSelectInput({
             </DropdownMenuTrigger>
             <DropdownMenuContent
               className={cn(
-                `flex flex-col mt-1 z-[1001] h-auto max-h-[396px] w-[464px] max-sm:w-[338px] relative pb-0`,
+                `flex flex-col mt-1 z-[1001] h-auto max-h-[283px] w-[464px] max-sm:w-[338px] relative pb-0`,
                 !publicKey && !searchValue.trim().length && 'pb-2'
               )}
               portal={true}

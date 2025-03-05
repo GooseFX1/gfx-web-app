@@ -1,17 +1,30 @@
 import { useDarkMode } from '@/context'
 import useBreakPoint from '@/hooks/useBreakPoint'
-import { DialogClose, Icon } from 'gfx-component-lib'
+import { DialogClose, Icon, Button } from 'gfx-component-lib'
+import { NAV_LINKS, navigateToCurried } from '@/utils/requests'
 
-export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number) => void; key: string }) => {
+export const DefaultStep = ({
+  currentStep,
+  setCurrentStep
+}: {
+  currentStep: number
+  setCurrentStep: (step: number) => void
+  key: string
+}) => {
   const { isMobile } = useBreakPoint()
   const { mode } = useDarkMode()
 
-  console.log(mode)
-
   return (
-    <div className="grid grid-cols-5 gap-10 w-full">
-      <div className={`p-6 flex flex-col ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
-        <div className="flex flex-row items-center justify-between gap-3 mb-2">
+    <div className="grid grid-cols-5 w-full h-full">
+      <div className={`py-2.5 px-6 flex flex-col h-full ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
+        <div
+          className={`flex flex-row items-center justify-between gap-3 mb-2 pt-4 
+            ${
+              isMobile
+                ? 'pb-2 border-b-1 border-border-lightmode-secondary dark:border-border-darkmode-secondary'
+                : ''
+            }`}
+        >
           <h1 className="text-lg font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary">
             Create
           </h1>
@@ -26,7 +39,11 @@ export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number)
                 className="cursor-pointer"
               />
               <DialogClose>
-                <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4" />
+                <Icon
+                  src={`/img/assets/rewards_close-${mode}.svg`}
+                  alt="Close"
+                  className="w-4 h-4 min-w-[25px] min-h-[25px]"
+                />
               </DialogClose>
             </div>
           )}
@@ -36,10 +53,11 @@ export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number)
         </p>
         <div className="space-y-4">
           <div
-            className={`w-full p-4 rounded-sm border bg-grey-5 dark:bg-black-1 border-border-lightmode-primary 
-    dark:border-border-darkmode-primary hover:bg-background-lightmode-secondary 
-    dark:hover:bg-background-darkmode-secondary transition-colors text-left cursor-pointer`}
-            onClick={() => setCurrentStep(1)}
+            className={`w-full p-4 rounded-sm border bg-grey-5 dark:bg-black-1 
+              border-border-lightmode-secondary hover:border-border-lightmode-primary 
+    dark:border-border-darkmode-secondary dark:hover:border-border-darkmode-primary 
+    transition-colors text-left cursor-pointer`}
+            onClick={() => setCurrentStep(currentStep + 1)}
           >
             <div className="flex items-center gap-3 mb-2">
               <Icon src={`/img/assets/token-rewards-${mode}.svg`} alt="Rewards" className="w-6 h-6" />
@@ -63,7 +81,11 @@ export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number)
             Not sure what to create?
           </h2>
           <DialogClose>
-            <Icon src="/img/assets/rewards_close.svg" alt="Close" className="w-4 h-4 absolute right-5 top-5" />
+            <Icon
+              src={`/img/assets/rewards_close-${mode}.svg`}
+              alt="Close"
+              className="w-4 h-4 absolute right-5 top-5 min-w-[25px] min-h-[25px]"
+            />
           </DialogClose>
           <Icon
             src={`/img/assets/help-token-rewards-${mode}.svg`}
@@ -72,13 +94,29 @@ export const DefaultStep = ({ setCurrentStep }: { setCurrentStep: (step: number)
           />
           <div className="mt-8 text-center text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
             See our{' '}
-            <a href="#" className="text-primary-lightmode hover:underline">
-              Pool Guide
-            </a>{' '}
+            <Button
+              variant={'ghost'}
+              onClick={navigateToCurried(`${NAV_LINKS.docs}/gamma`, '_blank')}
+              size={'sm'}
+              className={
+                `p-2 dark:text-text-darkmode-primary text-text-blue font-semibold
+                 max-sm:h-[26px] underline`
+              }
+            >
+              Pool Guide  
+            </Button>{' '}
             Or{' '}
-            <a href="#" className="text-primary-lightmode hover:underline">
+            <Button
+              variant={'ghost'}
+              onClick={navigateToCurried(`${NAV_LINKS.docs}/farm`, '_blank')}
+              size={'sm'}
+              className={
+                `p-2 dark:text-text-darkmode-primary text-text-blue font-semibold
+                 max-sm:h-[26px] underline`
+              }
+            >
               Farm Guide
-            </a>
+            </Button>
           </div>
         </div>
       )}

@@ -18,6 +18,8 @@ import {
   OBSERVATION_PREFIX,
   POOL_SEED_PRFIX,
   POOL_VAULT_SEED_PREFIX,
+  REWARD_INFO_SEED,
+  REWARD_VAULT_SEED,
   SYS_VAR_RENT,
   SYSTEM,
   TOKEN_2022_PROGRAM_ID,
@@ -32,6 +34,7 @@ import * as anchor from '@coral-xyz/anchor'
 import { GAMMAToken } from '@/types/gamma'
 import { CurveCalculator } from 'goosefx-amm-sdk'
 import BigNumber from 'bignumber.js'
+import dayjs from 'dayjs'
 
 enum TokenType {
   Token0,
@@ -671,19 +674,16 @@ export const getPriceQuotes = async (
         poolState: any
         observationState: any
         tokenAccountInfo0: any
-        tokenAccountInfo1: any,
-        mintAAddress: string,
+        tokenAccountInfo1: any
+        mintAAddress: string
         mintBAddress: string
       }
     | null
     | undefined
 ) => {
-  let prefetchedValues = _prefetchedValues;
-  
-  if (
-    mintA.address !== prefetchedValues?.mintAAddress ||
-    mintB.address !== prefetchedValues?.mintBAddress
-  ) {
+  let prefetchedValues = _prefetchedValues
+
+  if (mintA.address !== prefetchedValues?.mintAAddress || mintB.address !== prefetchedValues?.mintBAddress) {
     prefetchedValues = null
   }
 
@@ -796,6 +796,68 @@ export const swapTokens = async (
   }
 
   return swapTxn
+}
+
+export const createTokenRewards = async (
+  program: Program<Idl>,
+  poolId: string,
+  startTime: dayjs.Dayjs,
+  endTime: dayjs.Dayjs,
+  rewardAmount: string,
+  rewardMint: JupToken,
+  userPublicKey: PublicKey
+) => {
+  const startTimeBN = new BN(startTime.unix())
+  const endTimeBN = new BN(endTime.unix())
+  const rewardAmountBN = new BN(
+    new BigNumber(rewardAmount).times(new BigNumber(10).pow(rewardMint.decimals)).toNumber()
+  )
+  const authorityKey = await getAuthorityKey()
+  const pool = new PublicKey(poolId)
+  const rewardMintPublicKey = new PublicKey(rewardMint.address)
+
+  const rewardInfo = await getRewardInfoKey(startTimeBN, pool, rewardMintPublicKey)
+
+  const tokenRewardsTxn: Transaction = new Transaction()
+
+  const tokenRewardsIX = program.instruction.createRewards(startTimeBN, endTimeBN, rewardAmountBN, {
+    accounts: {
+      poolState: pool,
+      authority: authorityKey,
+      rewardMint: rewardMintPublicKey,
+      rewardProvider: userPublicKey,
+      rewardProvidersTokenAccount: await getAssociatedTokenAddress(rewardMintPublicKey, userPublicKey),
+      rewardInfo: rewardInfo,
+      rewardVault: await getRewardVaultKey(rewardInfo),
+      systemProgram: SYSTEM,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      tokenProgram2022: TOKEN_2022_PROGRAM_ID
+    }
+  })
+
+  tokenRewardsTxn.add(tokenRewardsIX)
+
+  return tokenRewardsTxn
+}
+
+const getRewardInfoKey = async (startTime: BN, poolState: PublicKey, rewardMint: PublicKey) => {
+  const [rewardInfoKey] = PublicKey.findProgramAddressSync(
+    [
+      Buffer.from(REWARD_INFO_SEED),
+      poolState.toBuffer(),
+      startTime.toArrayLike(Buffer, 'le', 8),
+      rewardMint.toBuffer()
+    ],
+    new PublicKey(GAMMA_PROGRAM_ID)
+  )
+  return rewardInfoKey
+}
+const getRewardVaultKey = async (rewardInfo: PublicKey) => {
+  const [rewardVaultKey] = PublicKey.findProgramAddressSync(
+    [Buffer.from(REWARD_VAULT_SEED), rewardInfo.toBuffer()],
+    new PublicKey(GAMMA_PROGRAM_ID)
+  )
+  return rewardVaultKey
 }
 
 const checkIfTokenAccExists = async (
