@@ -227,10 +227,9 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false)
   const [gammaBoostedRewardsIsActive, setGammaBoostedRewardsIsActive] = useState<boolean>(true)
   const [userCache, setUserCache] = useState<USER_CONFIG_CACHE>(getOrCreateCache())
+
   const [endpointName, setEndpointName] = useState<EndPointName>(
-    userCache.endpointName !== DEFAULT_ENDPOINT_NAME && userCache.endpointName !== 'Custom'
-      ? DEFAULT_ENDPOINT_NAME
-      : userCache.endpointName
+    userCache.endpointName ? userCache.endpointName : DEFAULT_ENDPOINT_NAME
   )
   const [priorityFee, setPriorityFee] = useState<PriorityFeeName>(userCache.priorityFee || 'Default')
   const [latency, setLatency] = useState<number>(0)
