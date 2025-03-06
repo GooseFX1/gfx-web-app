@@ -12,7 +12,6 @@ export const MyPositionStats: FC<{
 }> = ({ withdrawableBalanceA, withdrawableBalanceB }): ReactElement => {
   const { selectedCard, selectedCardPool } = useGamma()
   const { mode } = useDarkMode()
-  if (!selectedCard || !selectedCard.hasDeposit) return null
 
   return (
     <>
