@@ -17,15 +17,14 @@ export function getSortKey(sortConfig: GAMMASortConfig, isPortfolio: boolean, vi
   return key
 }
 
-export
-function attachLiquidity<T extends GAMMAPool>({
-                                                pools,
-                                                userLiqQuery,
-                                                mintA,
-                                                mintB,
-                                                sortBy,
-                                                sortDirection
-                                              }: {
+export function attachLiquidity<T extends GAMMAPool>({
+  pools,
+  userLiqQuery,
+  mintA,
+  mintB,
+  sortBy,
+  sortDirection
+}: {
   pools: T[]
   userLiqQuery: UseQueryResult<GAMMAUserLPPositionWithPrice[]>
   mintA: string
