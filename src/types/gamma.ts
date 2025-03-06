@@ -220,10 +220,12 @@ type GAMMAPortfolioPool = GAMMAPoolWithUserLiquidity & {
   currentPositionUSD: string
   tokenARatio: string
   tokenBRatio: string
+  lpTokensOwned: string
 }
 type GAMMAPortfolioPoolResponse = GAMMAAPIBaseResponse<
   {
     pools: GAMMAPortfolioPool[]
+    totalValue: string
   } & GAMMAAPIPaginatedResponse
 >
 

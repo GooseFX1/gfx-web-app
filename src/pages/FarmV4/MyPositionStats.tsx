@@ -24,7 +24,7 @@ export const MyPositionStats: FC<{
           Est. 24H Fees
         </span>
         <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">
-          ${bigNumberFormatter(new BigNumber(selectedCard.userLpPosition?.stats?.daily?.feesUSD))}
+          ${bigNumberFormatter(new BigNumber(selectedCard?.stats?.daily?.feesUSD))}
         </span>
       </div>
       <div className="flex justify-between mb-2">

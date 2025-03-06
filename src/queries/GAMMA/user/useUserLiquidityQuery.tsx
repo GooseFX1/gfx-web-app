@@ -7,6 +7,9 @@ import { INTERVALS } from '@/utils/time'
 import useQueryWrapperWithError from '@/queries/useQueryWrapperWithError'
 import { getQueryKeys } from '@/queries/query.helper'
 
+/**
+ * @deprecated DO NOT USE THIS - IT IS BEING PHASED OUT
+ */
 function useUserLiquidityQuery() {
  const {base58PublicKey} = useWalletBalance()
   const keys = getQueryKeys('GAMMA-user-liquidity', base58PublicKey)

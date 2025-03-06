@@ -1,18 +1,25 @@
-import { FC, useMemo } from 'react'
+import { FC } from 'react'
 import UnusedTokens from './UnusedTokens'
 import ComingSoon from './ComingSoon'
 import ProPositions from './ProPositions'
-import Decimal from 'decimal.js-light'
 import { commafy } from '@/utils'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'gfx-component-lib'
-import useUserLiquidityQuery from '@/queries/GAMMA/user/useUserLiquidityQuery'
+import useUserPortfolioPools from '@/queries/GAMMA/pools/useUserPortfolioPools'
+import { useGamma } from '@/context'
+import { getSortKey } from '@/queries/GAMMA/gammaQueries.helpers'
 
 const PortfolioScreen: FC = (): JSX.Element => {
-  const userLiqQuery = useUserLiquidityQuery()
-  const totalValue = useMemo(
-    () => userLiqQuery.data.reduce((acc, pos) => acc.add(Number(pos.totalValue)), new Decimal(0.0)).toNumber(),
-    [userLiqQuery.data]
-  )
+  const { selectedTokens, sortConfig, showDeposited, showCreatedPools, currentPoolType, isPortfolio, viewRange } =
+    useGamma()
+  const query = useUserPortfolioPools({
+    mintA: selectedTokens[0]?.address,
+    mintB: selectedTokens[1]?.address,
+    poolType: currentPoolType.type,
+    sortBy: getSortKey(sortConfig, isPortfolio, viewRange),
+    sortDirection: sortConfig.direction.toLowerCase(),
+    showCreated: showCreatedPools,
+    showDeposited
+  })
 
   return (
     <div>
@@ -35,7 +42,7 @@ const PortfolioScreen: FC = (): JSX.Element => {
                 header="Portfolio Value"
                 tooltip={'Portfolio Value is the total worth of all your investments across all pools.'}
                 subHeader="Monitor your top pools and coin values with advanced, user-friendly graphs."
-                value={commafy(totalValue, 2)}
+                value={commafy(+query.data.totalValue, 2)}
                 image="chart"
               />
               <ComingSoon
