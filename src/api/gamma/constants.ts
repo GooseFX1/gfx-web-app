@@ -12,5 +12,6 @@ export enum GAMMA_ENDPOINTS_V1 {
   TOKEN_LIST = '/v1/token-list',
   FORCE_CRON = '/v1/force-cron',
   PORTFOLIO_POOLS = '/v1/portfolio',
-  PORTFOLIO_POOLS_SEARCH = '/v1/portfolio/search'
+  PORTFOLIO_POOLS_SEARCH = '/v1/portfolio/search',
+  POOL_BY_ID = '/v1/pool',
 }
