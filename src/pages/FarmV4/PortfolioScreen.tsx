@@ -4,23 +4,10 @@ import ComingSoon from './ComingSoon'
 import ProPositions from './ProPositions'
 import { commafy } from '@/utils'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'gfx-component-lib'
-import useUserPortfolioPools from '@/queries/GAMMA/pools/useUserPortfolioPools'
-import { useGamma } from '@/context'
-import { getSortKey } from '@/queries/GAMMA/gammaQueries.helpers'
+import useUserPortfolioStatsQuery from '@/queries/GAMMA/pools/useUserPortfolioStatsQuery'
 
 const PortfolioScreen: FC = (): JSX.Element => {
-  const { selectedTokens, sortConfig, showDeposited, showCreatedPools, currentPoolType, isPortfolio, viewRange } =
-    useGamma()
-  const query = useUserPortfolioPools({
-    mintA: selectedTokens[0]?.address,
-    mintB: selectedTokens[1]?.address,
-    poolType: currentPoolType.type,
-    sortBy: getSortKey(sortConfig, isPortfolio, viewRange),
-    sortDirection: sortConfig.direction.toLowerCase(),
-    showCreated: showCreatedPools,
-    showDeposited
-  })
-
+  const statsQuery = useUserPortfolioStatsQuery()
   return (
     <div>
       <Accordion
@@ -42,7 +29,7 @@ const PortfolioScreen: FC = (): JSX.Element => {
                 header="Portfolio Value"
                 tooltip={'Portfolio Value is the total worth of all your investments across all pools.'}
                 subHeader="Monitor your top pools and coin values with advanced, user-friendly graphs."
-                value={commafy(+query.data.totalValue, 2)}
+                value={commafy(+statsQuery.data.totalValue, 2)}
                 image="chart"
               />
               <ComingSoon

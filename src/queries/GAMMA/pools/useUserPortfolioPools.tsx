@@ -22,19 +22,14 @@ type MintSearchProps = {
   mintB?: string
 }
 type UserPortfolioQueryProps = MintSearchProps & PoolsQueryProps
-type PoolsAPIResponse = InfiniteDataAPIResponse<GAMMAPortfolioPool[]> & {
-  totalValue: string
-}
-type PoolsQueryResponse = InfiniteDataQueryResponse<PoolsAPIResponse, GAMMAPortfolioPool> & {
-  totalValue: string
-}
+type PoolsAPIResponse = InfiniteDataAPIResponse<GAMMAPortfolioPool[]>
+type PoolsQueryResponse = InfiniteDataQueryResponse<PoolsAPIResponse, GAMMAPortfolioPool>
 
 const DEFAULT: PoolsQueryResponse= {
   pages: [],
   allPages: [],
   maxPagesReached: false,
-  pageParams: [1],
-  totalValue: '0.00'
+  pageParams: [1]
 }
 
 function useUserPortfolioPools(props: UserPortfolioQueryProps) {
@@ -79,7 +74,6 @@ function useUserPortfolioPools(props: UserPortfolioQueryProps) {
         return {
           allPages: flatPages,
           maxPagesReached: lastPage?.currentPage != lastPage?.totalPages,
-          totalValue: lastPage?.totalValue,
           ...data
         }
       },
@@ -119,7 +113,6 @@ async function fetchPoolsByMints({
 
   return {
     data: response.data.pools,
-    totalValue: response.data.totalValue ?? '0.00',
     currentPage: response.data.currentPage,
     totalItems: response.data.totalItems,
     totalPages: response.data.totalPages,
@@ -149,7 +142,6 @@ async function fetchPools({
 
   return {
     data: response.data.pools,
-    totalValue: response.data.totalValue ?? '0.00',
     currentPage: response.data.currentPage,
     totalItems: response.data.totalItems,
     totalPages: response.data.totalPages,
