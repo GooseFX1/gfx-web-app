@@ -15,6 +15,7 @@ import { GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
 import { GAMMAPortfolioPool, GAMMAPortfolioPoolResponse } from '@/types/gamma'
 import { clamp } from '@/utils'
 import { INTERVALS } from '@/utils/time'
+import { POOL_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
 
 type MintSearchProps = {
   mintA: string
@@ -104,7 +105,7 @@ async function fetchPoolsByMints({
   userPublicKey,
   pageParam = 1
 }): Promise<PoolsAPIResponse> {
-  const pageQuery = `?page=${pageParam}`
+  const pageQuery = `?page=${pageParam}&${POOL_LIST_PAGE_SIZE}`
   const sortQuery = `&sortBy=${sortBy}&sortDirection=${sortDirection}`
   const mintQuery = `&mintA=${mintA}${mintB ? `&mintB=${mintB}` : ''}`
   let userQuery = ``
@@ -135,7 +136,7 @@ async function fetchPools({
   userPublicKey,
   pageParam = 1
 }): Promise<PoolsAPIResponse> {
-  const pageQuery = `?page=${pageParam}`
+  const pageQuery = `?page=${pageParam}&pageSize=${POOL_LIST_PAGE_SIZE}`
   const sortQuery = `&sortBy=${sortBy}&sortDirection=${sortDirection}`
   let userQuery = ``
   if (userPublicKey) {
