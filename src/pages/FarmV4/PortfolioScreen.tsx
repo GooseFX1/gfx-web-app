@@ -8,6 +8,7 @@ import useUserPortfolioStatsQuery from '@/queries/GAMMA/pools/useUserPortfolioSt
 
 const PortfolioScreen: FC = (): JSX.Element => {
   const statsQuery = useUserPortfolioStatsQuery()
+  console.log(statsQuery.data)
   return (
     <div>
       <Accordion
@@ -29,7 +30,7 @@ const PortfolioScreen: FC = (): JSX.Element => {
                 header="Portfolio Value"
                 tooltip={'Portfolio Value is the total worth of all your investments across all pools.'}
                 subHeader="Monitor your top pools and coin values with advanced, user-friendly graphs."
-                value={commafy(+statsQuery.data.totalValue, 2)}
+                value={commafy(+statsQuery.data.portfolioValue, 2)}
                 image="chart"
               />
               <ComingSoon

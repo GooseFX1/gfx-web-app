@@ -8,7 +8,7 @@ import { ROUTES } from '@/Router'
 import { useLocation } from 'react-router-dom'
 
 const DEFAULT: PortfolioStatsResponse = {
-  totalValue: '0.00'
+  portfolioValue: '0.00'
 }
 
 function useUserPortfolioStatsQuery() {
@@ -34,11 +34,11 @@ function useUserPortfolioStatsQuery() {
 export default useUserPortfolioStatsQuery
 
 type PortfolioStatsResponse = {
-  totalValue: string
+  portfolioValue: string
 }
 
 async function getPortfolioStats({ signal, publicKey }) {
-  return (await fetch(getGAMMARootUrl() + GAMMA_ENDPOINTS_V1.PORTFOLIO_STATS + `?userPublicKey=${publicKey}`, {
+  return (await fetch(getGAMMARootUrl() + GAMMA_ENDPOINTS_V1.PORTFOLIO_STATS + `/${publicKey}`, {
     signal
-  }).then((res) => res.json())) as PortfolioStatsResponse
+  }).then((res) => res.json())).data as PortfolioStatsResponse
 }
