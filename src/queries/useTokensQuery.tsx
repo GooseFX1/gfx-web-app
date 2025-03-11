@@ -8,7 +8,7 @@ import { GAMMAListTokenResponse } from '@/types/gamma'
 import { clamp } from '@/utils'
 import { IWalletBalanceContext, useWalletBalance } from '@/context/walletBalanceContext'
 import { TokenListToken } from '@/context'
-import { UseInfiniteQueryResponseFix } from '@/queries/types'
+import { InfiniteDataAPIResponse, InfiniteDataQueryResponse, UseInfiniteQueryResponseFix } from '@/queries/types'
 import { useEffect } from 'react'
 import useQueryWrapperWithError from '@/queries/useQueryWrapperWithError'
 import { getQueryKeys } from '@/queries/query.helper'
@@ -17,23 +17,15 @@ type TokenQueryProps = {
   searchValue?: string
   poolType?: string
 }
-type TokenListAPIResponse = {
-  tokens: TokenListToken[]
-  totalPages: number
-  totalItems: number
-  currentPage: number
-  nextPage: number
-}
+type TokenListAPIResponse = InfiniteDataAPIResponse<TokenListToken[]>
 
-interface InfiniteTokenData extends InfiniteData<TokenListAPIResponse> {
-  allPages: TokenListToken[]
-  maxTokensReached: boolean
-}
+type TokenQueryResponse = InfiniteDataQueryResponse<TokenListAPIResponse, TokenListToken>
+
 const DEFAULT = {
   pages: [],
   pageParams: [1],
   allPages: [],
-  maxTokensReached: false
+  maxPagesReached: false
 } as InfiniteData<TokenListAPIResponse>
 function useTokensQuery({
   searchValue = '',
@@ -51,20 +43,22 @@ function useTokensQuery({
         signal
       }),
     select: (data) => {
-      const flatData = data.pages.map((page) => page.tokens).flat()
+      const flatData = data.pages.map((page) => page.data).flat()
       const lastPage = data.pages[data.pages.length - 1]
-      return {
+      const response: TokenQueryResponse = {
         pages: data.pages,
         allPages: flatData,
         pageParams: data.pageParams,
-        maxTokensReached: lastPage?.currentPage >= lastPage?.totalPages
+        maxPagesReached: lastPage?.currentPage >= lastPage?.totalPages
       }
+
+      return response;
     },
     getNextPageParam: (lastPage: TokenListAPIResponse) => lastPage?.nextPage,
     getPreviousPageParam: (firstPage: TokenListAPIResponse) => firstPage?.nextPage,
     staleTime: 1000 * 60,
     placeholderData: DEFAULT // fixes type issue, but ugly :/
-  }) as UseInfiniteQueryResponseFix<TokenListAPIResponse, Error, InfiniteTokenData>
+  }) as UseInfiniteQueryResponseFix<TokenListAPIResponse, Error, TokenQueryResponse>
   // ^ TypeCasting to fix the query.data access to get intellisense working
 
   useEffect(()=>{
@@ -117,7 +111,7 @@ async function getTokens({ searchValue, signal, pageParam = 1, poolType = 'all' 
   ).then((res) => res.json())) as GAMMAListTokenResponse
 
   return {
-    tokens: response.data.tokens,
+    data: response.data.tokens,
     totalPages: response.data.totalPages,
     totalItems: response.data.totalItems,
     currentPage: response.data.currentPage,

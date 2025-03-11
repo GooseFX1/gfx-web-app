@@ -1,5 +1,6 @@
 import axios from 'axios'
 import * as https from 'node:https'
+import { GAMMA_API_BASE } from '@/api/gamma/constants'
 
 const DOMAIN = () => {
   const sub =
@@ -143,3 +144,7 @@ export const axiosFetchWithRetries = async (
 }
 
 export default apiClient
+
+export function getGAMMARootUrl() {
+  return `https://${GAMMA_API_BASE}.goosefx.io`
+}

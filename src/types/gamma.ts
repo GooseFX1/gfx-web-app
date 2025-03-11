@@ -109,7 +109,7 @@ interface GAMMAPool {
 }
 
 export type GAMMAPoolWithUserLiquidity = GAMMAPool & {
-  userLpPosition: UserPortfolioLPPosition
+  userLpPosition?: UserPortfolioLPPosition
   hasDeposit: boolean
 }
 
@@ -220,12 +220,15 @@ type GAMMAPortfolioPool = GAMMAPoolWithUserLiquidity & {
   currentPositionUSD: string
   tokenARatio: string
   tokenBRatio: string
+  lpTokensOwned: string
 }
 type GAMMAPortfolioPoolResponse = GAMMAAPIBaseResponse<
   {
     pools: GAMMAPortfolioPool[]
+    totalValue: string
   } & GAMMAAPIPaginatedResponse
 >
+
 export type {
   GAMMAConfig,
   GAMMATokenList,

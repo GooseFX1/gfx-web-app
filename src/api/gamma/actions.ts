@@ -6,7 +6,7 @@ import {
   GAMMAPoolsResponse,
   GAMMAPortfolioPoolResponse,
   GAMMAStats,
-  UserPortfolioLPPosition,
+  UserPortfolioLPPosition
 } from '@/types/gamma'
 import { BlockheightBasedTransactionConfirmationStrategy, Connection } from '@solana/web3.js'
 import { aborter } from '@/utils'
