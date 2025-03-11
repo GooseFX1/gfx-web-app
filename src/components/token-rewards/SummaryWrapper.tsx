@@ -16,7 +16,7 @@ export const SummaryWrapper = ({ children }: SummaryWrapperProps) => {
   const { mode } = useDarkMode()
   return (
     <div className="grid grid-cols-5 w-full">
-      <div className={`p-6 flex flex-col ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
+      <div className={`py-3 px-4 flex flex-col ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
         <div className="flex flex-row items-center justify-between gap-3 mb-2">
           <h1 className="text-lg font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary">
             Summary

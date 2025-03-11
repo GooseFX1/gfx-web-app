@@ -63,9 +63,9 @@ export const SelectTokenStep = ({
   return (
     <div className="grid grid-cols-5 w-full h-full">
       <div className={`flex flex-col h-full ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
-        <div className="py-2.5 px-6 flex flex-col">
+        <div className={`pb-2.5 ${isMobile ? ' pt-3' : 'pt-4'} px-4 flex flex-col`}>
           <div
-            className={`flex flex-row items-center justify-between gap-3 mb-2 pt-4 ${
+            className={`flex flex-row items-center justify-between gap-3 mb-2 ${
               isMobile
                 ? 'pb-2 border-b-1 border-border-lightmode-secondary dark:border-border-darkmode-secondary'
                 : ''
@@ -142,7 +142,7 @@ export const SelectTokenStep = ({
           )}
         </div>
         <div
-          className="px-6 py-2.5 flex justify-between mt-auto border-t-1
+          className="px-4 py-2.5 flex justify-between mt-auto border-t-1
          border-border-lightmode-secondary dark:border-border-darkmode-secondary"
         >
           <Button
