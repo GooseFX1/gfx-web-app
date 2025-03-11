@@ -28,6 +28,7 @@ type PoolsAPIResponse = InfiniteDataAPIResponse<GAMMAPool[]>
 type MintSearchProps = {
   mintA: string
   mintB?: string
+  enabled?: boolean
 }
 type PoolQueryProps = MintSearchProps & PoolsQueryProps
 type PoolsQueryResponse = InfiniteDataQueryResponse<PoolsAPIResponse, GAMMAPoolWithUserLiquidity>
@@ -47,7 +48,8 @@ function usePoolsQuery({
   sortDirection,
   showCreated,
   showDeposited,
-  poolType
+  poolType,
+  enabled = true
 }: PoolQueryProps) {
   const { base58PublicKey } = useWalletBalance()
   const { pathname } = useLocation()
@@ -61,7 +63,8 @@ function usePoolsQuery({
     sortDirection,
     showCreated,
     showDeposited,
-    poolType
+    poolType,
+    enabled
   )
   const userLiqQuery = useUserLiquidityQuery()
   return useQueryWrapperWithError(
@@ -109,7 +112,7 @@ function usePoolsQuery({
       },
       placeholderData: DEFAULT,
       staleTime: INTERVALS.MINUTE,
-      enabled: !!base58PublicKey && pathname.includes(ROUTES.GAMMA)
+      enabled: !!base58PublicKey && pathname.includes(ROUTES.GAMMA) && enabled
     }) as UsePoolQueryResponse,
     DEFAULT,
     keys

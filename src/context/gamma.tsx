@@ -175,7 +175,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     sortDirection: sortConfig.direction.toLowerCase(),
     showCreated: showCreatedPools,
     showDeposited,
-    poolType: currentPoolType.type
+    poolType: currentPoolType.type,
+    enabled: !isPortfolio
   })
   const totalPoolCount = poolsQuery.data.totalItems
   const isLoadingPools =

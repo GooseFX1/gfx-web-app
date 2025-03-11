@@ -201,7 +201,8 @@ const MyPositionItems: FC = () => {
     sortBy: getSortKey(sortConfig, isPortfolio, viewRange),
     sortDirection: sortConfig.direction.toLowerCase(),
     showCreated: showCreatedPools,
-    showDeposited
+    showDeposited,
+    enabled: isPortfolio
   })
 
   if (query.isFetching) {
