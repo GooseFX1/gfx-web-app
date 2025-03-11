@@ -25,42 +25,62 @@ type UserPortfolioQueryProps = MintSearchProps & PoolsQueryProps
 type PoolsAPIResponse = InfiniteDataAPIResponse<GAMMAPortfolioPool[]>
 type PoolsQueryResponse = InfiniteDataQueryResponse<PoolsAPIResponse, GAMMAPortfolioPool>
 
-const DEFAULT: PoolsQueryResponse= {
+const DEFAULT: PoolsQueryResponse = {
   pages: [],
   allPages: [],
   maxPagesReached: false,
   pageParams: [1]
 }
 
-function useUserPortfolioPools(props: UserPortfolioQueryProps) {
+function useUserPortfolioPools({
+  poolType,
+  mintA,
+  mintB,
+  sortBy,
+  sortDirection,
+  showCreated,
+  showDeposited
+}: UserPortfolioQueryProps) {
   const { base58PublicKey } = useWalletBalance()
   const { pathname } = useLocation()
-  const keys = getQueryKeys('GAMMA-user-portfolio-pools', base58PublicKey, props)
+  const keys = getQueryKeys(
+    'GAMMA-user-portfolio-pools',
+    base58PublicKey,
+    poolType,
+    mintA,
+    mintB,
+    sortBy,
+    sortDirection,
+    showCreated,
+    showDeposited
+  )
 
   return useQueryWrapperWithError(
     useInfiniteQuery({
       queryKey: keys,
-      queryFn: async ({ signal, pageParam}) => {
-        if (props.mintA) {
+      queryFn: async ({ signal, pageParam }) => {
+        if (mintA) {
           return await fetchPoolsByMints({
             pageParam,
             signal,
-            mintA: props.mintA,
-            mintB: props.mintB,
-            sortBy: props.sortBy,
-            sortDirection: props.sortDirection,
-            showCreated: props.showCreated,
-            showDeposited: props.showDeposited,
-            userPublicKey: base58PublicKey
+            mintA: mintA,
+            mintB: mintB,
+            sortBy: sortBy,
+            sortDirection: sortDirection,
+            showCreated: showCreated,
+            showDeposited: showDeposited,
+            userPublicKey: base58PublicKey,
+            poolType: poolType
           })
         } else {
           return await fetchPools({
             pageParam,
             signal,
-            sortBy: props.sortBy,
-            sortDirection: props.sortDirection,
-            showCreated: props.showCreated,
-            showDeposited: props.showDeposited,
+            poolType: poolType,
+            sortBy: sortBy,
+            sortDirection: sortDirection,
+            showCreated: showCreated,
+            showDeposited: showDeposited,
             userPublicKey: base58PublicKey
           })
         }
@@ -68,7 +88,7 @@ function useUserPortfolioPools(props: UserPortfolioQueryProps) {
       getNextPageParam: (lastPage) => lastPage?.nextPage,
       getPreviousPageParam: (firstPage) => firstPage?.nextPage,
       select: (data) => {
-        const flatPages = data.pages.flatMap((page) => page.data);
+        const flatPages = data.pages.flatMap((page) => page.data)
         const lastPage = data.pages[data.pages.length - 1]
 
         return {
@@ -85,6 +105,7 @@ function useUserPortfolioPools(props: UserPortfolioQueryProps) {
     keys
   )
 }
+
 //as UseInfiniteQueryResponseFix<PoolsAPIResponse, Error, PoolsQueryResponse>
 export default useUserPortfolioPools
 
@@ -97,17 +118,25 @@ async function fetchPoolsByMints({
   showCreated,
   showDeposited,
   userPublicKey,
+  poolType,
   pageParam = 1
 }): Promise<PoolsAPIResponse> {
   const pageQuery = `?page=${pageParam}&${POOL_LIST_PAGE_SIZE}`
   const sortQuery = `&sortBy=${sortBy}&sortDirection=${sortDirection}`
   const mintQuery = `&mintA=${mintA}${mintB ? `&mintB=${mintB}` : ''}`
+  const poolTypeQuery = `&poolType=${poolType}`
   let userQuery = ``
   if (userPublicKey) {
     userQuery = `&userPublicKey=${userPublicKey}&showCreated=${showCreated}&showDeposited=${showDeposited}`
   }
   const response = (await fetch(
-    getGAMMARootUrl() + GAMMA_ENDPOINTS_V1.PORTFOLIO_POOLS_SEARCH + pageQuery + sortQuery + mintQuery + userQuery,
+    getGAMMARootUrl() +
+      GAMMA_ENDPOINTS_V1.PORTFOLIO_POOLS_SEARCH +
+      pageQuery +
+      sortQuery +
+      mintQuery +
+      userQuery +
+      poolTypeQuery,
     { signal }
   ).then((res) => res.json())) as GAMMAPortfolioPoolResponse
 
@@ -127,16 +156,18 @@ async function fetchPools({
   showCreated,
   showDeposited,
   userPublicKey,
+  poolType,
   pageParam = 1
 }): Promise<PoolsAPIResponse> {
   const pageQuery = `?page=${pageParam}&pageSize=${POOL_LIST_PAGE_SIZE}`
   const sortQuery = `&sortBy=${sortBy}&sortDirection=${sortDirection}`
+  const poolTypeQuery = `&poolType=${poolType}`
   let userQuery = ``
   if (userPublicKey) {
     userQuery = `&userPublicKey=${userPublicKey}&showCreated=${showCreated}&showDeposited=${showDeposited}`
   }
   const response = (await fetch(
-    getGAMMARootUrl() + GAMMA_ENDPOINTS_V1.PORTFOLIO_POOLS + pageQuery + sortQuery + userQuery,
+    getGAMMARootUrl() + GAMMA_ENDPOINTS_V1.PORTFOLIO_POOLS + pageQuery + sortQuery + userQuery + poolTypeQuery,
     { signal }
   ).then((res) => res.json())) as GAMMAPortfolioPoolResponse
 
