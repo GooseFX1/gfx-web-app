@@ -2449,16 +2449,26 @@
         },
         {
           "name": "vault_0_mint",
-          "docs": ["The mint of token_0 vault"]
+          "docs": ["The mint of token_0 vault"],
+          "writable": true
         },
         {
           "name": "vault_1_mint",
-          "docs": ["The mint of token_1 vault"]
+          "docs": ["The mint of token_1 vault"],
+          "writable": true
         },
         {
           "name": "memo_program",
           "docs": ["memo program"],
           "address": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"
+        },
+        {
+          "name": "kamino_program",
+          "address": "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD"
+        },
+        {
+          "name": "instruction_sysvar_account",
+          "address": "Sysvar1nstructions1111111111111111111111111"
         }
       ],
       "args": [

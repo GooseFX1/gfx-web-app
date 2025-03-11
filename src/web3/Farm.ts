@@ -1,4 +1,11 @@
-import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
+import {
+  Connection,
+  PublicKey,
+  SystemProgram,
+  SYSVAR_INSTRUCTIONS_PUBKEY,
+  Transaction,
+  TransactionInstruction
+} from '@solana/web3.js'
 import {
   createAssociatedTokenAccountInstruction,
   createCloseAccountInstruction,
@@ -32,9 +39,19 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import Decimal from 'decimal.js-light'
 import * as anchor from '@coral-xyz/anchor'
 import { GAMMAToken } from '@/types/gamma'
-import { CurveCalculator } from 'goosefx-amm-sdk'
+import { CurveCalculator, SYSTEM_PROGRAM_ID } from 'goosefx-amm-sdk'
 import BigNumber from 'bignumber.js'
 import dayjs from 'dayjs'
+import {
+  getGammaPoolDestinationCollateral,
+  getLendingMarketAuthority,
+  getReservesForMarket,
+  getReservesForMarketLiquidityToken,
+  KAMINO_MARKET_ID,
+  KAMINO_PROGRAM_ID,
+  KaminoReserve
+} from './kamino'
+import { Wallet } from '@solana/wallet-adapter-react'
 
 enum TokenType {
   Token0,
@@ -496,6 +513,78 @@ export const deposit = async (
   return depositAmountTX
 }
 
+const getWithdrawRemainingAccounts = async (
+  selectedCard: any,
+  poolAddress: PublicKey,
+  connection: Connection,
+  wallet: Wallet
+) => {
+  const kaminoReserves = await getReservesForMarket(connection, wallet)
+  const kaminoReserveToken0 = getReservesForMarketLiquidityToken(
+    kaminoReserves,
+    new PublicKey(selectedCard.mintA.address)
+  )
+  const kaminoReserveToken1 = getReservesForMarketLiquidityToken(
+    kaminoReserves,
+    new PublicKey(selectedCard.mintB.address)
+  )
+
+  const remainingAccounts = []
+  const addAccountsFromReserve = (reservePubkey: PublicKey, reserve: KaminoReserve) => {
+    remainingAccounts.push({
+      pubkey: reservePubkey,
+      isWritable: true,
+      isSigner: false
+    })
+    remainingAccounts.push({
+      pubkey: KAMINO_MARKET_ID,
+      isWritable: true,
+      isSigner: false
+    })
+    remainingAccounts.push({
+      pubkey: getLendingMarketAuthority(KAMINO_MARKET_ID, KAMINO_PROGRAM_ID)[0],
+      isWritable: false,
+      isSigner: false
+    })
+    remainingAccounts.push({
+      pubkey: reserve.state.liquidity.supplyVault,
+      isWritable: true,
+      isSigner: false
+    })
+    remainingAccounts.push({
+      pubkey: reserve.state.collateral.mintPubkey,
+      isWritable: true,
+      isSigner: false
+    })
+    remainingAccounts.push({
+      pubkey: getGammaPoolDestinationCollateral(poolAddress, reserve.state.liquidity.mintPubkey),
+      isWritable: true,
+      isSigner: false
+    })
+  }
+
+  if (kaminoReserveToken0) {
+    addAccountsFromReserve(kaminoReserveToken0.pubkey, kaminoReserveToken0.reserve)
+  }
+  if (kaminoReserveToken1) {
+    if (kaminoReserveToken0 == null) {
+      // If there is no kamino reserve for token 0, we need to add the system program as a remaining account
+      // This is done because the remaining accounts in the instruction are always read in order.
+      remainingAccounts.push(
+        ...Array(6).fill({
+          pubkey: SYSTEM_PROGRAM_ID,
+          isWritable: false,
+          isSigner: false
+        })
+      )
+    }
+
+    addAccountsFromReserve(kaminoReserveToken1.pubkey, kaminoReserveToken1.reserve)
+  }
+
+  return remainingAccounts
+}
+
 //Instruction - 2
 export const withdraw = async (
   userSourceWithdrawAmount: string,
@@ -507,7 +596,8 @@ export const withdraw = async (
   program: Program<Idl>,
   connection: Connection,
   userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
-  userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | ''
+  userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
+  wallet: Wallet
 ): Promise<Transaction> => {
   //console.log('user withdraws', userSourceWithdrawAmount, userTargetWithdrawAmount)
   const withdrawAccounts = await getAccountsForDepositWithdraw(
@@ -517,13 +607,25 @@ export const withdraw = async (
     userSourceTokenType,
     userTargetTokenType
   )
-  const withdrawInstructionAccount = { ...withdrawAccounts }
+
+  const withdrawInstructionAccount = {
+    ...withdrawAccounts,
+    kaminoProgram: KAMINO_PROGRAM_ID,
+    instructionSysvarAccount: SYSVAR_INSTRUCTIONS_PUBKEY
+  }
   const token0SlippageAmount = handleSlippageCalculation(userSourceWithdrawAmount, slippage, false)
   const token1SlippageAmount = handleSlippageCalculation(userTargetWithdrawAmount, slippage, false)
   const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.mintA?.decimals)
   const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.mintB?.decimals)
   //console.log('user withdraws of native value', token0Amount, token1Amount, lpAmount?.toNumber())
   const withdrawAmountTX = new Transaction()
+
+  const remainingAccounts = await getWithdrawRemainingAccounts(
+    selectedCard,
+    withdrawAccounts.poolState,
+    connection,
+    wallet
+  )
 
   const mintAata = await getAssociatedTokenAddress(
     new PublicKey(selectedCard?.mintA?.address),
@@ -558,7 +660,8 @@ export const withdraw = async (
     new BN(token0Amount),
     new BN(token1Amount),
     {
-      accounts: withdrawInstructionAccount
+      accounts: withdrawInstructionAccount,
+      remainingAccounts
     }
   )
   withdrawAmountTX.add(withdrawIX)

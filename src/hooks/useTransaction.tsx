@@ -22,7 +22,8 @@ type useTransactionReturn = {
     txn: Transaction | TransactionBuilder,
     connectionData?: SendTxnOptions,
     notify?: (promise: Promise<unknown>) => Promise<boolean>,
-    isCreatePoolInx?: boolean
+    isCreatePoolInx?: boolean,
+    skipComputeUnitsLimit?: boolean
   ) => Promise<{ success: boolean; txSig: string }>
 }
 const baseSet = new Set()
@@ -42,7 +43,8 @@ function useTransaction(): useTransactionReturn {
     async (txnIn: Transaction | TransactionBuilder, 
       connectionData?: SendTxnOptions, 
       notify = notifyUsingPromise, 
-      isCreatePoolInx?: boolean) => {
+      isCreatePoolInx?: boolean,
+      skipComputeUnitsLimit?: boolean) => {
       console.log('STARTING SEND TXN')
       const connection = connectionData?.connection ?? originalConnection
       const options: SendTransactionOptions = {
@@ -60,7 +62,12 @@ function useTransaction(): useTransactionReturn {
       const txn = txnIn instanceof TransactionBuilder ?
         await txnIn
           .setPriorityFee(priorityFromLevel)
-          ._getTransaction(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0), isCreatePoolInx) :
+          ._getTransaction(
+            publicKey, 
+            blockHash.blockhash, 
+            supportedTransactionTypes.has(0), 
+            isCreatePoolInx, 
+            skipComputeUnitsLimit) :
         txnIn
       console.log('signing txn', txn)
       const id = SpawnLoaderToast({ duration: connectionData?.transactionDuration ?? 60000 })
