@@ -12,14 +12,12 @@ import {
   useState
 } from 'react'
 import {
-  fetchAllPools,
   fetchGAMMAConfig,
-  fetchPoolsByMints,
   fetchTokenList,
   forceCronUpdate,
   forceCronUpdateWithConnectionAndTxSig
 } from '@/api/gamma'
-import { GAMMAConfig, GAMMAPool, GAMMAPoolsResponse, GAMMAPoolWithUserLiquidity } from '@/types/gamma'
+import { GAMMAConfig, GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   BASE_SLIPPAGE,
@@ -30,29 +28,23 @@ import {
   JupToken,
   ModeOfOperation,
   Pool,
-  POOL_LIST_PAGE_SIZE,
   POOL_TYPE
 } from '@/pages/FarmV4/constants'
 import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
 import { getLiquidityPoolKey, getpoolId } from '@/web3/Farm'
 import useBoolean from '@/hooks/useBoolean'
-import Decimal from 'decimal.js-light'
 import { aborter } from '@/utils'
-import BN from 'bn.js'
 import usePrevious from '@/hooks/usePrevious'
 import useMultiSelect from '@/hooks/useMultiSelect'
-import useFirstRender from '@/hooks/useFirstRender'
 import useUserLiquidityQuery from '@/queries/GAMMA/user/useUserLiquidityQuery'
+import usePoolsQuery, { UsePoolQueryResponse } from '@/queries/GAMMA/pools/usePoolsQuery'
+import { getSortKey } from '@/queries/GAMMA/gammaQueries.helpers'
 
 type ViewRange = 0 | 1 | 2
 
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
-  /**
-   * @deprecated use filteredPools instead - this is the raw response and should ideally not be used
-   */
-  pools: GAMMAPool[]
   slippage: number
   setSlippage: Dispatch<SetStateAction<number>>
   isCustomSlippage: boolean
@@ -77,18 +69,9 @@ interface GAMMADataModel {
   setCurrentSort: Dispatch<SetStateAction<string>>
   showDeposited: boolean
   setShowDeposited: Dispatch<SetStateAction<boolean>>
-  poolPage: number
   isLoadingPools: boolean
-  setPoolPage: Dispatch<SetStateAction<number>>
   isSearchActive: boolean
   filteredPools: GAMMAPoolWithUserLiquidity[]
-  updatePools: (
-    data: {
-      page: number
-      pageSize: number
-    },
-    append?: boolean
-  ) => void
   poolsHasMoreData: boolean
   sortConfig: GAMMASortConfig
   selectedCardLiquidityAcc: any
@@ -112,7 +95,7 @@ interface GAMMADataModel {
   setIsPortfolio: { toggle: () => void; on: () => void; off: () => void; set: (value: boolean) => void }
   isCardMode: string
   setIsCardMode: Dispatch<SetStateAction<string>>
-  nextPoolPage: number
+  poolsQuery: UsePoolQueryResponse
 }
 
 export type TokenListToken = {
@@ -135,7 +118,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { userCache, connection, updateUserCache } = useConnectionConfig()
   const { base58PublicKey, publicKey } = useWalletBalance()
   const [gammaConfig, setGammaConfig] = useState<GAMMAConfig | null>(null)
-  const [pools, setPools] = useState<GAMMAPool[]>([])
 
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<any>({})
@@ -150,17 +132,11 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [currentSort, setCurrentSort] = useState<string>(userCache.gamma.currentSort)
   const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
   const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
-  const [isLoadingPools, setIsLoadingPools] = useBoolean(false)
-  const [poolPage, setPoolPage] = useState(1)
-  const nextPoolPage = useMemo(() => poolPage + 1, [poolPage])
-  const [totalPoolCount, setTotalPoolCount] = useState(0)
-  const [poolsHasMoreData, setPoolsHasMoreData] = useState(true)
   const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
   const [selectedCardLiquidityAcc, setSelectedCardLiquidityAcc] = useState<any>({})
   const [calculatePoolType, setCalculatePoolType] = useState<Set<string>>(new Set())
 
   const userLiqQuery = useUserLiquidityQuery()
-
   useLayoutEffect(() => {
     if (!publicKey) {
       if (GAMMA_SORT_CONFIG_PUBKEY_REQUIRED.includes(userCache.gamma.currentSort)) {
@@ -192,13 +168,23 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   } = useMultiSelect<TokenListToken, string>({
     uniqueValueSelector: (token) => token.address
   })
-  const isFirstRender = useFirstRender()
+  const poolsQuery = usePoolsQuery({
+    mintA: selectedTokens[0]?.address,
+    mintB: selectedTokens[1]?.address,
+    sortBy: getSortKey(sortConfig, isPortfolio, viewRange),
+    sortDirection: sortConfig.direction.toLowerCase(),
+    showCreated: showCreatedPools,
+    showDeposited,
+    poolType: currentPoolType.type
+  })
+  const totalPoolCount = poolsQuery.data.totalItems
+  const isLoadingPools =
+    poolsQuery.isFetching ||
+    poolsQuery.isLoading ||
+    poolsQuery.isFetchingPreviousPage ||
+    poolsQuery.isFetchingNextPage
+  const poolsHasMoreData = !poolsQuery?.data.maxPagesReached
 
-  useEffect(() => {
-    if (!searchTokens) {
-      setPoolPage(1)
-    }
-  }, [searchTokens])
   const handlePoolSort = useCallback(
     (id: string) => {
       // persists current sort in local storage
@@ -231,9 +217,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [isCardMode, viewRange, currentSort, prevIsCardMode])
   useEffect(() => {
-    if (pools.length == 0) {
-      updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE })
-    }
     if (!gammaConfig) {
       fetchGAMMAConfig().then((config) => {
         if (config) setGammaConfig(config)
@@ -253,119 +236,11 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [])
 
-  const updatePools = (
-    {
-      page,
-      pageSize,
-      signal
-    }: {
-      page: number
-      pageSize: number
-      signal?: AbortSignal
-    },
-    append = true
-  ) => {
-    if (currentPoolType.type === 'migrate') {
-      return
-    }
-    let key = `${sortConfig.key.toLowerCase()}`
-    if ((sortConfig.id == '9' || sortConfig.id == '10') && !isPortfolio) {
-      return
-    }
-    if (sortConfig.id !== '1' && sortConfig.id !== '2' && sortConfig.id !== '9' && sortConfig.id !== '10') {
-      key = `${key}${computedViewRange.toLowerCase()}`
-    }
-    setIsLoadingPools.on()
-    const result =
-      selectedTokens.length > 0
-        ? fetchPoolsByMints({
-            mintA: selectedTokens[0]?.address,
-            mintB: selectedTokens[1]?.address,
-            poolType: currentPoolType.type,
-            sortOrder: sortConfig.direction.toLowerCase() as 'desc' | 'asc',
-            sortKey: key,
-            page: page,
-            pageSize: POOL_LIST_PAGE_SIZE,
-            signal: signal,
-            userPublicKey: base58PublicKey,
-            showDeposited,
-            showCreated: showCreatedPools
-          })
-        : fetchAllPools({
-            page,
-            pageSize,
-            poolType: currentPoolType.type,
-            sortOrder: sortConfig.direction.toLowerCase() as 'desc' | 'asc',
-            sortKey: key,
-            searchTokens,
-            abortSignal: signal,
-            userPublicKey: base58PublicKey,
-            showDeposited,
-            showCreated: showCreatedPools
-          })
-    result
-      .then((poolsData: GAMMAPoolsResponse) => {
-        if (poolsData && poolsData.success) {
-          setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
-          setPoolPage(poolsData.data.currentPage)
-          setTotalPoolCount(poolsData.data.totalItems)
-          const existingPools = append ? pools : []
-          const existingPoolsMap = new Map(
-            existingPools.map((pool) => [`${pool.mintA.address}_${pool.mintB.address}`, pool])
-          )
-
-          // Process new pools, overwriting existing entries to maintain sort order
-          const updatedPools = poolsData.data.pools.map((pool) => {
-            const key = `${pool.mintA.address}_${pool.mintB.address}`
-            // If pool exists and we're appending, use existing data
-            if (existingPoolsMap.has(key) && append) {
-              existingPoolsMap.delete(key) // Remove from map since we've handled it
-              return pool // Use new pool to maintain sort order
-            }
-            return pool
-          })
-
-          // Add any remaining existing pools that weren't in the new data
-          if (append) {
-            updatedPools.unshift(...Array.from(existingPoolsMap.values()))
-          }
-
-          setPools(updatedPools)
-        }
-      })
-      .finally(() => setIsLoadingPools.off())
-  }
-
-  useEffect(() => {
-    if (isFirstRender || isPortfolio) return
-    updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE }, false)
-  }, [currentPoolType, showDeposited, showCreatedPools, sortConfig, viewRange, isPortfolio])
-
   useEffect(() => {
     if (!isPortfolio) {
       setShowDeposited(false)
     }
   }, [isPortfolio])
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      //debounced search
-      setPoolPage(1)
-      updatePools(
-        {
-          page: 1,
-          pageSize: POOL_LIST_PAGE_SIZE,
-          signal: aborter.addSignal('update-gamma-pools')
-        },
-        false
-      )
-    }, 500)
-
-    return () => {
-      aborter.abortSignal('update-gamma-pools')
-      clearTimeout(timeout)
-    }
-  }, [selectedTokens])
 
   useEffect(() => {
     ;(async () => {
@@ -395,66 +270,13 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
     })()
   }, [GammaProgram, selectedCard, publicKey])
-  const [filteredPools, setFilteredPools] = useState<GAMMAPoolWithUserLiquidity[]>([])
-  useEffect(() => {
-    if (isPortfolio) return
-    const userLpPositions = new Map(userLiqQuery.data.map((lp) => [lp.poolStatePublicKey, lp]))
-    const mintA = selectedTokens[0]?.address
-    const mintB = selectedTokens[1]?.address
-    const newPools = pools
-      .map((pool) => {
-        const userLpPosition = userLpPositions.get(pool.id)
-        return {
-          ...pool,
-          userLpPosition: userLpPosition ? structuredClone(userLpPosition) : undefined,
-          hasDeposit: userLpPosition ? new BN(userLpPosition?.lpTokensOwned)?.gt(new BN(0)) : false
-        }
-      })
-      .sort((a, b) => {
-        if (sortConfig.id === '9' || sortConfig.id === '10') {
-          const aValue = new Decimal(a.userLpPosition.totalValue)
-          const bValue = new Decimal(b.userLpPosition.totalValue)
-
-          if (sortConfig.direction === 'ASC') {
-            return aValue.gte(bValue) ? -1 : 1
-          }
-          return aValue.lte(bValue) ? -1 : 1
-        }
-        if (mintA && mintB) {
-          // don't have both so keep current sort
-          if (
-            (a.mintA.address === mintA && a.mintB.address === mintB) ||
-            (a.mintB.address === mintA && a.mintA.address === mintB)
-          ) {
-            return -1
-          } else if (
-            (b.mintA.address === mintA && b.mintB.address === mintB) ||
-            (b.mintB.address === mintA && b.mintA.address === mintB)
-          ) {
-            return 1
-          }
-        }
-        return 0
-      })
-
-    setFilteredPools(newPools)
-  }, [
-    pools,
-    userLiqQuery.data,
-    showDeposited,
-    base58PublicKey,
-    showCreatedPools,
-    selectedTokens,
-    sortConfig,
-    isPortfolio
-  ])
 
   useEffect(() => {
-    if (!base58PublicKey || filteredPools.length == 0 || !selectedCard?.id) return
-    const pool = filteredPools.filter((pool) => pool.id === selectedCard.id)
+    if (!base58PublicKey || poolsQuery.data?.allPages?.length == 0 || !selectedCard?.id) return
+    const pool = poolsQuery.data.allPages.filter((pool) => pool.id === selectedCard.id)
     if (pool.length == 0) return
     setSelectedCard(pool[0])
-  }, [base58PublicKey, filteredPools])
+  }, [base58PublicKey, poolsQuery.data])
 
   const isSearchActive = searchTokens.trim().length > 0
   const forceCronAndUpdateLocalData = async (txSig?: string) => {
@@ -463,8 +285,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (!result) return
     userLiqQuery.refetch()
     // will trigger updatePool useEffect
-    updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE }, false)
-    setPoolPage(1)
+    poolsQuery.refetch()
   }
   const computedViewRange = viewRange == 0 ? '24H' : viewRange == 1 ? '7D' : '30D'
 
@@ -472,7 +293,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     <GAMMAContext.Provider
       value={{
         gammaConfig,
-        pools,
         slippage,
         setSlippage,
         isCustomSlippage,
@@ -497,12 +317,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         showDeposited,
         setShowDeposited,
         isLoadingPools,
-        poolPage,
-        setPoolPage,
         totalPoolCount,
         isSearchActive,
-        filteredPools,
-        updatePools,
         poolsHasMoreData,
         sortConfig,
         selectedCardLiquidityAcc,
@@ -526,7 +342,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setIsPortfolio,
         isCardMode,
         setIsCardMode,
-        nextPoolPage
+        filteredPools: poolsQuery.data?.allPages ?? [],
+        poolsQuery
       }}
     >
       {children}
