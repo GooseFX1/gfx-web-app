@@ -69,7 +69,8 @@ class TransactionBuilder {
     walletPublicKey: PublicKey,
     recentBlockhash: string,
     useVersionedTransaction: boolean,
-    isCreatePoolInx: boolean
+    isCreatePoolInx: boolean,
+    skipComputeUnitsLimit: boolean
   ): Promise<VersionedTransaction | Transaction> {
     if (this._usePriorityFee) {
       const ix = ComputeBudgetProgram.setComputeUnitPrice({
@@ -77,8 +78,10 @@ class TransactionBuilder {
       })
 
       this._instructions.unshift(ix)
-      const computeUnits = isCreatePoolInx ? 200_000 : 100_000
-      this._instructions.unshift(ComputeBudgetProgram.setComputeUnitLimit({ units: computeUnits }))
+      if (!skipComputeUnitsLimit) {
+        const computeUnits = isCreatePoolInx ? 200_000 : 100_000
+        this._instructions.unshift(ComputeBudgetProgram.setComputeUnitLimit({ units: computeUnits }))
+      }
       // const message = new TransactionMessage({
       //   instructions: [ComputeBudgetProgram.setComputeUnitLimit({ units: computeUnits }), ...this._instructions],
       //   payerKey: walletPublicKey,
@@ -106,9 +109,11 @@ class TransactionBuilder {
     return new Transaction().add(...this._instructions)
   }
 
-  async _getTransactionWithoutPriorityFee(walletPublicKey: PublicKey,
+  async _getTransactionWithoutPriorityFee(
+    walletPublicKey: PublicKey,
     recentBlockhash: string,
-    useVersionedTransaction: boolean) {
+    useVersionedTransaction: boolean
+  ) {
     if (useVersionedTransaction) {
       const message = new TransactionMessage({
         instructions: this._instructions,
