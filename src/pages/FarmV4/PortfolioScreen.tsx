@@ -8,7 +8,7 @@ import useUserPortfolioStatsQuery from '@/queries/GAMMA/pools/useUserPortfolioSt
 
 const PortfolioScreen: FC = (): JSX.Element => {
   const statsQuery = useUserPortfolioStatsQuery()
-  console.log(statsQuery.data)
+
   return (
     <div>
       <Accordion

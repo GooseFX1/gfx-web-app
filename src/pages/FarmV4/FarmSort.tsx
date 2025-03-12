@@ -17,12 +17,10 @@ import { GAMMA_SORT_CONFIG } from '@/pages/FarmV4/constants'
 import { useConnectionConfig, useDarkMode, useGamma } from '@/context'
 import { useWallet } from '@solana/wallet-adapter-react'
 
-function FarmSort({ isOpen, setIsOpen }: {
-  isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
-}) {
+function FarmSort({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: boolean) => void }) {
   const { userCache, updateUserCache } = useConnectionConfig()
-  const { showCreatedPools,
+  const {
+    showCreatedPools,
     setShowCreatedPools,
     currentSort,
     handlePoolSort,
@@ -35,21 +33,18 @@ function FarmSort({ isOpen, setIsOpen }: {
   const { mode } = useDarkMode()
   const { connected } = useWallet()
 
-  const handleFilterByCreated = useCallback(
-    () => {
-      setShowCreatedPools((prev) => {
-        updateUserCache({
-          gamma: {
-            ...userCache.gamma,
-            showCreatedFilter: !prev
-          }
-        })
-
-        return !prev
+  const handleFilterByCreated = useCallback(() => {
+    setShowCreatedPools((prev) => {
+      updateUserCache({
+        gamma: {
+          ...userCache.gamma,
+          showCreatedFilter: !prev
+        }
       })
-    },
-    [showCreatedPools, userCache]
-  )
+
+      return !prev
+    })
+  }, [showCreatedPools, userCache])
 
   const handleLayoutToggle = useCallback(() => {
     setIsCardMode((prev) => {
@@ -76,7 +71,7 @@ function FarmSort({ isOpen, setIsOpen }: {
       return !prev
     })
   }
-
+  console.log({currentSort})
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
@@ -86,7 +81,10 @@ function FarmSort({ isOpen, setIsOpen }: {
             size={'md'}
             className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
           />
-          {currentSort !== '1' || showCreatedPools || showDeposited ? (
+          {(!isPortfolio && currentSort !== '1') ||
+          (isPortfolio && currentSort != '9') ||
+          showCreatedPools ||
+          showDeposited ? (
             <img
               className={`absolute top-0.5 left-0 border-1 border-solid w-2.5 h-2.5
                         border-background-lightmode-primary dark:border-background-darkmode-primary rounded-full`}
@@ -160,19 +158,22 @@ function FarmSort({ isOpen, setIsOpen }: {
         <DropdownMenuRadioGroup asChild value={currentSort} onValueChange={(id) => handlePoolSort(id)}>
           <div className={'grid grid-cols-2 gap-1.5 items-center'}>
             {GAMMA_SORT_CONFIG.map((s) => {
-              const component = <DropdownMenuItem isActive={currentSort == s.id} asChild key={s.id}>
-                <DropdownMenuRadioItem value={s.id}>
-                  <DropdownMenuItemIndicator asChild forceMount className={'hidden'}>
-                    <RadioGroup value={currentSort}>
-                      <RadioGroupItemAsIndicator value={s.id} />
-                    </RadioGroup>
-                  </DropdownMenuItemIndicator>
-                  <div className={'w-full text-center'}>
-                    <p className={'text-b3 px-2 font-bold'}>{s.name}</p>
-                  </div>
-                </DropdownMenuRadioItem>
-              </DropdownMenuItem>
-              if ((!isPortfolio && +s.id < 9) || isPortfolio) {
+              const component = (
+                <DropdownMenuItem isActive={currentSort == s.id} asChild key={s.id}>
+                  <DropdownMenuRadioItem value={s.id}>
+                    <DropdownMenuItemIndicator asChild forceMount className={'hidden'}>
+                      <RadioGroup value={currentSort}>
+                        <RadioGroupItemAsIndicator value={s.id} />
+                      </RadioGroup>
+                    </DropdownMenuItemIndicator>
+                    <div className={'w-full text-center'}>
+                      <p className={'text-b3 px-2 font-bold'}>{s.name}</p>
+                    </div>
+                  </DropdownMenuRadioItem>
+                </DropdownMenuItem>
+              )
+              if ((!isPortfolio && +s.id < 9) ||
+                (isPortfolio && (+s.id > 4))) {
                 return component
               } else {
                 return null
