@@ -10,7 +10,6 @@ import { IWalletBalanceContext, useWalletBalance } from '@/context/walletBalance
 import { TokenListToken } from '@/context'
 import { InfiniteDataAPIResponse, InfiniteDataQueryResponse, UseInfiniteQueryResponseFix } from '@/queries/types'
 import { useEffect } from 'react'
-import useQueryWrapperWithError from '@/queries/useQueryWrapperWithError'
 import { getQueryKeys } from '@/queries/query.helper'
 
 type TokenQueryProps = {
@@ -66,7 +65,7 @@ function useTokensQuery({
     query.data.allPages = getTopBalancesWithTokenList(query.data.allPages, balance, topBalances);
   },[balance,base58PublicKey,topBalances,query.data])
 
-  return useQueryWrapperWithError(query, DEFAULT, keys);
+  return query;
 }
 
 export default useTokensQuery
