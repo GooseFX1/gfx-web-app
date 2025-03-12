@@ -16,8 +16,8 @@ export const TokenRewardsDrawer = ({ isOpen, setOpen }: { isOpen: boolean; setOp
   const [pool, setPool] = useState<GAMMAPool | null>(null)
   const [selectedToken, setSelectedToken] = useState<JupToken | null>(null)
   const [amountToken, setAmountToken] = useState<string>('')
-  const [startDate, setStartDate] = useState<dayjs.Dayjs>(null)
-  const [endDate, setEndDate] = useState<dayjs.Dayjs>(null)
+  const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs())
+  const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs().add(7,'day'))
   const { isMobile } = useBreakPoint()
 
   useEffect(() => {
@@ -28,8 +28,8 @@ export const TokenRewardsDrawer = ({ isOpen, setOpen }: { isOpen: boolean; setOp
   useEffect(() => {
     if (!startDate || !endDate) return
     const diff = startDate.diff(endDate, 'days')
-    if (diff === 0) {
-      setEndDate(endDate.add(1, 'day'))
+    if (diff >= 0) {
+      setEndDate(startDate.add(7, 'day'))
     }
   }, [startDate, endDate])
   const summary = (currentStep: number) => (

@@ -123,9 +123,8 @@ function DateTimeInputWithDialog({
             head_row: 'flex w-full justify-between',
             row: 'flex w-full justify-between',
             day: 'text-b2',
-            nav: 'ml-4',
-            button: 'w-full'
-          }}
+            nav: 'ml-4'
+        }}
           {...rest}
         />
       </ContentWrapper>

@@ -655,11 +655,12 @@ export const DepositWithdrawSlider: FC = () => {
         GammaProgram,
         connection,
         userSourceTokenType,
-        userTargetTokenType
+        userTargetTokenType,
+        wallet
       )
       txBuilder.add(tx)
       setSendingTransaction(true)
-      const { success, txSig } = await sendTransaction(txBuilder)
+      const { success, txSig } = await sendTransaction(txBuilder, undefined, undefined, undefined, true)
 
       if (!success) {
         //off(connectionId)

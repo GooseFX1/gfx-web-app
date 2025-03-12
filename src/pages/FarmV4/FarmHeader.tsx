@@ -34,7 +34,8 @@ export const FarmHeader: FC = () => {
     setIsPortfolio,
     isPortfolio,
     setCurrentPoolType,
-    setCurrentSort
+    setCurrentSort,
+    selectedTokens
   } = useGamma()
   const statsQuery = useStatsQuery()
   const { wallet } = useWallet()
@@ -140,7 +141,11 @@ export const FarmHeader: FC = () => {
                   label: 'Pools',
                   onClick: () => {
                     setCurrentSort('1')
-                    setCurrentPoolType(POOL_TYPE.primary)
+                    if (selectedTokens.length == 0 || selectedTokens.every((t) => t.isPrimary)) {
+                      setCurrentPoolType(POOL_TYPE.primary)
+                    } else {
+                      setCurrentPoolType(POOL_TYPE.hyper)
+                    }
                     setIsPortfolio.off()
                   }
                 },
@@ -149,7 +154,13 @@ export const FarmHeader: FC = () => {
                   label: 'Portfolio',
                   onClick: () => {
                     setCurrentSort('5')
-                    setCurrentPoolType(POOL_TYPE.all)
+                    if (selectedTokens.length == 0) {
+                      setCurrentPoolType(POOL_TYPE.all)
+                    } else if (selectedTokens.every((t) => t.isPrimary)) {
+                      setCurrentPoolType(POOL_TYPE.primary)
+                    } else {
+                      setCurrentPoolType(POOL_TYPE.hyper)
+                    }
                     setIsPortfolio.on()
                   }
                 }

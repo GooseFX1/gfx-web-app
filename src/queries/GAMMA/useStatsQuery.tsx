@@ -31,7 +31,7 @@ function useStatsQuery() {
     queryFn: fetchAggregateStats,
     staleTime: INTERVALS.MINUTE,
     placeholderData: DEFAULT,
-    enabled: pathname.startsWith(ROUTES.GAMMA),
+    enabled: pathname.startsWith(ROUTES.GAMMA)
   }), DEFAULT, keys);
 }
 
