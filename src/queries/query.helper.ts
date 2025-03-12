@@ -12,7 +12,7 @@ export const DEFAULT_INFINITE_QUERY_RESPONSE = {
   allPages: [],
   maxPagesReached: false,
   pageParams: [1]
-} as const
+}
 
 export const UseStatsQueryKey = 'GAMMA-stats' as const
 export const UseUserLiquidityQueryKey = 'GAMMA-user-liquidity' as const

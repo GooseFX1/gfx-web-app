@@ -1,5 +1,4 @@
 import {
-  InfiniteData,
   useInfiniteQuery
 } from '@tanstack/react-query'
 import { GAMMA_API_BASE, GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
@@ -10,7 +9,7 @@ import { IWalletBalanceContext, useWalletBalance } from '@/context/walletBalance
 import { TokenListToken } from '@/context'
 import { InfiniteDataAPIResponse, InfiniteDataQueryResponse, UseInfiniteQueryResponseFix } from '@/queries/types'
 import { useEffect } from 'react'
-import { getQueryKeys } from '@/queries/query.helper'
+import { DEFAULT_INFINITE_QUERY_RESPONSE, getQueryKeys } from '@/queries/query.helper'
 
 type TokenQueryProps = {
   searchValue?: string
@@ -20,12 +19,6 @@ type TokenListAPIResponse = InfiniteDataAPIResponse<TokenListToken[]>
 
 type TokenQueryResponse = InfiniteDataQueryResponse<TokenListAPIResponse, TokenListToken>
 
-const DEFAULT = {
-  pages: [],
-  pageParams: [1],
-  allPages: [],
-  maxPagesReached: false
-} as InfiniteData<TokenListAPIResponse>
 function useTokensQuery({
   searchValue = '',
   poolType = 'all'
@@ -56,7 +49,7 @@ function useTokensQuery({
     getNextPageParam: (lastPage: TokenListAPIResponse) => lastPage?.nextPage,
     getPreviousPageParam: (firstPage: TokenListAPIResponse) => firstPage?.nextPage,
     staleTime: 1000 * 60,
-    placeholderData: DEFAULT // fixes type issue, but ugly :/
+    placeholderData: DEFAULT_INFINITE_QUERY_RESPONSE // fixes type issue, but ugly :/
   }) as UseInfiniteQueryResponseFix<TokenListAPIResponse, Error, TokenQueryResponse>
   // ^ TypeCasting to fix the query.data access to get intellisense working
 

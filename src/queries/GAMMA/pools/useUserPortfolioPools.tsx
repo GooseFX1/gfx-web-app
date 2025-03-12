@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { getQueryKeys, INFINITE_QUERY_KEY } from '@/queries/query.helper'
+import { DEFAULT_INFINITE_QUERY_RESPONSE, getQueryKeys, INFINITE_QUERY_KEY } from '@/queries/query.helper'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { useLocation } from 'react-router-dom'
 import { ROUTES } from '@/Router'
@@ -23,13 +23,6 @@ type MintSearchProps = {
 type UserPortfolioQueryProps = MintSearchProps & PoolsQueryProps
 type PoolsAPIResponse = InfiniteDataAPIResponse<GAMMAPortfolioPool[]>
 type PoolsQueryResponse = InfiniteDataQueryResponse<PoolsAPIResponse, GAMMAPortfolioPool>
-
-const DEFAULT: PoolsQueryResponse = {
-  pages: [],
-  allPages: [],
-  maxPagesReached: false,
-  pageParams: [1]
-}
 
 function useUserPortfolioPools({
   poolType,
@@ -96,7 +89,7 @@ function useUserPortfolioPools({
         ...data
       }
     },
-    placeholderData: DEFAULT,
+    placeholderData: DEFAULT_INFINITE_QUERY_RESPONSE,
     staleTime: INTERVALS.MINUTE,
     enabled: !!base58PublicKey && pathname.includes(ROUTES.GAMMA)
   }) as UseInfiniteQueryResponseFix<PoolsAPIResponse, Error, PoolsQueryResponse>
