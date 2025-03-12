@@ -56,7 +56,7 @@ export const DefaultStep = ({
         </p>
         <div className="space-y-4">
           <div
-            className={`w-full p-4 rounded-sm border bg-grey-5 dark:bg-black-1 
+            className={`w-full ${isMobile ? 'p-2' : 'p-4'} rounded-sm border bg-grey-5 dark:bg-black-1 
               border-border-lightmode-secondary hover:border-border-lightmode-primary 
     dark:border-border-darkmode-secondary dark:hover:border-border-darkmode-primary 
     transition-colors text-left cursor-pointer`}

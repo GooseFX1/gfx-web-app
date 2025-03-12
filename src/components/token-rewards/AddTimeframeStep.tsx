@@ -166,7 +166,7 @@ export const AddTimeframeStep = ({
       </div>
 
       {!isMobile && (
-        <div className="py-6 px-5 flex flex-col items-center col-span-2 bg-grey-5 dark:bg-black-1">
+        <div className="py-4 px-4 flex flex-col items-center col-span-2 bg-grey-5 dark:bg-black-1">
           <DialogClose>
             <Icon
               src={`/img/assets/rewards_close-${mode}.svg`}

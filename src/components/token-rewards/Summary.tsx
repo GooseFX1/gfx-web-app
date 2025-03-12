@@ -22,6 +22,8 @@ interface SummaryProps {
   key: string
   hideTitle?: boolean
   activeStep?: number
+  currentStep?: number
+  setCurrentStep?: (step: number) => void
 }
 
 export const Summary = ({
@@ -31,7 +33,9 @@ export const Summary = ({
   startDate,
   endDate,
   hideTitle,
-  activeStep
+  activeStep,
+  currentStep,
+  setCurrentStep
 }: SummaryProps) => {
   const { mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
@@ -43,7 +47,7 @@ export const Summary = ({
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
 
   const estimatedRewardsPerDay = useMemo(() => {
-    if (!selectedPool || !selectedToken || !startDate || !endDate) return null
+    if (!selectedPool || !selectedToken || !startDate || !endDate || !amountToken) return null
 
     const days = dayjs(endDate).diff(dayjs(startDate), 'days')
     if (days <= 1) return amountToken
@@ -284,18 +288,40 @@ export const Summary = ({
       </div>
       {estimatedRewardsPerDay && (
         <>
-          {isMobile && <div className="w-full mt-4 h-[1px] bg-grey-4"></div>}
-          <div className={`flex justify-end mt-auto ${!isMobile ? 'mb-[12px]' : ''}`}>
-            <Button
-              className=" w-full mt-4"
-              colorScheme={'blue'}
-              variant={'primary'}
-              onClick={handleAddTokenRewards}
-              isLoading={sendingTransaction}
+          {isMobile ? (
+            <div
+              className="py-2.5 mt-auto flex justify-between border-t-1
+                   border-border-lightmode-secondary dark:border-border-darkmode-secondary"
             >
-              Add Token Rewards
-            </Button>
-          </div>
+              <Button
+                onClick={() => setCurrentStep(currentStep - 1)}
+                className="px-4 py-2 text-text-lightmode-primary dark:text-text-darkmode-primary underline"
+              >
+                Back
+              </Button>
+              <Button
+                className="px-4 py-2 cursor-pointer"
+                colorScheme={'blue'}
+                variant={'primary'}
+                onClick={handleAddTokenRewards}
+                isLoading={sendingTransaction}
+              >
+                Add Token Rewards
+              </Button>
+            </div>
+          ) : (
+            <div className={`flex justify-end mt-auto ${!isMobile ? 'mb-[12px]' : ''}`}>
+              <Button
+                className=" w-full mt-4"
+                colorScheme={'blue'}
+                variant={'primary'}
+                onClick={handleAddTokenRewards}
+                isLoading={sendingTransaction}
+              >
+                Add Token Rewards
+              </Button>
+            </div>
+          )}
           {!isMobile && (
             <p className="text-xs text-text-lightmode-tertiary dark:text-text-darkmode-tertiary">
               Rewards are locked in once transaction is confirmed. New rewards appear on the platform after they
