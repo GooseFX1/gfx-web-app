@@ -112,7 +112,7 @@ function usePoolsQuery({
       },
       placeholderData: DEFAULT,
       staleTime: INTERVALS.MINUTE,
-      enabled: !!base58PublicKey && pathname.includes(ROUTES.GAMMA) && enabled
+      enabled: pathname.includes(ROUTES.GAMMA) && enabled
     }) as UsePoolQueryResponse,
     DEFAULT,
     keys
