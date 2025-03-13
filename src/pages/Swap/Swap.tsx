@@ -74,6 +74,7 @@ export const Swap: FC = () => {
     ''
   )
   const [approxAmountAToB, setApproxAmountAToB] = useState<string>('0.00')
+  const [approxAmountBToA, setApproxAmountBToA] = useState<string>('0.00')
   const [loadingApproxAmounts, setLoadingApproxAmounts] = useBoolean(false)
 
   const [prefetchedQuoteValues, setPrefetchedQuoteValues] = useState<{
@@ -218,17 +219,14 @@ export const Swap: FC = () => {
     if (!selectedTokenA || !selectedTokenB) return
     setLoadingApproxAmounts.on()
 
-    const tokenAtoB = await getPriceQuotes(
-      '1',
-      selectedTokenA,
-      selectedTokenB,
-      GammaProgram,
-      connection,
-      prefetchedQuoteValues
-    )
-
-    setLoadingApproxAmounts.off()
-    setApproxAmountAToB(tokenAtoB.destinationAmountSwapped)
+    await Promise.all([
+      getPriceQuotes('1', selectedTokenA, selectedTokenB, GammaProgram, connection, prefetchedQuoteValues).then(
+        (res) => setApproxAmountAToB(res.destinationAmountSwapped)
+      ),
+      getPriceQuotes('1', selectedTokenB, selectedTokenA, GammaProgram, connection, prefetchedQuoteValues).then(
+        (res) => setApproxAmountBToA(res.destinationAmountSwapped)
+      )
+    ]).finally(() => setLoadingApproxAmounts.off())
   }
 
   const { usdValueA, usdValueB } = useMemo(() => {
@@ -529,7 +527,8 @@ mt-8 flex items-center justify-center
                   <Skeleton className="w-[100px] h-[25px] rounded-[2px] inline-flex m-auto" />
                 ) : (
                   <p>
-                    {approxAmountAToB} {invertPrice ? selectedTokenA?.symbol : selectedTokenB?.symbol}
+                    {invertPrice ? approxAmountBToA : approxAmountAToB}&nbsp;
+                    {invertPrice ? selectedTokenA?.symbol : selectedTokenB?.symbol}
                   </p>
                 )}
                 <IconWithFallback
@@ -632,7 +631,7 @@ function TokenSelectInput({
   disableTokenDropDown?: boolean
   isLocked?: boolean
   setAmountTokenB: (amount: string) => void
-  onBlur: (e: React.ChangeEvent<HTMLInputElement>)=>void
+  onBlur: (e: React.ChangeEvent<HTMLInputElement>) => void
 }) {
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { isDarkMode, mode } = useDarkMode()
