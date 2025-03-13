@@ -26,7 +26,7 @@ export type InfiniteDataAPIResponse<T> = {
   totalPages: number,
   nextPage: number
 }
-
+// UPDATE query.helper.ts DEFAULT_INFINITE_QUERY_RESPONSE - it scoops the error there and injects this
 export interface InfiniteDataQueryResponse<T , U = T> extends InfiniteData<T> {
   allPages: U[]
   maxPagesReached: boolean

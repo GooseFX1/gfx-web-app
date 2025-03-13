@@ -1,6 +1,5 @@
-import useQueryWrapperWithError from '@/queries/useQueryWrapperWithError'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { getQueryKeys } from '@/queries/query.helper'
+import { DEFAULT_INFINITE_QUERY_RESPONSE, getQueryKeys, INFINITE_QUERY_KEY } from '@/queries/query.helper'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { useLocation } from 'react-router-dom'
 import { ROUTES } from '@/Router'
@@ -25,13 +24,6 @@ type UserPortfolioQueryProps = MintSearchProps & PoolsQueryProps
 type PoolsAPIResponse = InfiniteDataAPIResponse<GAMMAPortfolioPool[]>
 type PoolsQueryResponse = InfiniteDataQueryResponse<PoolsAPIResponse, GAMMAPortfolioPool>
 
-const DEFAULT: PoolsQueryResponse = {
-  pages: [],
-  allPages: [],
-  maxPagesReached: false,
-  pageParams: [1]
-}
-
 function useUserPortfolioPools({
   poolType,
   mintA,
@@ -44,6 +36,7 @@ function useUserPortfolioPools({
   const { base58PublicKey } = useWalletBalance()
   const { pathname } = useLocation()
   const keys = getQueryKeys(
+    INFINITE_QUERY_KEY,
     'GAMMA-user-portfolio-pools',
     base58PublicKey,
     poolType,
@@ -55,55 +48,51 @@ function useUserPortfolioPools({
     showDeposited
   )
 
-  return useQueryWrapperWithError(
-    useInfiniteQuery({
-      queryKey: keys,
-      queryFn: async ({ signal, pageParam }) => {
-        if (mintA) {
-          return await fetchPoolsByMints({
-            pageParam,
-            signal,
-            mintA: mintA,
-            mintB: mintB,
-            sortBy: sortBy,
-            sortDirection: sortDirection,
-            showCreated: showCreated,
-            showDeposited: showDeposited,
-            userPublicKey: base58PublicKey,
-            poolType: poolType
-          })
-        } else {
-          return await fetchPools({
-            pageParam,
-            signal,
-            poolType: poolType,
-            sortBy: sortBy,
-            sortDirection: sortDirection,
-            showCreated: showCreated,
-            showDeposited: showDeposited,
-            userPublicKey: base58PublicKey
-          })
-        }
-      },
-      getNextPageParam: (lastPage) => lastPage?.nextPage,
-      getPreviousPageParam: (firstPage) => firstPage?.nextPage,
-      select: (data) => {
-        const flatPages = data.pages.flatMap((page) => page.data)
-        const lastPage = data.pages[data.pages.length - 1]
+  return useInfiniteQuery({
+    queryKey: keys,
+    queryFn: async ({ signal, pageParam }) => {
+      if (mintA) {
+        return await fetchPoolsByMints({
+          pageParam,
+          signal,
+          mintA: mintA,
+          mintB: mintB,
+          sortBy: sortBy,
+          sortDirection: sortDirection,
+          showCreated: showCreated,
+          showDeposited: showDeposited,
+          userPublicKey: base58PublicKey,
+          poolType: poolType
+        })
+      } else {
+        return await fetchPools({
+          pageParam,
+          signal,
+          poolType: poolType,
+          sortBy: sortBy,
+          sortDirection: sortDirection,
+          showCreated: showCreated,
+          showDeposited: showDeposited,
+          userPublicKey: base58PublicKey
+        })
+      }
+    },
+    getNextPageParam: (lastPage) => lastPage?.nextPage,
+    getPreviousPageParam: (firstPage) => firstPage?.nextPage,
+    select: (data) => {
+      const flatPages = data.pages.flatMap((page) => page.data)
+      const lastPage = data.pages[data.pages.length - 1]
 
-        return {
-          allPages: flatPages,
-          maxPagesReached: lastPage?.currentPage != lastPage?.totalPages,
-          ...data
-        }
-      },
-      placeholderData: DEFAULT,
-      staleTime: INTERVALS.MINUTE,
-      enabled: !!base58PublicKey && pathname.includes(ROUTES.GAMMA)
-    }) as UseInfiniteQueryResponseFix<PoolsAPIResponse, Error, PoolsQueryResponse>,
-    DEFAULT,
-    keys
-  )
+      return {
+        allPages: flatPages,
+        maxPagesReached: lastPage?.currentPage != lastPage?.totalPages,
+        ...data
+      }
+    },
+    placeholderData: DEFAULT_INFINITE_QUERY_RESPONSE,
+    staleTime: INTERVALS.MINUTE,
+    enabled: !!base58PublicKey && pathname.includes(ROUTES.GAMMA)
+  }) as UseInfiniteQueryResponseFix<PoolsAPIResponse, Error, PoolsQueryResponse>
 }
 
 //as UseInfiniteQueryResponseFix<PoolsAPIResponse, Error, PoolsQueryResponse>
@@ -122,7 +111,7 @@ async function fetchPoolsByMints({
   pageParam = 1
 }): Promise<PoolsAPIResponse> {
   const pageQuery = `?page=${pageParam}&${POOL_LIST_PAGE_SIZE}`
-  const sortQuery = `&sortBy=${sortBy}&sortDirection=${sortDirection}`
+  const sortQuery = `&sortBy=${sortBy}&sortOrder=${sortDirection}`
   const mintQuery = `&mintA=${mintA}${mintB ? `&mintB=${mintB}` : ''}`
   const poolTypeQuery = `&poolType=${poolType}`
   let userQuery = ``
@@ -160,7 +149,7 @@ async function fetchPools({
   pageParam = 1
 }): Promise<PoolsAPIResponse> {
   const pageQuery = `?page=${pageParam}&pageSize=${POOL_LIST_PAGE_SIZE}`
-  const sortQuery = `&sortBy=${sortBy}&sortDirection=${sortDirection}`
+  const sortQuery = `&sortBy=${sortBy}&sortOrder=${sortDirection}`
   const poolTypeQuery = `&poolType=${poolType}`
   let userQuery = ``
   if (userPublicKey) {

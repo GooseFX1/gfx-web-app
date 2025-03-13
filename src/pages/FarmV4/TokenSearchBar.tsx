@@ -151,7 +151,7 @@ function TokenSearchBar({poolType = 'all'}:{poolType?:Pool['type']}) {
             tokenList={tokenList}
             isLoading={query.isFetching}
             fetchNextPage={query.fetchNextPage}
-            maxTokensReached={query.data.maxTokensReached}
+            maxTokensReached={query.data.maxPagesReached}
             onTokenSelect={(t) => {
               setSearchValue('')
               addSelectedToken(t)

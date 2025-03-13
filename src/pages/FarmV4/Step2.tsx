@@ -560,7 +560,7 @@ function TokenSelectionInput({
                   tokenList={tokenList}
                   isLoading={query.isFetching}
                   fetchNextPage={query.fetchNextPage}
-                  maxTokensReached={query.data.maxTokensReached}
+                  maxTokensReached={query.data.maxPagesReached}
                   onTokenSelect={(token) => {
                     setToken(token)
                     setSearchValue('')

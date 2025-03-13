@@ -162,7 +162,10 @@ export const FarmContainer: FC = () => {
                         className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
                         onClick={() => (isSortFilterOpen ? setIsSortFilterOpen.off() : setIsSortFilterOpen.on())}
                       />
-                      {currentSort !== '1' || showCreatedPools || showDeposited ? (
+                      {(!isPortfolio && currentSort !== '1') ||
+                      (isPortfolio && currentSort != '9') ||
+                      showCreatedPools ||
+                      showDeposited ? (
                         <img
                           className={`absolute top-0.5 left-0 border-1 border-solid w-2.5 h-2.5
                         border-background-lightmode-primary dark:border-background-darkmode-primary rounded-full`}
@@ -298,7 +301,8 @@ export const FarmContainer: FC = () => {
                                     </span>
                                   </Badge>
                                 </label>
-                                if ((!isPortfolio && +s.id < 9) || isPortfolio) {
+                                if ((!isPortfolio && +s.id < 9) ||
+                                  (isPortfolio && (+s.id > 4))) {
                                   return component
                                 } else {
                                   return null
