@@ -16,9 +16,12 @@ export const DefaultStep = ({
 
   return (
     <div className="grid grid-cols-5 w-full h-full">
-      <div className={`py-2.5 px-6 flex flex-col h-full ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
+      <div
+        className={`pb-2.5 px-4 ${isMobile ? ' pt-3' : 'pt-4'} 
+      flex flex-col h-full ${isMobile ? 'col-span-5' : 'col-span-3'}`}
+      >
         <div
-          className={`flex flex-row items-center justify-between gap-3 mb-2 pt-4 
+          className={`flex flex-row items-center justify-between gap-3 mb-2 
             ${
               isMobile
                 ? 'pb-2 border-b-1 border-border-lightmode-secondary dark:border-border-darkmode-secondary'
@@ -53,7 +56,7 @@ export const DefaultStep = ({
         </p>
         <div className="space-y-4">
           <div
-            className={`w-full p-4 rounded-sm border bg-grey-5 dark:bg-black-1 
+            className={`w-full ${isMobile ? 'p-2' : 'p-4'} rounded-sm border bg-grey-5 dark:bg-black-1 
               border-border-lightmode-secondary hover:border-border-lightmode-primary 
     dark:border-border-darkmode-secondary dark:hover:border-border-darkmode-primary 
     transition-colors text-left cursor-pointer`}
@@ -98,22 +101,18 @@ export const DefaultStep = ({
               variant={'ghost'}
               onClick={navigateToCurried(`${NAV_LINKS.docs}/gamma`, '_blank')}
               size={'sm'}
-              className={
-                `p-2 dark:text-text-darkmode-primary text-text-blue font-semibold
-                 max-sm:h-[26px] underline`
-              }
+              className={`p-2 dark:text-text-darkmode-primary text-text-blue font-semibold
+                 max-sm:h-[26px] underline`}
             >
-              Pool Guide  
+              Pool Guide
             </Button>{' '}
             Or{' '}
             <Button
               variant={'ghost'}
               onClick={navigateToCurried(`${NAV_LINKS.docs}/farm`, '_blank')}
               size={'sm'}
-              className={
-                `p-2 dark:text-text-darkmode-primary text-text-blue font-semibold
-                 max-sm:h-[26px] underline`
-              }
+              className={`p-2 dark:text-text-darkmode-primary text-text-blue font-semibold
+                 max-sm:h-[26px] underline`}
             >
               Farm Guide
             </Button>

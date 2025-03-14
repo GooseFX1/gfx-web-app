@@ -258,9 +258,6 @@ const CreateDropdownMenu = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const { mode } = useDarkMode()
-  const query = window.location.search
-  const urlParams = new URLSearchParams(query)
-  const isBoostedRewards = urlParams.get('boosted-rewards')
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -308,7 +305,7 @@ const CreateDropdownMenu = ({
             </div>
           </div>
         </DropdownMenuItem>
-        {(gammaBoostedRewardsIsActive || isBoostedRewards) && (
+        {gammaBoostedRewardsIsActive && (
           <DropdownMenuItem
             onClick={() => {
               setOpenRewardsDrawer(true)
