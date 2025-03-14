@@ -239,5 +239,5 @@ export {
   fetchTokenList,
   fetchTokensByPublicKey,
   forceCronUpdate,
-  forceCronUpdateWithConnectionAndTxSig,
+  forceCronUpdateWithConnectionAndTxSig
 }
