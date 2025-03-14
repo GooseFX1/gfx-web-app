@@ -41,7 +41,8 @@ function useTokensQuery({
         pages: data.pages,
         allPages: flatData,
         pageParams: data.pageParams,
-        maxPagesReached: lastPage?.currentPage >= lastPage?.totalPages
+        maxPagesReached: lastPage?.currentPage >= lastPage?.totalPages,
+        totalItems: lastPage?.totalItems
       }
 
       return response;
@@ -49,7 +50,7 @@ function useTokensQuery({
     getNextPageParam: (lastPage: TokenListAPIResponse) => lastPage?.nextPage,
     getPreviousPageParam: (firstPage: TokenListAPIResponse) => firstPage?.nextPage,
     staleTime: 1000 * 60,
-    placeholderData: DEFAULT_INFINITE_QUERY_RESPONSE // fixes type issue, but ugly :/
+    placeholderData: DEFAULT_INFINITE_QUERY_RESPONSE
   }) as UseInfiniteQueryResponseFix<TokenListAPIResponse, Error, TokenQueryResponse>
   // ^ TypeCasting to fix the query.data access to get intellisense working
 

@@ -28,7 +28,7 @@ async function getPoolById({ id, publicKey, signal }) {
   const userQuery = publicKey ? `?userPublicKey=${publicKey}` : ''
   const response = (await fetch(getGAMMARootUrl() + GAMMA_ENDPOINTS_V1.POOL_BY_ID + `/${id}?` + userQuery, {
     signal
-  }).then((res) => res.json())) as GAMMAEnrichedPoolResponse
+  }).then((res) => res.json())).data as GAMMAEnrichedPoolResponse
 
   return response
 }

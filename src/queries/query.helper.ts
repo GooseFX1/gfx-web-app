@@ -11,14 +11,15 @@ export const DEFAULT_INFINITE_QUERY_RESPONSE = {
   pages: [],
   allPages: [],
   maxPagesReached: false,
-  pageParams: [1]
+  pageParams: [1],
+  totalItems: 0
 }
 
 export const UseStatsQueryKey = 'GAMMA-stats' as const
 export const UseUserLiquidityQueryKey = 'GAMMA-user-liquidity' as const
 export const UsePortfolioStatsQueryKey = 'GAMMA-portfolio-stats' as const
 export const UseSelectPoolQueryKey = 'GAMMA-pool-by-id' as const
-
+export const UsePoolsQueryKey = 'GAMMA-pools' as const
 export const UseSelectPoolQueryDefault = null
 export const UsePortfolioStatsQueryDefault: PortfolioStatsResponse = {
   portfolioValue: '0.00'

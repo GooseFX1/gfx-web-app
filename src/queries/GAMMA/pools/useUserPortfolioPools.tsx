@@ -18,7 +18,8 @@ import { POOL_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
 
 type MintSearchProps = {
   mintA: string
-  mintB?: string
+  mintB?: string,
+  enabled?: boolean
 }
 type UserPortfolioQueryProps = MintSearchProps & PoolsQueryProps
 type PoolsAPIResponse = InfiniteDataAPIResponse<GAMMAPortfolioPool[]>
@@ -31,7 +32,8 @@ function useUserPortfolioPools({
   sortBy,
   sortDirection,
   showCreated,
-  showDeposited
+  showDeposited,
+  enabled = true
 }: UserPortfolioQueryProps) {
   const { base58PublicKey } = useWalletBalance()
   const { pathname } = useLocation()
@@ -45,7 +47,8 @@ function useUserPortfolioPools({
     sortBy,
     sortDirection,
     showCreated,
-    showDeposited
+    showDeposited,
+    enabled
   )
 
   return useInfiniteQuery({
@@ -91,7 +94,7 @@ function useUserPortfolioPools({
     },
     placeholderData: DEFAULT_INFINITE_QUERY_RESPONSE,
     staleTime: INTERVALS.MINUTE,
-    enabled: !!base58PublicKey && pathname.includes(ROUTES.GAMMA)
+    enabled: !!base58PublicKey && pathname.includes(ROUTES.GAMMA) && enabled
   }) as UseInfiniteQueryResponseFix<PoolsAPIResponse, Error, PoolsQueryResponse>
 }
 

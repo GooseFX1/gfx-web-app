@@ -14,8 +14,12 @@ import {
   PoolsQueryProps,
   UseInfiniteQueryResponseFix
 } from '@/queries/types'
-import useQueryWrapperWithError from '@/queries/useQueryWrapperWithError'
-import { getQueryKeys } from '@/queries/query.helper'
+import {
+  DEFAULT_INFINITE_QUERY_RESPONSE,
+  getQueryKeys,
+  INFINITE_QUERY_KEY,
+  UsePoolsQueryKey
+} from '@/queries/query.helper'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import useUserLiquidityQuery from '@/queries/GAMMA/user/useUserLiquidityQuery'
@@ -33,13 +37,6 @@ type MintSearchProps = {
 type PoolQueryProps = MintSearchProps & PoolsQueryProps
 type PoolsQueryResponse = InfiniteDataQueryResponse<PoolsAPIResponse, GAMMAPoolWithUserLiquidity>
 export type UsePoolQueryResponse = UseInfiniteQueryResponseFix<PoolsAPIResponse, Error, PoolsQueryResponse>
-const DEFAULT: PoolsQueryResponse = {
-  pages: [],
-  allPages: [],
-  maxPagesReached: false,
-  pageParams: [1],
-  totalItems: 0
-}
 
 function usePoolsQuery({
   mintA,
@@ -55,7 +52,8 @@ function usePoolsQuery({
   const { pathname } = useLocation()
 
   const keys = getQueryKeys(
-    'GAMMA-pools',
+    INFINITE_QUERY_KEY,
+    UsePoolsQueryKey,
     base58PublicKey,
     mintA,
     mintB,
@@ -67,56 +65,52 @@ function usePoolsQuery({
     enabled
   )
   const userLiqQuery = useUserLiquidityQuery()
-  return useQueryWrapperWithError(
-    useInfiniteQuery({
-      queryKey: keys,
-      queryFn: async ({ signal, pageParam }) => {
-        if (mintA) {
-          return await fetchPoolsByMints({
-            pageParam,
-            signal,
-            mintA: mintA,
-            mintB: mintB,
-            sortBy: sortBy,
-            sortDirection: sortDirection,
-            showCreated: showCreated,
-            showDeposited: showDeposited,
-            userPublicKey: base58PublicKey,
-            poolType: poolType
-          })
-        } else {
-          return await fetchPools({
-            pageParam,
-            signal,
-            poolType: poolType,
-            sortBy: sortBy,
-            sortDirection: sortDirection,
-            showCreated: showCreated,
-            showDeposited: showDeposited,
-            userPublicKey: base58PublicKey
-          })
-        }
-      },
-      getNextPageParam: (lastPage) => lastPage.nextPage,
-      getPreviousPageParam: (firstPage) => firstPage.nextPage,
-      select: (data) => {
-        const flatData = data.pages.flatMap((page) => page.data)
-        const lastPage = data.pages[data.pages.length - 1]
-        const response: PoolsQueryResponse = {
-          ...data,
-          allPages: attachUserLiquidity(flatData, userLiqQuery.data, mintA, mintB),
-          maxPagesReached: lastPage?.currentPage != lastPage?.totalPages,
-          totalItems: lastPage?.totalItems ?? 0
-        }
-        return response
-      },
-      placeholderData: DEFAULT,
-      staleTime: INTERVALS.MINUTE,
-      enabled: pathname.includes(ROUTES.GAMMA) && enabled
-    }) as UsePoolQueryResponse,
-    DEFAULT,
-    keys
-  )
+  return useInfiniteQuery({
+    queryKey: keys,
+    queryFn: async ({ signal, pageParam }) => {
+      if (mintA) {
+        return await fetchPoolsByMints({
+          pageParam,
+          signal,
+          mintA: mintA,
+          mintB: mintB,
+          sortBy: sortBy,
+          sortDirection: sortDirection,
+          showCreated: showCreated,
+          showDeposited: showDeposited,
+          userPublicKey: base58PublicKey,
+          poolType: poolType
+        })
+      } else {
+        return await fetchPools({
+          pageParam,
+          signal,
+          poolType: poolType,
+          sortBy: sortBy,
+          sortDirection: sortDirection,
+          showCreated: showCreated,
+          showDeposited: showDeposited,
+          userPublicKey: base58PublicKey
+        })
+      }
+    },
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+    getPreviousPageParam: (firstPage) => firstPage.nextPage,
+    select: (data) => {
+      const flatData = data.pages.flatMap((page) => page.data)
+      const lastPage = data.pages[data.pages.length - 1]
+      const response: PoolsQueryResponse = {
+        ...data,
+        allPages: attachUserLiquidity(flatData, userLiqQuery.data, mintA, mintB),
+        maxPagesReached: lastPage?.currentPage != lastPage?.totalPages,
+        totalItems: lastPage?.totalItems ?? 0
+      }
+      return response
+    },
+    placeholderData: DEFAULT_INFINITE_QUERY_RESPONSE,
+    staleTime: INTERVALS.MINUTE,
+    enabled: pathname.includes(ROUTES.GAMMA) && enabled
+  }) as UsePoolQueryResponse
 }
 
 export default usePoolsQuery
