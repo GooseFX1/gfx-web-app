@@ -109,6 +109,7 @@ function usePoolsQuery({
     },
     placeholderData: DEFAULT_INFINITE_QUERY_RESPONSE,
     staleTime: INTERVALS.MINUTE,
+    keepPreviousData: true,
     enabled: pathname.includes(ROUTES.GAMMA) && enabled
   }) as UsePoolQueryResponse
 }
