@@ -4,12 +4,10 @@ import {
   GAMMAConfig,
   GAMMAListTokenResponse,
   GAMMAPoolsResponse,
-  GAMMAPortfolioPoolResponse,
   GAMMAStats,
   UserPortfolioLPPosition
 } from '@/types/gamma'
 import { BlockheightBasedTransactionConfirmationStrategy, Connection } from '@solana/web3.js'
-import { aborter } from '@/utils'
 
 const fetchGAMMAConfig = async (): Promise<GAMMAConfig | null> => {
   try {
@@ -68,49 +66,7 @@ const fetchAllPools = async ({
     return null
   }
 }
-const fetchPoolsByMints = async ({
-  mintA,
-  mintB,
-  page,
-  pageSize,
-  signal,
-  poolType,
-  sortOrder,
-  sortKey,
-  showCreated,
-  showDeposited,
-  userPublicKey
-}: {
-  mintA: string
-  mintB?: string
-  page: number
-  pageSize: number
-  signal?: AbortSignal
-  poolType: 'all' | 'hyper' | 'primary'
-  sortOrder: 'asc' | 'desc'
-  sortKey: string
-  showCreated?: boolean
-  showDeposited?: boolean
-  userPublicKey?: string
-}): Promise<GAMMAPoolsResponse | null> => {
-  const mintQuery = `mint1=${mintA}${mintB ? `&mint2=${mintB}` : ''}`
-  const pageQuery = `page=${page}&pageSize=${pageSize}`
-  const sortQuery = `poolType=${poolType}&sortOrder=${sortOrder}&sortBy=${sortKey}`
-  const showCreatedQuery = showCreated ? `&showCreated=${showCreated}` : ''
-  const showDepositedQuery = showDeposited ? `&showDeposited=${showDeposited}` : ''
-  const userPublicKeyQuery = userPublicKey ? `&userPublicKey=${userPublicKey}` : ''
-  try {
-    const response = await httpClient(GAMMA_API_BASE).get(
-      GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS +
-        `?${mintQuery}&${pageQuery}&${sortQuery}${showCreatedQuery}${showDepositedQuery}${userPublicKeyQuery}`,
-      { signal }
-    )
-    return response.data
-  } catch (error) {
-    console.error('Error fetching gamma pools:', error)
-    return null
-  }
-}
+
 export const fetchAndConcatAllPoolsByMints = async (
   {
     mintA,
@@ -275,57 +231,6 @@ const forceCronUpdateWithConnectionAndTxSig = async (connection: Connection, txS
   return await forceCronUpdate()
 }
 
-const fetchProfilePools = async ({
-  publicKey,
-  sortOrder,
-  sortBy,
-  page,
-  pageSize,
-  poolType
-}: {
-  publicKey: string
-  sortOrder: 'desc' | 'asc'
-  sortBy: string
-  page: number
-  pageSize: number
-  poolType: 'all' | 'primary' | 'hyper'
-}): Promise<GAMMAPortfolioPoolResponse> => {
-  const signal = aborter.addSignal(`GAMMA-PORTFOLIO-POOLS`)
-  // eslint-disable-next-line max-len
-  const url = `${GAMMA_ENDPOINTS_V1.PORTFOLIO_POOLS}?userPublicKey=${publicKey}&sortOrder=${sortOrder}&sortBy=${sortBy}&page=${page}&pageSize=${pageSize}&poolType=${poolType}`
-  return (await httpClient(GAMMA_API_BASE)
-    .get(url, { signal })
-    .then((response) => response.data)) as GAMMAPortfolioPoolResponse
-}
-
-const fetchProfilePoolsByMints = async ({
-  publicKey,
-  sortOrder,
-  sortBy,
-  page,
-  pageSize,
-  poolType,
-  mintA,
-  mintB = ''
-}: {
-  publicKey: string
-  sortOrder: 'desc' | 'asc'
-  sortBy: string
-  page: number
-  pageSize: number
-  poolType: 'all' | 'primary' | 'hyper'
-  mintA: string
-  mintB?: string
-}): Promise<GAMMAPortfolioPoolResponse> => {
-  const signal = aborter.addSignal(`GAMMA-PORTFOLIO-POOLS`)
-  const searchQuery = `&mintA=${mintA}&mintB=${mintB}`
-  // eslint-disable-next-line max-len
-  const url = `${GAMMA_ENDPOINTS_V1.PORTFOLIO_POOLS_SEARCH}?userPublicKey=${publicKey}&sortOrder=${sortOrder}&sortBy=${sortBy}&page=${page}&pageSize=${pageSize}&poolType=${poolType}${searchQuery}`
-  return (await httpClient(GAMMA_API_BASE)
-    .get(url, { signal })
-    .then((response) => response.data)) as GAMMAPortfolioPoolResponse
-}
-
 export {
   fetchGAMMAConfig,
   fetchAggregateStats,
@@ -333,9 +238,6 @@ export {
   fetchAllPools,
   fetchTokenList,
   fetchTokensByPublicKey,
-  fetchPoolsByMints,
   forceCronUpdate,
-  forceCronUpdateWithConnectionAndTxSig,
-  fetchProfilePools,
-  fetchProfilePoolsByMints
+  forceCronUpdateWithConnectionAndTxSig
 }

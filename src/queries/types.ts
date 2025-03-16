@@ -30,4 +30,5 @@ export type InfiniteDataAPIResponse<T> = {
 export interface InfiniteDataQueryResponse<T , U = T> extends InfiniteData<T> {
   allPages: U[]
   maxPagesReached: boolean
+  totalItems: number
 }

@@ -29,7 +29,8 @@ const FarmItems: FC<{
     currentPoolType,
     searchTokens,
     showDeposited,
-    isCardMode
+    isCardMode,
+    isLoadingPools
   } = useGamma()
   const isSearchActive = useMemo(() => searchTokens.length > 0, [searchTokens])
 
@@ -105,7 +106,7 @@ const FarmItems: FC<{
             }
           ]}
         />
-      ) : (numberOfTokensDeposited === 0 && showDeposited) || filteredPools.length === 0 ? (
+      ) : (numberOfTokensDeposited === 0 && showDeposited) || (filteredPools.length === 0 && !isLoadingPools) ? (
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
       ) : isCardMode === 'card' ? (
         <FarmItemsLite

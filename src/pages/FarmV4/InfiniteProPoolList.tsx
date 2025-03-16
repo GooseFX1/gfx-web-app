@@ -2,7 +2,6 @@ import { useGamma } from '@/context'
 import React, { FC, HTMLAttributes, useEffect, useRef, useState } from 'react'
 import InfiniteLoader from 'react-window-infinite-loader'
 import { FixedSizeList } from 'react-window'
-import { POOL_LIST_PAGE_SIZE } from './constants'
 import { FarmRowLoaderText } from './FarmRow'
 import { CSSProperties } from 'styled-components'
 
@@ -12,8 +11,7 @@ type InfiniteProPoolListScrollViewProps<T> = {
   items: T[]
   currentSort: string
   poolsHasMoreData: boolean
-  updatePools: (params: { page: number; pageSize: number }) => void
-  poolPage: number
+  fetchNextPage: () => void
   isLoadingPools: boolean
   totalPoolCount: number
 } & HTMLAttributes<HTMLDivElement>
@@ -24,8 +22,7 @@ export const InfiniteProPoolScrollView: FC<InfiniteProPoolListScrollViewProps<un
   items,
   currentSort,
   poolsHasMoreData,
-  updatePools,
-  poolPage,
+  fetchNextPage,
   isLoadingPools,
   totalPoolCount
 }): JSX.Element => {
@@ -36,10 +33,7 @@ export const InfiniteProPoolScrollView: FC<InfiniteProPoolListScrollViewProps<un
   const infiniteLoaderRef = useRef(null)
   const hasMountedRef = useRef(false)
 
-  const isItemLoaded = (index) => {
-    if (index < items.length) return true
-    return false
-  }
+  const isItemLoaded = (index) => index < items.length || !poolsHasMoreData
 
   // Each time the sort prop changed we called the method resetloadMoreItemsCache to clear the cache
   useEffect(() => {
@@ -57,10 +51,7 @@ export const InfiniteProPoolScrollView: FC<InfiniteProPoolListScrollViewProps<un
   const loadMoreItems = () => {
     if (isLoadingPools) return
     setShowingLoader(true)
-    updatePools({
-      page: poolPage + 1,
-      pageSize: POOL_LIST_PAGE_SIZE
-    })
+    fetchNextPage()
   }
 
   useEffect(() => {
@@ -71,12 +62,15 @@ export const InfiniteProPoolScrollView: FC<InfiniteProPoolListScrollViewProps<un
 
   // Render an item or a loading indicator.
   const Item = ({ index, style }: { index: number; style: CSSProperties }) => {
-    if (index === items.length && poolsHasMoreData) {
-      return (
-        <div style={style}>
-          <FarmRowLoaderText />
-        </div>
-      )
+    if (!isItemLoaded(index)) {
+      if (isLoadingPools) {
+        return (
+          <div style={style}>
+            <FarmRowLoaderText />
+          </div>
+        )
+      }
+      return null
     }
 
     if (index < items.length) {
@@ -125,10 +119,9 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
     filteredPools: items,
     currentSort,
     poolsHasMoreData,
-    updatePools,
-    poolPage,
     isLoadingPools,
-    totalPoolCount
+    totalPoolCount,
+    poolsQuery
   } = useGamma()
 
   return (
@@ -136,8 +129,7 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
       items={items}
       currentSort={currentSort}
       poolsHasMoreData={poolsHasMoreData}
-      updatePools={updatePools}
-      poolPage={poolPage}
+      fetchNextPage={poolsQuery.fetchNextPage}
       isLoadingPools={isLoadingPools}
       totalPoolCount={totalPoolCount}
       render={render}

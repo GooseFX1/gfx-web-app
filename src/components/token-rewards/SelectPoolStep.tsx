@@ -242,7 +242,6 @@ function PoolSelectInput({
     isLoadingPools,
     poolsHasMoreData,
     loadMorePools,
-    poolPage,
     totalPoolCount
   } = usePools({
     poolType: 'all',
@@ -352,8 +351,7 @@ function PoolSelectInput({
                 items={items}
                 currentSort="desc"
                 poolsHasMoreData={poolsHasMoreData}
-                updatePools={loadMorePools}
-                poolPage={poolPage}
+                fetchNextPage={loadMorePools}
                 isLoadingPools={isLoadingPools}
                 totalPoolCount={totalPoolCount}
               />

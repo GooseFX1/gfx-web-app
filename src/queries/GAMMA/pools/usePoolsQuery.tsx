@@ -1,56 +1,70 @@
-import { useInfiniteQuery } from '@tanstack/react-query'
-import { DEFAULT_INFINITE_QUERY_RESPONSE, getQueryKeys, INFINITE_QUERY_KEY } from '@/queries/query.helper'
-import { useWalletBalance } from '@/context/walletBalanceContext'
-import { useLocation } from 'react-router-dom'
-import { ROUTES } from '@/Router'
+import { POOL_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
+import { getGAMMARootUrl } from '@/api'
+import { GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
+import {
+  GAMMAPool,
+  GAMMAPoolWithUserLiquidity,
+  GAMMAPortfolioPoolResponse,
+  GAMMAUserLPPositionWithPrice
+} from '@/types/gamma'
+import { clamp } from '@/utils'
 import {
   InfiniteDataAPIResponse,
   InfiniteDataQueryResponse,
   PoolsQueryProps,
   UseInfiniteQueryResponseFix
 } from '@/queries/types'
-import { getGAMMARootUrl } from '@/api'
-import { GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
-import { GAMMAPortfolioPool, GAMMAPortfolioPoolResponse } from '@/types/gamma'
-import { clamp } from '@/utils'
+import {
+  DEFAULT_INFINITE_QUERY_RESPONSE,
+  getQueryKeys,
+  INFINITE_QUERY_KEY,
+  UsePoolsQueryKey
+} from '@/queries/query.helper'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { useWalletBalance } from '@/context/walletBalanceContext'
+import useUserLiquidityQuery from '@/queries/GAMMA/user/useUserLiquidityQuery'
 import { INTERVALS } from '@/utils/time'
-import { POOL_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
+import { useLocation } from 'react-router-dom'
+import { ROUTES } from '@/Router'
+import BN from 'bn.js'
 
+type PoolsAPIResponse = InfiniteDataAPIResponse<GAMMAPool[]>
 type MintSearchProps = {
   mintA: string
-  mintB?: string,
+  mintB?: string
   enabled?: boolean
 }
-type UserPortfolioQueryProps = MintSearchProps & PoolsQueryProps
-type PoolsAPIResponse = InfiniteDataAPIResponse<GAMMAPortfolioPool[]>
-type PoolsQueryResponse = InfiniteDataQueryResponse<PoolsAPIResponse, GAMMAPortfolioPool>
+type PoolQueryProps = MintSearchProps & PoolsQueryProps
+type PoolsQueryResponse = InfiniteDataQueryResponse<PoolsAPIResponse, GAMMAPoolWithUserLiquidity>
+export type UsePoolQueryResponse = UseInfiniteQueryResponseFix<PoolsAPIResponse, Error, PoolsQueryResponse>
 
-function useUserPortfolioPools({
-  poolType,
+function usePoolsQuery({
   mintA,
   mintB,
   sortBy,
   sortDirection,
   showCreated,
   showDeposited,
+  poolType,
   enabled = true
-}: UserPortfolioQueryProps) {
+}: PoolQueryProps) {
   const { base58PublicKey } = useWalletBalance()
   const { pathname } = useLocation()
+
   const keys = getQueryKeys(
     INFINITE_QUERY_KEY,
-    'GAMMA-user-portfolio-pools',
+    UsePoolsQueryKey,
     base58PublicKey,
-    poolType,
     mintA,
     mintB,
     sortBy,
     sortDirection,
     showCreated,
     showDeposited,
+    poolType,
     enabled
   )
-
+  const userLiqQuery = useUserLiquidityQuery()
   return useInfiniteQuery({
     queryKey: keys,
     queryFn: async ({ signal, pageParam }) => {
@@ -80,26 +94,27 @@ function useUserPortfolioPools({
         })
       }
     },
-    getNextPageParam: (lastPage) => lastPage?.nextPage,
-    getPreviousPageParam: (firstPage) => firstPage?.nextPage,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+    getPreviousPageParam: (firstPage) => firstPage.nextPage,
     select: (data) => {
-      const flatPages = data.pages.flatMap((page) => page.data)
+      const flatData = data.pages.flatMap((page) => page.data)
       const lastPage = data.pages[data.pages.length - 1]
-
-      return {
-        allPages: flatPages,
+      const response: PoolsQueryResponse = {
+        ...data,
+        allPages: attachUserLiquidity(flatData, userLiqQuery.data, mintA, mintB),
         maxPagesReached: lastPage?.currentPage != lastPage?.totalPages,
-        ...data
+        totalItems: lastPage?.totalItems ?? 0
       }
+      return response
     },
     placeholderData: DEFAULT_INFINITE_QUERY_RESPONSE,
     staleTime: INTERVALS.MINUTE,
-    enabled: !!base58PublicKey && pathname.includes(ROUTES.GAMMA) && enabled
-  }) as UseInfiniteQueryResponseFix<PoolsAPIResponse, Error, PoolsQueryResponse>
+    keepPreviousData: true,
+    enabled: pathname.includes(ROUTES.GAMMA) && enabled
+  }) as UsePoolQueryResponse
 }
 
-//as UseInfiniteQueryResponseFix<PoolsAPIResponse, Error, PoolsQueryResponse>
-export default useUserPortfolioPools
+export default usePoolsQuery
 
 async function fetchPoolsByMints({
   signal,
@@ -115,7 +130,7 @@ async function fetchPoolsByMints({
 }): Promise<PoolsAPIResponse> {
   const pageQuery = `?page=${pageParam}&${POOL_LIST_PAGE_SIZE}`
   const sortQuery = `&sortBy=${sortBy}&sortOrder=${sortDirection}`
-  const mintQuery = `&mintA=${mintA}${mintB ? `&mintB=${mintB}` : ''}`
+  const mintQuery = `&mint1=${mintA}${mintB ? `&mint2=${mintB}` : ''}`
   const poolTypeQuery = `&poolType=${poolType}`
   let userQuery = ``
   if (userPublicKey) {
@@ -123,7 +138,7 @@ async function fetchPoolsByMints({
   }
   const response = (await fetch(
     getGAMMARootUrl() +
-      GAMMA_ENDPOINTS_V1.PORTFOLIO_POOLS_SEARCH +
+      GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS +
       pageQuery +
       sortQuery +
       mintQuery +
@@ -159,7 +174,7 @@ async function fetchPools({
     userQuery = `&userPublicKey=${userPublicKey}&showCreated=${showCreated}&showDeposited=${showDeposited}`
   }
   const response = (await fetch(
-    getGAMMARootUrl() + GAMMA_ENDPOINTS_V1.PORTFOLIO_POOLS + pageQuery + sortQuery + userQuery + poolTypeQuery,
+    getGAMMARootUrl() + GAMMA_ENDPOINTS_V1.POOLS_INFO_ALL + pageQuery + sortQuery + userQuery + poolTypeQuery,
     { signal }
   ).then((res) => res.json())) as GAMMAPortfolioPoolResponse
 
@@ -170,4 +185,39 @@ async function fetchPools({
     totalPages: response.data.totalPages,
     nextPage: clamp(response.data.currentPage + 1, 1, response.data.totalPages)
   }
+}
+
+function attachUserLiquidity(
+  pools: GAMMAPool[],
+  userLiquidity: GAMMAUserLPPositionWithPrice[],
+  mintA?: string,
+  mintB?: string
+) {
+  const userLpPositions = new Map(userLiquidity.map((lp) => [lp.poolStatePublicKey, lp]))
+  return pools
+    .map((pool) => {
+      const userLpPosition = userLpPositions.get(pool.id)
+      return {
+        ...pool,
+        userLpPosition: userLpPosition ? structuredClone(userLpPosition) : undefined,
+        hasDeposit: userLpPosition ? new BN(userLpPosition?.lpTokensOwned)?.gt(new BN(0)) : false
+      }
+    })
+    .sort((a, b) => {
+      if (mintA && mintB) {
+        // don't have both so keep current sort
+        if (
+          (a.mintA.address === mintA && a.mintB.address === mintB) ||
+          (a.mintB.address === mintA && a.mintA.address === mintB)
+        ) {
+          return -1
+        } else if (
+          (b.mintA.address === mintA && b.mintB.address === mintB) ||
+          (b.mintB.address === mintA && b.mintA.address === mintB)
+        ) {
+          return 1
+        }
+      }
+      return 0
+    })
 }
