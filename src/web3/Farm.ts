@@ -910,7 +910,7 @@ export const createTokenRewards = async (
   rewardMint: JupToken,
   userPublicKey: PublicKey
 ) => {
-  const startTimeBN = new BN(startTime.unix())
+  const startTimeBN = new BN(startTime.add(5, 'minute').unix())
   const endTimeBN = new BN(endTime.unix())
   const rewardAmountBN = new BN(
     new BigNumber(rewardAmount).times(new BigNumber(10).pow(rewardMint.decimals)).toNumber()
