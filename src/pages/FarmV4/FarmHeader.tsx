@@ -145,10 +145,14 @@ export const FarmHeader: FC = () => {
                     if (isPortfolio) {
                       setShowDeposited(false)
                     }
-                    if (selectedTokens.length == 0 || selectedTokens.every((t) => t.isPrimary)) {
-                      setCurrentPoolType(POOL_TYPE.primary)
+                    if (selectedTokens.length != 0) {
+                      if (selectedTokens.every((t) => t.isPrimary)) {
+                        setCurrentPoolType(POOL_TYPE.primary)
+                      } else {
+                        setCurrentPoolType(POOL_TYPE.hyper)
+                      }
                     } else {
-                      setCurrentPoolType(POOL_TYPE.hyper)
+                      setCurrentPoolType(POOL_TYPE.all)
                     }
                     setIsPortfolio.off()
                   }

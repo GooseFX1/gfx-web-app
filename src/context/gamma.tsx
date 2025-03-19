@@ -122,7 +122,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<any>({})
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
-  const [currentPoolType, setCurrentPoolType] = useState<Pool>(POOL_TYPE.primary)
+  const [currentPoolType, setCurrentPoolType] = useState<Pool>(POOL_TYPE.all)
   const { GammaProgram } = usePriceFeedFarm()
   const [selectedCardPool, setSelectedCardPool] = useState<any>({})
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
@@ -288,6 +288,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     // will trigger updatePool useEffect
     poolsQuery.refetch()
   }
+
   const computedViewRange = viewRange == 0 ? '24H' : viewRange == 1 ? '7D' : '30D'
 
   return (
