@@ -11,6 +11,7 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 const FarmCard: FC<{
   pool: GAMMAPoolWithUserLiquidity | undefined
   className?: string
+  key?: string
 }> = ({ pool, className, ...props }): ReactElement => {
   const { setOpenDepositWithdrawSlider, setSelectedCard } = useGamma()
   const { base58PublicKey } = useWalletBalance()
