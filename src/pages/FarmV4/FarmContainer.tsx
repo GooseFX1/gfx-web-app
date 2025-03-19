@@ -1,10 +1,6 @@
 import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import {
-  useConnectionConfig,
-  useDarkMode,
-  useGamma
-} from '../../context'
+import { useConnectionConfig, useDarkMode, useGamma } from '../../context'
 import { GAMMA_SORT_CONFIG, POOL_TYPE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
@@ -27,6 +23,8 @@ import useBreakPoint from '../../hooks/useBreakPoint'
 import FarmSort from '@/pages/FarmV4/FarmSort'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import TokenSearchBar from '@/pages/FarmV4/TokenSearchBar'
+import { ClaimAllRewards } from '@/components/token-rewards/ClaimAllButton'
+import { ClaimAllRewardsDialog } from '@/components/token-rewards/ClaimAllRewardsDialog'
 
 export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
@@ -53,6 +51,8 @@ export const FarmContainer: FC = () => {
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
     [wallet?.adapter?.publicKey]
   )
+
+  const [openClaimAllRewardsDialog, setOpenClaimAllRewardsDialog] = useBoolean(false)
 
   useLayoutEffect(() => {
     if (openDepositWithdrawSlider) {
@@ -152,7 +152,17 @@ export const FarmContainer: FC = () => {
             />
             <div className="flex items-center w-full justify-between relative">
               <TokenSearchBar />
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center gap-[15px]">
+                <ClaimAllRewards
+                  openClaimAllRewardsDialog={openClaimAllRewardsDialog}
+                  setOpenClaimAllRewardsDialog={setOpenClaimAllRewardsDialog.set}
+                />
+                <ClaimAllRewardsDialog
+                  rewards={[]}
+                  openClaimAllRewardsDialog={openClaimAllRewardsDialog}
+                  setOpenClaimAllRewardsDialog={setOpenClaimAllRewardsDialog.set}
+                />
+
                 {breakpoint.isMobile ? (
                   <div>
                     <Button className="p-0 !h-[35px] !w-[35px] mx-2 relative" variant={'ghost'}>
@@ -263,11 +273,12 @@ export const FarmContainer: FC = () => {
                             <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
                             <div className={'grid grid-cols-2 gap-3'}>
                               {GAMMA_SORT_CONFIG.map((s) => {
-                                const component = <label className={`flex items-center`} key={s.id}>
-                                  <Badge
-                                    className={cn(
-                                      currentSort !== s.id &&
-                                        `dark:bg-black-1
+                                const component = (
+                                  <label className={`flex items-center`} key={s.id}>
+                                    <Badge
+                                      className={cn(
+                                        currentSort !== s.id &&
+                                          `dark:bg-black-1
                                       bg-white
                                       dark:before:to-black-4
                                       dark:before:from-black-4
@@ -279,30 +290,30 @@ export const FarmContainer: FC = () => {
                                       to-from-white
                                       justify-start p-1.25
                                       `,
-                                      `w-full h-[35px]`
-                                    )}
-                                  >
-                                    <input
-                                      type="radio"
-                                      name="sort"
-                                      value={s.id}
-                                      checked={currentSort === s.id}
-                                      onChange={() => handlePoolSort(s.id)}
-                                      className={'hidden'}
-                                      disabled={Number(s.id) >= 9 && !publicKey}
-                                    />
-                                    <span
-                                      className={`m-0 text-regular font-bold
+                                        `w-full h-[35px]`
+                                      )}
+                                    >
+                                      <input
+                                        type="radio"
+                                        name="sort"
+                                        value={s.id}
+                                        checked={currentSort === s.id}
+                                        onChange={() => handlePoolSort(s.id)}
+                                        className={'hidden'}
+                                        disabled={Number(s.id) >= 9 && !publicKey}
+                                      />
+                                      <span
+                                        className={`m-0 text-regular font-bold
                                      overflow-hidden
                                       overflow-ellipsis
                                       whitespace-nowrap`}
-                                    >
-                                      {s.name}
-                                    </span>
-                                  </Badge>
-                                </label>
-                                if ((!isPortfolio && +s.id < 9) ||
-                                  (isPortfolio && (+s.id > 4))) {
+                                      >
+                                        {s.name}
+                                      </span>
+                                    </Badge>
+                                  </label>
+                                )
+                                if ((!isPortfolio && +s.id < 9) || (isPortfolio && +s.id > 4)) {
                                   return component
                                 } else {
                                   return null

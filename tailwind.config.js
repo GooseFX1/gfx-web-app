@@ -27,5 +27,16 @@ module.exports = {
   corePlugins: {
     preflight: false
   },
-  plugins: []
+  plugins: [
+    function ({ addUtilities }) {
+      addUtilities({
+        ".text-primary-gradient": {
+          background: "linear-gradient(106deg, #F7931A 11.2%, #C31AE3 42.93%)",
+          "background-clip": "text",
+          "-webkit-background-clip": "text",
+          "-webkit-text-fill-color": "transparent",
+        },
+      });
+    },
+  ]
 }
