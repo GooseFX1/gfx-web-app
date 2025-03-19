@@ -1,36 +1,50 @@
 import { useDarkMode, useGamma } from '@/context'
 import { Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import { FC } from 'react'
-import { POOL_TYPE } from './constants'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { commafy, loadIconImage, numberFormatter } from '@/utils'
 import { fetchTokensByPublicKey } from '@/api/gamma'
 import { GAMMAListTokenResponse } from '@/types/gamma'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
+import { POOL_TYPE } from '@/pages/FarmV4/constants'
 
 const ExplorePools: FC<{ tokenMint: string }> = ({ tokenMint }) => {
-  const { setCurrentPoolType, addSelectedToken, clearAllSelectedTokens, setIsPortfolio, setCurrentSort } = useGamma()
+  const {
+    addSelectedToken,
+    clearAllSelectedTokens,
+    setIsPortfolio,
+    setCurrentSort,
+    selectedTokens,
+    setCurrentPoolType
+  } = useGamma()
   const chooseToken = async () => {
     clearAllSelectedTokens()
 
-    const response = (await fetchTokensByPublicKey(
-      tokenMint
-    )) as GAMMAListTokenResponse | null
+    const response = (await fetchTokensByPublicKey(tokenMint)) as GAMMAListTokenResponse | null
     if (!response || !response.success || response.data?.tokens?.length == 0) {
       return
     }
+    const newSelectedTokens = selectedTokens.slice()
     for (const token of response.data.tokens) {
       if (token.address === tokenMint) {
+        newSelectedTokens.push(token)
         addSelectedToken(token)
       }
     }
+    if (newSelectedTokens.length > 0) {
+      if (newSelectedTokens.every((t) => t.isPrimary)) {
+        setCurrentPoolType(POOL_TYPE.primary)
+      } else {
+        setCurrentPoolType(POOL_TYPE.hyper)
+      }
+    }
   }
+
   return (
     <div
       onClick={async () => {
         await chooseToken()
         setIsPortfolio.off()
-        setCurrentPoolType(POOL_TYPE?.primary)
         setCurrentSort('1')
       }}
       className="text-regular font-bold text-blue-1 dark:text-grey-8 underline cursor-pointer"
@@ -76,7 +90,9 @@ const UnusedTokens: FC = () => {
                 size="sm"
                 className="mr-1.5 rounded-circle border border-solid dark:border-black-4 border-grey-4"
               />
-              <span className="text-[13px] font-semibold text-black-4 dark:text-grey-8 mr-2.5">{balance.symbol}</span>
+              <span className="text-[13px] font-semibold text-black-4 dark:text-grey-8 mr-2.5">
+                {balance.symbol}
+              </span>
               <span className="text-[13px] font-semibold text-black-4 dark:text-grey-8 mr-1">
                 {numberFormatter(balance.tokenAmount.uiAmount)}
               </span>
