@@ -19,7 +19,7 @@ type SpanType = {
 type TextProps = ParagraphType | HeadingType | SpanType
 
 type TextNumberProps = {
-  value: SupportedValuesType
+  value: SupportedValuesType | undefined | null
   type?: SupportedConversionsType
   decimals?: number
   className?: string
