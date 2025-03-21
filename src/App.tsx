@@ -11,7 +11,7 @@ import {
   QUERY_KEY
 } from '@/queries/query.helper'
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error, query) => {
       console.log('ERROR:', error, query)

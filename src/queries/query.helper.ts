@@ -20,6 +20,9 @@ export const UseUserLiquidityQueryKey = 'GAMMA-user-liquidity' as const
 export const UsePortfolioStatsQueryKey = 'GAMMA-portfolio-stats' as const
 export const UseSelectPoolQueryKey = 'GAMMA-pool-by-id' as const
 export const UsePoolsQueryKey = 'GAMMA-pools' as const
+export const UseGammaProgramPoolKey = 'GAMMA-program-pool' as const
+export const UseGammaProgramUserLiquidityKey = 'GAMMA-program-user-liquidity' as const
+
 export const UseSelectPoolQueryDefault = null
 export const UsePortfolioStatsQueryDefault: PortfolioStatsResponse = {
   portfolioValue: '0.00'

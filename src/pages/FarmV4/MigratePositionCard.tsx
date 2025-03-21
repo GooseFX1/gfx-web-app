@@ -5,7 +5,8 @@ type MigratePositionCardProps = {
   //TODO: type this
   position: any
   positionsOnOtherPrograms: string[]
-  apr: number
+  apr: number,
+  key?:string
 }
 const MigratePositionCard: FC<MigratePositionCardProps> = ({ position, positionsOnOtherPrograms, apr }) => (
   <div

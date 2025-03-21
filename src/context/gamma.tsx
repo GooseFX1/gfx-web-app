@@ -12,12 +12,11 @@ import {
   useState
 } from 'react'
 import {
-  fetchGAMMAConfig,
   fetchTokenList,
   forceCronUpdate,
   forceCronUpdateWithConnectionAndTxSig
 } from '@/api/gamma'
-import { GAMMAConfig, GAMMAPoolWithUserLiquidity } from '@/types/gamma'
+import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   BASE_SLIPPAGE,
@@ -40,11 +39,11 @@ import useMultiSelect from '@/hooks/useMultiSelect'
 import useUserLiquidityQuery from '@/queries/GAMMA/user/useUserLiquidityQuery'
 import usePoolsQuery, { UsePoolQueryResponse } from '@/queries/GAMMA/pools/usePoolsQuery'
 import { getSortKey } from '@/queries/GAMMA/gammaQueries.helpers'
+import useGetAMMConfigIdQuery from '@/queries/GAMMA/pools/useGetGammaConfigIdQuery'
 
 type ViewRange = 0 | 1 | 2
 
 interface GAMMADataModel {
-  gammaConfig: GAMMAConfig
   slippage: number
   setSlippage: Dispatch<SetStateAction<number>>
   isCustomSlippage: boolean
@@ -117,7 +116,6 @@ const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { userCache, connection, updateUserCache } = useConnectionConfig()
   const { base58PublicKey, publicKey } = useWalletBalance()
-  const [gammaConfig, setGammaConfig] = useState<GAMMAConfig | null>(null)
 
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<any>({})
@@ -137,6 +135,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [calculatePoolType, setCalculatePoolType] = useState<Set<string>>(new Set())
 
   const userLiqQuery = useUserLiquidityQuery()
+  const ammConfigQuery = useGetAMMConfigIdQuery(0)
   useLayoutEffect(() => {
     if (!publicKey) {
       if (GAMMA_SORT_CONFIG_PUBKEY_REQUIRED.includes(userCache.gamma.currentSort)) {
@@ -218,12 +217,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [isCardMode, viewRange, currentSort, prevIsCardMode])
   useEffect(() => {
-    if (!gammaConfig) {
-      fetchGAMMAConfig().then((config) => {
-        if (config) setGammaConfig(config)
-      })
-    }
-
     if (calculatePoolType.size == 0) {
       const abortSig = 'tokenListCalcPoolTypeGamma'
       const signal = aborter.addSignal(abortSig)
@@ -247,7 +240,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     ;(async () => {
       if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
         try {
-          const poolIdKey = await getpoolId(selectedCard)
+          const poolIdKey = await getpoolId(selectedCard,ammConfigQuery.data)
           const gammaPool = await GammaProgram.account.poolState.fetch(poolIdKey)
           setSelectedCardPool(gammaPool)
         } catch (e) {
@@ -255,13 +248,13 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       }
     })()
-  }, [GammaProgram, selectedCard])
+  }, [GammaProgram, selectedCard, ammConfigQuery.data])
 
   useEffect(() => {
     ;(async () => {
       if (GammaProgram && publicKey && Object.keys(selectedCard)?.length > 0) {
         try {
-          const poolIdKey = await getpoolId(selectedCard)
+          const poolIdKey = await getpoolId(selectedCard,ammConfigQuery.data)
           const liquidityAccountKey = await getLiquidityPoolKey(poolIdKey, publicKey)
           const liquidityAccount = await GammaProgram?.account?.userPoolLiquidity?.fetch(liquidityAccountKey)
           setSelectedCardLiquidityAcc(liquidityAccount)
@@ -270,7 +263,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       }
     })()
-  }, [GammaProgram, selectedCard, publicKey])
+  }, [GammaProgram, selectedCard, publicKey, ammConfigQuery.data])
 
   useEffect(() => {
     if (!base58PublicKey || poolsQuery.data?.allPages?.length == 0 || !selectedCard?.id) return
@@ -294,7 +287,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <GAMMAContext.Provider
       value={{
-        gammaConfig,
         slippage,
         setSlippage,
         isCustomSlippage,
