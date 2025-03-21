@@ -8,42 +8,65 @@ type SupportedConversionsType = (typeof SupportedConversions)[number]
 type SupportedValuesType = string | number | Decimal | BigNumber | BN
 
 type ParagraphType = {
-  as?: "p"
+  as?: 'p'
 } & HTMLAttributes<HTMLParagraphElement>
 type HeadingType = {
-  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6"
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 } & HTMLAttributes<HTMLHeadingElement>
 type SpanType = {
-  as?: "span"
+  as?: 'span'
 } & HTMLAttributes<HTMLSpanElement>
-type TextProps = (ParagraphType | HeadingType | SpanType)
-
+type TextProps = ParagraphType | HeadingType | SpanType
 
 type TextNumberProps = {
   value: SupportedValuesType
   type?: SupportedConversionsType
   decimals?: number
   className?: string
+  useDecimalForPrecision?: boolean
+  roundType?: Decimal.Rounding
 } & TextProps
 
-function TextNumber({ value, className, children, type = 'none', decimals = 2, as = 'p', ...props }: TextNumberProps) {
-  const convertedValue = useMemo(() => computeValue(value, type, decimals), [value, type, decimals])
-  const Comp = as;
-  return <Comp className={className} {...props}>
-    {convertedValue}{children}
-  </Comp>
+function TextNumber({
+  value,
+  className,
+  children,
+  type = 'none',
+  decimals = 2,
+  as = 'p',
+  useDecimalForPrecision = false,
+  roundType = Decimal.ROUND_DOWN,
+  ...props
+}: TextNumberProps) {
+  const convertedValue = useMemo(
+    () => computeValue(value, type, decimals, useDecimalForPrecision, roundType),
+    [value, type, decimals, useDecimalForPrecision, roundType]
+  )
+  const Comp = as
+  return (
+    <Comp className={className} {...props}>
+      {convertedValue}
+      {children}
+    </Comp>
+  )
 }
 
 export default TextNumber
 
-function computeValue(value: SupportedValuesType, type: SupportedConversionsType, decimals: number) {
+function computeValue(
+  value: SupportedValuesType,
+  type: SupportedConversionsType,
+  decimals: number,
+  useDecimalForPrecision: boolean,
+  roundType: Decimal.Rounding
+) {
   const bigNumber: Decimal = new Decimal(getStringValue(value))
   const fixedValue = bigNumber.toFixed(decimals)
   switch (type) {
     case 'comma':
       return commafyString(fixedValue)
     case 'currency':
-      return formatLargeString(bigNumber, decimals)
+      return formatLargeString(bigNumber, decimals, useDecimalForPrecision, roundType)
     case 'none':
       return fixedValue
   }
@@ -81,7 +104,12 @@ function commafyString(num: string): string {
   return str.join('.')
 }
 
-function formatLargeString(value: string | Decimal, decimals: number): string {
+function formatLargeString(
+  value: string | Decimal,
+  decimals: number,
+  useDecimalForPrecision: boolean,
+  roundType: Decimal.Rounding
+): string {
   // Handle empty string input
   if (value === '') return ''
 
@@ -106,6 +134,8 @@ function formatLargeString(value: string | Decimal, decimals: number): string {
   }
 
   // Choose formatting: one decimal if the result is an integer, two decimals otherwise.
-  const formatted = result.isInteger() ? result.toFixed(1) : result.toFixed(decimals)
+  const formatted = result.isInteger()
+    ? result.toFixed(1)
+    : result.toFixed(useDecimalForPrecision ? decimals : 2, roundType)
   return formatted.replace(/\.?0+$/, '') + suffixes[index]
 }
