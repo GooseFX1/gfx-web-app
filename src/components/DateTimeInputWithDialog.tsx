@@ -1,4 +1,3 @@
-/* eslint-disable */
 import {
   cn,
   Dialog,
@@ -53,13 +52,11 @@ const TriggerWrapper = ({
   triggerClassName?: string
 }) => {
   if (isMobile) {
-    return (
-        <DialogTrigger className={triggerClassName}>{children}</DialogTrigger>
-    )
+    return <DialogTrigger className={triggerClassName}>{children}</DialogTrigger>
   }
   return (
     <PopoverAnchor>
-        <PopoverTrigger className={triggerClassName}>{children}</PopoverTrigger>
+      <PopoverTrigger className={triggerClassName}>{children}</PopoverTrigger>
     </PopoverAnchor>
   )
 }
@@ -68,7 +65,7 @@ const ContentWrapper = ({ children, isMobile }: { isMobile: boolean; children: R
     return (
       <DialogPortal>
         <DialogContent placement={'bottom'} className={'h-auto pt-3'}>
-          <DialogCloseDefault className={'z-[100]'}/>
+          <DialogCloseDefault className={'z-[100]'} />
           <DialogBody>{children}</DialogBody>
         </DialogContent>
       </DialogPortal>
@@ -104,7 +101,7 @@ function DateTimeInputWithDialog({
         px-2.5 py-[3.5px] border-1 border-solid border-border-lightmode-secondary dark:border-border-darkmode-secondary
         bg-background-lightmode-primary dark:bg-background-darkmode-primary text-text-lightmode-tertiary
          dark:text-text-darkmode-tertiary rounded-0.75 min-h-[35px] min-w-[160px] w-full 
-         text-b2 font-semibold flex items-center justify-center
+         text-b2 font-semibold flex items-center
         `,
             computedValue &&
               `text-text-lightmode-primary dark:text-text-darkmode-primary 
@@ -124,7 +121,8 @@ function DateTimeInputWithDialog({
             row: 'flex w-full justify-between',
             day: 'text-b2',
             nav: 'ml-4'
-        }}
+          }}
+          setDrawerOpen={setIsOpen.set}
           {...rest}
         />
       </ContentWrapper>
