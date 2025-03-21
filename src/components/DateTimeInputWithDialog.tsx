@@ -1,6 +1,4 @@
-/* eslint-disable */
 import {
-  Button,
   cn,
   Dialog,
   DialogBody,
