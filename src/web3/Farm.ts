@@ -1032,3 +1032,41 @@ export const doesPoolWithMintsExist = async (
     return false
   }
 }
+
+export const claimRewards = async (
+  program: Program<Idl>,
+  userPublicKey: PublicKey,
+  pool: PublicKey,
+  rewardInfo: PublicKey,
+  rewardMint: PublicKey,
+  connection: Connection
+) => {
+  // const userRewards = await getUserRewards(program, userPublicKey)
+  const claimRewardsTxn = new Transaction()
+
+  const associatedTokenAccount = await getAssociatedTokenAddress(rewardMint, userPublicKey)
+  const accountExists = await connection.getAccountInfo(associatedTokenAccount)
+  // Create token account to hold your wrapped SOL
+  if (!accountExists)
+    claimRewardsTxn.add(
+      createAssociatedTokenAccountInstruction(userPublicKey, associatedTokenAccount, userPublicKey, rewardMint)
+    )
+
+  const tokenRewardsIX = program.instruction.claimRewards({
+    accounts: {
+      poolState: pool,
+      authority: await getAuthorityKey(),
+      rewardMint: rewardMint,
+      rewardProvider: userPublicKey,
+      rewardProvidersTokenAccount: await getAssociatedTokenAddress(rewardMint, userPublicKey),
+      rewardInfo: rewardInfo,
+      rewardVault: await getRewardVaultKey(rewardInfo),
+      systemProgram: SYSTEM,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      tokenProgram2022: TOKEN_2022_PROGRAM_ID
+    }
+  })
+  claimRewardsTxn.add(tokenRewardsIX)
+
+  return claimRewardsTxn
+}
