@@ -259,7 +259,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         return newCache
       })
       setCacheUpdateQueue({})
-    }, 500)
+    }, 200)
     return () => {
       clearTimeout(timeout)
     }

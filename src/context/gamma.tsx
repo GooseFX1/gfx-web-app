@@ -160,7 +160,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         return sortValue
       })
     },
-    [isPortfolio, publicKey]
+    [isPortfolio, publicKey, userCache]
   )
   useLayoutEffect(() => {
     if (!publicKey) {
