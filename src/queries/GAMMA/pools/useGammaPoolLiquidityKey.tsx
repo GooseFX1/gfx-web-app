@@ -16,7 +16,7 @@ function useGammaPoolLiquidityKey({ poolId, userPublicKey }: UseGammaPoolLiquidi
         [Buffer.from(USER_POOL_LIQUIDITY_PREFIX), poolId.toBuffer(), userPublicKey.toBuffer()],
         toPublicKey(GAMMA_PROGRAM_ID)
       )[0],
-    staleTime: -1,
+    staleTime: Infinity,
     enabled: !!poolId && !!userPublicKey
   })
 }

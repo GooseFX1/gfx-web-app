@@ -25,7 +25,7 @@ function useGammaPoolIdQuery({ configId, mintA, mintB }: UseGammaPoolIdQueryProp
         new PublicKey(GAMMA_PROGRAM_ID)
       )[0]
     },
-    staleTime: -1,
+    staleTime: Infinity,
     enabled: !!configId && !!mintA && !!mintB
   })
 }

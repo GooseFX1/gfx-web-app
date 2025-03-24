@@ -11,7 +11,7 @@ function useGetGammaConfigIdQuery(id = 0) {
         [Buffer.from(AMM_CONFIG), u16ToBytes(id)],
         new PublicKey(GAMMA_PROGRAM_ID)
       )[0],
-    staleTime: -1
+    staleTime: Infinity
   })
 }
 
