@@ -35,6 +35,8 @@ import useGammaPoolIdQuery from '@/queries/GAMMA/pools/useGammaPoolIdQuery'
 import useGammaPoolLiquidityKey from '@/queries/GAMMA/pools/useGammaPoolLiquidityKey'
 import useGammaProgramPoolQuery from '@/queries/GAMMA/pools/useGammaProgramPoolQuery'
 import useGammaProgramUserLiquidityQuery from '@/queries/GAMMA/pools/useGammaProgramUserLiquidityQuery'
+import { useMutation } from '@tanstack/react-query'
+import { MUTATION_KEY } from '@/queries/query.helper'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
@@ -92,16 +94,97 @@ export const DepositWithdrawSlider: FC = () => {
   const { data: updatedPoolState, refetch: refetechUpdatedPoolState } = useGammaProgramPoolQuery({
     poolId: poolIdQuery.data?.toBase58()
   })
-  const { data: selectedCardLiquidityAcc,
-    refetch: refetchSelectedCardLiquidityAcc } = useGammaProgramUserLiquidityQuery({
-    liqKey: liqKeyQuery.data
+  const { data: selectedCardLiquidityAcc, refetch: refetchSelectedCardLiquidityAcc } =
+    useGammaProgramUserLiquidityQuery({
+      liqKey: liqKeyQuery.data
+    })
+  const depositMutation = useMutation({
+    mutationKey: [MUTATION_KEY, 'gamma-deposit', selectedCard?.mintA?.address, selectedCard?.mintB?.address],
+    mutationFn: async () => {
+      const txBuilder = createTransactionBuilder()
+      const tx = await deposit(
+        userSourceDepositAmount,
+        userTargetDepositAmount,
+        transactionLPAmount,
+        slippage,
+        selectedCard,
+        publicKey,
+        GammaProgram,
+        connection,
+        userSourceTokenType,
+        userTargetTokenType,
+        ammConfigQuery.data,
+        isSolMaxDeposit
+      )
+      txBuilder.add(tx)
+      setSendingTransaction(true)
+      const poolMessage = `(${selectedCard?.mintA?.symbol}-${selectedCard?.mintB?.symbol}) pool.`
+      // eslint-disable-next-line max-len
+      const sourceAmount = `${bigNumberFormatter(
+        new BigNumber(isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount)
+      )} ${selectedCard?.mintA?.symbol}`
+      // eslint-disable-next-line max-len
+      const targetAmount = `${bigNumberFormatter(
+        new BigNumber(isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount)
+      )} ${selectedCard?.mintB?.symbol}`
+      const type = isDeposit ? 'deposited' : 'withdrew'
+      const direction = isDeposit ? 'into' : 'from'
+      const { success, txSig } = await sendTransaction(txBuilder, {
+        successMessage: `You successfully ${type} ${sourceAmount}, ${targetAmount} ${direction} ${poolMessage}`
+      })
+      //console.log('success', success)
+      console.log('DepositResponse', success)
+      return txSig
+    },
+    onSuccess: (data) => {
+      refetechUpdatedPoolState()
+      refetchSelectedCardLiquidityAcc()
+      setSendingTransaction(false)
+      setUserSourceDepositAmount('')
+      setUserTargetDepositAmount('')
+      forceCronAndUpdateLocalData(data)
+    },
+    onError: (err) => {
+      //off(connectionId)
+      console.log('An error occurred while depositing!', err)
+      setSendingTransaction(false)
+    }
   })
-  console.log({
-    selectedCardLiquidityAcc,
-    updatedPoolState,
-    liqKeyQuery: liqKeyQuery.data,
-    poolIdQuery: poolIdQuery.data,
-    ammConfigQuery: ammConfigQuery.data
+  const withdrawMutation = useMutation({
+    mutationKey: [MUTATION_KEY, 'gamma-withdraw', selectedCard?.mintA?.address, selectedCard?.mintB?.address],
+    mutationFn: async () => {
+      const txBuilder = createTransactionBuilder()
+      const tx = await withdraw(
+        userSourceWithdrawAmount,
+        userTargetWithdrawAmount,
+        transactionLPAmount,
+        slippage,
+        selectedCard,
+        publicKey,
+        GammaProgram,
+        connection,
+        userSourceTokenType,
+        userTargetTokenType,
+        wallet,
+        ammConfigQuery.data
+      )
+      txBuilder.add(tx)
+      setSendingTransaction(true)
+      const { txSig } = await sendTransaction(txBuilder, undefined, undefined, undefined, true)
+      return txSig
+    },
+    onSettled: () => {
+      setSendingTransaction(false)
+    },
+    onSuccess: (data) => {
+      setSendingTransaction(false)
+      setUserSourceWithdrawAmount('')
+      setUserTargetWithdrawAmount('')
+      setActionType('')
+      refetechUpdatedPoolState()
+      refetchSelectedCardLiquidityAcc()
+      forceCronAndUpdateLocalData(data)
+    }
   })
   useEffect(() => {
     try {
@@ -418,113 +501,6 @@ export const DepositWithdrawSlider: FC = () => {
     ]
   )
 
-  const handleDeposit = async () => {
-    try {
-      const txBuilder = createTransactionBuilder()
-      const tx = await deposit(
-        userSourceDepositAmount,
-        userTargetDepositAmount,
-        transactionLPAmount,
-        slippage,
-        selectedCard,
-        publicKey,
-        GammaProgram,
-        connection,
-        userSourceTokenType,
-        userTargetTokenType,
-        ammConfigQuery.data,
-        isSolMaxDeposit
-      )
-      txBuilder.add(tx)
-      setSendingTransaction(true)
-      const poolMessage = `(${selectedCard?.mintA?.symbol}-${selectedCard?.mintB?.symbol}) pool.`
-      // eslint-disable-next-line max-len
-      const sourceAmount = `${bigNumberFormatter(
-        new BigNumber(isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount)
-      )} ${selectedCard?.mintA?.symbol}`
-      // eslint-disable-next-line max-len
-      const targetAmount = `${bigNumberFormatter(
-        new BigNumber(isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount)
-      )} ${selectedCard?.mintB?.symbol}`
-      const type = isDeposit ? 'deposited' : 'withdrew'
-      const direction = isDeposit ? 'into' : 'from'
-      const { success, txSig } = await sendTransaction(txBuilder, {
-        successMessage: `You successfully ${type} ${sourceAmount}, ${targetAmount} ${direction} ${poolMessage}`
-      })
-      //console.log('success', success)
-      console.log('DepositResponse', success)
-      if (!success) {
-        //off(connectionId)
-        console.log('An error occurred while depositing!')
-        setSendingTransaction(false)
-        return
-      } else {
-        refetechUpdatedPoolState()
-        refetchSelectedCardLiquidityAcc()
-        setSendingTransaction(false)
-        setUserSourceDepositAmount('')
-        setUserTargetDepositAmount('')
-        await forceCronAndUpdateLocalData(txSig)
-
-        //setOpenDepositWithdrawSlider(false)
-        //setSelectedCardLiquidityAcc({})
-      }
-    } catch (e) {
-      setSendingTransaction(false)
-      console.log('An error occurred while depositing.', e)
-    }
-  }
-
-  const handleWithdraw = async () => {
-    try {
-      const txBuilder = createTransactionBuilder()
-      const tx = await withdraw(
-        userSourceWithdrawAmount,
-        userTargetWithdrawAmount,
-        transactionLPAmount,
-        slippage,
-        selectedCard,
-        publicKey,
-        GammaProgram,
-        connection,
-        userSourceTokenType,
-        userTargetTokenType,
-        wallet,
-        ammConfigQuery.data
-      )
-      txBuilder.add(tx)
-      setSendingTransaction(true)
-      const { success, txSig } = await sendTransaction(txBuilder, undefined, undefined, undefined, true)
-
-      if (!success) {
-        //off(connectionId)
-        console.log('An error occurred while withdrawing!')
-        setSendingTransaction(false)
-        return
-      } else {
-        setSendingTransaction(false)
-        setUserSourceWithdrawAmount('')
-        setUserTargetWithdrawAmount('')
-        setActionType('')
-        refetechUpdatedPoolState()
-        refetchSelectedCardLiquidityAcc()
-        await forceCronAndUpdateLocalData(txSig)
-        // setOpenDepositWithdrawSlider(false)
-        // setSelectedCardLiquidityAcc({})
-        // setModeOfOperation(ModeOfOperation.DEPOSIT)
-      }
-    } catch (e) {
-      setSendingTransaction(false)
-      console.log('An error occurred while withdrawing.', e)
-    }
-  }
-
-  // const handleClaim = () => {
-  //   console.log('withdraw')
-  //   setIsButtonLoading.on()
-  //   setActionType('claim')
-  // }
-
   //eslint-disable-next-line
   const handleProcessStart = (type: 'claim' | 'withdraw') => {
     return () => {
@@ -590,7 +566,7 @@ export const DepositWithdrawSlider: FC = () => {
             }}
             title={actionModalTitle}
             actionLabel={actionLabel}
-            onActionClick={!isDeposit ? handleWithdraw : handleDeposit}
+            onActionClick={!isDeposit ? withdrawMutation.mutate : depositMutation.mutate}
             actionType={actionType}
             loading={sendingTransaction}
           >
@@ -683,7 +659,7 @@ export const DepositWithdrawSlider: FC = () => {
             <StickyFooter
               disableActionButton={isActionButtonDisabled}
               isLoading={sendingTransaction || isUserTyping}
-              onActionClick={isDeposit ? handleDeposit : handleProcessStart('withdraw')}
+              onActionClick={isDeposit ? depositMutation.mutate : handleProcessStart('withdraw')}
               isDeposit={isDeposit}
               // canClaim={true || isClaim}
               // claimText={'Claim 0.5 SOL + 12.0 USDC'}
