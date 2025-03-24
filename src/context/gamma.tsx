@@ -29,7 +29,7 @@ import {
 } from '@/pages/FarmV4/constants'
 import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
-import { getLiquidityPoolKey, getpoolId } from '@/web3/Farm'
+import { getpoolId } from '@/web3/Farm'
 import useBoolean from '@/hooks/useBoolean'
 import { aborter } from '@/utils'
 import usePrevious from '@/hooks/usePrevious'
@@ -72,8 +72,6 @@ interface GAMMADataModel {
   filteredPools: GAMMAPoolWithUserLiquidity[]
   maxPoolsReached: boolean
   sortConfig: GAMMASortConfig
-  selectedCardLiquidityAcc: any
-  setSelectedCardLiquidityAcc: Dispatch<SetStateAction<any>>
   createPoolType: string
   setCreatePoolType: Dispatch<SetStateAction<string>>
   isConfettiVisible: boolean
@@ -131,7 +129,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
   const [isPortfolio, setIsPortfolio] = useBoolean(false)
 
-  const [selectedCardLiquidityAcc, setSelectedCardLiquidityAcc] = useState<any>({})
   const [calculatePoolType, setCalculatePoolType] = useState<Set<string>>(new Set())
 
   const userLiqQuery = useUserLiquidityQuery()
@@ -271,21 +268,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [GammaProgram, selectedCard, ammConfigQuery.data])
 
   useEffect(() => {
-    ;(async () => {
-      if (GammaProgram && publicKey && Object.keys(selectedCard)?.length > 0) {
-        try {
-          const poolIdKey = await getpoolId(selectedCard, ammConfigQuery.data)
-          const liquidityAccountKey = await getLiquidityPoolKey(poolIdKey, publicKey)
-          const liquidityAccount = await GammaProgram?.account?.userPoolLiquidity?.fetch(liquidityAccountKey)
-          setSelectedCardLiquidityAcc(liquidityAccount)
-        } catch (e) {
-          console.log(e)
-        }
-      }
-    })()
-  }, [GammaProgram, selectedCard, publicKey, ammConfigQuery.data])
-
-  useEffect(() => {
     if (!base58PublicKey || poolsQuery.data?.allPages?.length == 0 || !selectedCard?.id) return
     const pool = poolsQuery.data.allPages.filter((pool) => pool.id === selectedCard.id)
     if (pool.length == 0) return
@@ -339,8 +321,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isSearchActive,
         maxPoolsReached,
         sortConfig,
-        selectedCardLiquidityAcc,
-        setSelectedCardLiquidityAcc,
         createPoolType,
         setCreatePoolType,
         isConfettiVisible,
