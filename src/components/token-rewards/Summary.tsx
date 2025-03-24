@@ -4,7 +4,7 @@ import { loadIconImage, numberFormatter } from '@/utils'
 import { useConnectionConfig, usePriceFeedFarm, useDarkMode } from '@/context'
 import { JupToken } from '@/pages/FarmV4/constants'
 import dayjs from 'dayjs'
-import { useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import Decimal from 'decimal.js'
 import { Button, Icon } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
@@ -24,6 +24,7 @@ interface SummaryProps {
   activeStep?: number
   currentStep?: number
   setCurrentStep?: (step: number) => void
+  setOpen?: Dispatch<SetStateAction<boolean>>
 }
 
 export const Summary = ({
@@ -35,7 +36,8 @@ export const Summary = ({
   hideTitle,
   activeStep,
   currentStep,
-  setCurrentStep
+  setCurrentStep,
+  setOpen
 }: SummaryProps) => {
   const { mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
@@ -94,6 +96,8 @@ export const Summary = ({
         console.log('An error occurred while Swapping!')
       } else {
         await forceCronUpdateWithConnectionAndTxSig(connection, txSig)
+        //close the rewards drawer when the txn lands successfully 
+        setOpen(false)
       }
     } catch (e) {
       console.log('An error occurred while depositing.', e)
