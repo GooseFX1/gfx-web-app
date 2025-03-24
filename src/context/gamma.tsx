@@ -70,7 +70,7 @@ interface GAMMADataModel {
   isLoadingPools: boolean
   isSearchActive: boolean
   filteredPools: GAMMAPoolWithUserLiquidity[]
-  poolsHasMoreData: boolean
+  maxPoolsReached: boolean
   sortConfig: GAMMASortConfig
   selectedCardLiquidityAcc: any
   setSelectedCardLiquidityAcc: Dispatch<SetStateAction<any>>
@@ -217,7 +217,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     poolsQuery.isLoading ||
     poolsQuery.isFetchingPreviousPage ||
     poolsQuery.isFetchingNextPage
-  const poolsHasMoreData = !poolsQuery?.data.maxPagesReached
+  const maxPoolsReached = poolsQuery?.data.maxPagesReached
 
   const handlePoolSort = useCallback(
     (id: string) => {
@@ -339,7 +339,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isLoadingPools,
         totalPoolCount,
         isSearchActive,
-        poolsHasMoreData,
+        maxPoolsReached,
         sortConfig,
         selectedCardLiquidityAcc,
         setSelectedCardLiquidityAcc,

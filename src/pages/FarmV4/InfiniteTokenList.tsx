@@ -42,11 +42,7 @@ export function InfiniteTokenList({
   const itemCount = !maxTokensReached ? tokenList.length + 1 : tokenList.length
   // Only load 1 page of items at a time.
   // Pass an empty callback to InfiniteLoader in case it asks us to load more than once.
-  const loadMoreItems = isLoading
-    ? () => {
-        // empty func to prevent re-calls
-      }
-    : () => {
+  const loadMoreItems = () => {
         if (isLoading || maxTokensReached) return
         fetchNextPage()
       }
