@@ -21,7 +21,7 @@ type MintSearchProps = {
   mintB?: string,
   enabled?: boolean
 }
-type UserPortfolioQueryProps = MintSearchProps & PoolsQueryProps
+type UserPortfolioQueryProps = MintSearchProps & Omit<PoolsQueryProps, "showDeposited">
 type PoolsAPIResponse = InfiniteDataAPIResponse<GAMMAPortfolioPool[]>
 type PoolsQueryResponse = InfiniteDataQueryResponse<PoolsAPIResponse, GAMMAPortfolioPool>
 
@@ -32,7 +32,6 @@ function useUserPortfolioPools({
   sortBy,
   sortDirection,
   showCreated,
-  showDeposited,
   enabled = true
 }: UserPortfolioQueryProps) {
   const { base58PublicKey } = useWalletBalance()
@@ -47,7 +46,6 @@ function useUserPortfolioPools({
     sortBy,
     sortDirection,
     showCreated,
-    showDeposited,
     enabled
   )
 
@@ -63,7 +61,6 @@ function useUserPortfolioPools({
           sortBy: sortBy,
           sortDirection: sortDirection,
           showCreated: showCreated,
-          showDeposited: showDeposited,
           userPublicKey: base58PublicKey,
           poolType: poolType
         })
@@ -75,7 +72,6 @@ function useUserPortfolioPools({
           sortBy: sortBy,
           sortDirection: sortDirection,
           showCreated: showCreated,
-          showDeposited: showDeposited,
           userPublicKey: base58PublicKey
         })
       }
@@ -108,7 +104,6 @@ async function fetchPoolsByMints({
   sortBy,
   sortDirection,
   showCreated,
-  showDeposited,
   userPublicKey,
   poolType,
   pageParam = 1
@@ -119,7 +114,7 @@ async function fetchPoolsByMints({
   const poolTypeQuery = `&poolType=${poolType}`
   let userQuery = ``
   if (userPublicKey) {
-    userQuery = `&userPublicKey=${userPublicKey}&showCreated=${showCreated}&showDeposited=${showDeposited}`
+    userQuery = `&userPublicKey=${userPublicKey}&showCreated=${showCreated}`
   }
   const response = (await fetch(
     getGAMMARootUrl() +
@@ -146,7 +141,6 @@ async function fetchPools({
   sortBy,
   sortDirection,
   showCreated,
-  showDeposited,
   userPublicKey,
   poolType,
   pageParam = 1
@@ -156,7 +150,7 @@ async function fetchPools({
   const poolTypeQuery = `&poolType=${poolType}`
   let userQuery = ``
   if (userPublicKey) {
-    userQuery = `&userPublicKey=${userPublicKey}&showCreated=${showCreated}&showDeposited=${showDeposited}`
+    userQuery = `&userPublicKey=${userPublicKey}&showCreated=${showCreated}`
   }
   const response = (await fetch(
     getGAMMARootUrl() + GAMMA_ENDPOINTS_V1.PORTFOLIO_POOLS + pageQuery + sortQuery + userQuery + poolTypeQuery,

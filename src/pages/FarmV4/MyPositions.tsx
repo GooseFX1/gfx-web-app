@@ -192,7 +192,7 @@ const MyPositions: FC<{
   )
 }
 const MyPositionItems: FC = () => {
-  const { selectedTokens, sortConfig, showDeposited, showCreatedPools, currentPoolType, isPortfolio, viewRange } =
+  const { selectedTokens, sortConfig, showCreatedPools, currentPoolType, isPortfolio, viewRange } =
     useGamma()
   const query = useUserPortfolioPools({
     mintA: selectedTokens[0]?.address,
@@ -201,7 +201,6 @@ const MyPositionItems: FC = () => {
     sortBy: getSortKey(sortConfig, isPortfolio, viewRange),
     sortDirection: sortConfig.direction.toLowerCase(),
     showCreated: showCreatedPools,
-    showDeposited,
     enabled: isPortfolio
   })
 
