@@ -65,7 +65,7 @@ function useNetworkStatus(): NetworkStatusReturn {
         return -1
       }
     },
-    staleTime: INTERVALS.MINUTE * 5,
+    staleTime: INTERVALS.MINUTE,
   })
 
   const mappedStatus = useMemo(() => {
