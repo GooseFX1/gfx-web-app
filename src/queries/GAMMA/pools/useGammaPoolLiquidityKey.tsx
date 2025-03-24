@@ -10,7 +10,7 @@ type UseGammaPoolLiquidityKeyQueryProps = {
 
 function useGammaPoolLiquidityKey({ poolId, userPublicKey }: UseGammaPoolLiquidityKeyQueryProps) {
   return useQuery({
-    queryKey: [QUERY_KEY, 'gamma-pool-liq-key', poolId, userPublicKey],
+    queryKey: [QUERY_KEY, 'gamma-pool-liq-key', poolId?.toBase58(), userPublicKey?.toBase58()],
     queryFn: () =>
       PublicKey.findProgramAddressSync(
         [Buffer.from(USER_POOL_LIQUIDITY_PREFIX), poolId.toBuffer(), userPublicKey.toBuffer()],

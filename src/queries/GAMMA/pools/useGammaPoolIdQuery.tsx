@@ -9,7 +9,7 @@ type UseGammaPoolIdQueryProps = {
 }
 function useGammaPoolIdQuery({ configId, mintA, mintB }: UseGammaPoolIdQueryProps) {
   return useQuery({
-    queryKey: [QUERY_KEY, 'gamma-pool-id', mintA, mintB, configId],
+    queryKey: [QUERY_KEY, 'gamma-pool-id', mintA, mintB, configId?.toBase58()],
     queryFn: () => {
       if (!configId || !mintA || !mintB) return null
       const mintAPublicKey = new PublicKey(mintA)

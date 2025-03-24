@@ -92,7 +92,7 @@ export const DepositWithdrawSlider: FC = () => {
     userPublicKey: publicKey
   })
   const { data: updatedPoolState, refetch: refetechUpdatedPoolState } = useGammaProgramPoolQuery({
-    poolId: poolIdQuery.data?.toBase58()
+    poolId: poolIdQuery.data
   })
   const { data: selectedCardLiquidityAcc, refetch: refetchSelectedCardLiquidityAcc } =
     useGammaProgramUserLiquidityQuery({
