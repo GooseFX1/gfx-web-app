@@ -170,6 +170,7 @@ export function InfiniteTokenList({
           ref={ref}
           height={clamp(tokenList.length * 58, isLoading ? 58 * 5 : 0, 396)}
           itemSize={58}
+          overscanCount={20}
         >
           {Item}
         </FixedSizeList>

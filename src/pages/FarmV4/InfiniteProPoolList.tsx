@@ -71,6 +71,7 @@ export const InfiniteProPoolScrollView: FC<InfiniteProPoolListScrollViewProps<un
       loadMoreItems={loadMoreItems}
       threshold={1}
       ref={infiniteLoaderRef}
+
     >
       {({ onItemsRendered, ref }) => (
         <FixedSizeList
@@ -79,6 +80,7 @@ export const InfiniteProPoolScrollView: FC<InfiniteProPoolListScrollViewProps<un
           className=""
           itemCount={effectiveItemCount}
           onItemsRendered={onItemsRendered}
+          overscanCount={20}
           ref={ref}
         >
           {Item}
