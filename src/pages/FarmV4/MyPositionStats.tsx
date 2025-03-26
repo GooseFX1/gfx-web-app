@@ -10,7 +10,7 @@ export const MyPositionStats: FC<{
   withdrawableBalanceA: BN
   withdrawableBalanceB: BN
 }> = ({ withdrawableBalanceA, withdrawableBalanceB }): ReactElement => {
-  const { selectedCard, selectedCardPool } = useGamma()
+  const { selectedCard } = useGamma()
   const { mode } = useDarkMode()
 
   return (
@@ -44,7 +44,7 @@ export const MyPositionStats: FC<{
           {bigNumberFormatter(
             new BigNumber(
               new Decimal(withdrawableBalanceA?.toString())
-                .div(Math.pow(10, selectedCardPool?.mint0Decimals || 0))
+                .div(Math.pow(10, selectedCard?.mintA?.decimals || 0))
                 .toString()
             )
           )}
@@ -68,7 +68,7 @@ export const MyPositionStats: FC<{
           {bigNumberFormatter(
             new BigNumber(
               new Decimal(withdrawableBalanceB?.toString())
-                .div(Math.pow(10, selectedCardPool?.mint1Decimals || 0))
+                .div(Math.pow(10, selectedCard?.mintA?.decimals || 0))
                 .toString()
             )
           )}
