@@ -31,7 +31,7 @@ import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
 import { getLiquidityPoolKey, getpoolId } from '@/web3/Farm'
 import useBoolean from '@/hooks/useBoolean'
-import { aborter, clamp } from '@/utils'
+import { aborter } from '@/utils'
 import usePrevious from '@/hooks/usePrevious'
 import useMultiSelect from '@/hooks/useMultiSelect'
 import useUserLiquidityQuery from '@/queries/GAMMA/user/useUserLiquidityQuery'
@@ -137,31 +137,28 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const userLiqQuery = useUserLiquidityQuery()
   const ammConfigQuery = useGetAMMConfigIdQuery(0)
 
-  const setCurrentSort = useCallback(
-    (value: string) => {
-      let sortValue = value;
-      if (!publicKey && isPortfolio && GAMMA_SORT_PORTFOLIO_BLACKLIST.includes(value)) {
-        sortValue = '9';
-      } else if (!isPortfolio && GAMMA_SORT_CONFIG_BLACKLIST.includes(value)) {
-        sortValue = '1';
-      }
+  const setCurrentSort = (value: string) => {
+    let sortValue = value
+    if (!publicKey && isPortfolio && GAMMA_SORT_PORTFOLIO_BLACKLIST.includes(value)) {
+      sortValue = '9'
+    } else if (!isPortfolio && GAMMA_SORT_CONFIG_BLACKLIST.includes(value)) {
+      sortValue = '1'
+    }
 
-      setCurrentSortState((prevState) => {
-        if (prevState === sortValue) {
-          return prevState
+    setCurrentSortState((prevState) => {
+      if (prevState === sortValue) {
+        return prevState
+      }
+      updateUserCache({
+        gamma: {
+          ...userCache.gamma,
+          currentSort: sortValue
         }
-        updateUserCache({
-          gamma: {
-            ...userCache.gamma,
-            currentSort: sortValue
-          }
-        })
-        // sets value to context
-        return sortValue
       })
-    },
-    [isPortfolio, publicKey, userCache]
-  )
+      // sets value to context
+      return sortValue
+    })
+  }
   useLayoutEffect(() => {
     if (!publicKey) {
       if (GAMMA_SORT_CONFIG_PUBKEY_REQUIRED.includes(userCache.gamma.currentSort)) {
@@ -172,13 +169,11 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [createPoolType, setCreatePoolType] = useState<string>('')
   const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
   const [viewRange, setViewRange] = useState<ViewRange>(0)
-  const sortConfig = useMemo(() => {
-    const key = isPortfolio ? '9' : '1' // defaulting as per config
-    return (
-      GAMMA_SORT_CONFIG_MAP.get(key) ??
-      GAMMA_SORT_CONFIG[clamp(parseInt(key) - 1, 0, GAMMA_SORT_CONFIG.length - 1)]
-    )
-  }, [currentSort, isPortfolio])
+  const sortConfig = useMemo(
+    () =>
+      GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[isPortfolio ? GAMMA_SORT_CONFIG.length - 2 : 0],
+    [currentSort, isPortfolio]
+  )
   const [isCardMode, setIsCardMode] = useState<string>(userCache.gamma.viewMode)
   const prevIsCardMode = usePrevious(isCardMode)
   const {
@@ -210,7 +205,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     sortDirection: sortConfig.direction.toLowerCase(),
     showCreated: showCreatedPools,
     enabled: isPortfolio
-  });
+  })
   const totalPoolCount = poolsQuery.data.totalItems
   const isLoadingPools =
     poolsQuery.isFetching ||
@@ -255,6 +250,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     if (!isPortfolio) {
       setShowDeposited(false)
+      setCurrentSort('1')
+    } else {
+      setCurrentSort('9')
     }
   }, [isPortfolio])
 
