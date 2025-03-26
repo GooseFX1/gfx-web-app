@@ -102,7 +102,7 @@ function usePoolsQuery({
       const response: PoolsQueryResponse = {
         ...data,
         allPages: attachUserLiquidity(flatData, userLiqQuery.data, mintA, mintB),
-        maxPagesReached: lastPage?.currentPage != lastPage?.totalPages,
+        maxPagesReached: lastPage?.currentPage >= lastPage?.totalPages,
         totalItems: lastPage?.totalItems ?? 0
       }
       return response

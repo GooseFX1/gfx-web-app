@@ -84,7 +84,7 @@ function useUserPortfolioPools({
 
       return {
         allPages: flatPages,
-        maxPagesReached: lastPage?.currentPage != lastPage?.totalPages,
+        maxPagesReached: lastPage?.currentPage >= lastPage?.totalPages,
         ...data
       }
     },

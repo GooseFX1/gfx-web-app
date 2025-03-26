@@ -241,8 +241,7 @@ function PoolSelectInput({
     pools: items,
     isLoadingPools,
     poolsHasMoreData,
-    loadMorePools,
-    totalPoolCount
+    loadMorePools
   } = usePools({
     poolType: 'all',
     sortKey: 'volume24h',
@@ -349,11 +348,9 @@ function PoolSelectInput({
                   ) : null
                 }
                 items={items}
-                currentSort="desc"
-                poolsHasMoreData={poolsHasMoreData}
+                maxPoolsReached={!poolsHasMoreData}
                 fetchNextPage={loadMorePools}
                 isLoadingPools={isLoadingPools}
-                totalPoolCount={totalPoolCount}
               />
             </DropdownMenuContent>
           </DropdownMenu>

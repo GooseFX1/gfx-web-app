@@ -1,5 +1,5 @@
 import { useGamma } from '@/context'
-import React, { FC, HTMLAttributes, useEffect, useRef, useState } from 'react'
+import React, { FC, HTMLAttributes, useEffect, useRef } from 'react'
 import InfiniteLoader from 'react-window-infinite-loader'
 import { FixedSizeList } from 'react-window'
 import { FarmRowLoaderText } from './FarmRow'
@@ -9,31 +9,25 @@ type InfiniteProPoolListScrollViewProps<T> = {
   render: (item: T, index: number) => JSX.Element
   itemPadding?: number
   items: T[]
-  currentSort: string
-  poolsHasMoreData: boolean
+  maxPoolsReached: boolean
   fetchNextPage: () => void
   isLoadingPools: boolean
-  totalPoolCount: number
 } & HTMLAttributes<HTMLDivElement>
 
 export const InfiniteProPoolScrollView: FC<InfiniteProPoolListScrollViewProps<unknown>> = ({
   render,
   itemPadding: ITEM_PADDING = 8,
   items,
-  currentSort,
-  poolsHasMoreData,
+  maxPoolsReached,
   fetchNextPage,
   isLoadingPools,
-  totalPoolCount
 }): JSX.Element => {
-  const [showingLoader, setShowingLoader] = useState(false)
-
-  const effectiveItemCount = items.length + (poolsHasMoreData ? 1 : 0)
+  const effectiveItemCount = items.length + (!maxPoolsReached ? 1 : 0)
 
   const infiniteLoaderRef = useRef(null)
   const hasMountedRef = useRef(false)
 
-  const isItemLoaded = (index) => index < items.length || !poolsHasMoreData
+  const isItemLoaded = (index) => index < items.length || maxPoolsReached
 
   // Each time the sort prop changed we called the method resetloadMoreItemsCache to clear the cache
   useEffect(() => {
@@ -43,22 +37,14 @@ export const InfiniteProPoolScrollView: FC<InfiniteProPoolListScrollViewProps<un
       if (infiniteLoaderRef.current) {
         infiniteLoaderRef.current.resetloadMoreItemsCache()
       }
-      setShowingLoader(false)
     }
     hasMountedRef.current = true
-  }, [currentSort])
+  }, [render,items])
 
   const loadMoreItems = () => {
-    if (isLoadingPools) return
-    setShowingLoader(true)
+    if (isLoadingPools || maxPoolsReached) return
     fetchNextPage()
   }
-
-  useEffect(() => {
-    if (!isLoadingPools && showingLoader) {
-      setShowingLoader(false)
-    }
-  }, [isLoadingPools, items.length])
 
   // Render an item or a loading indicator.
   const Item = ({ index, style }: { index: number; style: CSSProperties }) => {
@@ -73,30 +59,28 @@ export const InfiniteProPoolScrollView: FC<InfiniteProPoolListScrollViewProps<un
       return null
     }
 
-    if (index < items.length) {
-      return <div style={style}>{render(items[index], index)}</div>
-    }
-
-    return <div style={style} />
+    return <div style={style}>{render(items[index], index)}</div>
   }
 
-  const windowHeight = Math.min(10, effectiveItemCount) * 60 + Math.min(10, effectiveItemCount) * ITEM_PADDING
+  const windowHeight = Math.min(10, effectiveItemCount) * (60 + ITEM_PADDING)
 
   return (
     <InfiniteLoader
       isItemLoaded={isItemLoaded}
-      itemCount={totalPoolCount}
+      itemCount={effectiveItemCount}
       loadMoreItems={loadMoreItems}
       threshold={1}
       ref={infiniteLoaderRef}
+
     >
       {({ onItemsRendered, ref }) => (
         <FixedSizeList
           height={windowHeight}
           itemSize={60 + ITEM_PADDING}
-          className="List"
+          className=""
           itemCount={effectiveItemCount}
           onItemsRendered={onItemsRendered}
+          overscanCount={20}
           ref={ref}
         >
           {Item}
@@ -117,21 +101,17 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
 }): JSX.Element => {
   const {
     filteredPools: items,
-    currentSort,
-    poolsHasMoreData,
+    maxPoolsReached,
     isLoadingPools,
-    totalPoolCount,
     poolsQuery
   } = useGamma()
-
+  console.log({data: poolsQuery.data})
   return (
     <InfiniteProPoolScrollView
       items={items}
-      currentSort={currentSort}
-      poolsHasMoreData={poolsHasMoreData}
+      maxPoolsReached={maxPoolsReached}
       fetchNextPage={poolsQuery.fetchNextPage}
       isLoadingPools={isLoadingPools}
-      totalPoolCount={totalPoolCount}
       render={render}
       itemPadding={ITEM_PADDING}
     />
