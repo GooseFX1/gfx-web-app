@@ -68,7 +68,7 @@ export const MyPositionStats: FC<{
           {bigNumberFormatter(
             new BigNumber(
               new Decimal(withdrawableBalanceB?.toString())
-                .div(Math.pow(10, selectedCard?.mintA?.decimals || 0))
+                .div(Math.pow(10, selectedCard?.mintB?.decimals || 0))
                 .toString()
             )
           )}
