@@ -7,6 +7,7 @@ export function getQueryKeys(key: string, ...args: any[]) {
 
 export const INFINITE_QUERY_KEY = 'infiniteQueryKey' as const
 export const QUERY_KEY = 'queryKey' as const
+export const MUTATION_KEY = 'mutationKey' as const
 export const DEFAULT_INFINITE_QUERY_RESPONSE = {
   pages: [],
   allPages: [],

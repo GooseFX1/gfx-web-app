@@ -27,9 +27,7 @@ import {
   Pool,
   POOL_TYPE
 } from '@/pages/FarmV4/constants'
-import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
-import { getLiquidityPoolKey, getpoolId } from '@/web3/Farm'
 import useBoolean from '@/hooks/useBoolean'
 import { aborter } from '@/utils'
 import usePrevious from '@/hooks/usePrevious'
@@ -37,7 +35,6 @@ import useMultiSelect from '@/hooks/useMultiSelect'
 import useUserLiquidityQuery from '@/queries/GAMMA/user/useUserLiquidityQuery'
 import usePoolsQuery, { UsePoolQueryResponse } from '@/queries/GAMMA/pools/usePoolsQuery'
 import { getSortKey } from '@/queries/GAMMA/gammaQueries.helpers'
-import useGetAMMConfigIdQuery from '@/queries/GAMMA/pools/useGetGammaConfigIdQuery'
 import useUserPortfolioPools from '@/queries/GAMMA/pools/useUserPortfolioPools'
 
 type ViewRange = 0 | 1 | 2
@@ -52,8 +49,6 @@ interface GAMMADataModel {
   setOpenDepositWithdrawSlider: Dispatch<SetStateAction<boolean>>
   currentPoolType: Pool
   setCurrentPoolType: Dispatch<SetStateAction<Pool>>
-  selectedCardPool: any
-  setSelectedCardPool: Dispatch<SetStateAction<any>>
   modeOfOperation: string
   setModeOfOperation: Dispatch<SetStateAction<string>>
   totalPoolCount: number
@@ -72,8 +67,6 @@ interface GAMMADataModel {
   filteredPools: GAMMAPoolWithUserLiquidity[]
   maxPoolsReached: boolean
   sortConfig: GAMMASortConfig
-  selectedCardLiquidityAcc: any
-  setSelectedCardLiquidityAcc: Dispatch<SetStateAction<any>>
   createPoolType: string
   setCreatePoolType: Dispatch<SetStateAction<string>>
   isConfettiVisible: boolean
@@ -120,8 +113,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [selectedCard, setSelectedCard] = useState<any>({})
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
   const [currentPoolType, setCurrentPoolType] = useState<Pool>(POOL_TYPE.all)
-  const { GammaProgram } = usePriceFeedFarm()
-  const [selectedCardPool, setSelectedCardPool] = useState<any>({})
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [sendingTransaction, setSendingTransaction] = useState<boolean>(false)
   const [searchTokens, setSearchTokens] = useState<string>('')
@@ -131,11 +122,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
   const [isPortfolio, setIsPortfolio] = useBoolean(false)
 
-  const [selectedCardLiquidityAcc, setSelectedCardLiquidityAcc] = useState<any>({})
   const [calculatePoolType, setCalculatePoolType] = useState<Set<string>>(new Set())
 
   const userLiqQuery = useUserLiquidityQuery()
-  const ammConfigQuery = useGetAMMConfigIdQuery(0)
 
   const setCurrentSort = (value: string) => {
     let sortValue = value
@@ -257,35 +246,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [isPortfolio])
 
   useEffect(() => {
-    ;(async () => {
-      if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
-        try {
-          const poolIdKey = await getpoolId(selectedCard, ammConfigQuery.data)
-          const gammaPool = await GammaProgram.account.poolState.fetch(poolIdKey)
-          setSelectedCardPool(gammaPool)
-        } catch (e) {
-          console.log(e)
-        }
-      }
-    })()
-  }, [GammaProgram, selectedCard, ammConfigQuery.data])
-
-  useEffect(() => {
-    ;(async () => {
-      if (GammaProgram && publicKey && Object.keys(selectedCard)?.length > 0) {
-        try {
-          const poolIdKey = await getpoolId(selectedCard, ammConfigQuery.data)
-          const liquidityAccountKey = await getLiquidityPoolKey(poolIdKey, publicKey)
-          const liquidityAccount = await GammaProgram?.account?.userPoolLiquidity?.fetch(liquidityAccountKey)
-          setSelectedCardLiquidityAcc(liquidityAccount)
-        } catch (e) {
-          console.log(e)
-        }
-      }
-    })()
-  }, [GammaProgram, selectedCard, publicKey, ammConfigQuery.data])
-
-  useEffect(() => {
     if (!base58PublicKey || poolsQuery.data?.allPages?.length == 0 || !selectedCard?.id) return
     const pool = poolsQuery.data.allPages.filter((pool) => pool.id === selectedCard.id)
     if (pool.length == 0) return
@@ -320,10 +280,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setOpenDepositWithdrawSlider,
         currentPoolType,
         setCurrentPoolType,
-        selectedCardPool,
         modeOfOperation,
         setModeOfOperation,
-        setSelectedCardPool,
         sendingTransaction,
         setSendingTransaction,
         searchTokens,
@@ -339,8 +297,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isSearchActive,
         maxPoolsReached,
         sortConfig,
-        selectedCardLiquidityAcc,
-        setSelectedCardLiquidityAcc,
         createPoolType,
         setCreatePoolType,
         isConfettiVisible,

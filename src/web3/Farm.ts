@@ -315,11 +315,11 @@ const getAccountsForCreatePool = async (
   return accountObj
 }
 
-export const calculateOtherTokenAndLPAmount = async (
+export const calculateOtherTokenAndLPAmount = (
   givenTokenAmount: string,
   tokenType: TokenType,
   poolState: any
-): Promise<{ lpTokenAmount: BN; otherTokenAmountInString: string }> => {
+): { lpTokenAmount: BN; otherTokenAmountInString: string } => {
   try {
     if (!givenTokenAmount || +givenTokenAmount <= 0) {
       return { lpTokenAmount: new BN(0), otherTokenAmountInString: '' }
@@ -375,10 +375,10 @@ export const calculateOtherTokenAndLPAmount = async (
   }
 }
 
-export const lpTokensToTradingTokens = async (
+export const lpTokensToTradingTokens = (
   lpTokenAmount: BN,
   poolState: any
-): Promise<{ tokenAmount0: BN; tokenAmount1: BN }> => {
+): { tokenAmount0: BN; tokenAmount1: BN } => {
   try {
     const lpTokenSupply = poolState?.lpSupply
     if (lpTokenSupply.eq(new BN(0))) {
