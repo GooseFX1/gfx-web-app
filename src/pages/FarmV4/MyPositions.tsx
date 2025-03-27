@@ -136,8 +136,12 @@ const MyPositions: FC<{
 
             {/* apr */}
             <div className="flex items-center justify-center">
-              <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
-                <span className={'font-poppins font-semibold my-0.5'}>
+              <Badge
+                variant="default"
+                size={'lg'}
+                className={'to-brand-secondaryGradient-secondary/50 min-w-[60px]'}
+              >
+                <span className={'font-poppins font-semibold my-0.5 mx-auto'}>
                   {numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD))}%
                 </span>
               </Badge>
