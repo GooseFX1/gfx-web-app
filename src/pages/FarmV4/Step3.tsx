@@ -5,6 +5,7 @@ import { loadIconImage } from '@/utils'
 import { useDarkMode } from '@/context'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import TextNumber from '@/components/common/TextNumber'
+import { GAMMA_POOL_CREATION_FEE } from './constants'
 
 const Step3: FC<{
   tokenA: JupToken
@@ -127,11 +128,11 @@ const Step3: FC<{
                             it is not a fee to our protocol.
                         </TooltipContent>
                     </Tooltip>
-                    <span className="text-regular font-semibold text-yellow-2">~0.1 SOL</span>
+                    <span className="text-regular font-semibold text-yellow-2">~{GAMMA_POOL_CREATION_FEE} SOL</span>
                 </div>
                 <div className="text-regular font-semibold text-yellow-2">
-                    Note: If you have less than 0.1 SOL, the transaction will fail. 
-                    Please ensure that you have more than 0.1 SOL to create a new pool.
+                    Note: If you have less than {GAMMA_POOL_CREATION_FEE} SOL, the transaction will fail. 
+                    Please ensure that you have more than {GAMMA_POOL_CREATION_FEE} SOL to create a new pool.
                 </div>
             </div>
         </>

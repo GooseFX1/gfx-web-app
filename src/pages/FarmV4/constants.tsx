@@ -219,3 +219,4 @@ export const GAMMA_STABLE_TOKENS = [
    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', //USDC
    '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo' //PYUSD
 ]
+export const GAMMA_POOL_CREATION_FEE = '0.04'
