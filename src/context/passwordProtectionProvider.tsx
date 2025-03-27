@@ -1,6 +1,6 @@
-import { PasswordProtectionPage } from '@/pages/FarmV4/PasswordProtection'
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { toast } from 'sonner'
+import { PasswordProtectionPage } from '@/pages/PasswordPage/PasswordProtection'
 
 type PasswordContextType = {
   isAuthenticated: boolean

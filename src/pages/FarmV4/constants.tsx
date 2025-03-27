@@ -198,6 +198,8 @@ export type GAMMASortConfig = {
   key: string
 }
 export const GAMMA_SORT_CONFIG_PUBKEY_REQUIRED = ['9','10']
+export const GAMMA_SORT_PORTFOLIO_BLACKLIST = ['1','2', '3', '4']
+export const GAMMA_SORT_CONFIG_BLACKLIST = ['9','10']
 export const GAMMA_SORT_CONFIG_MAP: Map<string, GAMMASortConfig> =
   new Map(GAMMA_SORT_CONFIG.map((item) => [item.id, item]))
 export type PoolSortId = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8'
@@ -217,3 +219,4 @@ export const GAMMA_STABLE_TOKENS = [
    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', //USDC
    '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo' //PYUSD
 ]
+export const GAMMA_POOL_CREATION_FEE = '0.04'

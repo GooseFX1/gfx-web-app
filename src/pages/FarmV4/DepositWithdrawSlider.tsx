@@ -18,7 +18,6 @@ import useTransaction from '@/hooks/useTransaction'
 import {
   calculateOtherTokenAndLPAmount,
   deposit,
-  getAmmConfigId,
   getLiquidityPoolKey,
   getpoolId,
   lpTokensToTradingTokens,
@@ -35,6 +34,7 @@ import { blob, publicKey as pbk, struct, u128, u64, u8 } from '@/utils/marshmall
 //import LottieConfetti from '@/pages/FarmV4/LottieConfetti'
 import { u16 } from '@solana/buffer-layout'
 import useDebounce from '@/hooks/useDebounce'
+import useGetAMMConfigIdQuery from '@/queries/GAMMA/pools/useGetGammaConfigIdQuery'
 
 const POOL_STATE_LAYOUT = struct([
   blob(8, 'discriminator'),
@@ -138,13 +138,13 @@ export const DepositWithdrawSlider: FC = () => {
     ''
   )
   const {debounce, abortDebounce} = useDebounce()
-
+  const ammConfigQuery = useGetAMMConfigIdQuery(0)
   useEffect(() => {
     ;(async () => {
       if (Object.keys(selectedCardPool)?.length && userPublicKey) {
         try {
           let id = null
-          const poolIdKey = await getpoolId(selectedCard)
+          const poolIdKey = await getpoolId(selectedCard, ammConfigQuery.data)
           const liquidityAcc = await getLiquidityPoolKey(poolIdKey, userPublicKey)
           id = connection.onAccountChange(liquidityAcc, async (info) => {
             const decodedAccount = USER_POOL_LIQUIDITY_LAYOUT.decode(info.data)
@@ -165,7 +165,7 @@ export const DepositWithdrawSlider: FC = () => {
           console.log('Error in getting the updated liquidity account on account change', e)
         }
         try {
-          const poolIdKey = await getpoolId(selectedCard)
+          const poolIdKey = await getpoolId(selectedCard, ammConfigQuery.data)
           const id = connection.onAccountChange(poolIdKey, async (info) => {
             const decodedAccount = POOL_STATE_LAYOUT.decode(info.data)
             const updatedPoolData = {
@@ -191,13 +191,13 @@ export const DepositWithdrawSlider: FC = () => {
         }
       }
     })()
-  }, [selectedCardLiquidityAcc, updatedPoolState, selectedCardPool, userPublicKey])
+  }, [selectedCardLiquidityAcc, updatedPoolState, selectedCardPool, userPublicKey, ammConfigQuery.data])
 
   useEffect(() => {
     ;(async () => {
       try {
         if (Object.keys(selectedCard)?.length > 0) {
-          const poolIdKey = await getpoolId(selectedCard)
+          const poolIdKey = await getpoolId(selectedCard, ammConfigQuery.data)
           const accountInfo = await connection.getAccountInfo(poolIdKey)
           const decodedAccount = POOL_STATE_LAYOUT.decode(accountInfo.data)
           const updatedPoolData = {
@@ -222,8 +222,7 @@ export const DepositWithdrawSlider: FC = () => {
       }
 
       try {
-        const configKey = await getAmmConfigId(0)
-        const accountInfo = await connection.getAccountInfo(configKey)
+        const accountInfo = await connection.getAccountInfo(ammConfigQuery.data)
         const decodedAccount = AMM_CONFIG_LAYOUT.decode(accountInfo.data)
         const updatedPoolData = {
           ...selectedCardPool,
@@ -234,7 +233,7 @@ export const DepositWithdrawSlider: FC = () => {
         console.log('Error in getting the config account info', e)
       }
     })()
-  }, [selectedCardPool])
+  }, [selectedCardPool, ammConfigQuery.data])
 
   useEffect(() => {
     ;(async () => {
@@ -242,9 +241,7 @@ export const DepositWithdrawSlider: FC = () => {
         if (Object.keys(selectedCardLiquidityAcc)?.length > 0 && Object.keys(selectedCardPool)?.length > 0) {
           const { tokenAmount0, tokenAmount1 } = await lpTokensToTradingTokens(
             selectedCardLiquidityAcc?.lpTokensOwned,
-            Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
-            connection
-          )
+            Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool)
           //console.log("tokenAmount", tokenAmount0?.toNumber(), tokenAmount1?.toNumber())
           setWithdrawableBalanceA(tokenAmount0)
           setWithdrawableBalanceB(tokenAmount1)
@@ -344,9 +341,7 @@ export const DepositWithdrawSlider: FC = () => {
         const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
           input,
           sourceToken ? 0 : 1,
-          Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
-          connection
-        )
+          Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool)
         setTransactionLPAmount(lpTokenAmount)
         funcToCallInDebounce(otherTokenAmountInString)
       }
@@ -489,8 +484,7 @@ export const DepositWithdrawSlider: FC = () => {
             const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
               (userSourceTokenBal / 2)?.toString(),
               0,
-              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
-              connection
+              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool
             )
             setTransactionLPAmount(lpTokenAmount)
             setUserTargetDepositAmount(otherTokenAmountInString)
@@ -501,8 +495,7 @@ export const DepositWithdrawSlider: FC = () => {
             const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
               (userTargetTokenBal / 2)?.toString(),
               1,
-              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
-              connection
+              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool
             )
             setTransactionLPAmount(lpTokenAmount)
             setUserSourceDepositAmount(otherTokenAmountInString)
@@ -544,8 +537,7 @@ export const DepositWithdrawSlider: FC = () => {
                 ? await getMaxSolDepositAmount(userSourceTokenBal, connection)
                 : userSourceTokenBal?.toString(),
               0,
-              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
-              connection
+              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool
             )
             setTransactionLPAmount(lpTokenAmount)
             setUserTargetDepositAmount(otherTokenAmountInString)
@@ -559,8 +551,7 @@ export const DepositWithdrawSlider: FC = () => {
                 ? await getMaxSolDepositAmount(userTargetTokenBal, connection)
                 : userTargetTokenBal?.toString(),
               1,
-              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
-              connection
+              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool
             )
             setTransactionLPAmount(lpTokenAmount)
             setUserSourceDepositAmount(otherTokenAmountInString)
@@ -603,6 +594,7 @@ export const DepositWithdrawSlider: FC = () => {
         connection,
         userSourceTokenType,
         userTargetTokenType,
+        ammConfigQuery.data,
         isSolMaxDeposit
       )
       txBuilder.add(tx)
@@ -656,7 +648,8 @@ export const DepositWithdrawSlider: FC = () => {
         connection,
         userSourceTokenType,
         userTargetTokenType,
-        wallet
+        wallet,
+        ammConfigQuery.data
       )
       txBuilder.add(tx)
       setSendingTransaction(true)

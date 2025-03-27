@@ -208,8 +208,12 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
         <Tooltip>
           <TooltipTrigger className="no-underline">
             <div className="flex items-center justify-center max-sm:justify-end sm-lg:justify-end">
-              <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
-                <span className={'font-poppins font-semibold my-0.5'}>{formattedAPR}%</span>
+              <Badge
+                variant="default"
+                size={'lg'}
+                className={'to-brand-secondaryGradient-secondary/50 min-w-[60px]'}
+              >
+                <span className={'font-poppins font-semibold my-0.5 m-auto'}>{formattedAPR}%</span>
               </Badge>
             </div>
           </TooltipTrigger>

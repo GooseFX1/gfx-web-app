@@ -20,6 +20,7 @@ import sslJson from '../pages/FarmV3/idl/sslv2.json'
 import GammaJson from '../pages/FarmV4/idl/gamma.json'
 import { Gamma } from '../pages/FarmV4/idl/gammats'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+import { GAMMAIDL } from '@/pages/FarmV4/idl/gamma'
 
 interface IPrices {
   [x: string]: {
@@ -52,7 +53,7 @@ interface IPriceFeedConfig {
   SSLProgram: Program
   stakeAccountKey: PublicKey
   solPrice: number
-  GammaProgram: any
+  GammaProgram: coralProgram<GAMMAIDL>
 }
 
 export type UserRewardInfo = IdlAccounts<Gamma>['userRewardInfo']
@@ -104,7 +105,7 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
   const GammaProgram: any = useMemo(
     () =>
       new coralProgram(
-        GammaJson as any,
+        GammaJson as GAMMAIDL,
         new AnchorProvider(connection, wal as WalletContextState, { commitment: 'finalized' })
       ),
     [connection]

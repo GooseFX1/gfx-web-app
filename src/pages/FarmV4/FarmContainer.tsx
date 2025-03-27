@@ -128,18 +128,23 @@ export const FarmContainer: FC = () => {
         <>
           <div className="flex items-center max-sm:flex-col max-sm:gap-2 sm-lg:flex-col sm-lg:gap-2 mt-4.5">
             <RadioOptionGroup
-              defaultValue={'All'}
-              value={currentPoolType.name}
+              defaultValue={'all'}
+              value={currentPoolType.type}
               className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 min-md:mr-2 items-center'}
               optionClassName={`min-md:w-[85px]`}
               options={[
                 {
-                  value: POOL_TYPE.primary.name,
+                  value: POOL_TYPE.all.type,
+                  label: 'All',
+                  onClick: () => setCurrentPoolType(POOL_TYPE.all)
+                },
+                {
+                  value: POOL_TYPE.primary.type,
                   label: 'Primary',
                   onClick: () => setCurrentPoolType(POOL_TYPE.primary)
                 },
                 {
-                  value: POOL_TYPE.hyper.name,
+                  value: POOL_TYPE.hyper.type,
                   label: 'Hyper',
                   onClick: () => setCurrentPoolType(POOL_TYPE.hyper)
                 }

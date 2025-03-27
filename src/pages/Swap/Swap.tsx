@@ -32,7 +32,7 @@ import { InfiniteTokenListSwap } from '@/pages/Swap/InfiniteTokenListSwap'
 import { Connect } from '@/layouts'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import useTransaction from '@/hooks/useTransaction'
-import { doesPoolWithMintsExist, getAmmConfigId, getPoolIdKey, getPriceQuotes, swapTokens } from '@/web3/Farm'
+import { doesPoolWithMintsExist, getPoolIdKey, getPriceQuotes, swapTokens } from '@/web3/Farm'
 import { useWallet } from '@solana/wallet-adapter-react'
 import BigNumber from 'bignumber.js'
 import { forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
@@ -42,6 +42,7 @@ import Decimal from 'decimal.js'
 import LottieSwapCountDown from './LottieSwapCountDown'
 import { PublicKey } from '@solana/web3.js'
 import { Skeleton } from 'gfx-component-lib'
+import useGetGammaConfigIdQuery from '@/queries/GAMMA/pools/useGetGammaConfigIdQuery'
 
 export const Swap: FC = () => {
   const { isDarkMode, mode } = useDarkMode()
@@ -94,6 +95,7 @@ export const Swap: FC = () => {
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false)
   const [fee, setFee] = useState<string>('')
   const [isRefreshing, setIsRefreshing] = useBoolean(false)
+  const ammQuery = useGetGammaConfigIdQuery(0)
   const swapNotValid = useMemo(
     () =>
       !selectedTokenA ||
@@ -135,10 +137,12 @@ export const Swap: FC = () => {
     )
   }
   const checkIfPoolExists = async () =>
-    doesPoolWithMintsExist(selectedTokenA.address, selectedTokenB.address, GammaProgram).then((res) => {
-      setDoesPoolExist.set(res)
-      return res
-    })
+    doesPoolWithMintsExist(selectedTokenA.address, selectedTokenB.address, GammaProgram, ammQuery.data).then(
+      (res) => {
+        setDoesPoolExist.set(res)
+        return res
+      }
+    )
 
   const handleRefresh = async () => {
     console.log('REFRESH')
@@ -158,6 +162,7 @@ export const Swap: FC = () => {
         selectedTokenB,
         GammaProgram,
         connection,
+        ammQuery.data,
         prefetchedQuoteValues
       )
         .then(({ destinationAmountSwapped: price, tradeFee }) => {
@@ -184,11 +189,10 @@ export const Swap: FC = () => {
   }
   const handlePrefetchingAccounts = async () => {
     if (selectedTokenA && selectedTokenB) {
-      const configIdKey = await getAmmConfigId(0)
       const mintAPublicKey = new PublicKey(selectedTokenA?.address)
       const mintBPublickey = new PublicKey(selectedTokenB?.address)
 
-      const poolIdKey = await getPoolIdKey(configIdKey, mintAPublicKey, mintBPublickey)
+      const poolIdKey = await getPoolIdKey(ammQuery.data, mintAPublicKey, mintBPublickey)
 
       const [ammConfigState, poolState] = await Promise.all([
         GammaProgram.account.ammConfig.all(),
@@ -203,7 +207,7 @@ export const Swap: FC = () => {
 
       setPrefetchedQuoteValues({
         ammConfigState,
-        configIdKey,
+        configIdKey: ammQuery.data,
         poolIdKey,
         observationState,
         poolState,
@@ -220,12 +224,24 @@ export const Swap: FC = () => {
     setLoadingApproxAmounts.on()
 
     await Promise.all([
-      getPriceQuotes('1', selectedTokenA, selectedTokenB, GammaProgram, connection, prefetchedQuoteValues).then(
-        (res) => setApproxAmountAToB(res.destinationAmountSwapped)
-      ),
-      getPriceQuotes('1', selectedTokenB, selectedTokenA, GammaProgram, connection, prefetchedQuoteValues).then(
-        (res) => setApproxAmountBToA(res.destinationAmountSwapped)
-      )
+      getPriceQuotes(
+        '1',
+        selectedTokenA,
+        selectedTokenB,
+        GammaProgram,
+        connection,
+        ammQuery.data,
+        prefetchedQuoteValues
+      ).then((res) => setApproxAmountAToB(res.destinationAmountSwapped)),
+      getPriceQuotes(
+        '1',
+        selectedTokenB,
+        selectedTokenA,
+        GammaProgram,
+        connection,
+        ammQuery.data,
+        prefetchedQuoteValues
+      ).then((res) => setApproxAmountBToA(res.destinationAmountSwapped))
     ]).finally(() => setLoadingApproxAmounts.off())
   }
 
@@ -257,7 +273,8 @@ export const Swap: FC = () => {
         userTargetTokenType,
         slippage,
         GammaProgram,
-        connection
+        connection,
+        ammQuery.data
       )
       txBuilder.add(tx)
       // eslint-disable-next-line max-len

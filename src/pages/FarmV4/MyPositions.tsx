@@ -136,8 +136,12 @@ const MyPositions: FC<{
 
             {/* apr */}
             <div className="flex items-center justify-center">
-              <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
-                <span className={'font-poppins font-semibold my-0.5'}>
+              <Badge
+                variant="default"
+                size={'lg'}
+                className={'to-brand-secondaryGradient-secondary/50 min-w-[60px]'}
+              >
+                <span className={'font-poppins font-semibold my-0.5 mx-auto'}>
                   {numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD))}%
                 </span>
               </Badge>
@@ -192,7 +196,7 @@ const MyPositions: FC<{
   )
 }
 const MyPositionItems: FC = () => {
-  const { selectedTokens, sortConfig, showDeposited, showCreatedPools, currentPoolType, isPortfolio, viewRange } =
+  const { selectedTokens, sortConfig, showCreatedPools, currentPoolType, isPortfolio, viewRange } =
     useGamma()
   const query = useUserPortfolioPools({
     mintA: selectedTokens[0]?.address,
@@ -201,7 +205,6 @@ const MyPositionItems: FC = () => {
     sortBy: getSortKey(sortConfig, isPortfolio, viewRange),
     sortDirection: sortConfig.direction.toLowerCase(),
     showCreated: showCreatedPools,
-    showDeposited,
     enabled: isPortfolio
   })
 

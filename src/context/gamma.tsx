@@ -11,19 +11,16 @@ import {
   useMemo,
   useState
 } from 'react'
-import {
-  fetchGAMMAConfig,
-  fetchTokenList,
-  forceCronUpdate,
-  forceCronUpdateWithConnectionAndTxSig
-} from '@/api/gamma'
-import { GAMMAConfig, GAMMAPoolWithUserLiquidity } from '@/types/gamma'
+import { fetchTokenList, forceCronUpdate, forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
+import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   BASE_SLIPPAGE,
   GAMMA_SORT_CONFIG,
+  GAMMA_SORT_CONFIG_BLACKLIST,
   GAMMA_SORT_CONFIG_MAP,
   GAMMA_SORT_CONFIG_PUBKEY_REQUIRED,
+  GAMMA_SORT_PORTFOLIO_BLACKLIST,
   GAMMASortConfig,
   JupToken,
   ModeOfOperation,
@@ -40,11 +37,12 @@ import useMultiSelect from '@/hooks/useMultiSelect'
 import useUserLiquidityQuery from '@/queries/GAMMA/user/useUserLiquidityQuery'
 import usePoolsQuery, { UsePoolQueryResponse } from '@/queries/GAMMA/pools/usePoolsQuery'
 import { getSortKey } from '@/queries/GAMMA/gammaQueries.helpers'
+import useGetAMMConfigIdQuery from '@/queries/GAMMA/pools/useGetGammaConfigIdQuery'
+import useUserPortfolioPools from '@/queries/GAMMA/pools/useUserPortfolioPools'
 
 type ViewRange = 0 | 1 | 2
 
 interface GAMMADataModel {
-  gammaConfig: GAMMAConfig
   slippage: number
   setSlippage: Dispatch<SetStateAction<number>>
   isCustomSlippage: boolean
@@ -72,7 +70,7 @@ interface GAMMADataModel {
   isLoadingPools: boolean
   isSearchActive: boolean
   filteredPools: GAMMAPoolWithUserLiquidity[]
-  poolsHasMoreData: boolean
+  maxPoolsReached: boolean
   sortConfig: GAMMASortConfig
   selectedCardLiquidityAcc: any
   setSelectedCardLiquidityAcc: Dispatch<SetStateAction<any>>
@@ -117,46 +115,65 @@ const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { userCache, connection, updateUserCache } = useConnectionConfig()
   const { base58PublicKey, publicKey } = useWalletBalance()
-  const [gammaConfig, setGammaConfig] = useState<GAMMAConfig | null>(null)
 
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<any>({})
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
-  const [currentPoolType, setCurrentPoolType] = useState<Pool>(POOL_TYPE.primary)
+  const [currentPoolType, setCurrentPoolType] = useState<Pool>(POOL_TYPE.all)
   const { GammaProgram } = usePriceFeedFarm()
   const [selectedCardPool, setSelectedCardPool] = useState<any>({})
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [sendingTransaction, setSendingTransaction] = useState<boolean>(false)
   const [searchTokens, setSearchTokens] = useState<string>('')
   const [showCreatedPools, setShowCreatedPools] = useState<boolean>(userCache.gamma.showCreatedFilter)
-  const [currentSort, setCurrentSort] = useState<string>(userCache.gamma.currentSort)
+  const [currentSort, setCurrentSortState] = useState<string>(userCache.gamma.currentSort)
   const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
   const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
-  const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
+  const [isPortfolio, setIsPortfolio] = useBoolean(false)
+
   const [selectedCardLiquidityAcc, setSelectedCardLiquidityAcc] = useState<any>({})
   const [calculatePoolType, setCalculatePoolType] = useState<Set<string>>(new Set())
 
   const userLiqQuery = useUserLiquidityQuery()
+  const ammConfigQuery = useGetAMMConfigIdQuery(0)
+
+  const setCurrentSort = (value: string) => {
+    let sortValue = value
+    if (!publicKey && isPortfolio && GAMMA_SORT_PORTFOLIO_BLACKLIST.includes(value)) {
+      sortValue = '9'
+    } else if (!isPortfolio && GAMMA_SORT_CONFIG_BLACKLIST.includes(value)) {
+      sortValue = '1'
+    }
+
+    setCurrentSortState((prevState) => {
+      if (prevState === sortValue) {
+        return prevState
+      }
+      updateUserCache({
+        gamma: {
+          ...userCache.gamma,
+          currentSort: sortValue
+        }
+      })
+      // sets value to context
+      return sortValue
+    })
+  }
   useLayoutEffect(() => {
     if (!publicKey) {
       if (GAMMA_SORT_CONFIG_PUBKEY_REQUIRED.includes(userCache.gamma.currentSort)) {
-        setCurrentSort(() => {
-          updateUserCache({
-            ...userCache,
-            gamma: {
-              ...userCache.gamma,
-              currentSort: '1'
-            }
-          })
-          return '1'
-        })
+        setCurrentSort('1')
       }
     }
   }, [publicKey, userCache])
   const [createPoolType, setCreatePoolType] = useState<string>('')
   const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
   const [viewRange, setViewRange] = useState<ViewRange>(0)
-  const [isPortfolio, setIsPortfolio] = useBoolean(false)
+  const sortConfig = useMemo(
+    () =>
+      GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[isPortfolio ? GAMMA_SORT_CONFIG.length - 2 : 0],
+    [currentSort, isPortfolio]
+  )
   const [isCardMode, setIsCardMode] = useState<string>(userCache.gamma.viewMode)
   const prevIsCardMode = usePrevious(isCardMode)
   const {
@@ -168,15 +185,26 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   } = useMultiSelect<TokenListToken, string>({
     uniqueValueSelector: (token) => token.address
   })
+  const sortBy = getSortKey(sortConfig, isPortfolio, viewRange)
+
   const poolsQuery = usePoolsQuery({
     mintA: selectedTokens[0]?.address,
     mintB: selectedTokens[1]?.address,
-    sortBy: getSortKey(sortConfig, isPortfolio, viewRange),
+    sortBy: sortBy,
     sortDirection: sortConfig.direction.toLowerCase(),
     showCreated: showCreatedPools,
     showDeposited,
     poolType: currentPoolType.type,
-    enabled: !isPortfolio
+    enabled: !isPortfolio && sortBy != 'portfolio'
+  })
+  const portfolioPoolsQuery = useUserPortfolioPools({
+    mintA: selectedTokens[0]?.address,
+    mintB: selectedTokens[1]?.address,
+    poolType: currentPoolType.type,
+    sortBy: getSortKey(sortConfig, isPortfolio, viewRange),
+    sortDirection: sortConfig.direction.toLowerCase(),
+    showCreated: showCreatedPools,
+    enabled: isPortfolio
   })
   const totalPoolCount = poolsQuery.data.totalItems
   const isLoadingPools =
@@ -184,24 +212,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     poolsQuery.isLoading ||
     poolsQuery.isFetchingPreviousPage ||
     poolsQuery.isFetchingNextPage
-  const poolsHasMoreData = !poolsQuery?.data.maxPagesReached
+  const maxPoolsReached = poolsQuery?.data.maxPagesReached
 
   const handlePoolSort = useCallback(
     (id: string) => {
       // persists current sort in local storage
-      setCurrentSort((prevState) => {
-        if (prevState === id) {
-          return prevState
-        }
-        updateUserCache({
-          gamma: {
-            ...userCache.gamma,
-            currentSort: id
-          }
-        })
-        // sets value to context
-        return id
-      })
+      setCurrentSort(id)
     },
     [setCurrentSort, userCache]
   )
@@ -218,12 +234,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [isCardMode, viewRange, currentSort, prevIsCardMode])
   useEffect(() => {
-    if (!gammaConfig) {
-      fetchGAMMAConfig().then((config) => {
-        if (config) setGammaConfig(config)
-      })
-    }
-
     if (calculatePoolType.size == 0) {
       const abortSig = 'tokenListCalcPoolTypeGamma'
       const signal = aborter.addSignal(abortSig)
@@ -240,6 +250,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     if (!isPortfolio) {
       setShowDeposited(false)
+      setCurrentSort('1')
+    } else {
+      setCurrentSort('9')
     }
   }, [isPortfolio])
 
@@ -247,7 +260,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     ;(async () => {
       if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
         try {
-          const poolIdKey = await getpoolId(selectedCard)
+          const poolIdKey = await getpoolId(selectedCard, ammConfigQuery.data)
           const gammaPool = await GammaProgram.account.poolState.fetch(poolIdKey)
           setSelectedCardPool(gammaPool)
         } catch (e) {
@@ -255,13 +268,13 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       }
     })()
-  }, [GammaProgram, selectedCard])
+  }, [GammaProgram, selectedCard, ammConfigQuery.data])
 
   useEffect(() => {
     ;(async () => {
       if (GammaProgram && publicKey && Object.keys(selectedCard)?.length > 0) {
         try {
-          const poolIdKey = await getpoolId(selectedCard)
+          const poolIdKey = await getpoolId(selectedCard, ammConfigQuery.data)
           const liquidityAccountKey = await getLiquidityPoolKey(poolIdKey, publicKey)
           const liquidityAccount = await GammaProgram?.account?.userPoolLiquidity?.fetch(liquidityAccountKey)
           setSelectedCardLiquidityAcc(liquidityAccount)
@@ -270,7 +283,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       }
     })()
-  }, [GammaProgram, selectedCard, publicKey])
+  }, [GammaProgram, selectedCard, publicKey, ammConfigQuery.data])
 
   useEffect(() => {
     if (!base58PublicKey || poolsQuery.data?.allPages?.length == 0 || !selectedCard?.id) return
@@ -286,14 +299,18 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (!result) return
     userLiqQuery.refetch()
     // will trigger updatePool useEffect
-    poolsQuery.refetch()
+    if (!isPortfolio) {
+      poolsQuery.refetch()
+    } else {
+      portfolioPoolsQuery.refetch()
+    }
   }
+
   const computedViewRange = viewRange == 0 ? '24H' : viewRange == 1 ? '7D' : '30D'
 
   return (
     <GAMMAContext.Provider
       value={{
-        gammaConfig,
         slippage,
         setSlippage,
         isCustomSlippage,
@@ -320,7 +337,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isLoadingPools,
         totalPoolCount,
         isSearchActive,
-        poolsHasMoreData,
+        maxPoolsReached,
         sortConfig,
         selectedCardLiquidityAcc,
         setSelectedCardLiquidityAcc,

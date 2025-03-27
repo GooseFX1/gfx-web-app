@@ -20,6 +20,16 @@ export const TokenRewardsDrawer = ({ isOpen, setOpen }: { isOpen: boolean; setOp
   const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs().add(7,'day'))
   const { isMobile } = useBreakPoint()
 
+  //setting default values whenever the drawer opens/closes
+  useEffect(() => {
+      setCurrentStep(0)
+      setPool(null)
+      setSelectedToken(null)
+      setAmountToken('')
+      setStartDate(dayjs())
+      setEndDate(dayjs().add(7,'day'))
+  }, [isOpen])
+
   useEffect(() => {
     if (currentStep === 4 && !isMobile) {
       setCurrentStep(3)
@@ -87,6 +97,7 @@ export const TokenRewardsDrawer = ({ isOpen, setOpen }: { isOpen: boolean; setOp
         activeStep={4}
         currentStep={currentStep}
         setCurrentStep={setCurrentStep}
+        setOpen={setOpen}
       />
     </SummaryWrapper>
   ]

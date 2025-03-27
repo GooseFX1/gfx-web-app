@@ -1,10 +1,11 @@
 import { FC } from 'react'
 import { JupToken } from './constants'
 import { Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
-import { bigNumberFormatter, loadIconImage } from '@/utils'
+import { loadIconImage } from '@/utils'
 import { useDarkMode } from '@/context'
-import BigNumber from 'bignumber.js'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
+import TextNumber from '@/components/common/TextNumber'
+import { GAMMA_POOL_CREATION_FEE } from './constants'
 
 const Step3: FC<{
   tokenA: JupToken
@@ -75,7 +76,7 @@ const Step3: FC<{
         <div className="flex justify-between mb-3">
           <span className="text-regular font-semibold dark:text-grey-2 text-grey-1">Inital Price</span>
           <span className="text-regular font-semibold dark:text-grey-8 text-black-4">
-            ${bigNumberFormatter(new BigNumber(initialPrice), 6)}
+            <TextNumber value={initialPrice} decimals={6} type={'currency'}/>
           </span>
         </div>
         <div className="flex justify-between mb-3">
@@ -83,7 +84,9 @@ const Step3: FC<{
             {`Token A (${tokenA?.symbol})`}
           </span>
           <span className="text-regular font-semibold dark:text-grey-8 text-black-4">
-            {bigNumberFormatter(new BigNumber(amountTokenA), tokenA?.decimals ?? 6)} {tokenA?.symbol}
+            <TextNumber value={amountTokenA} decimals={tokenA?.decimals ?? 6} type={'currency'}>
+              &nbsp;{tokenA?.symbol}
+            </TextNumber>
           </span>
         </div>
         <div className="flex justify-between mb-3">
@@ -91,7 +94,9 @@ const Step3: FC<{
             {`Token B (${tokenB?.symbol})`}
           </span>
           <span className="text-regular font-semibold dark:text-grey-8 text-black-4">
-            {bigNumberFormatter(new BigNumber(amountTokenB), tokenB?.decimals ?? 6)} {tokenB?.symbol}
+            <TextNumber value={amountTokenB} decimals={tokenB?.decimals ?? 6} type={'currency'}>
+              &nbsp;{tokenB?.symbol}
+            </TextNumber>
           </span>
         </div>
         {/* <div className="flex justify-between mb-2">
@@ -123,11 +128,11 @@ const Step3: FC<{
                             it is not a fee to our protocol.
                         </TooltipContent>
                     </Tooltip>
-                    <span className="text-regular font-semibold text-yellow-2">~0.1 SOL</span>
+                    <span className="text-regular font-semibold text-yellow-2">~{GAMMA_POOL_CREATION_FEE} SOL</span>
                 </div>
                 <div className="text-regular font-semibold text-yellow-2">
-                    Note: If you have less than 0.1 SOL, the transaction will fail. 
-                    Please ensure that you have more than 0.1 SOL to create a new pool.
+                    Note: If you have less than {GAMMA_POOL_CREATION_FEE} SOL, the transaction will fail. 
+                    Please ensure that you have more than {GAMMA_POOL_CREATION_FEE} SOL to create a new pool.
                 </div>
             </div>
         </>

@@ -26,6 +26,7 @@ import { notifyUsingPromiseForCreatePool } from '@/utils/perpsNotifications'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { INTERVALS } from '@/utils/time'
 import { GAMMA_STABLE_TOKENS, POOL_TYPE } from '@/pages/FarmV4/constants'
+import useGetGammaConfigIdQuery from '@/queries/GAMMA/pools/useGetGammaConfigIdQuery'
 
 export const CreatePool: FC<{
   isCreatePool: boolean
@@ -61,6 +62,8 @@ export const CreatePool: FC<{
   const tokenBType = balance[tokenB?.address].tokenType
 
   const { connection } = useConnectionConfig()
+
+  const ammConfigQuery = useGetGammaConfigIdQuery(0)
 
   useMemo(() => {
     if (tokenA && tokenB) {
@@ -107,7 +110,8 @@ export const CreatePool: FC<{
           connection,
           tokenAType,
           tokenBType,
-          poolType
+          poolType,
+          ammConfigQuery.data
         )
         txBuilder.add(tx)
         setSendingTransaction(true)
