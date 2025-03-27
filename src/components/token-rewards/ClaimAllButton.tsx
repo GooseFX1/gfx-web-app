@@ -1,15 +1,21 @@
 import { Button, cn } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
+import { useBoostedRewards } from '@/context/boostedRewardsContext'
+import { numberFormatter } from '@/utils'
 
 type ClaimAllRewardsProps = {
   openClaimAllRewardsDialog: boolean
   setOpenClaimAllRewardsDialog: (open: boolean) => void
 }
 
-export function ClaimAllRewards({
-  setOpenClaimAllRewardsDialog
-}: ClaimAllRewardsProps) {
+export function ClaimAllRewards({ setOpenClaimAllRewardsDialog }: ClaimAllRewardsProps) {
   const { isMobile } = useBreakPoint()
+  const { claimableRewardsWithTokens } = useBoostedRewards()
+
+  console.log(claimableRewardsWithTokens)
+
+  if (claimableRewardsWithTokens.totalClaimableRewardsUsd.eq(0)) return null
+  if (claimableRewardsWithTokens.rewards.length === 0) return null
 
   const content = (className?: string) => (
     <div
@@ -31,7 +37,7 @@ export function ClaimAllRewards({
           className="text-[15px] 
   font-semibold text-text-lightmode-tertiary dark:text-text-darkmode-tertiary"
         >
-          $0.00
+          ${numberFormatter(claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber())}
         </p>
       </div>
 

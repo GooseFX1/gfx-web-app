@@ -158,7 +158,6 @@ export const FarmContainer: FC = () => {
                   setOpenClaimAllRewardsDialog={setOpenClaimAllRewardsDialog.set}
                 />
                 <ClaimAllRewardsDialog
-                  rewards={[]}
                   openClaimAllRewardsDialog={openClaimAllRewardsDialog}
                   setOpenClaimAllRewardsDialog={setOpenClaimAllRewardsDialog.set}
                 />

@@ -264,10 +264,16 @@ export const Swap: FC = () => {
       const sourceAmount = `${bigNumberFormatter(new BigNumber(amountTokenA))} ${selectedTokenA?.symbol}`
       // eslint-disable-next-line max-len
       const targetAmount = `${bigNumberFormatter(new BigNumber(amountTokenB))} ${selectedTokenB?.symbol}`
-      const { success, txSig } = await sendTransaction(txBuilder, {
-        // eslint-disable-next-line max-len
-        successMessage: `You successfully swapped ${sourceAmount} ${selectedTokenA?.symbol} to ${targetAmount} ${selectedTokenB?.symbol}`
-      })
+      const { success, txSig } = await sendTransaction(
+        txBuilder,
+        {
+          // eslint-disable-next-line max-len
+          successMessage: `You successfully swapped ${sourceAmount} ${selectedTokenA?.symbol} to ${targetAmount} ${selectedTokenB?.symbol}`
+        },
+        undefined,
+        undefined,
+        true
+      )
       console.log('SwapResponse', success)
       if (!success) {
         //off(connectionId)
@@ -278,7 +284,7 @@ export const Swap: FC = () => {
         await forceCronUpdateWithConnectionAndTxSig(connection, txSig)
       }
     } catch (e) {
-      console.log('An error occurred while depositing.', e)
+      console.log('An error occurred while swapping.', e)
     }
     setSendingTransaction(false)
   }
