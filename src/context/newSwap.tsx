@@ -99,7 +99,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <SwapContext.Provider
       value={{
-        tokens: tokensQuery.data.allPages,
+        tokens: tokensQuery.data.allPages ?? [],
         selectedTokenA,
         selectedTokenB,
         amountTokenA,
