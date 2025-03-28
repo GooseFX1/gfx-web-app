@@ -32,7 +32,7 @@ import { InfiniteTokenListSwap } from '@/pages/Swap/InfiniteTokenListSwap'
 import { Connect } from '@/layouts'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import useTransaction from '@/hooks/useTransaction'
-import { doesPoolWithMintsExist, getPoolIdKey, getPriceQuotes, swapTokens } from '@/web3/Farm'
+import { doesPoolWithMintsExist, getPriceQuotes, swapTokens } from '@/web3/Farm'
 import { useWallet } from '@solana/wallet-adapter-react'
 import BigNumber from 'bignumber.js'
 import { forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
@@ -40,9 +40,15 @@ import { ErrorToast } from '@/utils/perpsNotifications'
 import Decimal from 'decimal.js'
 
 import LottieSwapCountDown from './LottieSwapCountDown'
-import { PublicKey } from '@solana/web3.js'
 import { Skeleton } from 'gfx-component-lib'
 import useGetGammaConfigIdQuery from '@/queries/GAMMA/pools/useGetGammaConfigIdQuery'
+import useGammaPoolIdQuery from '@/queries/GAMMA/pools/useGammaPoolIdQuery'
+import useGammaProgramPoolQuery from '@/queries/GAMMA/pools/useGammaProgramPoolQuery'
+import useGammaProgramObservationState from '@/queries/GAMMA/pools/useGammaProgramObservationState'
+import useGammaProgramAmmConfig from '@/queries/GAMMA/pools/useGammaProgramAmmConfig'
+import { MUTATION_KEY } from '@/queries/query.helper'
+import { useMutation } from '@tanstack/react-query'
+import useGetGammaSwapAccounts from '@/queries/GAMMA/pools/useGetGammaSwapAccounts'
 
 export const Swap: FC = () => {
   const { isDarkMode, mode } = useDarkMode()
@@ -78,24 +84,66 @@ export const Swap: FC = () => {
   const [approxAmountBToA, setApproxAmountBToA] = useState<string>('0.00')
   const [loadingApproxAmounts, setLoadingApproxAmounts] = useBoolean(false)
 
-  const [prefetchedQuoteValues, setPrefetchedQuoteValues] = useState<{
-    configIdKey: PublicKey | undefined
-    poolIdKey: PublicKey | undefined
-    ammConfigState: any
-    poolState: any
-    observationState: any
-    tokenAccountInfo0: any
-    tokenAccountInfo1: any
-    mintAAddress: string
-    mintBAddress: string
-  }>(null)
-
   const { GammaProgram } = usePriceFeedFarm()
-  const [sendingTransaction, setSendingTransaction] = useState(false)
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false)
   const [fee, setFee] = useState<string>('')
   const [isRefreshing, setIsRefreshing] = useBoolean(false)
   const ammQuery = useGetGammaConfigIdQuery(0)
+  const poolIdQuery = useGammaPoolIdQuery({
+    configId: ammQuery.data,
+    mintA: selectedTokenA?.address,
+    mintB: selectedTokenB?.address
+  })
+  const ammConfigStateQuery = useGammaProgramAmmConfig()
+  const poolStateQuery = useGammaProgramPoolQuery({
+    poolId: poolIdQuery.data
+  })
+  const observationStateQuery = useGammaProgramObservationState({
+    observerKey: poolStateQuery.data?.observationKey
+  })
+  const swapAccountsQuery = useGetGammaSwapAccounts({
+    mintA: selectedTokenA?.address,
+    mintB: selectedTokenB?.address,
+    userSourceTokenType,
+    userTargetTokenType,
+    poolState: poolStateQuery.data,
+    ammConfigId: ammQuery.data,
+    poolIdKey: poolIdQuery.data
+  })
+  const swapMutation = useMutation({
+    mutationKey: [MUTATION_KEY, 'swap-swap', selectedTokenA, selectedTokenB],
+    mutationFn: async () => {
+      const txBuilder = createTransactionBuilder()
+      const tx = await swapTokens(
+        amountTokenA,
+        selectedTokenA,
+        selectedTokenB,
+        userPublicKey,
+        slippage,
+        GammaProgram,
+        connection,
+        ammConfigStateQuery.data,
+        poolStateQuery.data,
+        observationStateQuery.data,
+        swapAccountsQuery.data
+      )
+      txBuilder.add(tx)
+      // eslint-disable-next-line max-len
+      const sourceAmount = `${bigNumberFormatter(new BigNumber(amountTokenA))} ${selectedTokenA?.symbol}`
+      // eslint-disable-next-line max-len
+      const targetAmount = `${bigNumberFormatter(new BigNumber(amountTokenB))} ${selectedTokenB?.symbol}`
+      const { txSig } = await sendTransaction(txBuilder, {
+        // eslint-disable-next-line max-len
+        successMessage: `You successfully swapped ${sourceAmount} ${selectedTokenA?.symbol} to ${targetAmount} ${selectedTokenB?.symbol}`
+      })
+      return txSig
+    },
+    onSuccess: (txSig) => {
+      amountTokenACommands.clear()
+      amountTokenBCommands.clear()
+      forceCronUpdateWithConnectionAndTxSig(connection, txSig)
+    }
+  })
   const swapNotValid = useMemo(
     () =>
       !selectedTokenA ||
@@ -113,18 +161,6 @@ export const Swap: FC = () => {
       setUserTargetTokenType(balance[selectedTokenB?.address].tokenType)
     }
   }, [selectedTokenA, selectedTokenB, balance, userPublicKey])
-
-  // useEffect(() => {
-  //   if (!doesPoolExist) return
-  //   handleRefresh()
-  //   const handler = setInterval(async () => {
-  //     await handleRefresh()
-  //   }, 15000)
-  //
-  //   return () => {
-  //     clearInterval(handler)
-  //   }
-  // }, [selectedTokenA, selectedTokenB, amountTokenA, doesPoolExist])
 
   const handleSlippageSave = () => {
     setSlippage(value)
@@ -160,10 +196,9 @@ export const Swap: FC = () => {
         amountTokenA,
         selectedTokenA,
         selectedTokenB,
-        GammaProgram,
-        connection,
-        ammQuery.data,
-        prefetchedQuoteValues
+        ammConfigStateQuery.data,
+        poolStateQuery.data,
+        observationStateQuery.data
       )
         .then(({ destinationAmountSwapped: price, tradeFee }) => {
           amountTokenBCommands.set(price)
@@ -187,37 +222,6 @@ export const Swap: FC = () => {
     }
     isSource ? amountTokenACommands.onChange(e) : amountTokenBCommands.onChange(e)
   }
-  const handlePrefetchingAccounts = async () => {
-    if (selectedTokenA && selectedTokenB) {
-      const mintAPublicKey = new PublicKey(selectedTokenA?.address)
-      const mintBPublickey = new PublicKey(selectedTokenB?.address)
-
-      const poolIdKey = await getPoolIdKey(ammQuery.data, mintAPublicKey, mintBPublickey)
-
-      const [ammConfigState, poolState] = await Promise.all([
-        GammaProgram.account.ammConfig.all(),
-        GammaProgram.account.poolState.fetch(poolIdKey)
-      ])
-
-      const [observationState, tokenAccountInfo0, tokenAccountInfo1] = await Promise.all([
-        GammaProgram.account.observationState.fetch(poolState.observationKey),
-        connection.getParsedAccountInfo(poolState?.token0Vault),
-        connection.getParsedAccountInfo(poolState?.token1Vault)
-      ])
-
-      setPrefetchedQuoteValues({
-        ammConfigState,
-        configIdKey: ammQuery.data,
-        poolIdKey,
-        observationState,
-        poolState,
-        tokenAccountInfo0,
-        tokenAccountInfo1,
-        mintAAddress: selectedTokenA.address,
-        mintBAddress: selectedTokenB.address
-      })
-    }
-  }
 
   const handleApproxAmounts = async () => {
     if (!selectedTokenA || !selectedTokenB) return
@@ -228,19 +232,17 @@ export const Swap: FC = () => {
         '1',
         selectedTokenA,
         selectedTokenB,
-        GammaProgram,
-        connection,
-        ammQuery.data,
-        prefetchedQuoteValues
+        ammConfigStateQuery.data,
+        poolStateQuery.data,
+        observationStateQuery.data
       ).then((res) => setApproxAmountAToB(res.destinationAmountSwapped)),
       getPriceQuotes(
         '1',
         selectedTokenB,
         selectedTokenA,
-        GammaProgram,
-        connection,
-        ammQuery.data,
-        prefetchedQuoteValues
+        ammConfigStateQuery.data,
+        poolStateQuery.data,
+        observationStateQuery.data
       ).then((res) => setApproxAmountBToA(res.destinationAmountSwapped))
     ]).finally(() => setLoadingApproxAmounts.off())
   }
@@ -260,56 +262,9 @@ export const Swap: FC = () => {
     return returnValue
   }, [amountTokenA, amountTokenB, balance, selectedTokenA, selectedTokenB])
 
-  const handleSwap = async () => {
-    try {
-      setSendingTransaction(true)
-      const txBuilder = createTransactionBuilder()
-      const tx = await swapTokens(
-        amountTokenA,
-        selectedTokenA,
-        selectedTokenB,
-        userPublicKey,
-        userSourceTokenType,
-        userTargetTokenType,
-        slippage,
-        GammaProgram,
-        connection,
-        ammQuery.data
-      )
-      txBuilder.add(tx)
-      // eslint-disable-next-line max-len
-      const sourceAmount = `${bigNumberFormatter(new BigNumber(amountTokenA))} ${selectedTokenA?.symbol}`
-      // eslint-disable-next-line max-len
-      const targetAmount = `${bigNumberFormatter(new BigNumber(amountTokenB))} ${selectedTokenB?.symbol}`
-      const { success, txSig } = await sendTransaction(
-        txBuilder,
-        {
-          // eslint-disable-next-line max-len
-          successMessage: `You successfully swapped ${sourceAmount} ${selectedTokenA?.symbol} to ${targetAmount} ${selectedTokenB?.symbol}`
-        },
-        undefined,
-        undefined,
-        true
-      )
-      console.log('SwapResponse', success)
-      if (!success) {
-        //off(connectionId)
-        console.log('An error occurred while Swapping!')
-      } else {
-        amountTokenACommands.clear()
-        amountTokenBCommands.clear()
-        await forceCronUpdateWithConnectionAndTxSig(connection, txSig)
-      }
-    } catch (e) {
-      console.log('An error occurred while swapping.', e)
-    }
-    setSendingTransaction(false)
-  }
-
   useEffect(() => {
     if (!(selectedTokenA && selectedTokenB)) return
     checkIfPoolExists()
-    handlePrefetchingAccounts()
     handleRefresh()
     handleApproxAmounts()
   }, [selectedTokenA, selectedTokenB])
@@ -459,8 +414,8 @@ mt-8 flex items-center justify-center
                 otherToken={selectedTokenB}
                 handleChange={(e) => handleChange(e, true)}
                 amountToken={amountTokenA}
-                disableInput={sendingTransaction || !doesPoolExist}
-                disableTokenDropDown={sendingTransaction}
+                disableInput={swapMutation.isLoading || !doesPoolExist}
+                disableTokenDropDown={swapMutation.isLoading}
                 setAmountTokenB={amountTokenBCommands.set}
                 onBlur={amountTokenACommands.onBlur}
               />
@@ -509,7 +464,7 @@ mt-8 flex items-center justify-center
                 // handleChange={(e) => handleChange(e, false)}
                 amountToken={amountTokenB}
                 disableInput={true}
-                disableTokenDropDown={sendingTransaction}
+                disableTokenDropDown={swapMutation.isLoading}
                 isLocked={true}
                 setAmountTokenB={amountTokenBCommands.set}
                 onBlur={amountTokenACommands.onBlur}
@@ -617,12 +572,12 @@ mt-8 flex items-center justify-center
             <Connect />
           ) : (
             <Button
-              loading={sendingTransaction}
-              onClick={handleSwap}
+              isLoading={swapMutation.isLoading}
+              onClick={() => swapMutation.mutate()}
               variant={'primary'}
               colorScheme={'blue'}
               fullWidth
-              disabled={swapNotValid}
+              disabled={swapNotValid || swapMutation.isLoading}
             >
               Swap
             </Button>
@@ -658,9 +613,8 @@ function TokenSelectInput({
 }) {
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { isDarkMode, mode } = useDarkMode()
-  const { searchValue, setSearchValue, isLoadingTokenList, tokens, topBalancesWithTokenList } = useSwap()
+  const { searchValue, setSearchValue, isLoadingTokenList, tokens } = useSwap()
   const { publicKey } = useWalletBalance()
-  const tokenRenderList: JupToken[] = searchValue.length > 0 || !publicKey ? tokens : topBalancesWithTokenList
 
   return (
     <InputGroup
@@ -719,12 +673,12 @@ function TokenSelectInput({
                 isLoading={isLoadingTokenList}
                 disabled={disableTokenDropDown}
               />
-              {searchValue && tokenRenderList.length == 0 && !isLoadingTokenList ? (
+              {searchValue && tokens.length == 0 && !isLoadingTokenList ? (
                 <div className={'mb-auto p-2'}>No Tokens Found..</div>
               ) : null}
               <InfiniteTokenListSwap
                 useRenderListLength={searchValue.trim().length > 0}
-                tokenRenderList={tokenRenderList}
+                tokenRenderList={tokens}
                 onTokenSelect={(token) => {
                   setToken(token)
                   setSearchValue('')

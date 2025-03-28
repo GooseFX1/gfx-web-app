@@ -166,27 +166,28 @@ const getAccountsForDepositWithdraw = async (
   isDeposit: boolean,
   userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
-  ammConfig: PublicKey
+  poolIdKey: PublicKey,
+  liquidityAccountKey: PublicKey
 ) => {
-  const poolIdKey = await getpoolId(selectedCard, ammConfig)
   const mintA = new PublicKey(selectedCard?.mintA?.address)
   const mintB = new PublicKey(selectedCard?.mintB?.address)
-  const poolVaultKeyA = await getPoolVaultKey(poolIdKey, selectedCard?.mintA?.address)
-  const poolVaultKeyB = await getPoolVaultKey(poolIdKey, selectedCard?.mintB?.address)
-  const authorityKey = await getAuthorityKey()
-  const liquidityAccountKey = await getLiquidityPoolKey(poolIdKey, userPublicKey)
-  const tokenAccountAKey = await getAssociatedTokenAddress(
-    mintA,
-    userPublicKey,
-    null,
-    userSourceTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
-  )
-  const tokenAccountBKey = await getAssociatedTokenAddress(
-    mintB,
-    userPublicKey,
-    null,
-    userTargetTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
-  )
+  const [poolVaultKeyA, poolVaultKeyB, authorityKey, tokenAccountAKey, tokenAccountBKey] = await Promise.all([
+    getPoolVaultKey(poolIdKey, selectedCard?.mintA?.address),
+    getPoolVaultKey(poolIdKey, selectedCard?.mintB?.address),
+    getAuthorityKey(),
+    getAssociatedTokenAddress(
+      mintA,
+      userPublicKey,
+      null,
+      userSourceTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+    ),
+    getAssociatedTokenAddress(
+      mintB,
+      userPublicKey,
+      null,
+      userTargetTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+    )
+  ])
 
   const accountObj = {
     owner: userPublicKey,
@@ -207,33 +208,33 @@ const getAccountsForDepositWithdraw = async (
   return accountObj
 }
 
-const getAccountsForSwappingTokens = async (
-  mintA: GAMMAToken | JupToken,
-  mintB: GAMMAToken | JupToken,
+export const getAccountsForSwappingTokens = async (
+  mintA: string,
+  mintB: string,
   userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   poolState: any,
   userPublicKey: PublicKey,
-  ammConfigId: PublicKey
+  ammConfigId: PublicKey,
+  poolIdKey: PublicKey
 ) => {
-  const mintAPublicKey = new PublicKey(mintA?.address)
-  const mintBPublickey = new PublicKey(mintB?.address)
-  const poolIdKey = await getPoolIdKey(ammConfigId, mintAPublicKey, mintBPublickey)
-  const authorityKey = await getAuthorityKey()
-
-  const inputTokenAccount = await getAssociatedTokenAddress(
-    mintAPublicKey,
-    userPublicKey,
-    null,
-    userSourceTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
-  )
-
-  const outputTokenAccount = await getAssociatedTokenAddress(
-    mintBPublickey,
-    userPublicKey,
-    null,
-    userTargetTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
-  )
+  const mintAPublicKey = new PublicKey(mintA)
+  const mintBPublickey = new PublicKey(mintB)
+  const [authorityKey,inputTokenAccount,outputTokenAccount] = await Promise.all([
+    getAuthorityKey(),
+    getAssociatedTokenAddress(
+      mintAPublicKey,
+      userPublicKey,
+      null,
+      userSourceTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+    ),
+    getAssociatedTokenAddress(
+      mintBPublickey,
+      userPublicKey,
+      null,
+      userTargetTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+    )
+  ])
 
   const compare = mintAPublicKey?.toBuffer()?.compare(poolState.token0Mint?.toBuffer())
 
@@ -422,7 +423,8 @@ export const deposit = async (
   connection: Connection,
   userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
-  ammConfig: PublicKey,
+  poolIdKey: PublicKey,
+  liqKey: PublicKey,
   isSolMaxDeposit?: boolean
 ): Promise<Transaction> => {
   const depositAccounts = await getAccountsForDepositWithdraw(
@@ -431,7 +433,8 @@ export const deposit = async (
     true,
     userSourceTokenType,
     userTargetTokenType,
-    ammConfig
+    poolIdKey,
+    liqKey
   )
   const depositInstructionAccount = { ...depositAccounts }
   const liqAccData = await connection.getAccountInfo(depositAccounts?.userPoolLiquidity)
@@ -582,7 +585,8 @@ export const withdraw = async (
   userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   wallet: Wallet,
-  ammConfig
+  poolIdKey,
+  liqKey
 ): Promise<Transaction> => {
   //console.log('user withdraws', userSourceWithdrawAmount, userTargetWithdrawAmount)
   const withdrawAccounts = await getAccountsForDepositWithdraw(
@@ -591,7 +595,8 @@ export const withdraw = async (
     false,
     userSourceTokenType,
     userTargetTokenType,
-    ammConfig
+    poolIdKey,
+    liqKey
   )
 
   const withdrawInstructionAccount = {
@@ -748,58 +753,16 @@ export const createPool = async (
   return createPoolTxn
 }
 
-/**
- * This function is used to get the price quotes for swapping tokens
- * This is for going from Token A to Token B
- * @param amountToken amount of token to swap
- * @param mintA mint of token A
- * @param mintB mint of token B
- * @param program program instance
- * @param connection connection instance
- */
 export const getPriceQuotes = async (
   amountToken: string,
   mintA: GAMMAToken | JupToken,
   mintB: GAMMAToken | JupToken,
-  program: Program<GAMMAIDL>,
-  connection: Connection,
-  ammConfigId: PublicKey,
-  _prefetchedValues?:
-    | {
-        configIdKey: PublicKey | undefined
-        poolIdKey: PublicKey | undefined
-        ammConfigState: any
-        poolState: any
-        observationState: any
-        tokenAccountInfo0: any
-        tokenAccountInfo1: any
-        mintAAddress: string
-        mintBAddress: string
-      }
-    | null
-    | undefined
+  ammConfigState: any,
+  poolState: any,
+  observationState: any
 ) => {
-  let prefetchedValues = _prefetchedValues
-
-  if (mintA.address !== prefetchedValues?.mintAAddress || mintB.address !== prefetchedValues?.mintBAddress) {
-    prefetchedValues = null
-  }
-
   const mintAPublicKey = new PublicKey(mintA?.address)
-  const mintBPublickey = new PublicKey(mintB?.address)
-
-  const poolIdKey =
-    prefetchedValues?.poolIdKey ?? (await getPoolIdKey(ammConfigId, mintAPublicKey, mintBPublickey))
-
-  const [ammConfigState, poolState] = await Promise.all([
-    prefetchedValues?.ammConfigState ?? program.account.ammConfig.all(),
-    prefetchedValues?.poolState ?? program.account.poolState.fetch(poolIdKey)
-  ])
-
-  const [observationState] = await Promise.all([
-    prefetchedValues?.observationState ?? program.account.observationState.fetch(poolState.observationKey)
-  ])
-
+  console.log({ ammConfigState, poolState, observationState })
   const inputToken0Amount = convertToNativeValue(amountToken, mintA?.decimals)
 
   const swapTokenAmount0 = new BN(poolState?.token0VaultAmount)
@@ -828,17 +791,16 @@ export const swapTokens = async (
   mintA: GAMMAToken | JupToken,
   mintB: GAMMAToken | JupToken,
   userPublicKey: PublicKey,
-  userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
-  userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   slippage: number,
   program: Program<GAMMAIDL>,
   connection: Connection,
-  ammConfigId
+  ammConfigState: any,
+  poolState: any,
+  observationState: any,
+  accounts: any
 ) => {
   const mintAPublicKey = new PublicKey(mintA?.address)
   const mintBPublickey = new PublicKey(mintB?.address)
-  const poolIdKey = await getPoolIdKey(ammConfigId, mintAPublicKey, mintBPublickey)
-  const poolState = await program.account.poolState.fetch(poolIdKey)
 
   const amount = convertToNativeValue(amountToken, mintA?.decimals)
 
@@ -846,22 +808,12 @@ export const swapTokens = async (
     amountToken,
     mintA,
     mintB,
-    program,
-    connection,
-    ammConfigId
+    ammConfigState,
+    poolState,
+    observationState
   )
 
   const slippageAmount = new anchor.BN(+quote * (1 + slippage / 100))
-
-  const accounts = await getAccountsForSwappingTokens(
-    mintA,
-    mintB,
-    userSourceTokenType,
-    userTargetTokenType,
-    poolState,
-    userPublicKey,
-    ammConfigId
-  )
 
   let swapTxn: Transaction = new Transaction()
   if (mintA?.symbol === 'SOL') swapTxn = await wrapSolToken(userPublicKey, connection, amountToken)
