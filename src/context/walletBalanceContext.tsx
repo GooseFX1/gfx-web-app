@@ -62,7 +62,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   const { connection } = useConnectionConfig()
 
   const onChainTokenQuery = useQuery({
-    queryKey: [QUERY_KEY, 'wallet-tokens-onchaim', base58PublicKey],
+    queryKey: [QUERY_KEY, 'wallet-tokens-onchain', base58PublicKey],
     queryFn: async () => {
       const [standardTokens, token2022, solBalance] = await Promise.all([
         connection.getParsedTokenAccountsByOwner(publicKey, {
