@@ -1,11 +1,5 @@
 import { createContext, useContext, useEffect } from 'react'
-import {
-  ParsedAccountData,
-  PublicKey,
-  TokenAmount,
-  Transaction,
-  TransactionInstruction
-} from '@solana/web3.js'
+import { ParsedAccountData, PublicKey, TokenAmount, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from '@/context/settings'
 // It exists :/
@@ -81,7 +75,12 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     enabled: !!base58PublicKey
   })
   const gammaTokenQuery = useQuery({
-    queryKey: [QUERY_KEY, 'wallet-gamma-tokens', onChainTokenQuery.data],
+    queryKey: [
+      QUERY_KEY,
+      'wallet-gamma-tokens',
+      onChainTokenQuery.data?.accounts?.length,
+      onChainTokenQuery.data?.solBalance
+    ],
     queryFn: async () => {
       try {
         const tokenAccounts: Balance = {}
@@ -253,7 +252,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         createTokenAccountInstructions,
         createTokenAccount,
         createTokenAccounts,
-        walletValue: gammaTokenQuery.data?.walletValue ?? '0.0',
+        walletValue: gammaTokenQuery.data?.walletValue ?? '0.0'
       }}
     >
       {children}
