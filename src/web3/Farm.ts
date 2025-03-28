@@ -762,7 +762,7 @@ export const getPriceQuotes = async (
   observationState: any
 ) => {
   const mintAPublicKey = new PublicKey(mintA?.address)
-  console.log({ ammConfigState, poolState, observationState })
+
   const inputToken0Amount = convertToNativeValue(amountToken, mintA?.decimals)
 
   const swapTokenAmount0 = new BN(poolState?.token0VaultAmount)
