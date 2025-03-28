@@ -20,7 +20,7 @@ export const InfiniteProPoolScrollView: FC<InfiniteProPoolListScrollViewProps<un
   items,
   maxPoolsReached,
   fetchNextPage,
-  isLoadingPools,
+  isLoadingPools
 }): JSX.Element => {
   const effectiveItemCount = items.length + (!maxPoolsReached ? 1 : 0)
 
@@ -39,7 +39,7 @@ export const InfiniteProPoolScrollView: FC<InfiniteProPoolListScrollViewProps<un
       }
     }
     hasMountedRef.current = true
-  }, [render,items])
+  }, [render, items])
 
   const loadMoreItems = () => {
     if (isLoadingPools || maxPoolsReached) return
@@ -71,13 +71,12 @@ export const InfiniteProPoolScrollView: FC<InfiniteProPoolListScrollViewProps<un
       loadMoreItems={loadMoreItems}
       threshold={1}
       ref={infiniteLoaderRef}
-
     >
       {({ onItemsRendered, ref }) => (
         <FixedSizeList
           height={windowHeight}
           itemSize={60 + ITEM_PADDING}
-          className=""
+          className="!overflow-visible"
           itemCount={effectiveItemCount}
           onItemsRendered={onItemsRendered}
           overscanCount={20}
@@ -99,13 +98,8 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
   render,
   itemPadding: ITEM_PADDING = 8
 }): JSX.Element => {
-  const {
-    filteredPools: items,
-    maxPoolsReached,
-    isLoadingPools,
-    poolsQuery
-  } = useGamma()
-  console.log({data: poolsQuery.data})
+  const { filteredPools: items, maxPoolsReached, isLoadingPools, poolsQuery } = useGamma()
+  console.log({ data: poolsQuery.data })
   return (
     <InfiniteProPoolScrollView
       items={items}
