@@ -239,7 +239,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       }
     }
   }
-  const balanceProxy = new Proxy(gammaTokenQuery.data?.balance, balanceProxyHandler)
+  const balanceProxy = new Proxy(gammaTokenQuery.data?.balance ?? {}, balanceProxyHandler)
 
   return (
     <WalletBalanceContext.Provider
