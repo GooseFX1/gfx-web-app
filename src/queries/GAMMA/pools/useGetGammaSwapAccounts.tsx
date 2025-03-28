@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getAccountsForSwappingTokens } from '@/web3/Farm'
 import { PublicKey } from '@solana/web3.js'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+import { QUERY_KEY } from '@/queries/query.helper'
 
 type UseGetGammaSwapAccountsProps = {
   mintA: string
@@ -24,7 +25,18 @@ function useGetGammaSwapAccounts({
 }: UseGetGammaSwapAccountsProps) {
   const { publicKey, base58PublicKey } = useWalletBalance()
   return useQuery({
-    queryKey: ['gamma-swap-accounts', mintA, mintB, poolIdKey?.toBase58()],
+    queryKey: [
+      QUERY_KEY,
+      'gamma-swap-accounts',
+      mintA,
+      mintB,
+      userSourceTokenType,
+      userTargetTokenType,
+      !!poolState,
+      ammConfigId?.toBase58(),
+      poolIdKey?.toBase58(),
+      base58PublicKey
+    ],
     queryFn: async () =>
       getAccountsForSwappingTokens(
         mintA,
@@ -36,7 +48,15 @@ function useGetGammaSwapAccounts({
         ammConfigId,
         poolIdKey
       ),
-    enabled: !!mintA && !!mintB && !!poolIdKey && !!poolState && !!ammConfigId && !!base58PublicKey
+    enabled:
+      Boolean(mintA) &&
+      Boolean(mintB) &&
+      Boolean(userSourceTokenType) &&
+      Boolean(userTargetTokenType) &&
+      Boolean(poolIdKey) &&
+      Boolean(poolState) &&
+      Boolean(ammConfigId) &&
+      Boolean(base58PublicKey)
   })
 }
 

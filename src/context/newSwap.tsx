@@ -63,7 +63,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })
   }, [])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const mintA = selectedTokenA?.address;
     const mintB = selectedTokenB?.address;
     const params = new URLSearchParams();
@@ -94,7 +94,6 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [slippage, userCache])
   const tokensQuery = useTokensQuery({
     searchValue: searchValue,
-    poolType: 'any'
   });
   return (
     <SwapContext.Provider

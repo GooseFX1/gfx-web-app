@@ -10,14 +10,15 @@ type UseGammaProgramPoolQueryProps = {
 
 function useGammaProgramPoolQuery({ poolId }: UseGammaProgramPoolQueryProps) {
   const {GammaProgram} = usePriceFeedFarm()
-
+  console.log('poolQuery',{poolId, true: Boolean(poolId), enabled: !!poolId && !!GammaProgram})
   return useQuery({
-    queryKey: [QUERY_KEY, UseGammaProgramPoolKey, poolId?.toBase58(), !!GammaProgram],
+    queryKey: [QUERY_KEY, UseGammaProgramPoolKey, poolId],
     queryFn: async () =>
       await GammaProgram.account.poolState.fetch(poolId)
     ,
+    placeholderData: null,
     staleTime: INTERVALS.MINUTE,
-    enabled: !!poolId && !!GammaProgram
+    enabled: !!poolId
   })
 }
 
