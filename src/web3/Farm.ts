@@ -14,7 +14,7 @@ import {
   NATIVE_MINT,
   TOKEN_PROGRAM_ID
 } from '@solana/spl-token-v2'
-import { Program } from '@coral-xyz/anchor'
+import { Idl, Program } from '@coral-xyz/anchor'
 import BN from 'bn.js'
 import {
   AUTHORITY_PREFIX,
@@ -1065,7 +1065,9 @@ export const getClaimRewardsAccounts = async (
   const allRewardInfos = await program.account.rewardInfo.fetchMultiple(allRewardInfoKeys)
 
   const withdrawalRewardInfos = userRewardInfosWithWithdrawableRewards.map((userRewardInfo) => {
-    const indexOfRewardInfoKey = allRewardInfoKeys.indexOf(userRewardInfo.account.rewardInfo)
+    const indexOfRewardInfoKey = allRewardInfoKeys.findIndex((rewardInfoKey) =>
+      rewardInfoKey.equals(userRewardInfo.account.rewardInfo)
+    )
     const rewardInfo = allRewardInfos[indexOfRewardInfoKey]
     return {
       userRewardInfoPublicKey: userRewardInfo.publicKey,
@@ -1118,6 +1120,9 @@ export const claimRewards = async (
 
   const tokenRewardsIX = program.instruction.claimRewards({
     accounts: {
+      user: userPublicKey,
+      userTokenAccount: await getAssociatedTokenAddress(boostedRewardInfo.rewardInfo.mint, userPublicKey),
+      userRewardInfo: boostedRewardInfo.userRewardInfoPublicKey,
       poolState: boostedRewardInfo.rewardInfo.pool,
       authority: await getAuthorityKey(),
       rewardMint: boostedRewardInfo.rewardInfo.mint,

@@ -57,7 +57,7 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
         txBuilder,
         {
           // eslint-disable-next-line max-len
-          successMessage: `You claimed ${claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber()} in rewards`
+          successMessage: `You claimed $${claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber()} in rewards`
         },
         undefined,
         undefined,

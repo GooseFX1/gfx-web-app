@@ -55,7 +55,7 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
         txBuilder,
         {
           // eslint-disable-next-line max-len
-          successMessage: `You claimed ${claimableReward.claimableAmountUsd.toNumber()} in rewards`
+          successMessage: `You claimed $${claimableReward.claimableAmountUsd.toNumber()} in rewards`
         },
         undefined,
         undefined,
