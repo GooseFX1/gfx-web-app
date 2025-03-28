@@ -2,6 +2,7 @@ import { FC } from 'react'
 import useBoolean from '@/hooks/useBoolean'
 import RewardsClose from '@/assets/rewards_close.svg?react'
 import { useConnectionConfig } from '@/context'
+import { NAV_LINKS } from '@/utils/requests'
 
 const DocsBanner: FC = () => {
   const { userCache, updateUserCache } = useConnectionConfig()
@@ -36,7 +37,7 @@ const DocsBanner: FC = () => {
           Follow our{' '}
           <a
             className="font-bold text-regular dark:text-white text-blue-1 underline hover:underline visited:text-blue-1"
-            href="https://docs.goosefx.io/features/farm"
+            href={`${NAV_LINKS.docs}/goosefx-amm/gamma`}
             target="_blank"
             rel="noopener noreferrer"
           >
