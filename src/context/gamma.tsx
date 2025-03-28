@@ -21,6 +21,7 @@ import {
   GAMMA_SORT_CONFIG_MAP,
   GAMMA_SORT_CONFIG_PUBKEY_REQUIRED,
   GAMMA_SORT_PORTFOLIO_BLACKLIST,
+  GAMMA_SORT_CONFIG_DEFAULT,
   GAMMASortConfig,
   JupToken,
   ModeOfOperation,
@@ -131,7 +132,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (!publicKey && isPortfolio && GAMMA_SORT_PORTFOLIO_BLACKLIST.includes(value)) {
       sortValue = '9'
     } else if (!isPortfolio && GAMMA_SORT_CONFIG_BLACKLIST.includes(value)) {
-      sortValue = '1'
+      sortValue = GAMMA_SORT_CONFIG_DEFAULT
     }
 
     setCurrentSortState((prevState) => {
@@ -151,7 +152,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useLayoutEffect(() => {
     if (!publicKey) {
       if (GAMMA_SORT_CONFIG_PUBKEY_REQUIRED.includes(userCache.gamma.currentSort)) {
-        setCurrentSort('1')
+        setCurrentSort(GAMMA_SORT_CONFIG_DEFAULT)
       }
     }
   }, [publicKey, userCache])
@@ -217,8 +218,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (viewRange != 0) {
         setViewRange(0)
       }
-      if (currentSort != '1') {
-        setCurrentSort('1')
+      if (currentSort != GAMMA_SORT_CONFIG_DEFAULT) {
+        setCurrentSort(GAMMA_SORT_CONFIG_DEFAULT)
       }
     }
   }, [isCardMode, viewRange, currentSort, prevIsCardMode])
@@ -239,7 +240,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     if (!isPortfolio) {
       setShowDeposited(false)
-      setCurrentSort('1')
+      setCurrentSort(GAMMA_SORT_CONFIG_DEFAULT)
     } else {
       setCurrentSort('9')
     }

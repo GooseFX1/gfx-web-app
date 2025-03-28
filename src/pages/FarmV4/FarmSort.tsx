@@ -16,6 +16,7 @@ import {
 import { GAMMA_SORT_CONFIG } from '@/pages/FarmV4/constants'
 import { useConnectionConfig, useDarkMode, useGamma } from '@/context'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { GAMMA_SORT_CONFIG_DEFAULT } from '@/pages/FarmV4/constants'
 
 function FarmSort({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: boolean) => void }) {
   const { userCache, updateUserCache } = useConnectionConfig()
@@ -81,7 +82,7 @@ function FarmSort({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: 
             size={'md'}
             className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
           />
-          {(!isPortfolio && currentSort !== '1') ||
+          {(!isPortfolio && currentSort !== GAMMA_SORT_CONFIG_DEFAULT) ||
           (isPortfolio && currentSort != '9') ||
           showCreatedPools ||
           showDeposited ? (
