@@ -753,7 +753,7 @@ export const createPool = async (
   return createPoolTxn
 }
 
-export const getPriceQuotes = async (
+export const getPriceQuotes = (
   amountToken: string,
   mintA: GAMMAToken | JupToken,
   mintB: GAMMAToken | JupToken,
@@ -804,7 +804,7 @@ export const swapTokens = async (
 
   const amount = convertToNativeValue(amountToken, mintA?.decimals)
 
-  const { destinationAmountSwapped: quote } = await getPriceQuotes(
+  const { destinationAmountSwapped: quote } = getPriceQuotes(
     amountToken,
     mintA,
     mintB,
@@ -994,7 +994,7 @@ export interface BoostedRewardInfo {
 }
 
 export const getClaimRewardsAccounts = async (
-  program: Program<Idl>,
+  program: Program<GAMMAIDL>,
   userPublicKey: PublicKey
 ): Promise<BoostedRewardInfo[]> => {
   const userRewardInfos = await program.account.userRewardInfo.all([
