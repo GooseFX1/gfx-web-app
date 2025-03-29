@@ -182,10 +182,16 @@ export const Swap: FC = () => {
       const sourceAmount = `${bigNumberFormatter(new BigNumber(amountTokenA))} ${selectedTokenA?.symbol}`
       // eslint-disable-next-line max-len
       const targetAmount = `${bigNumberFormatter(new BigNumber(amountTokenB))} ${selectedTokenB?.symbol}`
-      const { txSig } = await sendTransaction(txBuilder, {
-        // eslint-disable-next-line max-len
-        successMessage: `You successfully swapped ${sourceAmount} ${selectedTokenA?.symbol} to ${targetAmount} ${selectedTokenB?.symbol}`
-      })
+      const { txSig } = await sendTransaction(
+        txBuilder,
+        {
+          // eslint-disable-next-line max-len
+          successMessage: `You successfully swapped ${sourceAmount} ${selectedTokenA?.symbol} to ${targetAmount} ${selectedTokenB?.symbol}`
+        },
+        undefined,
+        undefined,
+        true
+      )
       return txSig
     },
     onSuccess: (txSig) => {
@@ -250,7 +256,8 @@ export const Swap: FC = () => {
     approxSwapQuery.isFetching ||
     poolStateQuery.isFetching ||
     observationStateQuery.isFetching ||
-    swapAccountsQuery.isFetching || swapMutation.isLoading
+    swapAccountsQuery.isFetching ||
+    swapMutation.isLoading
   const doesPoolExist = poolStateQuery.isFetched ? !!poolStateQuery.data : true
 
   return (
@@ -388,7 +395,7 @@ mt-8 flex items-center justify-center
                 otherToken={selectedTokenB}
                 handleChange={(e) => handleChange(e, true)}
                 amountToken={amountTokenA}
-                disableInput={loadingPriceQuote|| !doesPoolExist}
+                disableInput={loadingPriceQuote || !doesPoolExist}
                 disableTokenDropDown={loadingPriceQuote}
                 setAmountTokenB={amountTokenBCommands.set}
                 onBlur={amountTokenACommands.onBlur}
