@@ -25,7 +25,7 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 import { BASE_SLIPPAGE, JupToken } from '@/pages/FarmV4/constants'
 import { toast } from 'sonner'
 import { useWalletBalance } from '@/context/walletBalanceContext'
-import { bigNumberFormatter, loadIconImage, numberFormatter } from '@/utils'
+import { bigNumberFormatter, loadIconImage, numberFormatter, sleep } from '@/utils'
 import SearchBar from '@/components/common/SearchBar'
 import useBoolean from '@/hooks/useBoolean'
 import { InfiniteTokenListSwap } from '@/pages/Swap/InfiniteTokenListSwap'
@@ -97,8 +97,15 @@ export const Swap: FC = () => {
   })
 
   const approxSwapQuery = useQuery({
-    queryKey: [QUERY_KEY, 'swap-approx', selectedTokenA?.address, selectedTokenB?.address],
+    queryKey: [
+      QUERY_KEY,
+      'swap-approx',
+      selectedTokenA?.address,
+      selectedTokenB?.address,
+      observationStateQuery.data?.observations
+    ],
     queryFn: async () => {
+      await sleep(150)
       const aToB = getPriceQuotes(
         '1',
         selectedTokenA,
@@ -131,8 +138,16 @@ export const Swap: FC = () => {
   })
 
   const priceQuoteQuery = useQuery({
-    queryKey: [QUERY_KEY, 'swap-price-quote', selectedTokenA?.address, selectedTokenB?.address, amountTokenA],
+    queryKey: [
+      QUERY_KEY,
+      'swap-price-quote',
+      selectedTokenA?.address,
+      selectedTokenB?.address,
+      amountTokenA,
+      observationStateQuery.data?.observations
+    ],
     queryFn: async () => {
+      await sleep(150)
       const quote = getPriceQuotes(
         amountTokenA,
         selectedTokenA,
@@ -251,11 +266,11 @@ export const Swap: FC = () => {
     }
   }
   // anything is fetching
-  const loadingPriceQuote =
-    priceQuoteQuery.isFetching ||
-    approxSwapQuery.isFetching ||
+  const loadingPriceQuote = priceQuoteQuery.isFetching || approxSwapQuery.isFetching
+  const isLoading =
     poolStateQuery.isFetching ||
     observationStateQuery.isFetching ||
+    ammConfigStateQuery.isFetching ||
     swapAccountsQuery.isFetching ||
     swapMutation.isLoading
   const doesPoolExist = poolStateQuery.isFetched ? !!poolStateQuery.data : true
@@ -395,8 +410,8 @@ mt-8 flex items-center justify-center
                 otherToken={selectedTokenB}
                 handleChange={(e) => handleChange(e, true)}
                 amountToken={amountTokenA}
-                disableInput={loadingPriceQuote || !doesPoolExist}
-                disableTokenDropDown={loadingPriceQuote}
+                disableInput={isLoading || !doesPoolExist}
+                disableTokenDropDown={isLoading}
                 setAmountTokenB={amountTokenBCommands.set}
                 onBlur={amountTokenACommands.onBlur}
               />
@@ -445,7 +460,7 @@ mt-8 flex items-center justify-center
                 // handleChange={(e) => handleChange(e, false)}
                 amountToken={amountTokenB}
                 disableInput={true}
-                disableTokenDropDown={loadingPriceQuote}
+                disableTokenDropDown={isLoading}
                 isLocked={true}
                 setAmountTokenB={amountTokenBCommands.set}
                 onBlur={amountTokenACommands.onBlur}
@@ -498,7 +513,7 @@ mt-8 flex items-center justify-center
                 />
                 <LottieSwapCountDown
                   onFinish={handleRefresh}
-                  isRefreshing={loadingPriceQuote}
+                  isRefreshing={loadingPriceQuote || isLoading}
                   hasInput={+amountTokenA > 0}
                 />
               </div>
@@ -553,12 +568,14 @@ mt-8 flex items-center justify-center
             <Connect />
           ) : (
             <Button
-              isLoading={loadingPriceQuote}
+              isLoading={loadingPriceQuote || isLoading}
               onClick={() => swapMutation.mutate()}
               variant={'primary'}
               colorScheme={'blue'}
               fullWidth
-              disabled={swapNotValid || loadingPriceQuote || !swapAccountsQuery.data || !doesPoolExist}
+              disabled={
+                swapNotValid || loadingPriceQuote || isLoading || !swapAccountsQuery.data || !doesPoolExist
+              }
             >
               Swap
             </Button>
