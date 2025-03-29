@@ -461,5 +461,8 @@ export const withdrawBigStringFarm = (nativeString: string, mintDecimals: number
   return usdString
 }
 
-export const loadIconImage = (uri: string | undefined, mode: string): string =>
-  uri && uri?.length > 0 ? uri : `/img/assets/fallback-token-${mode}.svg`
+export const loadIconImage = (uri: string | undefined, mode: string): string => {
+  if (!uri || uri?.length === 0) return `/img/assets/fallback-token-${mode}.svg`
+  const isGOFXURI = uri.includes('GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD/logo.png')
+  return isGOFXURI ? `/img/crypto/GOFX.svg` : uri
+}
