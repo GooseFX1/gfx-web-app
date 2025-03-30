@@ -11,13 +11,14 @@ import {
 } from 'react'
 import { getFarmTokenPrices } from '../api/SSL'
 import { Program, Provider } from '@project-serum/anchor'
-import { Program as coralProgram, AnchorProvider } from "@coral-xyz/anchor"
+import { Program as coralProgram, AnchorProvider, IdlAccounts } from '@coral-xyz/anchor'
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
 import { getStakingAccountKey, SSL_PROGRAM_ID } from '../web3'
 import { useConnectionConfig } from './settings'
 import { PublicKey } from '@solana/web3.js'
 import sslJson from '../pages/FarmV3/idl/sslv2.json'
 import GammaJson from '../pages/FarmV4/idl/gamma.json'
+import { Gamma } from '../pages/FarmV4/idl/gammats'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { GAMMAIDL } from '@/pages/FarmV4/idl/gamma'
 
@@ -55,6 +56,8 @@ interface IPriceFeedConfig {
   GammaProgram: coralProgram<GAMMAIDL>
 }
 
+export type UserRewardInfo = IdlAccounts<Gamma>['userRewardInfo']
+export type RewardInfo = IdlAccounts<Gamma>['rewardInfo']
 const PriceFeedFarmContext = createContext<IPriceFeedConfig | null>(null)
 
 export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -68,7 +71,7 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
   const { connection, network } = useConnectionConfig()
   const stakeProgram: Program = useMemo(
     () =>
-     publicKey
+      publicKey
         ? new Program(
             sslJson as any,
             SSL_PROGRAM_ID,

@@ -301,7 +301,7 @@ export const Swap: FC = () => {
         await forceCronUpdateWithConnectionAndTxSig(connection, txSig)
       }
     } catch (e) {
-      console.log('An error occurred while depositing.', e)
+      console.log('An error occurred while swapping.', e)
     }
     setSendingTransaction(false)
   }

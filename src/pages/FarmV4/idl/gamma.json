@@ -3237,6 +3237,18 @@
         "kind": "struct",
         "fields": [
           {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "reward_info",
+            "type": "pubkey"
+          },
+          {
+            "name": "pool_state",
+            "type": "pubkey"
+          },
+          {
             "name": "total_claimed",
             "type": "u64"
           },

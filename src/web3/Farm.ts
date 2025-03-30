@@ -14,7 +14,7 @@ import {
   NATIVE_MINT,
   TOKEN_PROGRAM_ID
 } from '@solana/spl-token-v2'
-import { Program } from '@coral-xyz/anchor'
+import { Idl, Program } from '@coral-xyz/anchor'
 import BN from 'bn.js'
 import {
   AUTHORITY_PREFIX,
@@ -51,6 +51,7 @@ import {
   KaminoReserve
 } from './kamino'
 import { Wallet } from '@solana/wallet-adapter-react'
+import { RewardInfo, UserRewardInfo } from '@/context/price_feed_farm'
 import { GAMMAIDL } from '@/pages/FarmV4/idl/gamma'
 
 enum TokenType {
@@ -1032,4 +1033,112 @@ export const doesPoolWithMintsExist = async (
   } catch (e) {
     return false
   }
+}
+
+export interface BoostedRewardInfo {
+  userRewardInfoPublicKey: PublicKey
+  userRewardInfo: UserRewardInfo
+  rewardInfo: RewardInfo
+}
+
+export const getClaimRewardsAccounts = async (
+  program: Program<Idl>,
+  userPublicKey: PublicKey
+): Promise<BoostedRewardInfo[]> => {
+  const userRewardInfos = await program.account.userRewardInfo.all([
+    {
+      memcmp: {
+        offset: 8,
+        encoding: 'base58',
+        bytes: userPublicKey.toBase58()
+      }
+    }
+  ])
+
+  const userRewardInfosWithWithdrawableRewards = userRewardInfos.filter((userRewardInfo) => {
+    const userRewardInfoAccount = userRewardInfo.account as UserRewardInfo
+    return userRewardInfoAccount.totalRewards.sub(userRewardInfoAccount.totalClaimed).gt(new BN(0))
+  })
+  const allRewardInfoKeys = userRewardInfosWithWithdrawableRewards.map(
+    (userRewardInfo) => (userRewardInfo.account as UserRewardInfo).rewardInfo
+  )
+  const allRewardInfos = await program.account.rewardInfo.fetchMultiple(allRewardInfoKeys)
+
+  const withdrawalRewardInfos = userRewardInfosWithWithdrawableRewards.map((userRewardInfo) => {
+    const indexOfRewardInfoKey = allRewardInfoKeys.findIndex((rewardInfoKey) =>
+      rewardInfoKey.equals(userRewardInfo.account.rewardInfo)
+    )
+    const rewardInfo = allRewardInfos[indexOfRewardInfoKey]
+    return {
+      userRewardInfoPublicKey: userRewardInfo.publicKey,
+      userRewardInfo: userRewardInfo.account as UserRewardInfo,
+      rewardInfo: rewardInfo as RewardInfo
+    } as BoostedRewardInfo
+  })
+
+  return withdrawalRewardInfos
+}
+
+export const getAllActiveRewards = async (
+  program: Program<Idl>
+): Promise<{ publicKey: PublicKey; rewardInfo: RewardInfo }[]> => {
+  const currentTime = new BN(dayjs().unix())
+  const userRewardInfos = await program.account.rewardInfo.all()
+
+  const activeRewards = userRewardInfos.filter((rewardInfo) => {
+    const rewardInfoAccount = rewardInfo.account as RewardInfo
+    return rewardInfoAccount.startAt.lte(currentTime) && rewardInfoAccount.endRewardsAt.gte(currentTime)
+  })
+
+  return activeRewards.map((rewardInfo) => ({
+    publicKey: rewardInfo.publicKey,
+    rewardInfo: rewardInfo.account as RewardInfo
+  }))
+}
+
+export const claimRewards = async (
+  program: Program<Idl>,
+  userPublicKey: PublicKey,
+  connection: Connection,
+  boostedRewardInfo: BoostedRewardInfo
+) => {
+  // const userRewards = await getUserRewards(program, userPublicKey)
+  const claimRewardsTxn = new Transaction()
+
+  const associatedTokenAccount = await getAssociatedTokenAddress(boostedRewardInfo.rewardInfo.mint, userPublicKey)
+  const accountExists = await connection.getAccountInfo(associatedTokenAccount)
+  // Create token account to hold your wrapped SOL
+  if (!accountExists)
+    claimRewardsTxn.add(
+      createAssociatedTokenAccountInstruction(
+        userPublicKey,
+        associatedTokenAccount,
+        userPublicKey,
+        boostedRewardInfo.rewardInfo.mint
+      )
+    )
+
+  const tokenRewardsIX = program.instruction.claimRewards({
+    accounts: {
+      user: userPublicKey,
+      userTokenAccount: await getAssociatedTokenAddress(boostedRewardInfo.rewardInfo.mint, userPublicKey),
+      userRewardInfo: boostedRewardInfo.userRewardInfoPublicKey,
+      poolState: boostedRewardInfo.rewardInfo.pool,
+      authority: await getAuthorityKey(),
+      rewardMint: boostedRewardInfo.rewardInfo.mint,
+      rewardProvider: userPublicKey,
+      rewardProvidersTokenAccount: await getAssociatedTokenAddress(
+        boostedRewardInfo.rewardInfo.mint,
+        userPublicKey
+      ),
+      rewardInfo: boostedRewardInfo.userRewardInfo.rewardInfo,
+      rewardVault: await getRewardVaultKey(boostedRewardInfo.userRewardInfo.rewardInfo),
+      systemProgram: SYSTEM,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      tokenProgram2022: TOKEN_2022_PROGRAM_ID
+    }
+  })
+  claimRewardsTxn.add(tokenRewardsIX)
+
+  return claimRewardsTxn
 }

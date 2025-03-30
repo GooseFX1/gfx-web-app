@@ -25,6 +25,7 @@ import { RewardsProvider } from '@/context/rewardsContext'
 import { MarketProductGroupProvider } from './context/market_product_group'
 import { Swap } from '@/pages/Swap'
 import { SwapProvider } from '@/context/newSwap'
+import { BoostedRewardsProvider } from './context/boostedRewardsContext'
 
 const Bridge = lazy(() => import('./pages/Bridge'))
 const GenericNotFound = lazy(() => import('./pages/InvalidUrl'))
@@ -129,8 +130,10 @@ export const Router: FC = () => {
                           <Route exact path={[ROUTES.GAMMA]}>
                             <PriceFeedFarmProvider>
                               <GammaProvider>
-                                {/*<JupWidget />*/}
-                                <FarmV4 />
+                                <BoostedRewardsProvider>
+                                  {/*<JupWidget />*/}
+                                  <FarmV4 />
+                                </BoostedRewardsProvider>
                               </GammaProvider>
                             </PriceFeedFarmProvider>
                           </Route>

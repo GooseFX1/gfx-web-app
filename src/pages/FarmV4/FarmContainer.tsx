@@ -1,10 +1,6 @@
 import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import {
-  useConnectionConfig,
-  useDarkMode,
-  useGamma
-} from '../../context'
+import { useConnectionConfig, useDarkMode, useGamma } from '../../context'
 import { GAMMA_SORT_CONFIG, POOL_TYPE, GAMMA_SORT_CONFIG_DEFAULT } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
@@ -27,6 +23,8 @@ import useBreakPoint from '../../hooks/useBreakPoint'
 import FarmSort from '@/pages/FarmV4/FarmSort'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import TokenSearchBar from '@/pages/FarmV4/TokenSearchBar'
+import { ClaimAllRewards } from '@/components/token-rewards/ClaimAllButton'
+import { ClaimAllRewardsDialog } from '@/components/token-rewards/ClaimAllRewardsDialog'
 
 export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
@@ -53,6 +51,8 @@ export const FarmContainer: FC = () => {
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
     [wallet?.adapter?.publicKey]
   )
+
+  const [openClaimAllRewardsDialog, setOpenClaimAllRewardsDialog] = useBoolean(false)
 
   useLayoutEffect(() => {
     if (openDepositWithdrawSlider) {
@@ -157,7 +157,16 @@ export const FarmContainer: FC = () => {
             />
             <div className="flex items-center w-full justify-between relative">
               <TokenSearchBar />
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center gap-[15px]">
+                <ClaimAllRewards
+                  openClaimAllRewardsDialog={openClaimAllRewardsDialog}
+                  setOpenClaimAllRewardsDialog={setOpenClaimAllRewardsDialog.set}
+                />
+                <ClaimAllRewardsDialog
+                  openClaimAllRewardsDialog={openClaimAllRewardsDialog}
+                  setOpenClaimAllRewardsDialog={setOpenClaimAllRewardsDialog.set}
+                />
+
                 {breakpoint.isMobile ? (
                   <div>
                     <Button className="p-0 !h-[35px] !w-[35px] mx-2 relative" variant={'ghost'}>
