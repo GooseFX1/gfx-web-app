@@ -197,6 +197,7 @@ export type GAMMASortConfig = {
   direction: 'ASC' | 'DESC'
   key: string
 }
+export const GAMMA_SORT_CONFIG_DEFAULT = '3'
 export const GAMMA_SORT_CONFIG_PUBKEY_REQUIRED = ['9','10']
 export const GAMMA_SORT_PORTFOLIO_BLACKLIST = ['1','2', '3', '4']
 export const GAMMA_SORT_CONFIG_BLACKLIST = ['9','10']

@@ -16,7 +16,7 @@ function useUserLiquidityQuery() {
     queryKey: keys,
     queryFn: async ()=> getLpPositions(base58PublicKey),
     placeholderData: QUERY_DEFAULT_MAP[UseUserLiquidityQueryKey],
-    staleTime: INTERVALS.MINUTE * 5,
+    staleTime: INTERVALS.MINUTE,
     enabled: !!base58PublicKey
   });
 }

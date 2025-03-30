@@ -21,11 +21,13 @@ import {
 import { fetchBrowserCountryCode } from '../api/analytics'
 import { fetchIsUnderMaintenance, fetchGammaBoostedRewards } from '../api/config'
 import { ENVS } from '../constants'
-import useActivityTracker from '@/hooks/useActivityTracker'
 import { axiosFetchWithRetries } from '../api'
 import { INTERVALS } from '@/utils/time'
 import { USER_CONFIG_CACHE } from '@/types/app_params'
 import bs58 from 'bs58'
+import { useQuery } from '@tanstack/react-query'
+import { QUERY_KEY } from '@/queries/query.helper'
+import { GAMMA_SORT_CONFIG_DEFAULT } from '@/pages/FarmV4/constants'
 
 const countries = [
   { code: 'BY', name: 'Belarus' },
@@ -119,7 +121,7 @@ function newCache(): USER_CONFIG_CACHE {
       showDepositedFilter: false,
       showCreatedFilter: false,
       docsBanner: true,
-      currentSort: '1',
+      currentSort: GAMMA_SORT_CONFIG_DEFAULT,
       viewMode: 'row'
     },
     hasSignedTC: false,
@@ -228,12 +230,10 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [gammaBoostedRewardsIsActive, setGammaBoostedRewardsIsActive] = useState<boolean>(true)
   const [userCache, setUserCache] = useState<USER_CONFIG_CACHE>(getOrCreateCache())
 
-  const [endpointName, setEndpointName] = useState<EndPointName>(
+  const [endpointName, setEndpointName] = useState<EndPointName>(() =>
     userCache.endpointName ? userCache.endpointName : DEFAULT_ENDPOINT_NAME
   )
   const [priorityFee, setPriorityFee] = useState<PriorityFeeName>(userCache.priorityFee || 'Default')
-  const [latency, setLatency] = useState<number>(0)
-  const [shouldTrack, setShouldTrack] = useState<boolean>(true)
   const setCache = useCallback((cache: USER_CONFIG_CACHE) => {
     setUserCache(cache)
   }, [])
@@ -298,7 +298,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const network = useMemo(() => RPCs[endpointName ?? DEFAULT_ENDPOINT_NAME].network, [endpointName])
   const endpoint = useMemo(
     () => (userCache.endpoint !== null ? userCache.endpoint : RPCs[endpointName].endpoint),
-    [endpointName, userCache]
+    [endpointName, userCache.endpoint]
   )
 
   useEffect(() => {
@@ -327,36 +327,20 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       commitment: 'processed'
     })
     return { connection, perpsConnection }
-  }, [endpointName, endpoint])
-
-  const getAndSetLatency = useCallback(async () => {
-    const start = Date.now()
-    await connection.getLatestBlockhashAndContext({
-      commitment: 'confirmed'
-    })
-    const end = Date.now()
-    const speedMs = end - start
-    setLatency(speedMs)
-  }, [connection])
-  useEffect(() => {
-    let timer: NodeJS.Timeout
-    getAndSetLatency()
-    if (shouldTrack) {
-      timer = setInterval(async () => {
-        getAndSetLatency()
-      }, INTERVALS.SECOND * 30)
-    }
-    return () => clearInterval(timer)
-  }, [shouldTrack, getAndSetLatency, endpoint, connection, endpointName])
-  const callbackOff = useCallback(() => setShouldTrack(false), [])
-  const callbackOn = useCallback(() => {
-    setShouldTrack(true)
-    getAndSetLatency
-  }, [])
-  useActivityTracker({
-    callbackOff: callbackOff,
-    callbackOn: callbackOn
+  }, [endpoint])
+  const latencyQuery = useQuery({
+    queryKey: [QUERY_KEY, 'latency', endpoint],
+    queryFn: async () => {
+      const start = Date.now()
+      await connection.getLatestBlockhashAndContext({
+        commitment: 'confirmed'
+      })
+      const end = Date.now()
+      return end - start
+    },
+    staleTime: INTERVALS.SECOND * 30
   })
+
   useEffect(() => {
     if (endpointName === null) {
       setEndpointName(
@@ -401,7 +385,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         priorityFee,
         setPriorityFee,
         priorityFeeInstruction,
-        latency,
+        latency: latencyQuery.data,
         priorityFeeValue,
         userCache,
         setUserCache: setCache,

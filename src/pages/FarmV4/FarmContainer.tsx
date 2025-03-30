@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { useConnectionConfig, useDarkMode, useGamma } from '../../context'
-import { GAMMA_SORT_CONFIG, POOL_TYPE } from './constants'
+import { GAMMA_SORT_CONFIG, POOL_TYPE, GAMMA_SORT_CONFIG_DEFAULT } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
   Badge,
@@ -176,7 +176,7 @@ export const FarmContainer: FC = () => {
                         className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
                         onClick={() => (isSortFilterOpen ? setIsSortFilterOpen.off() : setIsSortFilterOpen.on())}
                       />
-                      {(!isPortfolio && currentSort !== '1') ||
+                      {(!isPortfolio && currentSort !== GAMMA_SORT_CONFIG_DEFAULT) ||
                       (isPortfolio && currentSort != '9') ||
                       showCreatedPools ||
                       showDeposited ? (

@@ -1,6 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useConnectionConfig } from '@/context'
 import { INTERVALS } from '@/utils/time'
+import { useQuery } from '@tanstack/react-query'
+import { QUERY_KEY } from '@/queries/query.helper'
+
 const NETWORK_STATUS_UNKOWN = -1
 const NETWORK_STATUS_NORMAL = 0
 const NETWORK_STATUS_CONGESTED = 1
@@ -29,39 +32,44 @@ type HealthResponse = {
     }
   }
 }
+
 function useNetworkStatus(): NetworkStatusReturn {
   const [status, setStatus] = useState<NETWORK_STATUS>(-1)
   const { endpoint, latency } = useConnectionConfig()
-  const refetch = useCallback(async () => {
-    try {
-      const res: HealthResponse = await fetch(`${endpoint ?? SOLANA_DEFAULT_ENDPOINT}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'getHealth'
-        })
-      }).then((r) => r.json())
-      console.log('[Log] Health Response: ', res)
-      if (res.result) {
-        setStatus(0)
-      } else {
-        if (res.error && res.error.data.numSlotsBehind) {
-          setStatus(2)
+  const query = useQuery({
+    queryKey: [QUERY_KEY, 'network-status', endpoint],
+    queryFn: async () => {
+      try {
+        const res: HealthResponse = await fetch(`${endpoint ?? SOLANA_DEFAULT_ENDPOINT}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'getHealth'
+          })
+        }).then((r) => r.json())
+        if (res.result) {
+         return 0
         } else {
-          setStatus(1)
+          if (res.error && res.error.data.numSlotsBehind) {
+            return 2
+          } else {
+            return 1
+          }
         }
+      } catch (e) {
+        console.error('[Error] Failed to fetch health status', e)
+        return -1
       }
-    } catch (e) {
-      console.error('[Error] Failed to fetch health status', e)
-      setStatus(-1)
-    }
-  }, [endpoint])
+    },
+    staleTime: INTERVALS.MINUTE,
+  })
+
   const mappedStatus = useMemo(() => {
-    switch (status) {
+    switch (query.data) {
       case 0:
         return 'Normal'
       case 1:
@@ -71,13 +79,9 @@ function useNetworkStatus(): NetworkStatusReturn {
       default:
         return 'Unknown'
     }
-  }, [status])
+  }, [query.data])
+
   useEffect(() => {
-    refetch()
-    const interval = setInterval(() => refetch(), INTERVALS.MINUTE * 5)
-    return () => clearInterval(interval)
-  }, [endpoint])
-  useEffect(()=>{
     if (latency < 250 && status != NETWORK_STATUS_NORMAL) {
       setStatus(0)
     } else if (latency < 500 && status != NETWORK_STATUS_CONGESTED) {
@@ -86,8 +90,8 @@ function useNetworkStatus(): NetworkStatusReturn {
       setStatus(2)
     }
     console.log(latency)
-  },[latency])
-  return { status, mappedStatus, refetch }
+  }, [latency])
+  return { status, mappedStatus, refetch: query.refetch }
 }
 
 export default useNetworkStatus
