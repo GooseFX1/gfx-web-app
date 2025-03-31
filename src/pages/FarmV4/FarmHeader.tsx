@@ -145,14 +145,10 @@ export const FarmHeader: FC = () => {
                     if (isPortfolio) {
                       setShowDeposited(false)
                     }
-                    if (selectedTokens.length != 0) {
-                      if (selectedTokens.every((t) => t.isPrimary)) {
-                        setCurrentPoolType(POOL_TYPE.primary)
-                      } else {
-                        setCurrentPoolType(POOL_TYPE.hyper)
-                      }
+                    if (selectedTokens.length == 0 || selectedTokens.every((t) => t.isPrimary)) {
+                      setCurrentPoolType(POOL_TYPE.primary)
                     } else {
-                      setCurrentPoolType(POOL_TYPE.all)
+                      setCurrentPoolType(POOL_TYPE.hyper)
                     }
                     setIsPortfolio.off()
                   }
@@ -202,7 +198,7 @@ export const FarmHeader: FC = () => {
             options={options}
           />
           <div className="flex flex-row gap-2.5 self-stretch">
-            {infoCards?.map((card) => (
+            {infoCards?.map(card => card.name === '24H Fees' ? <></> : (
               <Container
                 key={card.name}
                 className={'w-[130px] justify-center h-full'}
@@ -226,7 +222,7 @@ export const FarmHeader: FC = () => {
                   &nbsp;
                 </ContainerTitle>
                 <h2>$ {card.value}</h2>
-              </Container>
+              </Container> 
             ))}
             {/* {isCardMode && (
               <div className="flex flex-col justify-around">
