@@ -77,62 +77,60 @@ export const Router: FC = () => {
       )}
       <TokenRegistryProvider>
         <AccountsProvider>
-          <TokenRegistryProvider>
-            <RewardToggleProvider>
-              <NavCollapseProvider>
-                <RewardsProvider>
-                  <PriceFeedFarmProvider>
-                    <AppLayout>
-                      <Toaster duration={5000} />
-                      {isUnderMaintenance ? (
-                        <Maintenance />
-                      ) : (
-                        <Suspense fallback={<PageLoader />}>
-                          <Switch>
-                            <Route exact path="/bridge">
-                              <Bridge />
-                            </Route>
-                            <Route exact path="/leaderboard">
-                              <StatsProvider>
-                                <LeaderBoard />
-                              </StatsProvider>
-                            </Route>
-                            <Route exact path={['/ssl', '/ssl/temp-withdraw']}>
-                              <Farm />
-                            </Route>
-                            <Route exact path={[ROUTES.GAMMA]}>
-                              <GammaProvider>
-                                <BoostedRewardsProvider>
-                                  <FarmV4 />
-                                </BoostedRewardsProvider>
-                              </GammaProvider>
-                            </Route>
-                            <Route exact path={['/swap']}>
-                              <SwapProvider>
-                                <Swap />
-                              </SwapProvider>
-                            </Route>
-                            <Route exact path="/analytics">
-                              <AnalyticsWrapper />
-                            </Route>
-                            <Route exact path="/analytics/ssl">
-                              <SSLAnalyticsDashboard />
-                            </Route>
-                            <Route exact path="/analytics/ssl/pairdata">
-                              <CoinGeckoPairs />
-                            </Route>
-                            <Route>
-                              <GenericNotFound />
-                            </Route>
-                          </Switch>
-                        </Suspense>
-                      )}
-                    </AppLayout>
-                  </PriceFeedFarmProvider>
-                </RewardsProvider>
-              </NavCollapseProvider>
-            </RewardToggleProvider>
-          </TokenRegistryProvider>
+          <RewardToggleProvider>
+            <NavCollapseProvider>
+              <RewardsProvider>
+                <PriceFeedFarmProvider>
+                  <AppLayout>
+                    <Toaster duration={5000} />
+                    {isUnderMaintenance ? (
+                      <Maintenance />
+                    ) : (
+                      <Suspense fallback={<PageLoader />}>
+                        <Switch>
+                          <Route exact path="/bridge">
+                            <Bridge />
+                          </Route>
+                          <Route exact path="/leaderboard">
+                            <StatsProvider>
+                              <LeaderBoard />
+                            </StatsProvider>
+                          </Route>
+                          <Route exact path={['/ssl', '/ssl/temp-withdraw']}>
+                            <Farm />
+                          </Route>
+                          <Route exact path={[ROUTES.GAMMA]}>
+                            <GammaProvider>
+                              <BoostedRewardsProvider>
+                                <FarmV4 />
+                              </BoostedRewardsProvider>
+                            </GammaProvider>
+                          </Route>
+                          <Route exact path={['/swap']}>
+                            <SwapProvider>
+                              <Swap />
+                            </SwapProvider>
+                          </Route>
+                          <Route exact path="/analytics">
+                            <AnalyticsWrapper />
+                          </Route>
+                          <Route exact path="/analytics/ssl">
+                            <SSLAnalyticsDashboard />
+                          </Route>
+                          <Route exact path="/analytics/ssl/pairdata">
+                            <CoinGeckoPairs />
+                          </Route>
+                          <Route>
+                            <GenericNotFound />
+                          </Route>
+                        </Switch>
+                      </Suspense>
+                    )}
+                  </AppLayout>
+                </PriceFeedFarmProvider>
+              </RewardsProvider>
+            </NavCollapseProvider>
+          </RewardToggleProvider>
         </AccountsProvider>
       </TokenRegistryProvider>
     </BrowserRouter>
