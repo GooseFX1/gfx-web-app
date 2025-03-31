@@ -202,7 +202,7 @@ export const FarmHeader: FC = () => {
             options={options}
           />
           <div className="flex flex-row gap-2.5 self-stretch">
-            {infoCards?.map((card) => (
+          {infoCards?.map(card => card.name === '24H Fees' ? <></> : (
               <Container
                 key={card.name}
                 className={'w-[130px] justify-center h-full'}
