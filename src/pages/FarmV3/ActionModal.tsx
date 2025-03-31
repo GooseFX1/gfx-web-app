@@ -15,7 +15,7 @@ import {
   IconTooltip
 } from 'gfx-component-lib'
 import BigNumber from 'bignumber.js'
-import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
+import { PropsWithKey } from '@/types/helper'
 //milliseconds in 5 minutes to be used to update the countdown every 5 minutes
 const TIMER = 300 * 1000
 

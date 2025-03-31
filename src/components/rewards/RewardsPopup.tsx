@@ -6,7 +6,6 @@ import { useDarkMode } from '../../context'
 import useRewards from '../../context/rewardsContext'
 import { Button, cn, Dialog, DialogBody, DialogContent, DialogOverlay, DialogPortal } from 'gfx-component-lib'
 import Rewards from './v2/Rewards'
-import Refer from './Refer'
 import Raffle from './raffle/Raffle'
 import RewardsClose from '@/assets/rewards_close.svg?react'
 
@@ -77,7 +76,6 @@ export const RewardsPopup: FC = () => {
          w-full flex flex-row max-md:flex-col rounded-t-[10px]`}
           >
             {panelIndex == REWARD_PANEL_INDEX && <Rewards />}
-            {panelIndex == REFER_PANEL_INDEX && <Refer />}
             {panelIndex == RAFFLE_PANEL_INDEX && <Raffle />}
           </DialogBody>
         </DialogContent>

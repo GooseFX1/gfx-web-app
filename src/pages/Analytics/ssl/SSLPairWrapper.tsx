@@ -1,11 +1,9 @@
 /* eslint-disable arrow-body-style */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { FC, useEffect, useMemo, useState } from 'react'
-import { MINTS, PAIRS } from './utils'
+import React, { FC, useEffect, useState } from 'react'
+import { PAIRS } from './utils'
 import { ANALYTICS_BASE } from '../../../api/analytics'
-import { GET_SSL_JUPITER } from '../../TradeV3/perps/perpsConstants'
-import axios from 'axios'
 import HighchartsReact from 'highcharts-react-official'
 import Highcharts from 'highcharts'
 import { AlertOutlined, CheckCircleOutlined } from '@ant-design/icons'
@@ -13,6 +11,7 @@ import { cloneDeep } from 'lodash'
 import styled from 'styled-components'
 import { Button, Spin } from 'antd'
 import { customClient } from '../../../api/index'
+import { GET_SSL_JUPITER } from '@/web3'
 
 const WRAPPER = styled.div`
   height: 100%;

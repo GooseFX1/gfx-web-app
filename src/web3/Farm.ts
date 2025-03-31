@@ -1042,7 +1042,7 @@ export interface BoostedRewardInfo {
 }
 
 export const getClaimRewardsAccounts = async (
-  program: Program<Idl>,
+  program: Program<GAMMAIDL>,
   userPublicKey: PublicKey
 ): Promise<BoostedRewardInfo[]> => {
   const userRewardInfos = await program.account.userRewardInfo.all([
@@ -1080,7 +1080,7 @@ export const getClaimRewardsAccounts = async (
 }
 
 export const getAllActiveRewards = async (
-  program: Program<Idl>
+  program: Program<GAMMAIDL>
 ): Promise<{ publicKey: PublicKey; rewardInfo: RewardInfo }[]> => {
   const currentTime = new BN(dayjs().unix())
   const userRewardInfos = await program.account.rewardInfo.all()

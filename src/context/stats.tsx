@@ -4,7 +4,7 @@ import { useConnectionConfig } from './settings'
 import { reverseLookup, getAllDomains, getFavoriteDomain } from '@bonfida/spl-name-service'
 import { useEffect } from 'react'
 import { httpClient } from '../api'
-import { GET_LEADERBOARD_DATA_V2 } from '../pages/TradeV3/perps/perpsConstants'
+import { GET_LEADERBOARD_DATA_V2 } from '@/web3'
 
 export interface User {
   contestPoints: number

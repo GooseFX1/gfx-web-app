@@ -3,13 +3,9 @@ import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { AppLayout } from './layouts'
 import {
   AccountsProvider,
-  CryptoProvider,
   GammaProvider,
   NavCollapseProvider,
-  OrderBookProvider,
-  OrderProvider,
   PriceFeedFarmProvider,
-  PriceFeedProvider,
   RewardToggleProvider,
   TokenRegistryProvider,
   useConnectionConfig,
@@ -17,28 +13,23 @@ import {
 } from './context'
 import { APP_DEFAULT_ROUTE } from './constants'
 import Maintenance from './pages/Maintenance'
-import { TraderProvider } from './context/trader_risk_group'
 import { StatsProvider } from './context/stats'
 import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
 import { Toaster } from 'gfx-component-lib'
 import { RewardsProvider } from '@/context/rewardsContext'
-import { MarketProductGroupProvider } from './context/market_product_group'
 import { Swap } from '@/pages/Swap'
 import { SwapProvider } from '@/context/newSwap'
 import { BoostedRewardsProvider } from './context/boostedRewardsContext'
 
 const Bridge = lazy(() => import('./pages/Bridge'))
 const GenericNotFound = lazy(() => import('./pages/InvalidUrl'))
-const CryptoContent = lazy(() => import('./pages/TradeV3/TradeContainer'))
 const AnalyticsWrapper = lazy(() => import('./pages/Analytics/AnalyticsWrapper'))
-const TradeAnalyticsWrapper = lazy(() => import('./pages/Analytics/trade/TradeAnalyticsWrapper'))
 const SSLAnalyticsDashboard = lazy(() => import('./pages/Analytics/ssl/SSLAnalyticsDashboard'))
 const LeaderBoard = lazy(() => import('./pages/Stats/LeaderBoard'))
 const Farm = lazy(() => import('./pages/FarmV3/Farm'))
 const FarmV4 = lazy(() => import('./pages/FarmV4/Farm'))
 
 const CoinGeckoPairs = lazy(() => import('./pages/Analytics/ssl/SSLPairs'))
-const Account = lazy(() => import('./pages/Account/Account'))
 
 const WRAPPER_STYLES: CSSProperties = {
   flex: '1',
@@ -54,6 +45,7 @@ const INNER_STYLES: CSSProperties = { width: '500px', height: '500px' }
 export const ROUTES = {
   GAMMA: '/gamma'
 } as const
+
 function PageLoader() {
   const { mode } = useDarkMode()
   const { RiveComponent } = useRive({
@@ -85,104 +77,62 @@ export const Router: FC = () => {
       )}
       <TokenRegistryProvider>
         <AccountsProvider>
-          <RewardToggleProvider>
-            <CryptoProvider>
+          <TokenRegistryProvider>
+            <RewardToggleProvider>
               <NavCollapseProvider>
                 <RewardsProvider>
-                  <AppLayout>
-                    <Toaster duration={5000} />
-                    {isUnderMaintenance ? (
-                      <Maintenance />
-                    ) : (
-                      <Suspense fallback={<PageLoader />}>
-                        <Switch>
-                          {/*
-                              <Route exact path="/swap/:tradePair?">
-                                <Swap />
-                              </Route>
-                            */}
-                          <Route exact path="/bridge">
-                            <Bridge />
-                          </Route>
-                          <Route path="/trade">
-                            <PriceFeedProvider>
-                              <OrderProvider>
-                                <MarketProductGroupProvider>
-                                  <TraderProvider>
-                                    <OrderBookProvider>
-                                      <CryptoContent />
-                                    </OrderBookProvider>
-                                  </TraderProvider>
-                                </MarketProductGroupProvider>
-                              </OrderProvider>
-                            </PriceFeedProvider>
-                          </Route>
-                          <Route exact path="/leaderboard">
-                            <StatsProvider>
-                              <LeaderBoard />
-                            </StatsProvider>
-                          </Route>
-                          <Route exact path={['/ssl', '/ssl/temp-withdraw']}>
-                            <PriceFeedFarmProvider>
+                  <PriceFeedFarmProvider>
+                    <AppLayout>
+                      <Toaster duration={5000} />
+                      {isUnderMaintenance ? (
+                        <Maintenance />
+                      ) : (
+                        <Suspense fallback={<PageLoader />}>
+                          <Switch>
+                            <Route exact path="/bridge">
+                              <Bridge />
+                            </Route>
+                            <Route exact path="/leaderboard">
+                              <StatsProvider>
+                                <LeaderBoard />
+                              </StatsProvider>
+                            </Route>
+                            <Route exact path={['/ssl', '/ssl/temp-withdraw']}>
                               <Farm />
-                            </PriceFeedFarmProvider>
-                          </Route>
-                          <Route exact path={[ROUTES.GAMMA]}>
-                            <PriceFeedFarmProvider>
+                            </Route>
+                            <Route exact path={[ROUTES.GAMMA]}>
                               <GammaProvider>
                                 <BoostedRewardsProvider>
-                                  {/*<JupWidget />*/}
                                   <FarmV4 />
                                 </BoostedRewardsProvider>
                               </GammaProvider>
-                            </PriceFeedFarmProvider>
-                          </Route>
-                          <Route exact path={['/swap']}>
-                            <PriceFeedFarmProvider>
+                            </Route>
+                            <Route exact path={['/swap']}>
                               <SwapProvider>
-                                {/*<JupWidget />*/}
                                 <Swap />
                               </SwapProvider>
-                            </PriceFeedFarmProvider>
-                          </Route>
-                          <Route exact path="/analytics">
-                            <AnalyticsWrapper />
-                          </Route>
-                          <Route exact path="/analytics/trade">
-                            <TradeAnalyticsWrapper />
-                          </Route>
-                          <Route exact path="/analytics/ssl">
-                            <SSLAnalyticsDashboard />
-                          </Route>
-                          <Route exact path="/analytics/ssl/pairdata">
-                            <PriceFeedFarmProvider>
+                            </Route>
+                            <Route exact path="/analytics">
+                              <AnalyticsWrapper />
+                            </Route>
+                            <Route exact path="/analytics/ssl">
+                              <SSLAnalyticsDashboard />
+                            </Route>
+                            <Route exact path="/analytics/ssl/pairdata">
                               <CoinGeckoPairs />
-                            </PriceFeedFarmProvider>
-                          </Route>
-                          <Route exact path="/account">
-                            <PriceFeedProvider>
-                              <OrderProvider>
-                                <MarketProductGroupProvider>
-                                  <TraderProvider>
-                                    <OrderBookProvider>
-                                      <Account />
-                                    </OrderBookProvider>
-                                  </TraderProvider>
-                                </MarketProductGroupProvider>
-                              </OrderProvider>
-                            </PriceFeedProvider>
-                          </Route>
-                          <Route>
-                            <GenericNotFound />
-                          </Route>
-                        </Switch>
-                      </Suspense>
-                    )}
-                  </AppLayout>
+                            </Route>
+                            <Route>
+                              <GenericNotFound />
+                            </Route>
+                          </Switch>
+                        </Suspense>
+                      )}
+                    </AppLayout>
+                  </PriceFeedFarmProvider>
                 </RewardsProvider>
               </NavCollapseProvider>
-            </CryptoProvider>
-          </RewardToggleProvider>
+            </RewardToggleProvider>
+          </TokenRegistryProvider>
         </AccountsProvider>
       </TokenRegistryProvider>
     </BrowserRouter>

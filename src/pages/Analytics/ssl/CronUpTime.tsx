@@ -3,7 +3,7 @@ import { getCronUpTimeData } from '@/api/analytics'
 import { getTodaysDate } from '../../../utils'
 import React, { FC, ReactElement, useEffect, useState } from 'react'
 import { Tooltip } from 'antd'
-import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
+import { PropsWithKey } from '@/types/helper'
 
 const getCurrentTimeSlot = (): string => {
   const now = new Date() // Get the current date and time

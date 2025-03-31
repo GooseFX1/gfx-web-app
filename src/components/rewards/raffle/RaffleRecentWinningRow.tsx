@@ -2,7 +2,7 @@ import React, { FC, ReactElement } from 'react'
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 import tw from 'twin.macro'
 import { numberFormatter } from '../../../utils'
-import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
+import { PropsWithKey } from '@/types/helper'
 
 const RecentWinningRow: FC<PropsWithKey<{ winning }>> = ({ winning }): ReactElement => (
   <div tw="flex flex-1 h-[47px] items-center gap-3">

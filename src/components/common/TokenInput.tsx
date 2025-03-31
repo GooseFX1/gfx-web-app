@@ -1,7 +1,7 @@
 import { Button, cn, Input, InputElementLeft, InputElementRight, InputGroup, ShadButtonProps } from 'gfx-component-lib'
 import { ChangeEvent, useCallback, useRef } from 'react'
 import { useDarkMode } from '@/context'
-import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
+import { PropsWithKey } from '@/types/helper'
 
 interface TokenInputProps {
   value?: number | string
