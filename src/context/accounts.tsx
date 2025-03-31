@@ -9,12 +9,12 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { TOKEN_PROGRAM_ID, WRAPPED_SOL_MINT } from 'openbook-ts/serum/lib/token-instructions'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { useConnectionConfig } from './settings'
 import { useTokenRegistry } from './token_registry'
-import { findAssociatedTokenAddress } from '../web3'
+import { findAssociatedTokenAddress, WRAPPED_SOL_MINT } from '../web3'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 
 export type IAccount = {
   amount: string

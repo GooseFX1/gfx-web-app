@@ -2,7 +2,6 @@ import BN from 'bn.js'
 import { publicKey, u64 } from '@solana/buffer-layout-utils'
 import { Idl, Program } from '@project-serum/anchor'
 import { struct, u32, u8 } from '@solana/buffer-layout'
-import { TOKEN_PROGRAM_ID } from 'openbook-ts/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import {
   NATIVE_MINT,
@@ -30,6 +29,7 @@ import {
 } from './utils'
 import { SSL_PREFIX, LIQUIDITY_ACCOUNT_PREFIX, toPublicKey, ADDRESSES, PT_MINT_PREFIX } from '../web3'
 import { TxnReturn } from './stake'
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 export const TOKEN_NAMES = {
   SOL: 'SOL',
   GOFX: 'GOFX',

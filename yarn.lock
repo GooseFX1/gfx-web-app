@@ -9966,9 +9966,6 @@ onetime@^6.0.0:
   dependencies:
     mimic-fn "^4.0.0"
 
-"openbook-ts@file:./openbook-package":
-  version "1.0.0"
-
 optionator@^0.9.1:
   version "0.9.4"
   resolved "https://registry.yarnpkg.com/optionator/-/optionator-0.9.4.tgz#7ea1c1a5d91d764fb282139c88fe11e182a3a734"
