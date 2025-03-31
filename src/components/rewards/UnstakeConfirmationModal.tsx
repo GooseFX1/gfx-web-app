@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react'
+import React, { FC } from 'react'
 import useRewards from '../../context/rewardsContext'
 import { numberFormatter } from '../../utils'
 import CloseIcon from '../../assets/close-lite.svg?react'
@@ -22,16 +22,12 @@ interface UnstakeConfirmationModalProps {
   amount: number
 }
 
-const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
-  isOpen,
-  onClose,
-  amount = 0.0,
-}) => {
+const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({ isOpen, onClose, amount = 0.0 }) => {
   const { unstakeMutation, totalStaked } = useRewards()
-  const handleStakeConfirmation = useCallback(async () => {
+  const handleStakeConfirmation = async () => {
     await unstakeMutation.mutate(amount)
     onClose()
-  }, [amount])
+  }
   const { mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
   return (
@@ -84,11 +80,7 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
               </div>
 
               <div className={`flex flex-col gap-2.5`}>
-                <Button
-                  colorScheme={'red'}
-                  onClick={onClose}
-                  disabled={unstakeMutation.isLoading}
-                >
+                <Button colorScheme={'red'} onClick={onClose} disabled={unstakeMutation.isLoading}>
                   Cancel
                 </Button>
                 <Button
