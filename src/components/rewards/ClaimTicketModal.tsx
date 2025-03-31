@@ -81,7 +81,6 @@ const UnstakingTicketLineItem = ({ ticket }: PropsWithKey<{ ticket: UnstakeTicke
   const [oneDayLeft, setOneDayLeft] = useState(false)
   const [canClaim, setCanClaim] = useState(false)
   const { redeemUnstakingTicketsMutation, getUiAmount, userMetaData } = useRewards()
-  const [isClaiming, setIsClaiming] = useState(false)
   const [claimButtonText, setClaimButtonText] = useState('Unstake GOFX')
   const setClaimText = useCallback(
     (interval: NodeJS.Timeout) => {
@@ -110,9 +109,7 @@ const UnstakingTicketLineItem = ({ ticket }: PropsWithKey<{ ticket: UnstakeTicke
     return () => clearInterval(interval)
   }, [setClaimText])
   const unstakeGoFX = useCallback(() => {
-    setIsClaiming(true)
     const index = userMetaData.unstakingTickets.findIndex((t) => t.createdAt.eq(ticket.createdAt))
-    console.log(userMetaData.unstakingTickets, index)
     redeemUnstakingTicketsMutation.mutate([{ index, ticket }])
   }, [redeemUnstakingTicketsMutation, ticket, userMetaData])
   const uiUnstakeAmount = useMemo(() => getUiAmount(ticket.totalUnstaked), [ticket.totalUnstaked])
@@ -133,12 +130,12 @@ const UnstakingTicketLineItem = ({ ticket }: PropsWithKey<{ ticket: UnstakeTicke
             !canClaim &&
             `disabled:text-text-red disabled:dark:text-text-red opacity-100 dark:opacity-100`,
           canClaim && ` text-white`,
-          isClaiming && `cursor-not-allowed `
+          redeemUnstakingTicketsMutation.isLoading && `cursor-not-allowed `
         )}
-        disabled={!canClaim || isClaiming}
+        disabled={!canClaim || redeemUnstakingTicketsMutation.isLoading}
         colorScheme={canClaim ? 'primaryGradient' : 'default'}
         onClick={unstakeGoFX}
-        isLoading={isClaiming}
+        isLoading={redeemUnstakingTicketsMutation.isLoading}
       >
         {claimButtonText}
       </Button>
