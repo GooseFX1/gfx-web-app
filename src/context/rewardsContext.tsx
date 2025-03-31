@@ -36,10 +36,10 @@ interface IRewardsContext {
   unstakeableTickets: UnstakeableTicket[]
   activeUnstakingTickets: UnstakeTicket[]
   hasRewards: boolean
-  stakeMutation: UseMutationResult
-  unstakeMutation: UseMutationResult
-  claimFeesMutation: UseMutationResult
-  redeemUnstakingTicketsMutation: UseMutationResult
+  stakeMutation: UseMutationResult<void, unknown, number, unknown>
+  unstakeMutation: UseMutationResult<void, unknown, number, unknown>
+  claimFeesMutation: UseMutationResult<void, unknown, void, unknown>
+  redeemUnstakingTicketsMutation: UseMutationResult<void, unknown, UnstakeableTicket[], unknown>
   getUiAmount: (value: anchor.BN, isUsdc?: boolean) => number
   totalStakedInUSD: number
   gofxValue: number

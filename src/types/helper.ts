@@ -1,0 +1,1 @@
+export type PropsWithKey<T> = T & { key: string }

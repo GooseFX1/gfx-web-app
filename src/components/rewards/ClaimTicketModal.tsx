@@ -15,7 +15,7 @@ import {
 } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import CloseLite from '@/assets/close-lite.svg?react'
-import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
+import { PropsWithKey } from '@/types/helper'
 
 interface AllUnstakingTicketModalProps {
   isOpen: boolean
@@ -113,7 +113,7 @@ const UnstakingTicketLineItem = ({ ticket }: PropsWithKey<{ ticket: UnstakeTicke
     setIsClaiming(true)
     const index = userMetaData.unstakingTickets.findIndex((t) => t.createdAt.eq(ticket.createdAt))
     console.log(userMetaData.unstakingTickets, index)
-    redeemUnstakingTicketsMutation([{ index, ticket }]).finally(() => setIsClaiming(false))
+    redeemUnstakingTicketsMutation.mutate([{ index, ticket }])
   }, [redeemUnstakingTicketsMutation, ticket, userMetaData])
   const uiUnstakeAmount = useMemo(() => getUiAmount(ticket.totalUnstaked), [ticket.totalUnstaked])
   if (ticket.createdAt.toNumber() === 0 || ticket.totalUnstaked.toString() === '0') {
