@@ -7,7 +7,7 @@ import { IconWithFallback } from '@/components/common/IconWithFallback'
 import TextNumber from '@/components/common/TextNumber'
 import { GAMMA_POOL_CREATION_FEE } from './constants'
 
-const Step3: FC<{
+const CreatePoolConfirmStep: FC<{
   tokenA: JupToken
   tokenB: JupToken
   amountTokenA: string
@@ -139,4 +139,4 @@ const Step3: FC<{
     )
 }
 
-export default Step3
+export default CreatePoolConfirmStep
