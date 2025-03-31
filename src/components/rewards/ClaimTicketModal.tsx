@@ -80,7 +80,7 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
 const UnstakingTicketLineItem = ({ ticket }: PropsWithKey<{ ticket: UnstakeTicket }>) => {
   const [oneDayLeft, setOneDayLeft] = useState(false)
   const [canClaim, setCanClaim] = useState(false)
-  const { redeemUnstakingTickets, getUiAmount, userMetaData } = useRewards()
+  const { redeemUnstakingTicketsMutation, getUiAmount, userMetaData } = useRewards()
   const [isClaiming, setIsClaiming] = useState(false)
   const [claimButtonText, setClaimButtonText] = useState('Unstake GOFX')
   const setClaimText = useCallback(
@@ -113,8 +113,8 @@ const UnstakingTicketLineItem = ({ ticket }: PropsWithKey<{ ticket: UnstakeTicke
     setIsClaiming(true)
     const index = userMetaData.unstakingTickets.findIndex((t) => t.createdAt.eq(ticket.createdAt))
     console.log(userMetaData.unstakingTickets, index)
-    redeemUnstakingTickets([{ index, ticket }]).finally(() => setIsClaiming(false))
-  }, [redeemUnstakingTickets, ticket, userMetaData])
+    redeemUnstakingTicketsMutation([{ index, ticket }]).finally(() => setIsClaiming(false))
+  }, [redeemUnstakingTicketsMutation, ticket, userMetaData])
   const uiUnstakeAmount = useMemo(() => getUiAmount(ticket.totalUnstaked), [ticket.totalUnstaked])
   if (ticket.createdAt.toNumber() === 0 || ticket.totalUnstaked.toString() === '0') {
     return null

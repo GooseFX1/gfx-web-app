@@ -20,19 +20,16 @@ interface UnstakeConfirmationModalProps {
   isOpen: boolean
   onClose: () => void
   amount: number
-  setStakeLoading: (loading: boolean) => void
 }
 
 const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
   isOpen,
   onClose,
   amount = 0.0,
-  setStakeLoading
 }) => {
-  const { unstake, totalStaked } = useRewards()
-  const handleStakeConfirmation = useCallback(() => {
-    setStakeLoading(true)
-    unstake(amount).finally(() => setStakeLoading(false))
+  const { unstakeMutation, totalStaked } = useRewards()
+  const handleStakeConfirmation = useCallback(async () => {
+    await unstakeMutation.mutate(amount)
     onClose()
   }, [amount])
   const { mode } = useDarkMode()
@@ -87,7 +84,11 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
               </div>
 
               <div className={`flex flex-col gap-2.5`}>
-                <Button colorScheme={'red'} onClick={onClose}>
+                <Button
+                  colorScheme={'red'}
+                  onClick={onClose}
+                  disabled={unstakeMutation.isLoading}
+                >
                   Cancel
                 </Button>
                 <Button
@@ -95,6 +96,7 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
                   onClick={handleStakeConfirmation}
                   className={'dark:text-white text-text-blue'}
                   disabled={!(totalStaked >= amount)}
+                  isLoading={unstakeMutation.isLoading}
                 >
                   Yes, Continue With 7D Cooldown
                 </Button>

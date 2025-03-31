@@ -7,7 +7,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Button, cn } from 'gfx-component-lib'
 
 function RewardsClaimButton(): JSX.Element {
-  const { claimable, claimFees } = useRewards()
+  const { claimable, claimFeesMutation } = useRewards()
   const { connected } = useWallet()
   const [isClaiming, setIsClaiming] = useBoolean(false)
   const { isDone, time } = useTimer({
@@ -20,8 +20,8 @@ function RewardsClaimButton(): JSX.Element {
   })
   const handleClaim = useCallback(async () => {
     setIsClaiming.on()
-    await claimFees().finally(setIsClaiming.off)
-  }, [claimFees])
+    await claimFeesMutation().finally(setIsClaiming.off)
+  }, [claimFeesMutation])
   const buttonDisabled = !connected || claimable <= 0 || (!isDone && claimable <= 0)
   return (
     <Button
