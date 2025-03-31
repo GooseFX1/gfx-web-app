@@ -15,7 +15,7 @@ import {
 } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import CloseLite from '@/assets/close-lite.svg?react'
-import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
+import { PropsWithKey } from '@/types/helper'
 
 interface AllUnstakingTicketModalProps {
   isOpen: boolean
