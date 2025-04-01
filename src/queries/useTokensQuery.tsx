@@ -1,6 +1,4 @@
-import {
-  useInfiniteQuery
-} from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { GAMMA_API_BASE, GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
 import { TOKEN_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
 import { GAMMAListTokenResponse } from '@/types/gamma'
@@ -8,7 +6,6 @@ import { clamp } from '@/utils'
 import { IWalletBalanceContext, useWalletBalance } from '@/context/walletBalanceContext'
 import { TokenListToken } from '@/context'
 import { InfiniteDataAPIResponse, InfiniteDataQueryResponse, UseInfiniteQueryResponseFix } from '@/queries/types'
-import { useEffect } from 'react'
 import { DEFAULT_INFINITE_QUERY_RESPONSE, getQueryKeys } from '@/queries/query.helper'
 
 type TokenQueryProps = {
@@ -19,13 +16,10 @@ type TokenListAPIResponse = InfiniteDataAPIResponse<TokenListToken[]>
 
 type TokenQueryResponse = InfiniteDataQueryResponse<TokenListAPIResponse, TokenListToken>
 
-function useTokensQuery({
-  searchValue = '',
-  poolType = 'all'
-                        }: TokenQueryProps) {
-  const { base58PublicKey, topBalances, balance } = useWalletBalance()
+function useTokensQuery({ searchValue = '', poolType = 'all' }: TokenQueryProps) {
+  const { topBalances, balance } = useWalletBalance()
   const keys = getQueryKeys('GAMMA-tokens', searchValue, poolType)
-  const query =  useInfiniteQuery({
+  const query = useInfiniteQuery({
     queryKey: keys,
     queryFn: async ({ pageParam, signal, queryKey }) =>
       getTokens({
@@ -39,13 +33,13 @@ function useTokensQuery({
       const lastPage = data.pages[data.pages.length - 1]
       const response: TokenQueryResponse = {
         pages: data.pages,
-        allPages: flatData,
+        allPages: getTopBalancesWithTokenList(flatData, balance, topBalances, searchValue),
         pageParams: data.pageParams,
         maxPagesReached: lastPage?.currentPage >= lastPage?.totalPages,
         totalItems: lastPage?.totalItems
       }
 
-      return response;
+      return response
     },
     getNextPageParam: (lastPage: TokenListAPIResponse) => lastPage?.nextPage,
     getPreviousPageParam: (firstPage: TokenListAPIResponse) => firstPage?.nextPage,
@@ -53,13 +47,7 @@ function useTokensQuery({
     placeholderData: DEFAULT_INFINITE_QUERY_RESPONSE
   }) as UseInfiniteQueryResponseFix<TokenListAPIResponse, Error, TokenQueryResponse>
   // ^ TypeCasting to fix the query.data access to get intellisense working
-
-  useEffect(()=>{
-    if (!query.data || query.data.allPages.length == 0) return
-    query.data.allPages = getTopBalancesWithTokenList(query.data.allPages, balance, topBalances);
-  },[balance,base58PublicKey,topBalances,query.data])
-
-  return query;
+  return query
 }
 
 export default useTokensQuery
@@ -67,8 +55,12 @@ export default useTokensQuery
 function getTopBalancesWithTokenList(
   tokens: TokenListToken[],
   balance: IWalletBalanceContext['balance'],
-  topBalances: IWalletBalanceContext['topBalances']
+  topBalances: IWalletBalanceContext['topBalances'],
+  searchValue: string
 ): TokenListToken[] {
+  if (searchValue) {
+    return tokens
+  }
   const data = []
   const hasTokenSet = new Set()
   for (const tokenBalance of topBalances) {
