@@ -72,7 +72,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const programQuery = useQuery({
     queryKey: [QUERY_KEY, 'gfx-stake-program', endpoint],
     queryFn: () => new GfxStakeRewards(connection, getNetwork(network), new Wallet(Keypair.generate())),
-    staleTime: Infinity,
+    staleTime: Infinity
   })
 
   const poolStateQuery = useQuery({
@@ -279,11 +279,11 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     <RewardsContext.Provider
       value={{
         userMetaData: userDataQuery.data?.userMetadata,
-        claimable: userDataQuery.data?.claimable,
-        totalStaked: userDataQuery.data?.totalStaked,
-        totalEarned: userDataQuery.data?.totalEarned,
-        unstakeableTickets: userDataQuery.data?.unstakeableTickets,
-        activeUnstakingTickets: userDataQuery.data?.activeUnstakingTickets,
+        claimable: userDataQuery.data?.claimable ?? 0,
+        totalStaked: userDataQuery.data?.totalStaked ?? 0,
+        totalEarned: userDataQuery.data?.totalEarned ?? 0,
+        unstakeableTickets: userDataQuery.data?.unstakeableTickets ?? [],
+        activeUnstakingTickets: userDataQuery.data?.activeUnstakingTickets ?? [],
         stakeMutation: stakeMutation,
         unstakeMutation: unstakeMutation,
         claimFeesMutation: claimFeesMutation,
@@ -293,7 +293,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         totalStakedInUSD,
         gofxValue: gofxValueQuery.data,
         userStakeRatio,
-        totalStakedGlobally: poolStateQuery.data?.totalStakedGlobally
+        totalStakedGlobally: poolStateQuery.data?.totalStakedGlobally ?? 0
       }}
     >
       {children}
