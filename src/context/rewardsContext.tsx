@@ -291,7 +291,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         getUiAmount,
         hasRewards,
         totalStakedInUSD,
-        gofxValue: gofxValueQuery.data,
+        gofxValue: gofxValueQuery.data ?? 0,
         userStakeRatio,
         totalStakedGlobally: poolStateQuery.data?.totalStakedGlobally ?? 0
       }}
