@@ -50,8 +50,6 @@ export const DepositWithdrawSlider: FC = () => {
     setModeOfOperation,
     setSelectedCard,
     slippage,
-    sendingTransaction,
-    setSendingTransaction,
     forceCronAndUpdateLocalData
   } = useGamma()
   const [userSourceTokenBal, setUserSourceTokenBal] = useState<number>()
@@ -111,11 +109,11 @@ export const DepositWithdrawSlider: FC = () => {
         connection,
         userSourceTokenType,
         userTargetTokenType,
-        ammConfigQuery.data,
+        poolIdQuery.data,
+        liqKeyQuery.data,
         isSolMaxDeposit
       )
       txBuilder.add(tx)
-      setSendingTransaction(true)
       const poolMessage = `(${selectedCard?.mintA?.symbol}-${selectedCard?.mintB?.symbol}) pool.`
       // eslint-disable-next-line max-len
       const sourceAmount = `${bigNumberFormatter(
@@ -137,15 +135,9 @@ export const DepositWithdrawSlider: FC = () => {
     onSuccess: (data) => {
       refetechUpdatedPoolState()
       refetchSelectedCardLiquidityAcc()
-      setSendingTransaction(false)
       setUserSourceDepositAmount('')
       setUserTargetDepositAmount('')
       forceCronAndUpdateLocalData(data)
-    },
-    onError: (err) => {
-      //off(connectionId)
-      console.log('An error occurred while depositing!', err)
-      setSendingTransaction(false)
     }
   })
   const withdrawMutation = useMutation({
@@ -164,18 +156,14 @@ export const DepositWithdrawSlider: FC = () => {
         userSourceTokenType,
         userTargetTokenType,
         wallet,
-        ammConfigQuery.data
+        poolIdQuery.data,
+        liqKeyQuery.data
       )
       txBuilder.add(tx)
-      setSendingTransaction(true)
       const { txSig } = await sendTransaction(txBuilder, undefined, undefined, undefined, true)
       return txSig
     },
-    onSettled: () => {
-      setSendingTransaction(false)
-    },
     onSuccess: (data) => {
-      setSendingTransaction(false)
       setUserSourceWithdrawAmount('')
       setUserTargetWithdrawAmount('')
       setActionType('')
@@ -563,7 +551,7 @@ export const DepositWithdrawSlider: FC = () => {
             actionLabel={actionLabel}
             onActionClick={!isDeposit ? withdrawMutation.mutate : depositMutation.mutate}
             actionType={actionType}
-            loading={sendingTransaction}
+            loading={depositMutation.isLoading || withdrawMutation.isLoading}
           >
             <GammaActionModalContentStack
               options={[
@@ -653,7 +641,7 @@ export const DepositWithdrawSlider: FC = () => {
           <DialogFooter>
             <StickyFooter
               disableActionButton={isActionButtonDisabled}
-              isLoading={sendingTransaction || isUserTyping}
+              isLoading={depositMutation.isLoading || withdrawMutation.isLoading || isUserTyping}
               onActionClick={isDeposit ? depositMutation.mutate : handleProcessStart('withdraw')}
               isDeposit={isDeposit}
               // canClaim={true || isClaim}

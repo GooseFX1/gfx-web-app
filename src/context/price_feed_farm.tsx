@@ -10,7 +10,7 @@ import {
   useState
 } from 'react'
 import { getFarmTokenPrices } from '../api/SSL'
-import { Program, Provider } from '@project-serum/anchor'
+import { Program, ProgramAccount, Provider } from '@project-serum/anchor'
 import { Program as coralProgram, AnchorProvider, IdlAccounts } from '@coral-xyz/anchor'
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
 import { getStakingAccountKey, SSL_PROGRAM_ID } from '../web3'
@@ -27,6 +27,7 @@ interface IPrices {
     current: number
   }
 }
+
 interface IChange {
   [x: string]: {
     change?: string
@@ -37,11 +38,13 @@ interface IChange {
     }
   }
 }
+
 interface IStats {
   tvl: number
   volume7dSum: number
   totalVolumeTrade?: number
 }
+
 interface IPriceFeedConfig {
   prices: IPrices
   tokenInfo?: IChange
@@ -58,6 +61,10 @@ interface IPriceFeedConfig {
 
 export type UserRewardInfo = IdlAccounts<Gamma>['userRewardInfo']
 export type RewardInfo = IdlAccounts<Gamma>['rewardInfo']
+export type GammaPoolState = IdlAccounts<Gamma>['poolState']
+export type GammaAmmConfig = ProgramAccount<IdlAccounts<Gamma>['ammConfig']>
+export type GammaObservationState = IdlAccounts<Gamma>['observationState']
+
 const PriceFeedFarmContext = createContext<IPriceFeedConfig | null>(null)
 
 export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
