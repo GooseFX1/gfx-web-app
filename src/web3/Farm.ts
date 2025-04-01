@@ -51,7 +51,13 @@ import {
   KaminoReserve
 } from './kamino'
 import { Wallet } from '@solana/wallet-adapter-react'
-import { RewardInfo, UserRewardInfo } from '@/context/price_feed_farm'
+import {
+  GammaAmmConfig,
+  GammaObservationState,
+  GammaPoolState,
+  RewardInfo,
+  UserRewardInfo
+} from '@/context/price_feed_farm'
 import { GAMMAIDL } from '@/pages/FarmV4/idl/gamma'
 
 enum TokenType {
@@ -213,7 +219,7 @@ export const getAccountsForSwappingTokens = async (
   mintB: string,
   userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
-  poolState: any,
+  poolState: GammaPoolState,
   userPublicKey: PublicKey,
   ammConfigId: PublicKey,
   poolIdKey: PublicKey
@@ -320,7 +326,7 @@ const getAccountsForCreatePool = async (
 export const calculateOtherTokenAndLPAmount = (
   givenTokenAmount: string,
   tokenType: TokenType,
-  poolState: any
+  poolState: GammaPoolState
 ): { lpTokenAmount: BN; otherTokenAmountInString: string } => {
   try {
     if (!givenTokenAmount || +givenTokenAmount <= 0) {
@@ -379,7 +385,7 @@ export const calculateOtherTokenAndLPAmount = (
 
 export const lpTokensToTradingTokens = (
   lpTokenAmount: BN,
-  poolState: any
+  poolState: GammaPoolState
 ): { tokenAmount0: BN; tokenAmount1: BN } => {
   try {
     const lpTokenSupply = poolState?.lpSupply
@@ -757,9 +763,9 @@ export const getPriceQuotes = (
   amountToken: string,
   mintA: GAMMAToken | JupToken,
   mintB: GAMMAToken | JupToken,
-  ammConfigState: any,
-  poolState: any,
-  observationState: any
+  ammConfigState: GammaAmmConfig[],
+  poolState: GammaPoolState,
+  observationState: GammaObservationState
 ) => {
   const mintAPublicKey = new PublicKey(mintA?.address)
 
@@ -794,9 +800,9 @@ export const swapTokens = async (
   slippage: number,
   program: Program<GAMMAIDL>,
   connection: Connection,
-  ammConfigState: any,
-  poolState: any,
-  observationState: any,
+  ammConfigState: GammaAmmConfig[],
+  poolState: GammaPoolState,
+  observationState: GammaObservationState,
   accounts: any
 ) => {
   const mintAPublicKey = new PublicKey(mintA?.address)
