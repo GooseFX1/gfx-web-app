@@ -202,32 +202,36 @@ export const FarmHeader: FC = () => {
             options={options}
           />
           <div className="flex flex-row gap-2.5 self-stretch">
-          {infoCards?.map(card => card.name === '24H Fees' ? <></> : (
-              <Container
-                key={card.name}
-                className={'w-[130px] justify-center h-full'}
-                colorScheme={'primaryGradient'}
-                size={'lg'}
-              >
-                <ContainerTitle className={'z-[1]'}>
-                  <Tooltip>
-                    <TooltipTrigger
-                      className={cn(
-                        `text-grey-1 dark:text-grey-2 !cursor-pointer
+            {infoCards?.map((card) =>
+              card.name === '24H Fees' ? (
+                <></>
+              ) : (
+                <Container
+                  key={card.name}
+                  className={'w-[130px] justify-center h-full'}
+                  colorScheme={'primaryGradient'}
+                  size={'lg'}
+                >
+                  <ContainerTitle className={'z-[1]'}>
+                    <Tooltip>
+                      <TooltipTrigger
+                        className={cn(
+                          `text-grey-1 dark:text-grey-2 !cursor-pointer
                     text-tiny font-semibold no-underline`,
-                        card.tooltip.trim() && `underline decoration-dotted mb-1 underline-offset-4`
-                      )}
-                      disabled={!card.tooltip.trim()}
-                    >
-                      {card?.name}:
-                    </TooltipTrigger>
-                    <TooltipContent>{card.tooltip}</TooltipContent>
-                  </Tooltip>
-                  &nbsp;
-                </ContainerTitle>
-                <h2>$ {card.value}</h2>
-              </Container>
-            ))}
+                          card.tooltip.trim() && `underline decoration-dotted mb-1 underline-offset-4`
+                        )}
+                        disabled={!card.tooltip.trim()}
+                      >
+                        {card?.name}:
+                      </TooltipTrigger>
+                      <TooltipContent>{card.tooltip}</TooltipContent>
+                    </Tooltip>
+                    &nbsp;
+                  </ContainerTitle>
+                  <h2>$ {card.value}</h2>
+                </Container>
+              )
+            )}
             {/* {isCardMode && (
               <div className="flex flex-col justify-around">
                 <div className="text-lg font-semibold font-poppins dark:text-grey-8 text-black-4">
@@ -332,8 +336,8 @@ const CreateDropdownMenu = ({
                   className="text-sm text-text-lightmode-secondary 
                 dark:text-text-darkmode-secondary whitespace-normal"
                 >
-                  You can additional token emissions as rewards to LPs in any pool. These boosted rewards accrue
-                  extra yield for LPs.
+                  Add additional token emissions as rewards to LPs in any pool. These boosted rewards accrue extra
+                  yield for LPs.
                 </p>
               </div>
             </div>

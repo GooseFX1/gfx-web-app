@@ -26,6 +26,7 @@ export interface IBoostedRewardsConfig {
     rewardInfo: RewardInfo
     token: TokenListToken
     pricePerDay: BigNumber
+    pricePerDayUsd: BigNumber
   } | null>
   getClaimableRewardByPoolId: (
     poolId: PublicKey
@@ -33,6 +34,7 @@ export interface IBoostedRewardsConfig {
     | (BoostedRewardInfo & { claimableAmount: BigNumber; claimableAmountUsd: BigNumber; token: TokenListToken })
     | null
   >
+  refreshRewards: () => void
 }
 
 const BoostedRewardsContext = createContext<IBoostedRewardsConfig | null>(null)
@@ -53,34 +55,33 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [tokens, setTokens] = useState<TokenListToken[]>([])
 
-  console.log(
-    'allActiveRewards',
-    allActiveRewards.forEach((reward) => console.log(reward.rewardInfo.pool.toBase58()))
-  )
-  console.log(
-    'claimableRewards',
-    claimableRewards.forEach((reward) => console.log(reward.rewardInfo.pool.toBase58()))
-  )
+  const fetchAllActiveRewards = async () => {
+    setIsLoadingActiveRewards(true)
+    const allActiveRewards = await getAllActiveRewards(GammaProgram)
+    setAllActiveRewards(allActiveRewards)
+    setIsLoadingActiveRewards(false)
+  }
+
+  const fetchClaimableRewards = async (_userPublicKey: PublicKey) => {
+    if (!_userPublicKey) return
+    setIsLoadingClaimableRewards(true)
+    const claimableRewards = await getClaimRewardsAccounts(GammaProgram, _userPublicKey)
+    setClaimableRewards(claimableRewards)
+    setIsLoadingClaimableRewards(false)
+  }
+
   useEffect(() => {
-    const fetchAllActiveRewards = async () => {
-      setIsLoadingActiveRewards(true)
-      const allActiveRewards = await getAllActiveRewards(GammaProgram)
-      setAllActiveRewards(allActiveRewards)
-      setIsLoadingActiveRewards(false)
-    }
     fetchAllActiveRewards()
   }, [])
 
   useEffect(() => {
-    if (!userPublicKey) return
-    const fetchClaimableRewards = async () => {
-      setIsLoadingClaimableRewards(true)
-      const claimableRewards = await getClaimRewardsAccounts(GammaProgram, userPublicKey)
-      setClaimableRewards(claimableRewards)
-      setIsLoadingClaimableRewards(false)
-    }
-    fetchClaimableRewards()
+    fetchClaimableRewards(userPublicKey)
   }, [userPublicKey])
+
+  const refreshRewards = useCallback(() => {
+    fetchAllActiveRewards()
+    fetchClaimableRewards(userPublicKey)
+  }, [fetchAllActiveRewards, fetchClaimableRewards, userPublicKey])
 
   useEffect(() => {
     const fetchTokens = async () => {
@@ -164,7 +165,8 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
       return {
         ...reward,
         token: _token,
-        pricePerDay
+        pricePerDay,
+        pricePerDayUsd: pricePerDay.multipliedBy(_token.price)
       }
     },
     [allActiveRewards, isLoadingActiveRewards, tokens]
@@ -209,7 +211,8 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
         isLoadingClaimableRewards,
         getActiveRewardByPoolId,
         getClaimableRewardByPoolId,
-        claimableRewardsWithTokens
+        claimableRewardsWithTokens,
+        refreshRewards
       }}
     >
       {children}

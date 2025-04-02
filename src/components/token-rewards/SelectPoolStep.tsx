@@ -58,9 +58,7 @@ export const SelectPoolStep = ({ currentStep, setCurrentStep, summary, pool, set
   return (
     <div className="grid grid-cols-5 w-full h-full">
       <div className={`flex flex-col h-full ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
-        <div
-          className={`pb-2.5 ${isMobile ? ' pt-3' : 'pt-4'} px-4 flex flex-col`}
-        >
+        <div className={`pb-2.5 ${isMobile ? ' pt-3' : 'pt-4'} px-4 flex flex-col`}>
           <div
             className={`flex flex-row items-center justify-between gap-3 mb-2 ${
               isMobile
@@ -232,9 +230,9 @@ function PoolSelectInput({
 
   const [searchValue, setSearchValue] = useState<string>('')
 
-  const formattedTVL = useMemo(() => {
-    const liquidity = parseFloat(pool?.tvl || '0')
-    return liquidity ? numberFormatter(Math.max(0, liquidity)) : '0.00'
+  const formattedVolume = useMemo(() => {
+    const volume = Math.max(0, pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD)
+    return volume ? numberFormatter(Math.max(0, volume)) : '0.00'
   }, [pool])
 
   const {
@@ -361,7 +359,7 @@ function PoolSelectInput({
         type="text"
         placeholder=""
         onChange={(e) => handleChange(e, true)}
-        value={`24H Liq. ${formattedTVL}`}
+        value={`24H Vol. ${formattedVolume}`}
         className={cn(
           'h-[45px] text-right',
           disableInput &&

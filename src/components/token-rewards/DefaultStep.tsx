@@ -72,7 +72,7 @@ export const DefaultStep = ({
               </h3>
             </div>
             <p className="text-sm text-text-lightmode-secondary dark:text-text-darkmode-secondary">
-              You can additional token emissions as rewards to LPs in any pool. These boosted rewards accrue extra
+              Add additional token emissions as rewards to LPs in any pool. These boosted rewards accrue extra
               yield for LPs.
             </p>
           </div>

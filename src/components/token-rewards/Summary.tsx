@@ -12,7 +12,7 @@ import { createTokenRewards } from '@/web3/Farm'
 import useTransaction from '@/hooks/useTransaction'
 import { forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
 import { useWallet } from '@solana/wallet-adapter-react'
-
+import { useBoostedRewards } from '@/context/boostedRewardsContext'
 interface SummaryProps {
   selectedPool?: GAMMAPool
   selectedToken?: JupToken
@@ -47,6 +47,7 @@ export const Summary = ({
   const { connection } = useConnectionConfig()
   const { GammaProgram } = usePriceFeedFarm()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const { refreshRewards } = useBoostedRewards()
 
   const estimatedRewardsPerDay = useMemo(() => {
     if (!selectedPool || !selectedToken || !startDate || !endDate || !amountToken) return null
@@ -95,8 +96,9 @@ export const Summary = ({
         //off(connectionId)
         console.log('An error occurred while Swapping!')
       } else {
+        refreshRewards()
         await forceCronUpdateWithConnectionAndTxSig(connection, txSig)
-        //close the rewards drawer when the txn lands successfully 
+        //close the rewards drawer when the txn lands successfully
         setOpen(false)
       }
     } catch (e) {
