@@ -231,6 +231,7 @@ function PoolSelectInput({
   const [searchValue, setSearchValue] = useState<string>('')
 
   const formattedVolume = useMemo(() => {
+    if (!pool || !pool.stats || !pool.stats.daily) return '0.00'
     const volume = Math.max(0, pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD)
     return volume ? numberFormatter(Math.max(0, volume)) : '0.00'
   }, [pool])
