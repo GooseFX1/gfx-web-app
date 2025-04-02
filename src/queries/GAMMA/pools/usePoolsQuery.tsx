@@ -30,10 +30,11 @@ import BN from 'bn.js'
 
 type PoolsAPIResponse = InfiniteDataAPIResponse<GAMMAPool[]>
 type MintSearchProps = {
-  mintA: string
+  searchValue?: string
+  mintA?: string
   mintB?: string
-  enabled?: boolean
 }
+
 type PoolQueryProps = MintSearchProps & PoolsQueryProps
 type PoolsQueryResponse = InfiniteDataQueryResponse<PoolsAPIResponse, GAMMAPoolWithUserLiquidity>
 export type UsePoolQueryResponse = UseInfiniteQueryResponseFix<PoolsAPIResponse, Error, PoolsQueryResponse>
@@ -46,6 +47,7 @@ function usePoolsQuery({
   showCreated,
   showDeposited,
   poolType,
+  searchValue,
   enabled = true
 }: PoolQueryProps) {
   const { base58PublicKey } = useWalletBalance()
@@ -62,6 +64,7 @@ function usePoolsQuery({
     showCreated,
     showDeposited,
     poolType,
+    searchValue,
     enabled
   )
   const userLiqQuery = useUserLiquidityQuery()
@@ -90,7 +93,8 @@ function usePoolsQuery({
           sortDirection: sortDirection,
           showCreated: showCreated,
           showDeposited: showDeposited,
-          userPublicKey: base58PublicKey
+          userPublicKey: base58PublicKey,
+          searchValue: searchValue
         })
       }
     },
@@ -164,17 +168,25 @@ async function fetchPools({
   showDeposited,
   userPublicKey,
   poolType,
+  searchValue,
   pageParam = 1
 }): Promise<PoolsAPIResponse> {
   const pageQuery = `?page=${pageParam}&pageSize=${POOL_LIST_PAGE_SIZE}`
   const sortQuery = `&sortBy=${sortBy}&sortOrder=${sortDirection}`
   const poolTypeQuery = `&poolType=${poolType}`
+  const searchQuery = searchValue ? `&search=${searchValue}` : ''
   let userQuery = ``
   if (userPublicKey) {
     userQuery = `&userPublicKey=${userPublicKey}&showCreated=${showCreated}&showDeposited=${showDeposited}`
   }
   const response = (await fetch(
-    getGAMMARootUrl() + GAMMA_ENDPOINTS_V1.POOLS_INFO_ALL + pageQuery + sortQuery + userQuery + poolTypeQuery,
+    getGAMMARootUrl() +
+      GAMMA_ENDPOINTS_V1.POOLS_INFO_ALL +
+      pageQuery +
+      sortQuery +
+      userQuery +
+      poolTypeQuery +
+      searchQuery,
     { signal }
   ).then((res) => res.json())) as GAMMAPortfolioPoolResponse
 

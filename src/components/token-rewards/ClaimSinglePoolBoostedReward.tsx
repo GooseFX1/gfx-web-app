@@ -15,7 +15,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 
 export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
   const { mode } = useDarkMode()
-  const { getActiveRewardByPoolId, getClaimableRewardByPoolId } = useBoostedRewards()
+  const { getActiveRewardByPoolId, getClaimableRewardByPoolId, refreshRewards } = useBoostedRewards()
 
   const [activeReward, setActiveReward] = useState<{
     publicKey: PublicKey
@@ -65,6 +65,8 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
       if (!success) {
         //off(connectionId)
         console.log('An error occurred while claiming rewards!')
+      } else {
+        refreshRewards()
       }
     } catch (e) {
       console.log('An error occurred while claiming rewards.', e)
@@ -101,7 +103,7 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
                 {numberFormatter(activeReward.pricePerDay.toNumber())} {activeReward.token.symbol} / day
               </p>
             </div>
-            {activeReward && claimableReward && (
+            {activeReward && claimableReward && claimableReward.claimableAmountUsd.gte(0.5) && (
               <Button
                 className="w-full py-[5px] px-[10px] 
         border-[1px] border-transparent bg-gradient-to-r from-[#F7931A] to-[#C31AE3] p-[1px]

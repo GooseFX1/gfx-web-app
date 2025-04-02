@@ -43,7 +43,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
       return {
         formattedVolume: '0.00',
         formattedFees: '0.00',
-        formattedAPR: '0.00',
+        formattedAPR: 0,
         tradeAPR: '0.00',
         kaminoAPR: '0.00'
       }
@@ -55,13 +55,11 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
             Math.max(0, pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD)
           ),
           formattedFees: numberFormatter(Math.max(0, pool.stats.daily.feesUSD)),
-          formattedAPR: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.daily.feesAprUSD +
-                pool.stats.daily.withdrawnKaminoProfitTokenAUsd +
-                pool.stats.daily.withdrawnKaminoProfitTokenBUsd
-            )
+          formattedAPR: Math.max(
+            0,
+            pool.stats.daily.feesAprUSD +
+              pool.stats.daily.withdrawnKaminoProfitTokenAUsd +
+              pool.stats.daily.withdrawnKaminoProfitTokenBUsd
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD)),
           kaminoAPR: numberFormatter(
@@ -77,13 +75,11 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
             Math.max(0, pool.stats.weekly.volumeTokenAUSD + pool.stats.weekly.volumeTokenBUSD)
           ),
           formattedFees: numberFormatter(Math.max(0, pool.stats.weekly.feesUSD)),
-          formattedAPR: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.weekly.feesAprUSD +
-                pool.stats.weekly.withdrawnKaminoProfitTokenAUsd +
-                pool.stats.weekly.withdrawnKaminoProfitTokenBUsd
-            )
+          formattedAPR: Math.max(
+            0,
+            pool.stats.weekly.feesAprUSD +
+              pool.stats.weekly.withdrawnKaminoProfitTokenAUsd +
+              pool.stats.weekly.withdrawnKaminoProfitTokenBUsd
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.weekly.feesAprUSD)),
           kaminoAPR: numberFormatter(
@@ -99,13 +95,11 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
             Math.max(0, pool.stats.monthly.volumeTokenAUSD + pool.stats.monthly.volumeTokenBUSD)
           ),
           formattedFees: numberFormatter(Math.max(0, pool.stats.monthly.feesUSD)),
-          formattedAPR: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.monthly.feesAprUSD +
-                pool.stats.monthly.withdrawnKaminoProfitTokenAUsd +
-                pool.stats.monthly.withdrawnKaminoProfitTokenBUsd
-            )
+          formattedAPR: Math.max(
+            0,
+            pool.stats.monthly.feesAprUSD +
+              pool.stats.monthly.withdrawnKaminoProfitTokenAUsd +
+              pool.stats.monthly.withdrawnKaminoProfitTokenBUsd
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUSD)),
           kaminoAPR: numberFormatter(
@@ -123,6 +117,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
     rewardInfo: RewardInfo
     token: TokenListToken
     pricePerDay: BigNumber
+    pricePerDayUsd: BigNumber
   } | null>(null)
 
   useEffect(() => {
@@ -144,11 +139,12 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
         setOpenDepositWithdrawSlider(true)
       }}
     >
-      {(true || (pool.poolCreator === base58PublicKey && !isMobile)) && (
+      {pool.poolCreator === base58PublicKey && !isMobile && (
         <Icon
           src={`/img/assets/owner-${mode}.svg`}
           alt="Rewards"
-          className="w-5 h-5 min-w-5 min-h-5 absolute top-[-10px] left-[-10px]"
+          size={'sm'}
+          className=" absolute top-0.5 left-0.5"
         />
       )}
       <div className="flex flex-row items-center">
@@ -214,7 +210,12 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
               size={'lg'}
               className={'to-brand-secondaryGradient-secondary/50 min-w-[60px]'}
             >
-              <span className={'font-poppins font-semibold my-0.5 m-auto'}>{formattedAPR}%</span>
+              <span className={'font-poppins font-semibold my-0.5 m-auto'}>
+                {activeReward
+                  ? numberFormatter(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())
+                  : numberFormatter(formattedAPR)}
+                %
+              </span>
             </Badge>
           </div>
         </TooltipTrigger>
@@ -234,9 +235,35 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
               </div>
               <span className="font-display font-semibold my-0.5 text-[15px]">{kaminoAPR}%</span>
             </div>
+            {activeReward ? (
+              <div className="flex flex-row justify-between gap-5">
+                <div className="flex flex-row gap-1 items-center">
+                  <IconWithFallback
+                    src={loadIconImage(activeReward.token.logoURI, mode)}
+                    className="border-solid dark:border-black-2 border-white
+                          border-[2px] rounded-full h-5 w-5"
+                  />
+                  <span className="font-poppins font-semibold my-0.5 text-[15px]">
+                    {activeReward.token.symbol}
+                  </span>
+                </div>
+                <span className="font-display font-semibold my-0.5 text-[15px]">
+                  {numberFormatter(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())}%
+                </span>
+              </div>
+            ) : null}
             <div className="flex flex-row justify-between gap-5">
               <span className="font-poppins font-semibold my-0.5 text-[15px]">Total APR</span>
-              <span className="font-display font-semibold my-0.5 text-[15px]">{formattedAPR}%</span>
+              <span className="font-display font-semibold my-0.5 text-[15px]">
+                {activeReward
+                  ? numberFormatter(
+                      new BigNumber(formattedAPR)
+                        .plus(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())
+                        .toNumber()
+                    )
+                  : numberFormatter(formattedAPR)}
+                %
+              </span>
             </div>
             {activeReward ? (
               <>

@@ -19,7 +19,6 @@ import { POOL_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
 type MintSearchProps = {
   mintA: string
   mintB?: string,
-  enabled?: boolean
 }
 type UserPortfolioQueryProps = MintSearchProps & Omit<PoolsQueryProps, "showDeposited">
 type PoolsAPIResponse = InfiniteDataAPIResponse<GAMMAPortfolioPool[]>

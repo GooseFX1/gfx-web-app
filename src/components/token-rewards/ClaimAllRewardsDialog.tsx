@@ -32,7 +32,7 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
 }): JSX.Element => {
   const { mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
-  const { claimableRewardsWithTokens } = useBoostedRewards()
+  const { claimableRewardsWithTokens, refreshRewards } = useBoostedRewards()
   const [sendingTransaction, setSendingTransaction] = useState(false)
   const { sendTransaction, createTransactionBuilder } = useTransaction()
   const { connection } = useConnectionConfig()
@@ -67,6 +67,8 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
       if (!success) {
         //off(connectionId)
         console.log('An error occurred while claiming rewards!')
+      } else {
+        refreshRewards()
       }
     } catch (e) {
       console.log('An error occurred while claiming rewards.', e)

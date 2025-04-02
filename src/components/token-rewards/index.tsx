@@ -38,7 +38,7 @@ export const TokenRewardsDrawer = ({ isOpen, setOpen }: { isOpen: boolean; setOp
   useEffect(() => {
     if (!startDate || !endDate) return
     const diff = startDate.diff(endDate, 'days')
-    if (diff >= 0) {
+    if (diff > 0) {
       setEndDate(startDate.add(7, 'day'))
     }
   }, [startDate, endDate])

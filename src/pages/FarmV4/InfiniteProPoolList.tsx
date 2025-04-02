@@ -76,7 +76,6 @@ export const InfiniteProPoolScrollView: FC<InfiniteProPoolListScrollViewProps<un
         <FixedSizeList
           height={windowHeight}
           itemSize={60 + ITEM_PADDING}
-          className="!overflow-visible"
           itemCount={effectiveItemCount}
           onItemsRendered={onItemsRendered}
           overscanCount={20}
@@ -99,7 +98,7 @@ const InfiniteProPoolList: FC<InfiniteProPoolListProps<unknown>> = ({
   itemPadding: ITEM_PADDING = 8
 }): JSX.Element => {
   const { filteredPools: items, maxPoolsReached, isLoadingPools, poolsQuery } = useGamma()
-  console.log({ data: poolsQuery.data })
+
   return (
     <InfiniteProPoolScrollView
       items={items}
