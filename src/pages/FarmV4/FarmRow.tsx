@@ -143,7 +143,8 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
         <Icon
           src={`/img/assets/owner-${mode}.svg`}
           alt="Rewards"
-          className="w-5 h-5 min-w-5 min-h-5 absolute top-[-10px] left-[-10px]"
+          size={'sm'}
+          className=" absolute top-0.5 left-0.5"
         />
       )}
       <div className="flex flex-row items-center">
