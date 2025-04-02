@@ -13,6 +13,7 @@ import useTransaction from '@/hooks/useTransaction'
 import { forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
+
 interface SummaryProps {
   selectedPool?: GAMMAPool
   selectedToken?: JupToken
@@ -49,28 +50,31 @@ export const Summary = ({
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const { refreshRewards } = useBoostedRewards()
 
-  const estimatedRewardsPerDay = useMemo(() => {
-    if (!selectedPool || !selectedToken || !startDate || !endDate || !amountToken) return null
+  const { estimatedRewardsPerDay, totalRewards } = useMemo(() => {
+    if (!selectedPool || !selectedToken || !startDate || !endDate || !amountToken)
+      return {
+        estimatedRewardsPerDay: '0.00',
+        totalRewards: 0.00
+      }
 
     const days = dayjs(endDate).diff(dayjs(startDate), 'days')
-    if (days <= 1) return amountToken
-
-    const totalRewards = numberFormatter(new Decimal(amountToken).div(days).toNumber())
-    return totalRewards
+    if (days <= 1) return { estimatedRewardsPerDay: amountToken, totalRewards: +amountToken }
+    const totalRewards = new Decimal(amountToken).div(days).toNumber()
+    const estimatedRewardsPerDay = numberFormatter(totalRewards)
+    return { estimatedRewardsPerDay, totalRewards }
   }, [selectedPool, selectedToken, startDate, endDate])
 
   const { usdValue } = useMemo(() => {
     const returnValue = {
       usdValue: '0.00'
     }
-    if (estimatedRewardsPerDay && selectedToken && selectedToken.price) {
-      returnValue.usdValue = numberFormatter(
-        new Decimal(estimatedRewardsPerDay).mul(selectedToken.price).toNumber()
-      )
+    if (totalRewards && selectedToken && selectedToken.price) {
+      console.log('DECIMAL HERE', totalRewards, selectedToken.price)
+      returnValue.usdValue = numberFormatter(new Decimal(totalRewards).mul(selectedToken.price).toNumber())
     }
 
     return returnValue
-  }, [estimatedRewardsPerDay, selectedToken])
+  }, [totalRewards, selectedToken])
 
   const handleAddTokenRewards = async () => {
     try {
@@ -292,7 +296,7 @@ export const Summary = ({
           </>
         )}
       </div>
-      {estimatedRewardsPerDay && (
+      {totalRewards > 0 && (
         <>
           {isMobile ? (
             <div
