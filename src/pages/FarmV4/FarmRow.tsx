@@ -212,7 +212,11 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
             >
               <span className={'font-poppins font-semibold my-0.5 m-auto'}>
                 {activeReward
-                  ? numberFormatter(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())
+                  ? numberFormatter(
+                      new BigNumber(formattedAPR)
+                        .plus(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())
+                        .toNumber()
+                    )
                   : numberFormatter(formattedAPR)}
                 %
               </span>
