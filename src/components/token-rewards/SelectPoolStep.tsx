@@ -26,6 +26,7 @@ import { CSSProperties, ElementType, useMemo, useState } from 'react'
 import { InfiniteProPoolScrollView } from '@/pages/FarmV4/InfiniteProPoolList'
 import { usePools } from '@/hooks/usePools'
 import { StepCounter, totalSteps } from './StepCounter'
+import usePoolsQuery from '@/queries/GAMMA/pools/usePoolsQuery'
 
 interface SelectPoolStepProps {
   currentStep: number
@@ -236,19 +237,13 @@ function PoolSelectInput({
     return volume ? numberFormatter(Math.max(0, volume)) : '0.00'
   }, [pool])
 
-  const {
-    pools: items,
-    isLoadingPools,
-    poolsHasMoreData,
-    loadMorePools
-  } = usePools({
+  const poolsQuery = usePoolsQuery({
     poolType: 'all',
-    sortKey: 'volume24h',
-    searchTokens: searchValue,
+    sortBy: 'volume24h',
+    sortDirection: 'desc',
     showDeposited: false,
     showCreated: false,
-    pageSize: 10,
-    sortOrder: 'desc'
+    searchValue: searchValue
   })
 
   return (
@@ -324,10 +319,10 @@ function PoolSelectInput({
                   setSearchValue(e.target.value)
                 }}
                 onClear={() => setSearchValue('')}
-                isLoading={isLoadingPools}
+                isLoading={poolsQuery.isLoading}
                 disabled={disableTokenDropDown}
               />
-              {searchValue && items.length == 0 && !isLoadingPools ? (
+              {searchValue && poolsQuery.data?.allPages.length == 0 && !poolsQuery.isLoading ? (
                 <div className={'mb-auto p-2'}>No Tokens Found..</div>
               ) : null}
               <p className="text-sm text-text-lightmode-primary dark:text-text-darkmode-primary font-extrabold py-2">
@@ -346,10 +341,10 @@ function PoolSelectInput({
                     />
                   ) : null
                 }
-                items={items}
-                maxPoolsReached={!poolsHasMoreData}
-                fetchNextPage={loadMorePools}
-                isLoadingPools={isLoadingPools}
+                items={poolsQuery.data?.allPages}
+                maxPoolsReached={poolsQuery.data.maxPagesReached}
+                fetchNextPage={poolsQuery.fetchNextPage}
+                isLoadingPools={poolsQuery.isLoading}
               />
             </DropdownMenuContent>
           </DropdownMenu>
