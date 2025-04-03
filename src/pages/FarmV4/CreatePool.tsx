@@ -183,6 +183,7 @@ export const CreatePool: FC<{
           setTokenB(null)
           setAmountTokenA('')
           setAmountTokenB('')
+          setCurrentSlide(0)
         }
       }}
       open={isCreatePool}
