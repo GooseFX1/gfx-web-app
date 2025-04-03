@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import {
   Badge,
   Button,
@@ -11,7 +11,7 @@ import {
   loaders,
   Icon
 } from 'gfx-component-lib'
-import { RewardInfo, TokenListToken, useDarkMode, useGamma } from '@/context'
+import { useDarkMode, useGamma } from '@/context'
 import useBreakpoint from '../../hooks/useBreakPoint'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
@@ -20,6 +20,8 @@ import { IconWithFallback } from '@/components/common/IconWithFallback'
 import BigNumber from 'bignumber.js'
 import { PublicKey } from '@solana/web3.js'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
+import { useQuery } from '@tanstack/react-query'
+import { QUERY_KEY } from '@/queries/query.helper'
 
 type FarmRowProps = {
   pool: GAMMAPoolWithUserLiquidity
@@ -33,7 +35,6 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
   const { base58PublicKey } = useWalletBalance()
   const { mode } = useDarkMode()
   const { getActiveRewardByPoolId } = useBoostedRewards()
-
   const formattedTVL = useMemo(() => {
     const liquidity = parseFloat(pool.tvl)
     return liquidity ? numberFormatter(Math.max(0, liquidity)) : '0.00'
@@ -58,8 +59,8 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
           formattedAPR: Math.max(
             0,
             pool.stats.daily.feesAprUSD +
-              pool.stats.daily.withdrawnKaminoProfitTokenAUsd +
-              pool.stats.daily.withdrawnKaminoProfitTokenBUsd
+            pool.stats.daily.withdrawnKaminoProfitTokenAUsd +
+            pool.stats.daily.withdrawnKaminoProfitTokenBUsd
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD)),
           kaminoAPR: numberFormatter(
@@ -78,8 +79,8 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
           formattedAPR: Math.max(
             0,
             pool.stats.weekly.feesAprUSD +
-              pool.stats.weekly.withdrawnKaminoProfitTokenAUsd +
-              pool.stats.weekly.withdrawnKaminoProfitTokenBUsd
+            pool.stats.weekly.withdrawnKaminoProfitTokenAUsd +
+            pool.stats.weekly.withdrawnKaminoProfitTokenBUsd
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.weekly.feesAprUSD)),
           kaminoAPR: numberFormatter(
@@ -98,8 +99,8 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
           formattedAPR: Math.max(
             0,
             pool.stats.monthly.feesAprUSD +
-              pool.stats.monthly.withdrawnKaminoProfitTokenAUsd +
-              pool.stats.monthly.withdrawnKaminoProfitTokenBUsd
+            pool.stats.monthly.withdrawnKaminoProfitTokenAUsd +
+            pool.stats.monthly.withdrawnKaminoProfitTokenBUsd
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUSD)),
           kaminoAPR: numberFormatter(
@@ -111,18 +112,17 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
         }
     }
   }, [pool.stats, viewRange])
-
-  const [activeReward, setActiveReward] = useState<{
-    publicKey: PublicKey
-    rewardInfo: RewardInfo
-    token: TokenListToken
-    pricePerDay: BigNumber
-    pricePerDayUsd: BigNumber
-  } | null>(null)
-
-  useEffect(() => {
-    getActiveRewardByPoolId(new PublicKey(pool.id)).then((reward) => setActiveReward(reward))
-  }, [getActiveRewardByPoolId, pool.id])
+  
+  const { data: activeReward } = useQuery({
+    queryKey: [QUERY_KEY, 'activeReward', pool.id],
+    queryFn: () => getActiveRewardByPoolId(new PublicKey(pool.id)),
+    enabled: !!pool.id
+  })
+  
+  const apr = activeReward ? numberFormatter(
+      new BigNumber(formattedAPR)
+        .plus(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())
+        .toNumber()) : numberFormatter(formattedAPR)
 
   return (
     <div
@@ -211,14 +211,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
               className={'to-brand-secondaryGradient-secondary/50 min-w-[60px]'}
             >
               <span className={'font-poppins font-semibold my-0.5 m-auto'}>
-                {activeReward
-                  ? numberFormatter(
-                      new BigNumber(formattedAPR)
-                        .plus(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())
-                        .toNumber()
-                    )
-                  : numberFormatter(formattedAPR)}
-                %
+                {apr}%
               </span>
             </Badge>
           </div>
@@ -259,13 +252,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
             <div className="flex flex-row justify-between gap-5">
               <span className="font-poppins font-semibold my-0.5 text-[15px]">Total APR</span>
               <span className="font-display font-semibold my-0.5 text-[15px]">
-                {activeReward
-                  ? numberFormatter(
-                      new BigNumber(formattedAPR)
-                        .plus(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())
-                        .toNumber()
-                    )
-                  : numberFormatter(formattedAPR)}
+                {apr}
                 %
               </span>
             </div>
