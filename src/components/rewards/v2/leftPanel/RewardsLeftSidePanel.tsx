@@ -26,9 +26,9 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
   const { connection } = useConnectionConfig()
   const [approxRewardAmount, setApproxRewardAmount] = useState<number>(0)
   const [calculating, setCalculating] = useBoolean(false)
-  const { totalStakedInUSD, gofxValue, totalStaked, stake, unstakeableTickets } = useRewards()
+  const { totalStakedInUSD, gofxValue, totalStaked, stakeMutation, unstakeableTickets, unstakeMutation } =
+    useRewards()
   const [isUnstakeConfirmationModalOpen, setIsUnstakeConfirmationModalOpen] = useBoolean(false)
-  const [isStakeLoading, setIsStakeLoading] = useBoolean(false)
   const [proposedStakeAmount, setProposedStakeAmount] = useState<string>('')
 
   const adjustedStakeAmountInUSD = useMemo(() => {
@@ -57,10 +57,9 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
       return
     }
 
-    setIsStakeLoading.on()
     if (isStakeSelected) {
       try {
-        await stake(+proposedStakeAmount)
+        await stakeMutation.mutate(+proposedStakeAmount)
         console.log(`Successful Stake: ${publicKey.toBase58()}
          - ${proposedStakeAmount}`)
       } catch (error) {
@@ -71,20 +70,19 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
     } else {
       setIsUnstakeConfirmationModalOpen.on()
     }
-    setIsStakeLoading.off()
-  }, [stake, proposedStakeAmount, publicKey, isStakeSelected])
+  }, [stakeMutation, proposedStakeAmount, publicKey, isStakeSelected])
   const disabledStakeButton =
-    (+proposedStakeAmount <= 0||isNaN(+proposedStakeAmount)) ||
+    +proposedStakeAmount <= 0 ||
+    isNaN(+proposedStakeAmount) ||
     (isStakeSelected && +proposedStakeAmount > userGoFxBalance.uiAmount) ||
     (!isStakeSelected && +proposedStakeAmount > totalStaked)
-
+  const isStakeOrUnstaking = stakeMutation.isLoading || unstakeMutation.isLoading;
   return (
     <RewardsLeftLayout>
       <UnstakeConfirmationModal
         amount={+proposedStakeAmount}
         isOpen={isUnstakeConfirmationModalOpen}
         onClose={setIsUnstakeConfirmationModalOpen.off}
-        setStakeLoading={setIsStakeLoading.set}
       />
       <CombinedRewardsTopLinks>
         {/* <TopLinks /> */}
@@ -128,18 +126,14 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
               className={'w-full'}
               colorScheme={'blue'}
               onClick={handleStakeUnstake}
-              disabled={disabledStakeButton || isStakeLoading}
-              isLoading={isStakeLoading}
+              disabled={disabledStakeButton || isStakeOrUnstaking}
+              isLoading={isStakeOrUnstaking}
             >
-              {+proposedStakeAmount > 0 ? (
-                isStakeSelected ? (
-                  `Stake ${numberFormatter(+proposedStakeAmount)} GOFX`
-                ) : (
-                  `Unstake ${numberFormatter(+proposedStakeAmount)} GOFX`
-                )
-              ) : (
-                'Enter Amount'
-              )}
+              {+proposedStakeAmount > 0
+                ? isStakeSelected
+                  ? `Stake ${numberFormatter(+proposedStakeAmount)} GOFX`
+                  : `Unstake ${numberFormatter(+proposedStakeAmount)} GOFX`
+                : 'Enter Amount'}
             </Button>
           )}
         </div>
