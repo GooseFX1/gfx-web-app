@@ -12,9 +12,7 @@ export function ClaimAllRewards({ setOpenClaimAllRewardsDialog }: ClaimAllReward
   const { isMobile } = useBreakPoint()
   const { claimableRewardsWithTokens } = useBoostedRewards()
 
-  console.log(claimableRewardsWithTokens)
-
-  if (claimableRewardsWithTokens.totalClaimableRewardsUsd.eq(0)) return null
+  if (!claimableRewardsWithTokens.totalClaimableRewardsUsd.gte(0.1)) return null
   if (claimableRewardsWithTokens.rewards.length === 0) return null
 
   const content = (className?: string) => (
@@ -40,9 +38,9 @@ export function ClaimAllRewards({ setOpenClaimAllRewardsDialog }: ClaimAllReward
           ${numberFormatter(claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber())}
         </p>
       </div>
-
-      <Button
-        className="font-display text-text-lightmode-tertiary
+      {claimableRewardsWithTokens.totalClaimableRewardsUsd.gte(0.5) && (
+        <Button
+          className="font-display text-text-lightmode-tertiary
  dark:text-text-darkmode-tertiary 
  border-[1.5px] border-border-lightmode-tertiary 
  dark:border-border-darkmode-tertiary
@@ -50,11 +48,12 @@ export function ClaimAllRewards({ setOpenClaimAllRewardsDialog }: ClaimAllReward
  bg-white dark:bg-black-2 font-bold
  rounded-[100px]
  "
-        variant={'outline'}
-        onClick={() => setOpenClaimAllRewardsDialog(true)}
-      >
-        Claim All
-      </Button>
+          variant={'outline'}
+          onClick={() => setOpenClaimAllRewardsDialog(true)}
+        >
+          Claim All
+        </Button>
+      )}
     </div>
   )
 

@@ -44,7 +44,7 @@ function useTransaction(): useTransactionReturn {
       connectionData?: SendTxnOptions, 
       notify = notifyUsingPromise, 
       isCreatePoolInx?: boolean,
-      skipComputeUnitsLimit?: boolean) => {
+      skipComputeUnitsLimit = true) => {
       console.log('STARTING SEND TXN')
       const connection = connectionData?.connection ?? originalConnection
       const options: SendTransactionOptions = {

@@ -26,6 +26,7 @@ import { CSSProperties, ElementType, useMemo, useState } from 'react'
 import { InfiniteProPoolScrollView } from '@/pages/FarmV4/InfiniteProPoolList'
 import { usePools } from '@/hooks/usePools'
 import { StepCounter, totalSteps } from './StepCounter'
+import usePoolsQuery from '@/queries/GAMMA/pools/usePoolsQuery'
 
 interface SelectPoolStepProps {
   currentStep: number
@@ -58,9 +59,7 @@ export const SelectPoolStep = ({ currentStep, setCurrentStep, summary, pool, set
   return (
     <div className="grid grid-cols-5 w-full h-full">
       <div className={`flex flex-col h-full ${isMobile ? 'col-span-5' : 'col-span-3'}`}>
-        <div
-          className={`pb-2.5 ${isMobile ? ' pt-3' : 'pt-4'} px-4 flex flex-col`}
-        >
+        <div className={`pb-2.5 ${isMobile ? ' pt-3' : 'pt-4'} px-4 flex flex-col`}>
           <div
             className={`flex flex-row items-center justify-between gap-3 mb-2 ${
               isMobile
@@ -232,24 +231,19 @@ function PoolSelectInput({
 
   const [searchValue, setSearchValue] = useState<string>('')
 
-  const formattedTVL = useMemo(() => {
-    const liquidity = parseFloat(pool?.tvl || '0')
-    return liquidity ? numberFormatter(Math.max(0, liquidity)) : '0.00'
+  const formattedVolume = useMemo(() => {
+    if (!pool || !pool.stats || !pool.stats.daily) return '0.00'
+    const volume = Math.max(0, pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD)
+    return volume ? numberFormatter(Math.max(0, volume)) : '0.00'
   }, [pool])
 
-  const {
-    pools: items,
-    isLoadingPools,
-    poolsHasMoreData,
-    loadMorePools
-  } = usePools({
+  const poolsQuery = usePoolsQuery({
     poolType: 'all',
-    sortKey: 'volume24h',
-    searchTokens: searchValue,
+    sortBy: 'volume24h',
+    sortDirection: 'desc',
     showDeposited: false,
     showCreated: false,
-    pageSize: 10,
-    sortOrder: 'desc'
+    searchValue: searchValue
   })
 
   return (
@@ -325,10 +319,10 @@ function PoolSelectInput({
                   setSearchValue(e.target.value)
                 }}
                 onClear={() => setSearchValue('')}
-                isLoading={isLoadingPools}
+                isLoading={poolsQuery.isLoading}
                 disabled={disableTokenDropDown}
               />
-              {searchValue && items.length == 0 && !isLoadingPools ? (
+              {searchValue && poolsQuery.data?.allPages.length == 0 && !poolsQuery.isLoading ? (
                 <div className={'mb-auto p-2'}>No Tokens Found..</div>
               ) : null}
               <p className="text-sm text-text-lightmode-primary dark:text-text-darkmode-primary font-extrabold py-2">
@@ -347,10 +341,10 @@ function PoolSelectInput({
                     />
                   ) : null
                 }
-                items={items}
-                maxPoolsReached={!poolsHasMoreData}
-                fetchNextPage={loadMorePools}
-                isLoadingPools={isLoadingPools}
+                items={poolsQuery.data?.allPages}
+                maxPoolsReached={poolsQuery.data.maxPagesReached}
+                fetchNextPage={poolsQuery.fetchNextPage}
+                isLoadingPools={poolsQuery.isLoading}
               />
             </DropdownMenuContent>
           </DropdownMenu>
@@ -361,7 +355,7 @@ function PoolSelectInput({
         type="text"
         placeholder=""
         onChange={(e) => handleChange(e, true)}
-        value={`24H Liq. ${formattedTVL}`}
+        value={`24H Vol. ${formattedVolume}`}
         className={cn(
           'h-[45px] text-right',
           disableInput &&

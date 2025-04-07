@@ -20,7 +20,12 @@ const DepositWithdrawAccordion: FC<{
       className="dark:bg-black-1 bg-grey-5 mx-2.5 my-3 !rounded-[4px]"
       defaultValue={selectedCard?.hasDeposit ? ['lp-stats'] : ['pool-stats']}
     >
-      {token ? <ClaimSinglePoolBoostedReward pool={selectedCard} /> : null}
+      {token ? (
+        <>
+          <ClaimSinglePoolBoostedReward pool={selectedCard} />
+          <div className="h-[10px] bg-white dark:bg-black-2" />
+        </>
+      ) : null}
       {selectedCard?.hasDeposit || +selectedCard?.currentPositionUSD > 0 ? (
         <AccordionItem value="lp-stats">
           <AccordionTrigger>

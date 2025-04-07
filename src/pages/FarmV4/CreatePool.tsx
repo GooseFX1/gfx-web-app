@@ -3,8 +3,8 @@ import 'styled-components/macro'
 import Slider from 'react-slick'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '@/layouts'
-import Step2 from './Step2'
-import Step3 from './Step3'
+import CreatePoolChooseTokenStep from './CreatePoolChooseTokenStep'
+import CreatePoolConfirmStep from './CreatePoolConfirmStep'
 import {
   Button,
   Dialog,
@@ -27,6 +27,7 @@ import { useWalletBalance } from '@/context/walletBalanceContext'
 import { INTERVALS } from '@/utils/time'
 import { GAMMA_STABLE_TOKENS, POOL_TYPE } from '@/pages/FarmV4/constants'
 import useGetGammaConfigIdQuery from '@/queries/GAMMA/pools/useGetGammaConfigIdQuery'
+import { useMutation } from '@tanstack/react-query'
 
 export const CreatePool: FC<{
   isCreatePool: boolean
@@ -94,11 +95,8 @@ export const CreatePool: FC<{
       isSource ? setAmountTokenA(inputNumber) : setAmountTokenB(inputNumber)
     }
   }
-
-  const next = async () => {
-    if (currentSlide !== 1) slider?.current?.slickNext()
-    else {
-      try {
+  const createPoolMutation = useMutation({
+    mutationFn: async () => {
         const txBuilder = createTransactionBuilder()
         const tx = await createPool(
           tokenA,
@@ -130,21 +128,33 @@ export const CreatePool: FC<{
           // setAmountTokenA('')
           // setAmountTokenB('')
           // slider.current.slickGoTo(1)
-          return
+          throw new Error('Transaction failed')
         } else {
           await forceCronAndUpdateLocalData(txSig)
           setIsConfettiVisible(true)
           setIsCreatePool(false)
         }
-      } catch (e) {
-        console.log('Error while creating a new pool.', e)
-        setSendingTransaction(false)
-        setTokenA(null)
-        setTokenB(null)
-        setAmountTokenA('')
-        setAmountTokenB('')
-        slider.current.slickGoTo(0)
-      }
+        return txSig;
+    },
+    onSuccess: (txSig) => {
+      setIsConfettiVisible(true)
+      setIsCreatePool(false)
+      forceCronAndUpdateLocalData(txSig)
+    },
+    onError: (e) => {
+      console.error('Error while creating a new pool.', e)
+      setSendingTransaction(false)
+      setTokenA(null)
+      setTokenB(null)
+      setAmountTokenA('')
+      setAmountTokenB('')
+      slider.current.slickGoTo(0)
+    }
+  })
+  const next = async () => {
+    if (currentSlide !== 1) slider?.current?.slickNext()
+    else {
+      createPoolMutation.mutate()
     }
   }
 
@@ -173,6 +183,7 @@ export const CreatePool: FC<{
           setTokenB(null)
           setAmountTokenA('')
           setAmountTokenB('')
+          setCurrentSlide(0)
         }
       }}
       open={isCreatePool}
@@ -204,7 +215,7 @@ export const CreatePool: FC<{
           <DialogBody className={'flex-col flex-[1 0] overflow-auto pb-0'}>
             <Slider ref={slider} {...settings}>
               <div className="slide">
-                <Step2
+                <CreatePoolChooseTokenStep
                   tokenA={tokenA}
                   setTokenA={setTokenA}
                   tokenB={tokenB}
@@ -225,7 +236,7 @@ export const CreatePool: FC<{
                 />
               </div>
               <div className="slide">
-                <Step3
+                <CreatePoolConfirmStep
                   tokenA={tokenA}
                   tokenB={tokenB}
                   amountTokenA={amountTokenA}

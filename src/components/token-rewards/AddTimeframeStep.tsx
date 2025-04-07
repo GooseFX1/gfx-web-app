@@ -103,7 +103,7 @@ export const AddTimeframeStep = ({
                     </div>
                     <div className="col-span-2">
                       <p className="text-end">
-                        {endDate && startDate ? dayjs(endDate).diff(startDate, 'days') : 0} Days
+                        {endDate && startDate ? Math.ceil(dayjs(endDate).diff(startDate, 'days',true)): 0} Days
                       </p>
                     </div>
                   </div>

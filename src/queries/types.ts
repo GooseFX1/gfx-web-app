@@ -17,6 +17,7 @@ export type PoolsQueryProps = {
   sortBy: string,
   showCreated: boolean,
   showDeposited: boolean
+  enabled?: boolean
 }
 
 export type InfiniteDataAPIResponse<T> = {

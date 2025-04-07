@@ -32,7 +32,7 @@ import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import useTokensQuery from '@/queries/useTokensQuery'
 
-const Step2: FC<{
+const CreatePoolChooseTokenStep: FC<{
   tokenA: TokenListToken
   setTokenA: Dispatch<SetStateAction<TokenListToken>>
   tokenB: TokenListToken
@@ -586,7 +586,7 @@ function TokenSelectionInput({
   )
 }
 
-export default Step2
+export default CreatePoolChooseTokenStep
 
 export function TokenListSkeleton({ RenderAs }: { RenderAs: ElementType }) {
   return (
