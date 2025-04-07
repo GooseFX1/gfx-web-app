@@ -1,6 +1,7 @@
 import { FC } from 'react'
-import { Badge, Button, cn } from 'gfx-component-lib'
+import { Badge, Button, Icon, cn } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
+import { PublicKey } from '@solana/web3.js'
 import { ModeOfOperation } from './constants'
 import { loadIconImage, numberFormatter } from '@/utils'
 import NoResultsFound from '@/pages/FarmV4/NoResultsFound'
@@ -13,7 +14,9 @@ import { IconWithFallback } from '@/components/common/IconWithFallback'
 import BigNumber from 'bignumber.js'
 import useUserPortfolioPools from '@/queries/GAMMA/pools/useUserPortfolioPools'
 import { getSortKey } from '@/queries/GAMMA/gammaQueries.helpers'
-
+import { useBoostedRewards } from '@/context/boostedRewardsContext'
+import { useQuery } from '@tanstack/react-query'
+import { QUERY_KEY } from '@/queries/query.helper'
 
 const renderTokenBalance = (p: GAMMAPortfolioPool) => {
   const ratioA = numberFormatter(+p.tokenARatio, 2)
@@ -36,6 +39,7 @@ const MyPositions: FC<{
   const { isTablet, isDesktop, isMobile } = useBreakPoint()
   const { mode } = useDarkMode()
   const { base58PublicKey } = useWalletBalance()
+  const { getActiveRewardByPoolId } = useBoostedRewards()
 
   let noResultsTitle = ''
   let noResultsSubText = ''
@@ -58,137 +62,161 @@ const MyPositions: FC<{
       break
   }
 
+  const poolIds = queryPositions.map(pool => pool.id);
+  
+  const { data: activeRewards } = useQuery({
+    queryKey: [QUERY_KEY, 'activeRewards', poolIds],
+    queryFn: async () => {
+      const results = {};
+      for (const poolId of poolIds) {
+        if (poolId) {
+          results[poolId] = await getActiveRewardByPoolId(new PublicKey(poolId));
+        }
+      }
+      return results;
+    },
+    enabled: poolIds.length > 0
+  });
+
   return (
     <div className={`flex flex-col gap-[15px] mt-[15px]`}>
       {queryPositions.length > 0 ? (
-        queryPositions.map((pool) => (
-          <div
-            className={cn(
-              `grid grid-flow-col grid-cols-[1.5fr_1fr_0.5fr_1fr_0.5fr_1fr] dark:bg-black-2 px-2.5 cursor-pointer
-                h-15 border border-solid dark:border-black-4 border-grey-4 bg-white rounded-tiny py-3.75
-                sm-lg:grid-cols-[1.25fr_0.75fr_0.75fr]`,
-              isMobile && `grid-cols-[1.25fr_0.75fr_0.75fr]`,
-              isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
-            )}
-            key={`${pool.id}_${sortConfig.id}`}
-            onClick={() => {
-              setSelectedCard(pool)
-              setOpenDepositWithdrawSlider(true)
-              setModeOfOperation(ModeOfOperation.DEPOSIT)
-            }}
-          >
-            {/* name */}
-            <div className="flex flex-row items-center">
-              <IconWithFallback
-                src={loadIconImage(pool.mintA.logoURI, mode)}
-                className="border-solid dark:border-black-2 border-white
-                                  border-[2px] rounded-full h-[25px] w-[25px]"
-              />
-              <IconWithFallback
-                src={loadIconImage(pool.mintB.logoURI, mode)}
-                className="relative right-[10px] border-solid dark:border-black-2
-                                  border-white border-[2px] rounded-full h-[25px] w-[25px]"
-              />
-              <div
-                className="font-poppins text-regular font-semibold
-                                    dark:text-grey-8 text-black-4 mr-5"
-              >
-                {pool.mintA.symbol} - {pool.mintB.symbol}
+        queryPositions.map((pool) => {
+          const activeReward = activeRewards?.[pool.id];
+          const isOwner = base58PublicKey === pool.poolCreator;
+          return (
+            <div
+              className={cn(
+                `relative grid grid-flow-col grid-cols-[1.5fr_1fr_0.5fr_1fr_0.5fr_1fr] dark:bg-black-2 px-2.5 
+                cursor-pointer h-15 border border-solid dark:border-black-4 border-grey-4 bg-white 
+                rounded-tiny py-3.75 sm-lg:grid-cols-[1.25fr_0.75fr_0.75fr]`,
+                isMobile && `grid-cols-[1.25fr_0.75fr_0.75fr]`,
+                isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
+              )}
+              key={`${pool.id}_${sortConfig.id}`}
+              onClick={() => {
+                setSelectedCard(pool)
+                setOpenDepositWithdrawSlider(true)
+                setModeOfOperation(ModeOfOperation.DEPOSIT)
+              }}
+            >
+              {isOwner && !isMobile && (
+                <Icon
+                  src={`/img/assets/owner-${mode}.svg`}
+                  alt="pool-owner"
+                  size={'sm'}
+                  className=" absolute top-0.5 left-0.5"
+                />
+              )}
+              {/* name */}
+              <div className="flex flex-row items-center">
+                <IconWithFallback
+                  src={loadIconImage(pool.mintA.logoURI, mode)}
+                  className="border-solid dark:border-black-2 border-white
+                                    border-[2px] rounded-full h-[25px] w-[25px]"
+                />
+                <IconWithFallback
+                  src={loadIconImage(pool.mintB.logoURI, mode)}
+                  className="relative right-[10px] border-solid dark:border-black-2
+                                    border-white border-[2px] rounded-full h-[25px] w-[25px]"
+                />
+                <div
+                  className="font-poppins text-regular font-semibold
+                                      dark:text-grey-8 text-black-4 mr-2"
+                >
+                  {pool.mintA.symbol} - {pool.mintB.symbol}
+                </div>
+                {activeReward && !isMobile && (
+                  <Badge size="sm" variant="default" className={'ml-2 h-5.5'}>
+                    Rewards
+                  </Badge>
+                )}
               </div>
-              {pool.poolCreator == base58PublicKey && !isMobile && (
-                <Badge size="sm" variant="default" className="h-5.5">
-                  Owner
+              {/* position */}
+              <div
+                className="flex items-center justify-center text-regular
+                                  font-semibold dark:text-grey-8 text-black-4"
+              >
+                ${numberFormatter(+pool.currentPositionUSD)}
+              </div>
+              {/* fees */}
+              {isDesktop && (
+                <div
+                  className="border border-solid dark:border-black-4 flex items-center
+                                    font-poppins text-tiny font-semibold dark:text-grey-8 text-black-4 mx-auto
+                                    border-grey-1 bg-grey-5 dark:bg-black-2 rounded-[2.5px] h-[25px] px-1"
+                >
+                  {(
+                    new BigNumber(pool?.latestDynamicFeeRate || 0.0).div(10 ** 4).toNumber() ||
+                    new BigNumber(pool?.config.tradeFeeRate || 0.0).div(10 ** 4).toNumber()
+                  ).toFixed(2)}
+                  %
+                </div>
+              )}
+              {/* token balance */}
+              {isDesktop && (
+                <div
+                  className="flex items-center justify-center text-black-4
+                                      text-regular font-semibold dark:text-grey-8"
+                >
+                  {renderTokenBalance(pool)}
+                </div>
+              )}
+              {/* apr */}
+              <div className="flex items-center justify-center">
+                <Badge
+                  variant="default"
+                  size={'lg'}
+                  className={'to-brand-secondaryGradient-secondary/50 min-w-[60px]'}
+                >
+                  <span className={'font-poppins font-semibold my-0.5 mx-auto'}>
+                    {numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD))}%
+                  </span>
                 </Badge>
+              </div>
+              {/* actions */}
+              {(isTablet || isDesktop) && (
+                <div className="flex items-center justify-center">
+                  {/* <Button
+                      className="h-[30px] w-[61px] cursor-pointer flex flex-row
+                                justify-center items-center !rounded-[200px]"
+                      colorScheme={'secondaryGradient'}
+                      variant={'outline'}
+                      aria-disabled={!canClaim}
+                    >
+                      Claim
+                    </Button> */}
+                  <Button
+                    colorScheme={'blue'}
+                    className={'h-7.5 w-7.5 mr-4'}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      setSelectedCard(pool)
+                      setOpenDepositWithdrawSlider(true)
+                      setModeOfOperation(ModeOfOperation.DEPOSIT)
+                    }}
+                  >
+                    +
+                  </Button>
+                  <Button
+                    colorScheme={'blue'}
+                    className={'h-7.5 w-7.5'}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      setSelectedCard(pool)
+                      setOpenDepositWithdrawSlider(true)
+                      setModeOfOperation(ModeOfOperation.WITHDRAW)
+                    }}
+                  >
+                    -
+                  </Button>
+                </div>
               )}
             </div>
-            {/* position */}
-            <div
-              className="flex items-center justify-center text-regular
-                                font-semibold dark:text-grey-8 text-black-4"
-            >
-              ${numberFormatter(+pool.currentPositionUSD)}
-            </div>
-
-            {/* fees */}
-            {isDesktop && (
-              <div
-                className="border border-solid dark:border-black-4 flex items-center
-                                  font-poppins text-tiny font-semibold dark:text-grey-8 text-black-4 mx-auto
-                                  border-grey-1 bg-grey-5 dark:bg-black-2 rounded-[2.5px] h-[25px] px-1"
-              >
-                {(
-                  new BigNumber(pool?.latestDynamicFeeRate || 0.0).div(10 ** 4).toNumber() ||
-                  new BigNumber(pool?.config.tradeFeeRate || 0.0).div(10 ** 4).toNumber()
-                ).toFixed(2)}
-                %
-              </div>
-            )}
-
-            {/* token balance */}
-            {isDesktop && (
-              <div
-                className="flex items-center justify-center text-black-4
-                                    text-regular font-semibold dark:text-grey-8"
-              >
-                {renderTokenBalance(pool)}
-              </div>
-            )}
-
-            {/* apr */}
-            <div className="flex items-center justify-center">
-              <Badge
-                variant="default"
-                size={'lg'}
-                className={'to-brand-secondaryGradient-secondary/50 min-w-[60px]'}
-              >
-                <span className={'font-poppins font-semibold my-0.5 mx-auto'}>
-                  {numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD))}%
-                </span>
-              </Badge>
-            </div>
-
-            {/* actions */}
-            {(isTablet || isDesktop) && (
-              <div className="flex items-center justify-center">
-                {/* <Button
-                    className="h-[30px] w-[61px] cursor-pointer flex flex-row
-                              justify-center items-center !rounded-[200px]"
-                    colorScheme={'secondaryGradient'}
-                    variant={'outline'}
-                    aria-disabled={!canClaim}
-                  >
-                    Claim
-                  </Button> */}
-                <Button
-                  colorScheme={'blue'}
-                  className={'h-7.5 w-7.5 mr-4'}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    setSelectedCard(pool)
-                    setOpenDepositWithdrawSlider(true)
-                    setModeOfOperation(ModeOfOperation.DEPOSIT)
-                  }}
-                >
-                  +
-                </Button>
-                <Button
-                  colorScheme={'blue'}
-                  className={'h-7.5 w-7.5'}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    setSelectedCard(pool)
-                    setOpenDepositWithdrawSlider(true)
-                    setModeOfOperation(ModeOfOperation.WITHDRAW)
-                  }}
-                >
-                  -
-                </Button>
-              </div>
-            )}
-          </div>
-        ))
+          )
+        })
       ) : (
         <NoResultsFound requestPool={false} str={noResultsTitle} subText={noResultsSubText} />
       )}

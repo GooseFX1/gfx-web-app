@@ -142,7 +142,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
       {pool.poolCreator === base58PublicKey && !isMobile && (
         <Icon
           src={`/img/assets/owner-${mode}.svg`}
-          alt="Rewards"
+          alt="pool-owner"
           size={'sm'}
           className=" absolute top-0.5 left-0.5"
         />
