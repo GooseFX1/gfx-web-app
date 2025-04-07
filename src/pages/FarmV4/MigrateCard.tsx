@@ -1,9 +1,7 @@
 import React, { FC } from 'react'
 import { Button, cn, Container, Icon } from 'gfx-component-lib'
-import { POOL_TYPE } from '@/pages/FarmV4/constants'
 import { Connect } from '@/layouts'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useGamma } from '@/context'
 
 type MigrateCardProps = {
   openPositionsAcrossPrograms: number
@@ -14,7 +12,6 @@ const MigrateCard: FC<MigrateCardProps> = ({
   openPositionImages
 }) => {
   const { connected } = useWallet()
-  const { setCurrentPoolType } = useGamma()
   return (
     <Container className={`flex flex-col flex-1 gap-2.5 p-2.5 bg-background-lightmode-secondary 
     dark:bg-background-darkmode-secondary rounded-[8px] before:rounded-[8px]`}>
@@ -42,7 +39,7 @@ const MigrateCard: FC<MigrateCardProps> = ({
         <Button
           className={`w-max`}
           colorScheme={'blue'}
-          onClick={() => setCurrentPoolType(POOL_TYPE?.migrate)}
+          // TODO: Add migrate function
           disabled={openPositionsAcrossPrograms === 0}
         >
           {openPositionsAcrossPrograms > 0 ? 'Migrate Now' : 'No Open Positions'}

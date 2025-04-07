@@ -1,7 +1,6 @@
 import React, { FC, Fragment, useMemo, useState } from 'react'
 import { useConnectionConfig, useDarkMode, useGamma } from '../../context'
 import { bigNumberFormatter, truncateBigNumber } from '../../utils'
-import { POOL_TYPE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
   Button,
@@ -34,9 +33,7 @@ export const FarmHeader: FC = () => {
     setViewRange: setRange,
     setIsPortfolio,
     isPortfolio,
-    setCurrentPoolType,
     setCurrentSort,
-    selectedTokens,
     setShowDeposited
   } = useGamma()
   const statsQuery = useStatsQuery()
@@ -146,15 +143,6 @@ export const FarmHeader: FC = () => {
                     if (isPortfolio) {
                       setShowDeposited(false)
                     }
-                    if (selectedTokens.length != 0) {
-                      if (selectedTokens.every((t) => t.isPrimary)) {
-                        setCurrentPoolType(POOL_TYPE.primary)
-                      } else {
-                        setCurrentPoolType(POOL_TYPE.hyper)
-                      }
-                    } else {
-                      setCurrentPoolType(POOL_TYPE.all)
-                    }
                     setIsPortfolio.off()
                   }
                 },
@@ -163,13 +151,6 @@ export const FarmHeader: FC = () => {
                   label: 'Portfolio',
                   onClick: () => {
                     setCurrentSort('9')
-                    if (selectedTokens.length == 0) {
-                      setCurrentPoolType(POOL_TYPE.all)
-                    } else if (selectedTokens.every((t) => t.isPrimary)) {
-                      setCurrentPoolType(POOL_TYPE.primary)
-                    } else {
-                      setCurrentPoolType(POOL_TYPE.hyper)
-                    }
                     setIsPortfolio.on()
                   }
                 }
@@ -233,22 +214,6 @@ export const FarmHeader: FC = () => {
                 </Container>
               )
             )}
-            {/* {isCardMode && (
-              <div className="flex flex-col justify-around">
-                <div className="text-lg font-semibold font-poppins dark:text-grey-8 text-black-4">
-                  More metrics?
-                </div>
-                <div
-                  className="text-regular font-semibold dark:text-white text-blue-1 underline cursor-pointer"
-                  onClick={() => {
-                    setIsPortfolio.on()
-                    setCurrentPoolType(POOL_TYPE?.all)
-                  }}
-                >
-                  Go to Portfolio
-                </div>
-              </div>
-            )} */}
           </div>
         </div>
       )}

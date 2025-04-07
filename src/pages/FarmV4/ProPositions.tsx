@@ -1,8 +1,6 @@
 import { FC, useEffect } from 'react'
 //import { Container } from 'gfx-component-lib'
-import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { useGamma } from '@/context'
-import { POOL_TYPE } from './constants'
 import MyPositionSortHeader from './MyPositionSortHeader'
 import MyPositionItems from './MyPositions'
 import FarmSort from '@/pages/FarmV4/FarmSort'
@@ -14,8 +12,6 @@ import { ClaimAllRewardsDialog } from '@/components/token-rewards/ClaimAllReward
 const ProPositions: FC = () => {
   const [openClaimAllRewardsDialog, setOpenClaimAllRewardsDialog] = useBoolean(false)
   const {
-    currentPoolType,
-    setCurrentPoolType,
     setShowDeposited,
     showDeposited
   } = useGamma()
@@ -50,29 +46,6 @@ const ProPositions: FC = () => {
         </div> */}
       </div>
       <div className="flex items-center max-sm:flex-col max-sm:gap-4 sm-lg:flex-col sm-lg:gap-4 mb-3.75">
-        <RadioOptionGroup
-          defaultValue={'All'}
-          value={currentPoolType.name}
-          className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-4 mr-2'}
-          optionClassName={`min-md:w-[85px]`}
-          options={[
-            {
-              value: POOL_TYPE.all.name,
-              label: 'All',
-              onClick: () => setCurrentPoolType(POOL_TYPE.all)
-            },
-            {
-              value: POOL_TYPE.primary.name,
-              label: 'Primary',
-              onClick: () => setCurrentPoolType(POOL_TYPE.primary)
-            },
-            {
-              value: POOL_TYPE?.hyper?.name,
-              label: 'Hyper',
-              onClick: () => setCurrentPoolType(POOL_TYPE.hyper)
-            }
-          ]}
-        />
         <div className="flex w-full items-center justify-between">
           <TokenSearchBar />
           <div className="flex justify-between items-center gap-[15px]">

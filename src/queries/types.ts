@@ -12,7 +12,6 @@ export type UseQueryResponseFix<T, U, K = T> = UseQueryResult<T, U> & {
 }
 
 export type PoolsQueryProps = {
-  poolType: string,
   sortDirection: string,
   sortBy: string,
   showCreated: boolean,

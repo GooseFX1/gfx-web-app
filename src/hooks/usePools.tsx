@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react'
 import { clamp } from '@/utils'
 
 export function usePools({
-  poolType,
   sortKey,
   sortOrder,
   searchTokens,
@@ -13,7 +12,6 @@ export function usePools({
   showCreated,
   pageSize = 10
 }: {
-  poolType: 'all' | 'primary' | 'hyper'
   sortKey: any
   sortOrder: any
   searchTokens: string
@@ -34,7 +32,7 @@ export function usePools({
     fetchAllPools({
       page: initialPoolPage || poolPage,
       pageSize,
-      poolType: poolType,
+      poolType: 'all',
       sortOrder: sortOrder,
       searchTokens,
       userPublicKey: base58PublicKey,
@@ -79,7 +77,7 @@ export function usePools({
     setPoolsHasMoreData(false)
     setTotalPoolCount(0)
     loadPools(1)
-  }, [pageSize, sortKey, poolType, searchTokens, showCreated, showDeposited, base58PublicKey])
+  }, [pageSize, sortKey, searchTokens, showCreated, showDeposited, base58PublicKey])
 
   const loadMorePools = () => {
     if (isLoadingPools || !poolsHasMoreData) return

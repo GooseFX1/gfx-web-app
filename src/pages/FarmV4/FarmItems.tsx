@@ -1,11 +1,8 @@
 import { FC, useMemo } from 'react'
 import NoResultsFound from './NoResultsFound'
 import { useGamma } from '@/context'
-import FarmItemsMigrate from '@/pages/FarmV4/FarmItemsMigrate'
 import FarmItemsLite from '@/pages/FarmV4/FarmItemsLite'
 import FarmItemsPro from '@/pages/FarmV4/FarmItemsPro'
-//import { Button } from 'gfx-component-lib'
-import { POOL_TYPE } from '@/pages/FarmV4/constants'
 
 export const noPoolsFound = {
   title: 'Oops, no pools found',
@@ -15,10 +12,6 @@ export const noPoolsDeposited = {
   title: 'Oops, no pools deposited',
   subText: 'Don’t worry, explore our pools and start earning!'
 }
-// const noCreatedPools = {
-//   title: 'Oops, no created pools',
-//   subText: 'Don’t worry, you can always create one!'
-// }
 
 const FarmItems: FC<{
   numberOfTokensDeposited: number
@@ -26,7 +19,6 @@ const FarmItems: FC<{
 }> = ({ numberOfTokensDeposited, isCreatedActive }) => {
   const {
     filteredPools,
-    currentPoolType,
     searchTokens,
     showDeposited,
     isCardMode,
@@ -87,26 +79,7 @@ const FarmItems: FC<{
 
   return (
     <div>
-      {currentPoolType.name === POOL_TYPE.migrate.name ? (
-        <FarmItemsMigrate
-          openPositionsAcrossPrograms={[
-            {
-              tokenA: {
-                name: 'SOL',
-                balance: '0.24',
-                symbol: 'SOL',
-                src: '/img/crypto/SOL.svg'
-              },
-              tokenB: {
-                name: 'USDC',
-                balance: '0.24',
-                symbol: 'USDC',
-                src: '/img/crypto/USDC.svg'
-              }
-            }
-          ]}
-        />
-      ) : (numberOfTokensDeposited === 0 && showDeposited) || (filteredPools.length === 0 && !isLoadingPools) ? (
+      {(numberOfTokensDeposited === 0 && showDeposited) || (filteredPools.length === 0 && !isLoadingPools) ? (
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
       ) : isCardMode === 'card' ? (
         <FarmItemsLite
@@ -116,20 +89,6 @@ const FarmItems: FC<{
       ) :
         <FarmItemsPro />
       }
-      {/* {!isCardMode && ((!(numberOfTokensDeposited === 0 && showDeposited) || filteredPools.length !== 0) &&
-        currentPoolType.type != 'migrate') && poolsHasMoreData &&
-        <Button
-          className="cursor-pointer rounded-full border-[1.5px] border-solid border-purple-5
-            dark:bg-black-1 dark:text-white bg-grey-5 mx-auto font-bold text-regular text-black-4"
-          variant={'primary'}
-          onClick={() => updatePools({
-            page: poolPage + 1,
-            pageSize: POOL_LIST_PAGE_SIZE
-          })}
-        >
-          Load More
-        </Button>
-      } */}
     </div>
   )
 }

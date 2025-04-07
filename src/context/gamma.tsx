@@ -25,8 +25,6 @@ import {
   GAMMASortConfig,
   JupToken,
   ModeOfOperation,
-  Pool,
-  POOL_TYPE
 } from '@/pages/FarmV4/constants'
 import { useConnectionConfig } from './settings'
 import useBoolean from '@/hooks/useBoolean'
@@ -48,8 +46,6 @@ interface GAMMADataModel {
   setSelectedCard: Dispatch<SetStateAction<any>>
   openDepositWithdrawSlider: boolean
   setOpenDepositWithdrawSlider: Dispatch<SetStateAction<boolean>>
-  currentPoolType: Pool
-  setCurrentPoolType: Dispatch<SetStateAction<Pool>>
   modeOfOperation: string
   setModeOfOperation: Dispatch<SetStateAction<string>>
   totalPoolCount: number
@@ -113,7 +109,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<any>({})
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
-  const [currentPoolType, setCurrentPoolType] = useState<Pool>(POOL_TYPE.all)
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [sendingTransaction, setSendingTransaction] = useState<boolean>(false)
   const [searchTokens, setSearchTokens] = useState<string>('')
@@ -184,13 +179,11 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     sortDirection: sortConfig.direction.toLowerCase(),
     showCreated: showCreatedPools,
     showDeposited,
-    poolType: currentPoolType.type,
     enabled: !isPortfolio && sortBy != 'portfolio'
   })
   const portfolioPoolsQuery = useUserPortfolioPools({
     mintA: selectedTokens[0]?.address,
     mintB: selectedTokens[1]?.address,
-    poolType: currentPoolType.type,
     sortBy: getSortKey(sortConfig, isPortfolio, viewRange),
     sortDirection: sortConfig.direction.toLowerCase(),
     showCreated: showCreatedPools,
@@ -279,8 +272,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSelectedCard,
         openDepositWithdrawSlider,
         setOpenDepositWithdrawSlider,
-        currentPoolType,
-        setCurrentPoolType,
         modeOfOperation,
         setModeOfOperation,
         sendingTransaction,
