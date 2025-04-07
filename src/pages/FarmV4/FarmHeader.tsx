@@ -34,7 +34,8 @@ export const FarmHeader: FC = () => {
     setIsPortfolio,
     isPortfolio,
     setCurrentSort,
-    setShowDeposited
+    setShowDeposited,
+    setShowCreatedPools
   } = useGamma()
   const statsQuery = useStatsQuery()
   const { wallet } = useWallet()
@@ -142,6 +143,7 @@ export const FarmHeader: FC = () => {
                     setCurrentSort('1')
                     if (isPortfolio) {
                       setShowDeposited(false)
+                      setShowCreatedPools(false)
                     }
                     setIsPortfolio.off()
                   }
@@ -151,6 +153,8 @@ export const FarmHeader: FC = () => {
                   label: 'Portfolio',
                   onClick: () => {
                     setCurrentSort('9')
+                    setShowDeposited(false)
+                    setShowCreatedPools(false)
                     setIsPortfolio.on()
                   }
                 }
