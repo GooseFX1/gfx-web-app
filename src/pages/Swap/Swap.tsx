@@ -618,7 +618,11 @@ mt-8 flex items-center justify-center
                 swapNotValid || loadingPriceQuote || isLoading || !swapAccountsQuery.data || !doesPoolExist
               }
             >
-              Swap
+              {
+                selectedTokenA?.address && selectedTokenB?.address ?
+                  +amountTokenA > balance[selectedTokenA?.address].tokenAmount.uiAmount ?
+                  `Insufficient ${selectedTokenA?.symbol}` : `Swap` : `Swap`
+              }
             </Button>
           )}
         </div>
