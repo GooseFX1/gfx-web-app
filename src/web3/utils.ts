@@ -1,4 +1,3 @@
-import { TOKEN_PROGRAM_ID } from 'openbook-ts/serum/lib/token-instructions'
 import BN from 'bn.js'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
 import {
@@ -14,6 +13,7 @@ import {
 import { useLocalStorage } from '../utils'
 import { NETWORK_CONSTANTS } from '../constants'
 import { WalletContextState } from '@solana/wallet-adapter-react'
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 
 const SECONDS_30 = 30 * 1000
 const COMMITMENT_LEVELS = ['processed', 'confirmed', 'finalized']

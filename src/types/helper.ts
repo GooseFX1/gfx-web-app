@@ -1,1 +1,1 @@
-export type PropsWithKey<T> = T & { key: string }
+export type PropsWithKey<T> = T & { key?: string }

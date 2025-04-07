@@ -1,6 +1,5 @@
 export * from './AppLayout'
 export * from './Connect'
-export * from './GoFX'
 export * from './MainNav'
 export * from './More'
 export * from './PrivacyPolicy'

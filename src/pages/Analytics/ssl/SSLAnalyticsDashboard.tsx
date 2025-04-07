@@ -7,15 +7,14 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import { GradientText } from '../../../components'
 import { httpClient } from '../../../api'
-import { GET_SSL_ANALYTICS } from '../../TradeV3/perps/perpsConstants'
 import { MINTS } from './utils'
 import { Connection, PublicKey } from '@solana/web3.js'
 import SSLAnalyticsTableWrapper from './SSLAnalyticsTableWrapper'
 import { Tabs } from 'antd'
-import type { TabsProps } from 'antd'
 import SSLHistoricCharts from './SSLHistoricCharts'
 import SSLPairWrapper from './SSLPairWrapper'
 import CronUpTime from './CronUpTime'
+import { GET_SSL_ANALYTICS } from '@/web3'
 
 const WRAPPER = styled.div`
   ${tw`flex justify-center mt-4 items-center flex-col h-screen`}

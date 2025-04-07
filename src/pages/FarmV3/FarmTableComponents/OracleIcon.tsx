@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react'
 import { SSLToken } from '@/pages/FarmV3/constants'
 import { useDarkMode } from '@/context'
-import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
+import { PropsWithKey } from '@/types/helper'
 
 const OracleIcon: FC<PropsWithKey<{
   token: SSLToken

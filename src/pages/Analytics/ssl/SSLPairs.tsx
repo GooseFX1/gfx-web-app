@@ -6,7 +6,7 @@ import { httpClient } from '../../../api'
 import { truncateBigNumber } from '../../../utils/misc'
 import { usePriceFeedFarm } from '../../../context'
 import { getPriceObject } from '../../../web3/utils'
-import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
+import { PropsWithKey } from '@/types/helper'
 
 const WRAPPER = styled.div`
     ${tw`p-10`}

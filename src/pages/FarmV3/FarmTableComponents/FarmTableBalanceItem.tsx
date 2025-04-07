@@ -26,7 +26,7 @@ import FarmItemHead from '@/pages/FarmV3/FarmTableComponents/FarmItemHead'
 import { toast } from 'sonner'
 import BigNumber from 'bignumber.js'
 import useTransaction from '@/hooks/useTransaction'
-import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
+import { PropsWithKey } from '@/types/helper'
 
 const MIN_AMOUNT_DEPOSIT = 0.01
 const MIN_AMOUNT_WITHDRAW = 0.01

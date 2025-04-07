@@ -9966,9 +9966,6 @@ onetime@^6.0.0:
   dependencies:
     mimic-fn "^4.0.0"
 
-"openbook-ts@file:./openbook-package":
-  version "1.0.0"
-
 optionator@^0.9.1:
   version "0.9.4"
   resolved "https://registry.yarnpkg.com/optionator/-/optionator-0.9.4.tgz#7ea1c1a5d91d764fb282139c88fe11e182a3a734"
@@ -10157,9 +10154,6 @@ pdfast@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/pdfast/-/pdfast-0.2.0.tgz#8cbc556e1bf2522177787c0de2e0d4373ba885c9"
   integrity sha512-cq6TTu6qKSFUHwEahi68k/kqN2mfepjkGrG9Un70cgdRRKLKY6Rf8P8uvP2NvZktaQZNF3YE7agEkLj0vGK9bA==
-
-"perps-wasm@file:./perps-wasm":
-  version "0.1.0"
 
 picocolors@^1.0.0, picocolors@^1.0.1:
   version "1.0.1"

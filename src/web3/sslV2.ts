@@ -2,7 +2,6 @@ import BN from 'bn.js'
 import { publicKey, u64 } from '@solana/buffer-layout-utils'
 import { Idl, Program } from '@project-serum/anchor'
 import { struct, u32, u8 } from '@solana/buffer-layout'
-import { TOKEN_PROGRAM_ID } from 'openbook-ts/serum/lib/token-instructions'
 import {
   createAssociatedTokenAccountInstruction,
   createCloseAccountInstruction,
@@ -24,6 +23,7 @@ import {
 import { SSLToken } from '../pages/FarmV3/constants'
 import { convertToNativeValue } from '../utils'
 import TransactionBuilder from '@/web3/Builders/transaction.builder'
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 
 export interface Account {
   /** Address of the account */
