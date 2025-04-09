@@ -54,16 +54,16 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
       case 0:
         return {
           formattedVolume: numberFormatter(
-            Math.max(0, pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD)
+            Math.max(0, pool.stats.daily.volumeTokenAUsd + pool.stats.daily.volumeTokenBUsd)
           ),
-          formattedFees: numberFormatter(Math.max(0, pool.stats.daily.feesUSD)),
+          formattedFees: numberFormatter(Math.max(0, pool.stats.daily.feesUsd)),
           formattedAPR: Math.max(
             0,
-            pool.stats.daily.feesAprUSD +
+            pool.stats.daily.feesAprUsd +
               pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd +
               pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
           ),
-          tradeAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD)),
+          tradeAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUsd)),
           kaminoAPR: numberFormatter(
             Math.max(
               0,
@@ -81,16 +81,16 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
       case 1:
         return {
           formattedVolume: numberFormatter(
-            Math.max(0, pool.stats.weekly.volumeTokenAUSD + pool.stats.weekly.volumeTokenBUSD)
+            Math.max(0, pool.stats.weekly.volumeTokenAUsd + pool.stats.weekly.volumeTokenBUsd)
           ),
-          formattedFees: numberFormatter(Math.max(0, pool.stats.weekly.feesUSD)),
+          formattedFees: numberFormatter(Math.max(0, pool.stats.weekly.feesUsd)),
           formattedAPR: Math.max(
             0,
-            pool.stats.weekly.feesAprUSD +
+            pool.stats.weekly.feesAprUsd +
               pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
               pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
           ),
-          tradeAPR: numberFormatter(Math.max(0, pool.stats.weekly.feesAprUSD)),
+          tradeAPR: numberFormatter(Math.max(0, pool.stats.weekly.feesAprUsd)),
           kaminoAPR: numberFormatter(
             Math.max(
               0,
@@ -108,16 +108,16 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
       case 2:
         return {
           formattedVolume: numberFormatter(
-            Math.max(0, pool.stats.monthly.volumeTokenAUSD + pool.stats.monthly.volumeTokenBUSD)
+            Math.max(0, pool.stats.monthly.volumeTokenAUsd + pool.stats.monthly.volumeTokenBUsd)
           ),
-          formattedFees: numberFormatter(Math.max(0, pool.stats.monthly.feesUSD)),
+          formattedFees: numberFormatter(Math.max(0, pool.stats.monthly.feesUsd)),
           formattedAPR: Math.max(
             0,
-            pool.stats.monthly.feesAprUSD +
+            pool.stats.monthly.feesAprUsd +
               pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +
               pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
           ),
-          tradeAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUSD)),
+          tradeAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUsd)),
           kaminoAPR: numberFormatter(
             Math.max(
               0,
@@ -243,7 +243,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
           <div className="flex flex-col gap-1">
             <div className="flex flex-row justify-between gap-5">
               <div className="flex flex-row gap-1 items-center">
-                <Icon src="/img/assets/goosefx-small.png" alt="Goose Fx" className="w-5 h-5 max-w-5 max-h-5" />
+                <Icon src="/img/crypto/GOFX.svg" alt="Goose Fx" className="w-5 h-5 max-w-5 max-h-5" />
                 <span className="font-poppins font-semibold my-0.5 text-[15px]">Trade APR</span>
               </div>
               <span className="font-display font-semibold my-0.5 text-[15px]">{tradeAPR}%</span>

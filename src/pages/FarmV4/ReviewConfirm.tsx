@@ -35,8 +35,8 @@ export const ReviewConfirm: FC<{
           <span className="!font-regular font-semibold dark:text-grey-8 text-black-4">
             $
             {numberFormatter(
-              Math.max(0, selectedCard?.stats?.daily?.feesUSD) || 0.0,
-              new BigNumber(Math.max(0, selectedCard?.stats?.daily?.feesUSD) || 0.0).gt(0) ? 4 : 2
+              Math.max(0, selectedCard?.stats?.daily?.feesUsd) || 0.0,
+              new BigNumber(Math.max(0, selectedCard?.stats?.daily?.feesUsd) || 0.0).gt(0) ? 4 : 2
             )}
           </span>
         </div>

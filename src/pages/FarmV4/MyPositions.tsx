@@ -137,7 +137,7 @@ const MyPositions: FC<{
                 className="flex items-center justify-center text-regular
                                   font-semibold dark:text-grey-8 text-black-4"
               >
-                ${numberFormatter(+pool.currentPositionUSD)}
+                ${numberFormatter(+pool.currentPositionUsd)}
               </div>
               {/* fees */}
               {isDesktop && (
@@ -170,7 +170,7 @@ const MyPositions: FC<{
                   className={'to-brand-secondaryGradient-secondary/50 min-w-[60px]'}
                 >
                   <span className={'font-poppins font-semibold my-0.5 mx-auto'}>
-                    {numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD))}%
+                    {numberFormatter(Math.max(0, pool.stats.daily.feesAprUsd))}%
                   </span>
                 </Badge>
               </div>

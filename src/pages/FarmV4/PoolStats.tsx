@@ -11,15 +11,15 @@ export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
     return liquidity ? numberFormatter(Math.max(0, liquidity)) : '0.00'
   }, [pool])
   const dailyVolume = useMemo(
-    () => numberFormatter(Math.max(0, pool?.stats?.daily?.volumeTokenAUSD + pool?.stats?.daily?.volumeTokenBUSD)),
-    [pool?.stats?.daily?.volumeTokenAUSD, pool?.stats?.daily?.volumeTokenBUSD]
+    () => numberFormatter(Math.max(0, pool?.stats?.daily?.volumeTokenAUsd + pool?.stats?.daily?.volumeTokenBUsd)),
+    [pool?.stats?.daily?.volumeTokenAUsd, pool?.stats?.daily?.volumeTokenBUsd]
   )
 
   const [fees, setFees] = useState<string>('Loading')
 
   const dailyAPR = useMemo(
-    () => numberFormatter(Math.max(0, pool?.stats?.daily?.feesAprUSD)),
-    [pool?.stats?.daily?.feesAprUSD]
+    () => numberFormatter(Math.max(0, pool?.stats?.daily?.feesAprUsd)),
+    [pool?.stats?.daily?.feesAprUsd]
   )
 
   useEffect(() => {

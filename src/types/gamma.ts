@@ -115,11 +115,11 @@ export type GAMMAPoolWithUserLiquidity = GAMMAPool & {
 
 interface GAMMAPoolStats {
   range: '24H' | '7D' | '30D'
-  feesUSD: number
-  volumeTokenAUSD: number
-  volumeTokenBUSD: number
-  feesAprUSD: number
-  volumeAprUSD: number
+  feesUsd: number
+  volumeTokenAUsd: number
+  volumeTokenBUsd: number
+  feesAprUsd: number
+  volumeAprUsd: number
   withdrawnKaminoProfitTokenAUsd: number
   withdrawnKaminoProfitTokenBUsd: number
   withdrawnKaminoProfitTokenAAprUsd: number
