@@ -85,6 +85,7 @@ const FarmItemsProSort: FC = () => {
           title={'Fee Tier'}
           tooltip={`The percentage fee taken by the pool, this influence the rewards you'll earn.`}
           canSort={false}
+          tooltip={`This is a dynamic fee that can vary between 0.01-10% depending on the token volatility`}
         />
       )}
       <FarmRowItem

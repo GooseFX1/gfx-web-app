@@ -89,7 +89,7 @@ const CreatePoolConfirmStep: FC<{
                             Pool Fee Rate
                         </TooltipTrigger>
                         <TooltipContent className={'z-[1001]'}>
-                            This is the fee in bps % we charge per swap
+                          This is a dynamic fee that can vary between 0.01-10% depending on the token volatility
                         </TooltipContent>
                     </Tooltip>
                     <span className="text-regular font-semibold text-yellow-2">0.2%</span>
