@@ -161,12 +161,8 @@ const GammaOnboard: FC = (): JSX.Element => {
           <div className="text-regular font-semibold text-grey-9">
             <span className="text-purple-3 !font-semibold">Step 1</span> of 3
           </div>
-          <img
-            src={`img/assets/welcome_${mode}.svg`}
-            alt="welcome-icn"
-            className='mt-[22px] mb-3.75 mx-auto'
-          />
-          <p className='m-auto text-regular text-center font-semibold dark:text-grey-2 text-grey-1 max-w-[350px]'>
+          <img src={`img/assets/onboard_1_${mode}.svg`} alt="welcome-icn" className="mt-[22px] mb-3.75 mx-auto" />
+          <p className="m-auto text-regular text-center font-semibold dark:text-grey-2 text-grey-1 max-w-[350px]">
             Welcome to GooseFX's farm, where you can earn yield on your tokens by being a liquidity provider (LP).
             Let’s get to know our main modes.
           </p>
@@ -176,34 +172,26 @@ const GammaOnboard: FC = (): JSX.Element => {
             <span className="text-purple-3 !font-semibold">Step 2</span> of 3
           </div>
           <img
-            src={`img/assets/welcome_lite_${mode}.svg`}
+            src={`img/assets/onboard_2_${mode}.svg`}
             alt="welcome-icn"
-            className='mt-[22px] mb-3.75 mx-auto'
+            className="mt-[22px] mb-3.75 mx-auto"
           />
-          <div className='text-regular text-center font-semibold dark:text-grey-2 text-grey-1 mb-1.5'>
-            <span className='lite-mode-txt'>Lite Mode:&nbsp;</span>
-            A more simple experience if you are<br/>new to liquidity providing on DEXs!
-          </div>
-          <div className='text-regular text-center text-tiny dark:text-grey-1 text-grey-9'>
-            Remember you can switch back at any time :)
-          </div>
+          <p className="m-auto text-regular text-center font-semibold dark:text-grey-2 text-grey-1 max-w-[350px]">
+            Explore different pools or create your own, apply filters or change the layout.
+          </p>
         </div>
         <div className="slide">
           <div className="text-regular font-semibold text-grey-9">
             <span className="text-purple-3 !font-semibold">Step 3</span> of 3
           </div>
           <img
-            src={`img/assets/welcome_pro_${mode}.svg`}
+            src={`img/assets/onboard_3_${mode}.svg`}
             alt="welcome-icn"
-            className='mt-[22px] mb-3.75 mx-auto'
+            className="mt-[22px] mb-3.75 mx-auto"
           />
-          <div className='text-regular text-center font-semibold dark:text-grey-2 text-grey-1 mb-1.5'>
-            <span className='pro-mode-txt'>Pro Mode:&nbsp;</span>
-            Unlock advanced features, portfolio tracking, stats & more! For experienced users.
-          </div>
-          <div className='text-regular text-center text-tiny dark:text-grey-1 text-grey-9'>
-            Remember you can switch back at any time :)
-          </div>
+          <p className="m-auto text-regular text-center font-semibold dark:text-grey-2 text-grey-1 max-w-[350px]">
+            Visit the portfolio tab, to get a detail view about your deposits APR and more!
+          </p>
         </div>
       </Slider>
     </STYLED_POPUP>

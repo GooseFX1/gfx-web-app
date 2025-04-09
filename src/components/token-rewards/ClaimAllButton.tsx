@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { Button, cn } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
@@ -15,6 +16,12 @@ export function ClaimAllRewards({ setOpenClaimAllRewardsDialog }: ClaimAllReward
   if (!claimableRewardsWithTokens.totalClaimableRewardsUsd.gte(0.1)) return null
   if (claimableRewardsWithTokens.rewards.length === 0) return null
 
+  const canClaimAll = useMemo(
+    () => claimableRewardsWithTokens.totalClaimableRewardsUsd.gte(0.5),
+    [claimableRewardsWithTokens.totalClaimableRewardsUsd]
+  )
+
+
   const content = (className?: string) => (
     <div
       className={cn(
@@ -26,34 +33,28 @@ export function ClaimAllRewards({ setOpenClaimAllRewardsDialog }: ClaimAllReward
     >
       <div className="flex flex-row items-center gap-2">
         <h2
-          className="text-[15px] 
-  font-semibold text-text-lightmode-secondary dark:text-text-darkmode-secondary"
+          className="text-[15px] font-semibold text-text-lightmode-secondary 
+          dark:text-text-darkmode-secondary"
         >
           Pending Rewards:
         </h2>
         <p
-          className="text-[15px] 
-  font-semibold text-text-lightmode-tertiary dark:text-text-darkmode-tertiary"
+          className="text-[15px] font-semibold text-text-lightmode-tertiary 
+          dark:text-text-darkmode-tertiary font-poppins"
         >
           ${numberFormatter(claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber())}
         </p>
       </div>
-      {claimableRewardsWithTokens.totalClaimableRewardsUsd.gte(0.5) && (
-        <Button
-          className="font-display text-text-lightmode-tertiary
- dark:text-text-darkmode-tertiary 
- border-[1.5px] border-border-lightmode-tertiary 
- dark:border-border-darkmode-tertiary
- items-center h-[28px] 
- bg-white dark:bg-black-2 font-bold
- rounded-[100px]
- "
-          variant={'outline'}
-          onClick={() => setOpenClaimAllRewardsDialog(true)}
-        >
-          Claim All
-        </Button>
-      )}
+      <Button
+        className="h-[28px] "
+        size={'sm'}
+        colorScheme={canClaimAll ? 'secondaryGradient' : ''}
+        variant={'outline'}
+        onClick={() => setOpenClaimAllRewardsDialog(canClaimAll)}
+        disabled={!canClaimAll}
+      >
+        Claim All
+      </Button>
     </div>
   )
 

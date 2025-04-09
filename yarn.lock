@@ -7046,6 +7046,11 @@ dotenv@^16.0.1, dotenv@^16.0.3:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.4.5.tgz#cdd3b3b604cb327e286b4762e13502f717cb099f"
   integrity sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==
 
+dotenv@^16.4.7:
+  version "16.4.7"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.4.7.tgz#0e20c5b82950140aa99be360a8a5f52335f53c26"
+  integrity sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==
+
 dotignore@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/dotignore/-/dotignore-0.1.2.tgz#f942f2200d28c3a76fbdd6f0ee9f3257c8a2e905"
@@ -8233,8 +8238,25 @@ globrex@^0.1.2:
   resolved "https://registry.yarnpkg.com/globrex/-/globrex-0.1.2.tgz#dd5d9ec826232730cd6793a5e33a9302985e6098"
   integrity sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==
 
-"goosefx-amm-sdk@file:./gamma-sdk":
-  version "0.0.0"
+goosefx-amm-sdk@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/goosefx-amm-sdk/-/goosefx-amm-sdk-1.2.0.tgz#862fdce661bcbe7c0b933d09e3152dc425411309"
+  integrity sha512-7Mdj5Ch7PoyNPV4HBW8EcDD7H2yNwy/Qv3tmzuwQXoN9FIjKctGU5RXAyHstSEHbpJhCmzSUROWRza3EXqP5tA==
+  dependencies:
+    "@project-serum/serum" "^0.13.65"
+    "@solana/buffer-layout" "^4.0.1"
+    "@solana/spl-token" "^0.4.6"
+    "@solana/web3.js" "^1.91.8"
+    axios "^1.1.3"
+    big.js "^6.2.1"
+    bn.js "^5.2.1"
+    buffer "^6.0.3"
+    dayjs "^1.11.5"
+    decimal.js-light "^2.5.1"
+    dotenv "^16.4.7"
+    lodash "^4.17.21"
+    toformat "^2.0.0"
+    tsconfig-paths "^4.2.0"
 
 goosefx-ssl-sdk@^1.2.24, goosefx-ssl-sdk@latest:
   version "1.2.24"
@@ -9065,7 +9087,7 @@ json5@^1.0.2:
   dependencies:
     minimist "^1.2.0"
 
-json5@^2.2.3:
+json5@^2.2.2, json5@^2.2.3:
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.3.tgz#78cd6f1a19bdc12b73db5ad0c61efd66c1e29283"
   integrity sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==
@@ -12559,6 +12581,15 @@ tsconfig-paths@^3.15.0:
   dependencies:
     "@types/json5" "^0.0.29"
     json5 "^1.0.2"
+    minimist "^1.2.6"
+    strip-bom "^3.0.0"
+
+tsconfig-paths@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-4.2.0.tgz#ef78e19039133446d244beac0fd6a1632e2d107c"
+  integrity sha512-NoZ4roiN7LnbKn9QqE1amc9DJfzvZXxF4xDavcOWt1BPkdx+m+0gJuPM+S0vCe7zTJMYUP0R8pO2XMr+Y8oLIg==
+  dependencies:
+    json5 "^2.2.2"
     minimist "^1.2.6"
     strip-bom "^3.0.0"
 
