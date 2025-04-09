@@ -60,14 +60,15 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
           formattedAPR: Math.max(
             0,
             pool.stats.daily.feesAprUSD +
-            pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd +
-            pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
+              pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd +
+              pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD)),
           kaminoAPR: numberFormatter(
             Math.max(
               0,
-              pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd + pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
+              pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd +
+                pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
             )
           ),
           kaminoUSD: numberFormatter(
@@ -86,14 +87,15 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
           formattedAPR: Math.max(
             0,
             pool.stats.weekly.feesAprUSD +
-            pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
-            pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
+              pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
+              pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.weekly.feesAprUSD)),
           kaminoAPR: numberFormatter(
             Math.max(
               0,
-              pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd + pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
+              pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
+                pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
             )
           ),
           kaminoUSD: numberFormatter(
@@ -112,14 +114,15 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
           formattedAPR: Math.max(
             0,
             pool.stats.monthly.feesAprUSD +
-            pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +
-            pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
+              pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +
+              pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUSD)),
           kaminoAPR: numberFormatter(
             Math.max(
               0,
-              pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd + pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
+              pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +
+                pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
             )
           ),
           kaminoUSD: numberFormatter(
@@ -131,17 +134,20 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
         }
     }
   }, [pool.stats, viewRange])
-  
+
   const { data: activeReward } = useQuery({
     queryKey: [QUERY_KEY, 'activeReward', pool.id],
     queryFn: () => getActiveRewardByPoolId(new PublicKey(pool.id)),
     enabled: !!pool.id
   })
-  
-  const apr = activeReward ? numberFormatter(
-      new BigNumber(formattedAPR)
-        .plus(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())
-        .toNumber()) : numberFormatter(formattedAPR)
+
+  const apr = activeReward
+    ? numberFormatter(
+        new BigNumber(formattedAPR)
+          .plus(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())
+          .toNumber()
+      )
+    : numberFormatter(formattedAPR)
 
   return (
     <div
@@ -229,9 +235,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
               size={'lg'}
               className={'to-brand-secondaryGradient-secondary/50 min-w-[60px]'}
             >
-              <span className={'font-poppins font-semibold my-0.5 m-auto'}>
-                {apr}%
-              </span>
+              <span className={'font-poppins font-semibold my-0.5 m-auto'}>{apr}%</span>
             </Badge>
           </div>
         </TooltipTrigger>
@@ -270,10 +274,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
             ) : null}
             <div className="flex flex-row justify-between gap-5">
               <span className="font-poppins font-semibold my-0.5 text-[15px]">Total APR</span>
-              <span className="font-display font-semibold my-0.5 text-[15px]">
-                {apr}
-                %
-              </span>
+              <span className="font-display font-semibold my-0.5 text-[15px]">{apr}%</span>
             </div>
             {activeReward ? (
               <>
