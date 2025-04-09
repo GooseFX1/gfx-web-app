@@ -39,14 +39,15 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
     const liquidity = parseFloat(pool.tvl)
     return liquidity ? numberFormatter(Math.max(0, liquidity)) : '0.00'
   }, [pool])
-  const { formattedVolume, formattedFees, formattedAPR, tradeAPR, kaminoAPR } = useMemo(() => {
+  const { formattedVolume, formattedFees, formattedAPR, tradeAPR, kaminoUSD } = useMemo(() => {
     if (!pool.stats) {
       return {
         formattedVolume: '0.00',
         formattedFees: '0.00',
         formattedAPR: 0,
         tradeAPR: '0.00',
-        kaminoAPR: '0.00'
+        kaminoAPR: '0.00',
+        kaminoUSD: '0.00'
       }
     }
     switch (viewRange) {
@@ -59,11 +60,17 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
           formattedAPR: Math.max(
             0,
             pool.stats.daily.feesAprUSD +
-            pool.stats.daily.withdrawnKaminoProfitTokenAUsd +
-            pool.stats.daily.withdrawnKaminoProfitTokenBUsd
+            pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd +
+            pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUSD)),
           kaminoAPR: numberFormatter(
+            Math.max(
+              0,
+              pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd + pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
+            )
+          ),
+          kaminoUSD: numberFormatter(
             Math.max(
               0,
               pool.stats.daily.withdrawnKaminoProfitTokenAUsd + pool.stats.daily.withdrawnKaminoProfitTokenBUsd
@@ -79,11 +86,17 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
           formattedAPR: Math.max(
             0,
             pool.stats.weekly.feesAprUSD +
-            pool.stats.weekly.withdrawnKaminoProfitTokenAUsd +
-            pool.stats.weekly.withdrawnKaminoProfitTokenBUsd
+            pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
+            pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.weekly.feesAprUSD)),
           kaminoAPR: numberFormatter(
+            Math.max(
+              0,
+              pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd + pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
+            )
+          ),
+          kaminoUSD: numberFormatter(
             Math.max(
               0,
               pool.stats.weekly.withdrawnKaminoProfitTokenAUsd + pool.stats.weekly.withdrawnKaminoProfitTokenBUsd
@@ -99,11 +112,17 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
           formattedAPR: Math.max(
             0,
             pool.stats.monthly.feesAprUSD +
-            pool.stats.monthly.withdrawnKaminoProfitTokenAUsd +
-            pool.stats.monthly.withdrawnKaminoProfitTokenBUsd
+            pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +
+            pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
           ),
           tradeAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUSD)),
           kaminoAPR: numberFormatter(
+            Math.max(
+              0,
+              pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd + pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
+            )
+          ),
+          kaminoUSD: numberFormatter(
             Math.max(
               0,
               pool.stats.monthly.withdrawnKaminoProfitTokenAUsd + pool.stats.monthly.withdrawnKaminoProfitTokenBUsd
@@ -230,7 +249,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
                 <Icon src="/img/assets/kamino.svg" alt="Kamino" className="w-5 h-5 max-w-5 max-h-5" />
                 <span className="font-poppins font-semibold my-0.5 text-[15px]">Kamino APR</span>
               </div>
-              <span className="font-display font-semibold my-0.5 text-[15px]">{kaminoAPR}%</span>
+              <span className="font-display font-semibold my-0.5 text-[15px]">${kaminoUSD}</span>
             </div>
             {activeReward ? (
               <div className="flex flex-row justify-between gap-5">

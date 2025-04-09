@@ -120,10 +120,10 @@ interface GAMMAPoolStats {
   volumeTokenBUSD: number
   feesAprUSD: number
   volumeAprUSD: number
-  withdrawnKaminoProfitTokenA: number
-  withdrawnKaminoProfitTokenB: number
   withdrawnKaminoProfitTokenAUsd: number
   withdrawnKaminoProfitTokenBUsd: number
+  withdrawnKaminoProfitTokenAAprUsd: number
+  withdrawnKaminoProfitTokenBAprUsd: number
 }
 
 // user model
