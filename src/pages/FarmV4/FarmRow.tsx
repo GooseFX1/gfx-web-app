@@ -228,10 +228,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
         </div>
       )}
       <Tooltip>
-        <TooltipTrigger
-          className="no-underline !cursor-default"
-          disabled={parseFloat(kaminoUSD) === 0 && !activeReward}
-        >
+        <TooltipTrigger className="no-underline !cursor-default">
           <div className="flex items-center justify-center max-sm:justify-end sm-lg:justify-end">
             <Badge
               variant="default"
@@ -244,10 +241,14 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
         </TooltipTrigger>
         <TooltipContent className="w-[266px] max-w-[266px] p-2">
           <div className="">
-            <div className="flex flex-row justify-between mb-3">
-              <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
-              <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
-            </div>
+            {/* should only show if kaminoUSD is greater than 0 or activeReward */}
+            {parseFloat(kaminoUSD) > 0 || activeReward && (
+              <div className="flex flex-row justify-between mb-3">
+                <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
+                <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
+              </div>
+            )}
+
             {/* should only show if kaminoUSD is greater than 0 */}
             {parseFloat(kaminoUSD) > 0 && (
               <div className="flex flex-row justify-between mb-3">
@@ -272,8 +273,12 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
                 </div>
               </div>
             ) : null}
-            <div className="w-full h-[1px] border-t-1 border-border-lightmode-secondary 
-              dark:border-border-darkmode-secondary my-2" />
+            {parseFloat(kaminoUSD) > 0 || activeReward && (
+              <div
+                className="w-full h-[1px] border-t-1 border-border-lightmode-secondary 
+                dark:border-border-darkmode-secondary my-2"
+              />
+            )}
             <div className="flex flex-row justify-between ">
               <span className="font-poppins font-semibold text-[15px]">Total APR</span>
               <span className="font-display font-semibold text-[15px]">{apr}%</span>

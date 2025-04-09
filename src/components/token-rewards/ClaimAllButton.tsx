@@ -21,7 +21,6 @@ export function ClaimAllRewards({ setOpenClaimAllRewardsDialog }: ClaimAllReward
     [claimableRewardsWithTokens.totalClaimableRewardsUsd]
   )
 
-
   const content = (className?: string) => (
     <div
       className={cn(
