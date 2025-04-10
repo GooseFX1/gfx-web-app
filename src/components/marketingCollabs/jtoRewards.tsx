@@ -4,11 +4,12 @@ import RewardsClose from '@/assets/rewards_close.svg?react'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import useBoolean from '@/hooks/useBoolean'
 import { useConnectionConfig } from '@/context'
-
+import { useDarkMode } from '@/context'
 
 const JtoRewards: FC = () => {
   const { userCache, updateUserCache } = useConnectionConfig()
   const { isMobile } = useBreakPoint()
+  const { mode } = useDarkMode()
   
   const [showBanner, setShowBanner] = useBoolean(userCache.gamma.jtoRewardsBanner !== false)
 
@@ -32,7 +33,7 @@ const JtoRewards: FC = () => {
       >
         {!isMobile && (
           <IconWithFallback
-            src="/img/assets/jto-rewards.svg"
+            src={`/img/assets/jto-rewards-${mode}.svg`}
             alt="Boosted Rewards"
             className="min-h-[95px] min-w-[95px] max-h-[95px] max-w-[95px] h-[95px] w-[95px]"
           />
@@ -46,7 +47,7 @@ const JtoRewards: FC = () => {
           <div className={isMobile ? 'max-sm:flex max-sm:items-center' : ''}>
             {isMobile && (
               <IconWithFallback
-                src="/img/assets/jto-rewards.svg"
+                src={`/img/assets/jto-rewards-${mode}.svg`}
                 alt="Boosted Rewards"
                 className="min-h-[95px] min-w-[95px] max-h-[95px] max-w-[95px] h-[95px] w-[95px]"
               />
