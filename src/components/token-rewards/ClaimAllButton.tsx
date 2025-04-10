@@ -12,14 +12,16 @@ type ClaimAllRewardsProps = {
 export function ClaimAllRewards({ setOpenClaimAllRewardsDialog }: ClaimAllRewardsProps) {
   const { isMobile } = useBreakPoint()
   const { claimableRewardsWithTokens } = useBoostedRewards()
-
-  if (!claimableRewardsWithTokens.totalClaimableRewardsUsd.gte(0.1)) return null
-  if (claimableRewardsWithTokens.rewards.length === 0) return null
-
   const canClaimAll = useMemo(
     () => claimableRewardsWithTokens.totalClaimableRewardsUsd.gte(0.5),
     [claimableRewardsWithTokens.totalClaimableRewardsUsd]
   )
+  
+  // Early returns after all hooks have been called
+  const shouldRender = claimableRewardsWithTokens.totalClaimableRewardsUsd.gte(0.1) && 
+                       claimableRewardsWithTokens.rewards.length > 0
+  
+  if (!shouldRender) return null
 
   const content = (className?: string) => (
     <div
