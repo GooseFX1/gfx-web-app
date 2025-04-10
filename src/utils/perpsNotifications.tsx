@@ -314,7 +314,8 @@ export const notifyUsingPromiseForCreatePool = async (promise: Promise<unknown>)
     onDismiss: (t: ToastT) => {
       toast.dismiss(t.id)
     },
-    duration: 45000
+    duration: 45000,
+    id: 'create-pool-toast'
   } as ExternalToast
   config.id = toast(<IntemediaryToast className={cn(`w-[290px]`)}>
     <IntemediaryToastHeading stage={'loading'}>Creating pool...</IntemediaryToastHeading>
