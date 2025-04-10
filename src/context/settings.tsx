@@ -122,7 +122,8 @@ function newCache(): USER_CONFIG_CACHE {
       showCreatedFilter: false,
       docsBanner: true,
       currentSort: GAMMA_SORT_CONFIG_DEFAULT,
-      viewMode: 'row'
+      viewMode: 'row',
+      jtoRewardsBanner: true
     },
     hasSignedTC: false,
     endpointName: DEFAULT_ENDPOINT_NAME,

@@ -25,4 +25,5 @@ export interface USER_CONFIG_CACHE {
   hasSignedTC: boolean
   priorityFee: PriorityFeeName
   swap: UserSWAPConfig
+  jtoRewardsBanner: boolean
 }
