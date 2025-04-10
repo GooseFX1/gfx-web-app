@@ -134,7 +134,7 @@ async function fetchPoolsByMints({
 }): Promise<PoolsAPIResponse> {
   const pageQuery = `?page=${pageParam}&${POOL_LIST_PAGE_SIZE}`
   const sortQuery = `&sortBy=${sortBy}&sortOrder=${sortDirection}`
-  const mintQuery = `&mint1=${mintA}${mintB ? `&mint2=${mintB}` : ''}`
+  const mintQuery = `&mint1=${mintA.trim()}${mintB ? `&mint2=${mintB.trim()}` : ''}`
   const poolTypeQuery = `&poolType=${poolType}`
   let userQuery = ``
   if (userPublicKey) {
@@ -174,7 +174,7 @@ async function fetchPools({
   const pageQuery = `?page=${pageParam}&pageSize=${POOL_LIST_PAGE_SIZE}`
   const sortQuery = `&sortBy=${sortBy}&sortOrder=${sortDirection}`
   const poolTypeQuery = `&poolType=${poolType}`
-  const searchQuery = searchValue ? `&search=${searchValue}` : ''
+  const searchQuery = searchValue ? `&search=${searchValue.trim()}` : ''
   let userQuery = ``
   if (userPublicKey) {
     userQuery = `&userPublicKey=${userPublicKey}&showCreated=${showCreated}&showDeposited=${showDeposited}`
