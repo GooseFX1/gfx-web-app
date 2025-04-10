@@ -42,7 +42,7 @@ const JtoRewards: FC = () => {
           isMobile ? 'max-sm:flex-col' : 'gap-7 items-center'
         }>
           <h2 className="text-primary-gradient mb-3 mr-5 max-sm:order-first">
-            Earn 20K $JTO and 300K $GOFX for 30D
+            Earn 10K $JTO and 300K $GOFX for 30D
           </h2>
           <div className={isMobile ? 'max-sm:flex max-sm:items-center' : ''}>
             {isMobile && (
