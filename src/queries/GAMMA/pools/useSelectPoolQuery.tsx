@@ -22,7 +22,7 @@ function useSelectPoolQuery({ id }: SelectPoolQueryProps) {
 
 export default useSelectPoolQuery
 // TODO: fill this in
-type GAMMAEnrichedPoolResponse = {}
+type GAMMAEnrichedPoolResponse = Record<string, unknown>
 
 async function getPoolById({ id, publicKey, signal }) {
   const userQuery = publicKey ? `?userPublicKey=${publicKey}` : ''
