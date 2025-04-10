@@ -165,12 +165,19 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
       }}
     >
       {pool.poolCreator === base58PublicKey && !isMobile && (
-        <Icon
-          src={`/img/assets/owner-${mode}.svg`}
-          alt="pool-owner"
-          size={'sm'}
-          className=" absolute top-0.5 left-0.5"
-        />
+        <Tooltip>
+            <TooltipTrigger className='absolute'>
+            <Icon
+              src={`/img/assets/owner-${mode}.svg`}
+              alt="pool-owner"
+              size={'sm'}
+              className=" absolute top-0.5 left-0.5"
+            />
+            </TooltipTrigger>
+            <TooltipContent>
+              <span>You are the owner of this pool</span>
+            </TooltipContent>
+        </Tooltip>
       )}
       <div className="flex flex-row items-center">
         <IconWithFallback
@@ -191,9 +198,12 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
           <IconWithFallback src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
         } */}
         {activeReward && (
-          <Badge size="sm" variant="default" className={'ml-2.5 h-5.5'}>
-            Rewards
-          </Badge>
+            <Icon
+              src={`/img/assets/rewards-icon-${mode}.svg`}
+              alt="claim-rewards"
+              size={'sm'}
+              className='ml-2'
+            />
         )}
       </div>
       {!isMobile && (
