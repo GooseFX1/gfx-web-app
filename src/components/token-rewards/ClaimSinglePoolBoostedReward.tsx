@@ -9,7 +9,7 @@ import { useEffect, useMemo } from 'react'
 import { useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { numberFormatter } from '@/utils'
-import { BoostedRewardInfo, claimRewards } from '@/web3/Farm'
+import { claimRewards } from '@/web3/Farm'
 import useTransaction from '@/hooks/useTransaction'
 import { useWallet } from '@solana/wallet-adapter-react'
 
@@ -17,15 +17,18 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
   const { mode } = useDarkMode()
   const { getActiveRewardByPoolId, getClaimableRewardByPoolId, refreshRewards } = useBoostedRewards()
 
-  const [activeReward, setActiveReward] = useState<{
-    publicKey: PublicKey
-    rewardInfo: RewardInfo
-    token: TokenListToken
-    pricePerDay: BigNumber
-  } | null>(null)
+  const [activeReward, setActiveReward] = useState<
+    | {
+        publicKey: PublicKey
+        rewardInfo: RewardInfo
+        token: TokenListToken
+        pricePerDay: BigNumber
+      }[]
+    | null
+  >(null)
 
   const [claimableReward, setClaimableReward] = useState<
-    | (BoostedRewardInfo & { claimableAmount: BigNumber; claimableAmountUsd: BigNumber; token: TokenListToken })
+    | ({ claimableAmount: BigNumber; claimableAmountUsd: BigNumber; })
     | null
   >(null)
 
@@ -85,26 +88,28 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
         </AccordionTrigger>
         <AccordionContent>
           <div className="flex flex-col gap-[10px] pt-2">
-            <div className="flex flex-row items-center justify-between">
+          {activeReward.map((reward) => (
+            <div key={reward.publicKey.toString()} className="flex flex-row items-center justify-between">
               <div className="flex flex-row items-center gap-[5px]">
                 <IconWithFallback
-                  src={loadIconImage(activeReward.token.logoURI, mode)}
+                  src={loadIconImage(reward.token.logoURI, mode)}
                   className=" rounded-full "
                 />
                 <p
                   className="font-display font-semibold text-[15px] 
                     text-text-lightmode-primary dark:text-text-darkmode-primary"
                 >
-                  {activeReward.token.symbol}
+                  {reward.token.symbol}
                 </p>
               </div>
               <p
                 className="font-display font-semibold text-[15px] 
                       text-text-lightmode-secondary dark:text-text-darkmode-secondary"
               >
-                {numberFormatter(activeReward.pricePerDay.toNumber())} {activeReward.token.symbol} / day
+                {numberFormatter(reward.pricePerDay.toNumber())} {reward.token.symbol} / day
               </p>
             </div>
+          ))}
             {activeReward && claimableReward && claimableReward.claimableAmountUsd.gte(0.5) && (
               <Button
                 className="w-full py-[5px] px-[10px] 
