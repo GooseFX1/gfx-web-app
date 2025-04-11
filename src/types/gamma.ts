@@ -217,7 +217,7 @@ type GAMMAStats = {
   }
 }
 type GAMMAPortfolioPool = GAMMAPoolWithUserLiquidity & {
-  currentPositionUSD: string
+  currentPositionUsd: string
   tokenARatio: string
   tokenBRatio: string
   lpTokensOwned: string

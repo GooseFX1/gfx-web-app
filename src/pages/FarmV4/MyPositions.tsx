@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Badge, Button, Icon, cn } from 'gfx-component-lib'
+import { Badge, Button, Icon, cn, Tooltip, TooltipTrigger, TooltipContent } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import { PublicKey } from '@solana/web3.js'
 import { ModeOfOperation } from './constants'
@@ -8,7 +8,7 @@ import NoResultsFound from '@/pages/FarmV4/NoResultsFound'
 import { noPoolsFound } from '@/pages/FarmV4/FarmItems'
 import { GAMMAPortfolioPool } from '@/types/gamma'
 import useBreakPoint from '@/hooks/useBreakPoint'
-import { FarmRowLoader } from '@/pages/FarmV4/FarmRow'
+import { FarmRowLoader, getPoolValuesByRange } from '@/pages/FarmV4/FarmRow'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import BigNumber from 'bignumber.js'
@@ -26,14 +26,15 @@ const renderTokenBalance = (p: GAMMAPortfolioPool) => {
 
 const MyPositions: FC<{
   queryPositions: GAMMAPortfolioPool[]
-}> = ({queryPositions}) => {
+}> = ({ queryPositions }) => {
   const {
     setSelectedCard,
     setOpenDepositWithdrawSlider,
     setModeOfOperation,
     isSearchActive,
     showCreatedPools,
-    sortConfig
+    sortConfig,
+    viewRange
   } = useGamma()
 
   const { isTablet, isDesktop, isMobile } = useBreakPoint()
@@ -62,28 +63,37 @@ const MyPositions: FC<{
       break
   }
 
-  const poolIds = queryPositions.map(pool => pool.id);
-  
+  const poolIds = queryPositions.map((pool) => pool.id)
+
   const { data: activeRewards } = useQuery({
     queryKey: [QUERY_KEY, 'activeRewards', poolIds],
     queryFn: async () => {
-      const results = {};
+      const results = {}
       for (const poolId of poolIds) {
         if (poolId) {
-          results[poolId] = await getActiveRewardByPoolId(new PublicKey(poolId));
+          results[poolId] = await getActiveRewardByPoolId(new PublicKey(poolId))
         }
       }
-      return results;
+      return results
     },
     enabled: poolIds.length > 0
-  });
+  })
 
   return (
     <div className={`flex flex-col gap-[15px] mt-[15px]`}>
       {queryPositions.length > 0 ? (
         queryPositions.map((pool) => {
-          const activeReward = activeRewards?.[pool.id];
-          const isOwner = base58PublicKey === pool.poolCreator;
+          const { formattedAPR, kaminoUSD, tradeAPR } = getPoolValuesByRange(pool, viewRange)
+
+          const activeReward = activeRewards?.[pool.id]
+          const isOwner = base58PublicKey === pool.poolCreator
+          const apr = activeReward
+            ? numberFormatter(
+                new BigNumber(formattedAPR)
+                  .plus(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())
+                  .toNumber()
+              )
+            : numberFormatter(formattedAPR)
           return (
             <div
               className={cn(
@@ -164,15 +174,69 @@ const MyPositions: FC<{
               )}
               {/* apr */}
               <div className="flex items-center justify-center">
-                <Badge
-                  variant="default"
-                  size={'lg'}
-                  className={'to-brand-secondaryGradient-secondary/50 min-w-[60px]'}
-                >
-                  <span className={'font-poppins font-semibold my-0.5 mx-auto'}>
-                    {numberFormatter(Math.max(0, pool.stats.daily.feesAprUsd))}%
-                  </span>
-                </Badge>
+                <Tooltip>
+                  <TooltipTrigger className="no-underline !cursor-default">
+                    <div className="flex items-center justify-center max-sm:justify-end sm-lg:justify-end">
+                      <Badge
+                        variant="default"
+                        size={'lg'}
+                        className={'to-brand-secondaryGradient-secondary/50 min-w-[60px]'}
+                      >
+                        <span className={'font-poppins font-semibold my-0.5 m-auto'}>{apr}%</span>
+                      </Badge>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent className="w-[266px] max-w-[266px] p-2">
+                    <div className="">
+                      {/* should only show if kaminoUSD is greater than 0 or activeReward */}
+                      {parseFloat(kaminoUSD) > 0 ||
+                        (activeReward && (
+                          <div className="flex flex-row justify-between mb-3">
+                            <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
+                            <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
+                          </div>
+                        ))}
+
+                      {/* should only show if kaminoUSD is greater than 0 */}
+                      {parseFloat(kaminoUSD) > 0 && (
+                        <div className="flex flex-row justify-between mb-3">
+                          <span className="font-poppins font-semibold text-[15px]">Lending APR</span>
+                          <span className="font-display font-semibold text-[15px]">${kaminoUSD}</span>
+                        </div>
+                      )}
+                      {activeReward ? (
+                        <div>
+                          <h2 className="text-[10px] text-primary-gradient">Boosted Rewards</h2>
+
+                          <div className="flex flex-row items-center">
+                            <IconWithFallback
+                              src={loadIconImage(activeReward.token.logoURI, mode)}
+                              className="border-solid dark:border-black-2 border-white
+                          border-[2px] rounded-full h-5 w-5"
+                            />
+                            <span className="font-poppins font-semibold text-[15px]">
+                              {activeReward.token.symbol}
+                            </span>
+                            <span className="font-display font-semibold text-[15px] ml-auto">
+                              {numberFormatter(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())}%
+                            </span>
+                          </div>
+                        </div>
+                      ) : null}
+                      {parseFloat(kaminoUSD) > 0 ||
+                        (activeReward && (
+                          <div
+                            className="w-full h-[1px] border-t-1 border-border-lightmode-secondary
+                dark:border-border-darkmode-secondary my-2"
+                          />
+                        ))}
+                      <div className="flex flex-row justify-between ">
+                        <span className="font-poppins font-semibold text-[15px]">Total APR</span>
+                        <span className="font-display font-semibold text-[15px]">{apr}%</span>
+                      </div>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
               </div>
               {/* actions */}
               {(isTablet || isDesktop) && (
@@ -224,8 +288,7 @@ const MyPositions: FC<{
   )
 }
 const MyPositionItems: FC = () => {
-  const { selectedTokens, sortConfig, showCreatedPools, currentPoolType, isPortfolio, viewRange } =
-    useGamma()
+  const { selectedTokens, sortConfig, showCreatedPools, currentPoolType, isPortfolio, viewRange } = useGamma()
   const query = useUserPortfolioPools({
     mintA: selectedTokens[0]?.address,
     mintB: selectedTokens[1]?.address,
@@ -247,6 +310,6 @@ const MyPositionItems: FC = () => {
     )
   }
 
-  return <MyPositions queryPositions={query.data.allPages}/>
+  return <MyPositions queryPositions={query.data.allPages} />
 }
 export default MyPositionItems
