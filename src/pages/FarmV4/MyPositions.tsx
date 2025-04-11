@@ -154,7 +154,7 @@ const MyPositionItem: FC<{
       className={cn(
         `relative grid grid-flow-col grid-cols-[1.5fr_1fr_0.5fr_1fr_0.5fr_1fr] dark:bg-black-2 px-2.5 
         cursor-pointer h-15 border border-solid dark:border-black-4 border-grey-4 bg-white 
-        rounded-tiny py-3.75 sm-lg:grid-cols-[1.25fr_0.75fr_0.75fr]`,
+        rounded-tiny py-3.75 sm-lg:grid-cols-[1.25fr_0.75fr_0.75fr] overflow-visible`,
         isMobile && `grid-cols-[1.25fr_0.75fr_0.75fr]`,
         isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
       )}
@@ -166,12 +166,19 @@ const MyPositionItem: FC<{
       }}
     >
       {isOwner && !isMobile && (
-        <Icon
-          src={`/img/assets/owner-${mode}.svg`}
-          alt="pool-owner"
-          size={'sm'}
-          className=" absolute top-0.5 left-0.5"
-        />
+        <Tooltip>
+          <TooltipTrigger className='absolute'>
+          <Icon
+            src={`/img/assets/owner-${mode}.svg`}
+            alt="pool-owner"
+            size={'sm'}
+            className=" absolute top-0.5 left-0.5"
+          />
+          </TooltipTrigger>
+          <TooltipContent>
+            <span>You are the owner of this pool</span>
+          </TooltipContent>
+      </Tooltip>
       )}
       {/* name */}
       <div className="flex flex-row items-center">
@@ -192,9 +199,12 @@ const MyPositionItem: FC<{
           {pool.mintA.symbol} - {pool.mintB.symbol}
         </div>
         {activeReward && !isMobile && (
-          <Badge size="sm" variant="default" className={'ml-2 h-5.5'}>
-            Rewards
-          </Badge>
+          <Icon
+            src={`/img/assets/rewards-icon-${mode}.svg`}
+            alt="claim-rewards"
+            size={'sm'}
+            className='ml-2'
+          />
         )}
       </div>
       {/* position */}
