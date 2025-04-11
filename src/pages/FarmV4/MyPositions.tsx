@@ -226,11 +226,11 @@ const MyPositionItem: FC<{
           )}
           {activeReward &&
               activeReward.length > 0 &&
-              activeReward.map((reward) => (
               <div>
                 <h2 className="text-[10px] text-primary-gradient">Boosted Rewards</h2>
 
-                <div className="flex flex-row items-center">
+                {activeReward.map((reward) => (
+                <div className="flex flex-row items-center mb-3">
                   <IconWithFallback
                     src={loadIconImage(reward.token.logoURI, mode)}
                     className="border-solid dark:border-black-2 border-white
@@ -240,9 +240,9 @@ const MyPositionItem: FC<{
                   <span className="font-display font-semibold text-[15px] ml-auto">
                     {numberFormatter(reward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())}%
                   </span>
-                </div>
+                </div>))}
               </div>
-          ))}
+          }
           {parseFloat(kaminoUSD) > 0 || activeReward && (
             <div
               className="w-full h-[1px] border-t-1 border-border-lightmode-secondary 
