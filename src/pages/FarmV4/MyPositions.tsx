@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react'
+import { FC } from 'react'
 import { Badge, Button, Icon, Tooltip, TooltipContent, TooltipTrigger, cn } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import { PublicKey } from '@solana/web3.js'
@@ -8,7 +8,7 @@ import NoResultsFound from '@/pages/FarmV4/NoResultsFound'
 import { noPoolsFound } from '@/pages/FarmV4/FarmItems'
 import { GAMMAPortfolioPool } from '@/types/gamma'
 import useBreakPoint from '@/hooks/useBreakPoint'
-import { FarmRowLoader } from '@/pages/FarmV4/FarmRow'
+import { FarmRowLoader, getPoolValuesByRange } from '@/pages/FarmV4/FarmRow'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import BigNumber from 'bignumber.js'
@@ -27,10 +27,7 @@ const renderTokenBalance = (p: GAMMAPortfolioPool) => {
 const MyPositions: FC<{
   queryPositions: GAMMAPortfolioPool[]
 }> = ({queryPositions}) => {
-  const {
-    isSearchActive,
-    showCreatedPools,
-  } = useGamma()
+  const { isSearchActive, showCreatedPools } = useGamma()
 
   const { getActiveRewardByPoolId } = useBoostedRewards()
 
@@ -94,52 +91,16 @@ const MyPositionItem: FC<{
     setSelectedCard,
     setOpenDepositWithdrawSlider,
     setModeOfOperation,
-    sortConfig
+    sortConfig,
+    viewRange
   } = useGamma()
 
   const { isTablet, isDesktop, isMobile } = useBreakPoint()
   const { mode } = useDarkMode()
-
+  
   const activeReward = activeRewards?.[pool.id];
   const isOwner = base58PublicKey === pool.poolCreator;
-
-  const { formattedAPR, tradeAPR, kaminoUSD } = useMemo(() => {
-    if (!pool.stats) {
-      return {
-        formattedVolume: '0.00',
-        formattedFees: '0.00',
-        formattedAPR: 0,
-        tradeAPR: '0.00',
-        kaminoAPR: '0.00',
-        kaminoUSD: '0.00'
-      }
-    }
-        return {
-          formattedVolume: numberFormatter(
-            Math.max(0, pool.stats.daily.volumeTokenAUsd + pool.stats.daily.volumeTokenBUsd)
-          ),
-          formattedFees: numberFormatter(Math.max(0, pool.stats.daily.feesUsd)),
-          formattedAPR: Math.max(
-            0,
-            pool.stats.daily.feesAprUsd +
-            pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd +
-            pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
-          ),
-          tradeAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUsd)),
-          kaminoAPR: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd + pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
-            )
-          ),
-          kaminoUSD: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.daily.withdrawnKaminoProfitTokenAUsd + pool.stats.daily.withdrawnKaminoProfitTokenBUsd
-            )
-          )
-        }
-  }, [pool.stats])
+  const { formattedAPR, kaminoUSD, tradeAPR } = getPoolValuesByRange(pool, viewRange)
 
   const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
   const apr = activeReward
@@ -166,18 +127,18 @@ const MyPositionItem: FC<{
     >
       {isOwner && !isMobile && (
         <Tooltip>
-          <TooltipTrigger className='absolute'>
-          <Icon
-            src={`/img/assets/owner-${mode}.svg`}
-            alt="pool-owner"
-            size={'sm'}
-            className=" absolute top-0.5 left-0.5"
-          />
+          <TooltipTrigger className="absolute">
+            <Icon
+              src={`/img/assets/owner-${mode}.svg`}
+              alt="pool-owner"
+              size={'sm'}
+              className=" absolute top-0.5 left-0.5"
+            />
           </TooltipTrigger>
           <TooltipContent>
             <span>You are the owner of this pool</span>
           </TooltipContent>
-      </Tooltip>
+        </Tooltip>
       )}
       {/* name */}
       <div className="flex flex-row items-center">
@@ -198,12 +159,7 @@ const MyPositionItem: FC<{
           {pool.mintA.symbol} - {pool.mintB.symbol}
         </div>
         {activeReward && !isMobile && (
-          <Icon
-            src={`/img/assets/rewards-icon-${mode}.svg`}
-            alt="claim-rewards"
-            size={'sm'}
-            className='ml-2'
-          />
+          <Icon src={`/img/assets/rewards-icon-${mode}.svg`} alt="claim-rewards" size={'sm'} className="ml-2" />
         )}
       </div>
       {/* position */}
@@ -211,7 +167,7 @@ const MyPositionItem: FC<{
         className="flex items-center justify-center text-regular
                           font-semibold dark:text-grey-8 text-black-4"
       >
-        ${numberFormatter(+pool.currentPositionUSD)}
+        ${numberFormatter(+pool.currentPositionUsd)}
       </div>
       {/* fees */}
       {isDesktop && (
@@ -235,31 +191,31 @@ const MyPositionItem: FC<{
         >
           {renderTokenBalance(pool)}
         </div>
-      )}  
-
-            <Tooltip>
-        <TooltipTrigger className="no-underline !cursor-default">
-        <div className="flex items-center justify-center">
-        <Badge
-          variant="default"
-          size={'lg'}
-          className={'to-brand-secondaryGradient-secondary/50 min-w-[60px]'}
-        >
-          <span className={'font-poppins font-semibold my-0.5 mx-auto'}>
-            {numberFormatter(Math.max(0, pool.stats.daily.feesAprUsd))}%
-          </span>
-        </Badge>
-      </div>
-      </TooltipTrigger>
-      <TooltipContent className="w-[266px] max-w-[266px] p-2">
-        <div className="">
-          {/* should only show if kaminoUSD is greater than 0 or activeReward */}
-          {parseFloat(kaminoUSD) > 0 || activeReward && (
-            <div className="flex flex-row justify-between mb-3">
-              <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
-              <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
+      )}
+      {/* apr */}
+      <div className="flex items-center justify-center">
+        <Tooltip>
+          <TooltipTrigger className="no-underline !cursor-default">
+            <div className="flex items-center justify-center max-sm:justify-end sm-lg:justify-end">
+              <Badge
+                variant="default"
+                size={'lg'}
+                className={'to-brand-secondaryGradient-secondary/50 min-w-[60px]'}
+              >
+                <span className={'font-poppins font-semibold my-0.5 m-auto'}>{apr}%</span>
+              </Badge>
             </div>
-          )}
+          </TooltipTrigger>
+          <TooltipContent className="w-[266px] max-w-[266px] p-2">
+            <div className="">
+              {/* should only show if kaminoUSD is greater than 0 or activeReward */}
+              {parseFloat(kaminoUSD) > 0 ||
+                (activeReward && (
+                  <div className="flex flex-row justify-between mb-3">
+                    <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
+                    <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
+                  </div>
+                ))}
 
           {/* should only show if kaminoUSD is greater than 0 */}
           {parseFloat(kaminoUSD) > 0 && (
@@ -300,6 +256,7 @@ const MyPositionItem: FC<{
         </div>
       </TooltipContent>
     </Tooltip>
+    </div>
 
       {/* actions */}
       {(isTablet || isDesktop) && (
