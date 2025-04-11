@@ -64,12 +64,11 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
         undefined,
         true
       )
-      console.log('ClaimAllRewardsResponse', success)
       if (!success) {
-        //off(connectionId)
         console.log('An error occurred while claiming rewards!')
       } else {
-        refreshRewards()
+        const refreshSuccess = refreshRewards()
+        console.log('refresh Rewards Success', refreshSuccess)
       }
     } catch (e) {
       console.log('An error occurred while claiming rewards.', e)
@@ -110,7 +109,8 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
               </p>
             </div>
           ))}
-            {activeReward && claimableReward && claimableReward.claimableAmountUsd.gte(0.5) && (
+
+            {false && (
               <Button
                 className="w-full py-[5px] px-[10px] 
                     border-[1px] border-transparent bg-gradient-to-r from-[#F7931A] to-[#C31AE3] p-[1px]"
@@ -121,7 +121,7 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
               >
                 <div
                   className="bg-white dark:bg-black-1 h-full w-full rounded-[999px] 
-        flex items-center justify-center"
+                              flex items-center justify-center"
                 >
                   Claim ${numberFormatter(claimableReward.claimableAmountUsd.toNumber())}
                 </div>

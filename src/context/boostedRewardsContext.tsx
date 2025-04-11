@@ -34,7 +34,7 @@ export interface IBoostedRewardsConfig {
     | ({ claimableAmount: BigNumber; claimableAmountUsd: BigNumber; })
     | null
   >
-  refreshRewards: () => void
+  refreshRewards: () => boolean
 }
 
 const BoostedRewardsContext = createContext<IBoostedRewardsConfig | null>(null)
@@ -63,10 +63,9 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
   }
 
   const fetchClaimableRewards = async (_userPublicKey: PublicKey) => {
-    if (!_userPublicKey) return
     setIsLoadingClaimableRewards(true)
-    const claimableRewards = await getClaimRewardsAccounts(GammaProgram, _userPublicKey)
-    setClaimableRewards(claimableRewards)
+    const clmRwds = await getClaimRewardsAccounts(GammaProgram, _userPublicKey)
+    setClaimableRewards(clmRwds)
     setIsLoadingClaimableRewards(false)
   }
 
@@ -75,33 +74,49 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
   }, [])
 
   useEffect(() => {
-    fetchClaimableRewards(userPublicKey)
+    if (!userPublicKey) {
+      resetClaimableToEmpty()
+    } else {  
+      fetchClaimableRewards(userPublicKey)
+    }
   }, [userPublicKey])
 
   const refreshRewards = useCallback(() => {
     fetchAllActiveRewards()
-    fetchClaimableRewards(userPublicKey)
+
+    if (!userPublicKey) {
+      resetClaimableToEmpty()
+    } else {
+      // uses timeout delay to avoid race condition
+      setTimeout(() => {
+        fetchClaimableRewards(userPublicKey)
+      }, 2000)
+    }
+    return () => true
   }, [fetchAllActiveRewards, fetchClaimableRewards, userPublicKey])
 
   useEffect(() => {
     const fetchTokens = async () => {
-      if (!allActiveRewards.length && !claimableRewards.length) return
+      if (allActiveRewards.length === 0 && claimableRewards.length === 0) return
 
       const allTokenAddresses = [
         ...new Set(allActiveRewards.map((reward) => reward.rewardInfo.mint)),
         ...new Set(claimableRewards.map((reward) => reward.rewardInfo.mint))
       ]
 
+      // If there is at least one public key in allTokenAddresses that doesn't have a matching token 
+      // in the tokens array,
+      // then fetch the tokens from the API
       if (allTokenAddresses.some((pubKey) => !tokens.find((t) => t.address === pubKey.toString()))) {
         const tokenListData = await fetchTokensByPublicKey(allTokenAddresses.join(','))
-        if (!tokenListData.success || tokenListData.data.tokens?.length !== allTokenAddresses.length) return
+        if (!tokenListData.success || tokenListData.data.tokens?.length === 0) return
         setTokens(tokenListData.data.tokens)
       }
     }
     fetchTokens()
   }, [allActiveRewards, claimableRewards])
 
-  useEffect(() => {
+  useEffect(() => {    
     const fetchClaimableRewardsWithToken = async () => {
       if (!claimableRewards.length) return
       if (!tokens.length) return
@@ -127,6 +142,7 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
           token: _token
         })
       }
+      console.log('setting claimableRewardsWithTokens', rewardsWithTokens)
       setClaimableRewardsWithTokens({
         totalClaimableRewardsUsd: rewardsWithTokens.reduce(
           (acc, reward) => acc.plus(reward.claimableAmountUsd),
@@ -212,6 +228,14 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
     },
     [claimableRewards, isLoadingClaimableRewards, tokens]
   )
+
+  const resetClaimableToEmpty = useCallback(() => {
+    setClaimableRewards([])
+    setClaimableRewardsWithTokens({
+      totalClaimableRewardsUsd: new BigNumber(0),
+      rewards: []
+    })
+  }, [])
 
   return (
     <BoostedRewardsContext.Provider

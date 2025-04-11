@@ -56,24 +56,31 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
       const { success } = await sendTransaction(
         txBuilder,
         {
-          // eslint-disable-next-line max-len
-          successMessage: `You claimed $${claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber()} in rewards`
+          successMessage: `You claimed $${numberFormatter(
+            claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber(),
+            4
+          )} in rewards`
         },
         undefined,
         undefined,
         true
       )
-      console.log('ClaimAllRewardsResponse', success)
       if (!success) {
         //off(connectionId)
         console.log('An error occurred while claiming rewards!')
       } else {
-        refreshRewards()
+        const refreshSuccess = refreshRewards()
+        if (refreshSuccess) {
+          setSendingTransaction(false)
+          setOpenClaimAllRewardsDialog(false)
+        }
       }
     } catch (e) {
       console.log('An error occurred while claiming rewards.', e)
+    } finally {
+      setSendingTransaction(false)
+      setOpenClaimAllRewardsDialog(false)
     }
-    setSendingTransaction(false)
   }
 
   return (
@@ -116,8 +123,11 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
                       </p>
                     </div>
                     <div className="flex-1 flex flex-col items-center gap-2">
-                      {claimableRewardsWithTokens.rewards.map((reward) => (
-                        <div key={reward.token.address} className="flex flex-row items-center gap-[5px]">
+                      {claimableRewardsWithTokens.rewards.map((reward, index) => (
+                        <div
+                          key={`${reward.token.address}-${index}`}
+                          className="flex flex-row items-center gap-[5px]"
+                        >
                           <IconWithFallback
                             src={loadIconImage(reward.token.logoURI, mode)}
                             className="border-solid dark:border-black-2 border-white

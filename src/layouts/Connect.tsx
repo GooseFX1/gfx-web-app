@@ -177,9 +177,9 @@ export const Connect: FC<MenuItemProps> = ({
             >
               <div
                 className={`flex items-center justify-center border-2 dark:border-black-1 border-solid
-                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 p-[2px]`}
+                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 overflow-hidden`}
               >
-                <Icon size={'sm'} src={adapterIcon} />
+                <Icon size={'sm'} src={adapterIcon} className='rounded-lg' />
               </div>
               <div>
                 <h4

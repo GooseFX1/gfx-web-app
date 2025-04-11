@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useEffect } from 'react'
 import { Button, cn } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
@@ -12,13 +12,17 @@ type ClaimAllRewardsProps = {
 export function ClaimAllRewards({ setOpenClaimAllRewardsDialog }: ClaimAllRewardsProps) {
   const { isMobile } = useBreakPoint()
   const { claimableRewardsWithTokens } = useBoostedRewards()
+
   const canClaimAll = useMemo(
-    () => claimableRewardsWithTokens.totalClaimableRewardsUsd.gte(0.5),
-    [claimableRewardsWithTokens.totalClaimableRewardsUsd]
+    () => claimableRewardsWithTokens.totalClaimableRewardsUsd.gt(0),
+    [claimableRewardsWithTokens]
   )
+  useEffect(() => {
+    console.log('claimableRewardsWithTokens', claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber())
+  }, [claimableRewardsWithTokens])
   
   // Early returns after all hooks have been called
-  const shouldRender = claimableRewardsWithTokens.totalClaimableRewardsUsd.gte(0.1) && 
+  const shouldRender = claimableRewardsWithTokens.totalClaimableRewardsUsd.gt(0) && 
                        claimableRewardsWithTokens.rewards.length > 0
   
   if (!shouldRender) return null
@@ -37,11 +41,11 @@ export function ClaimAllRewards({ setOpenClaimAllRewardsDialog }: ClaimAllReward
           className="text-[15px] font-semibold text-text-lightmode-secondary 
           dark:text-text-darkmode-secondary"
         >
-          Pending Rewards:
+          Rewards:
         </h2>
         <p
-          className="text-[15px] font-semibold text-text-lightmode-tertiary 
-          dark:text-text-darkmode-tertiary font-poppins"
+          className="text-[15px] font-semibold text-black-1
+          dark:text-white font-poppins"
         >
           ${numberFormatter(claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber())}
         </p>
@@ -51,7 +55,7 @@ export function ClaimAllRewards({ setOpenClaimAllRewardsDialog }: ClaimAllReward
         size={'sm'}
         colorScheme={canClaimAll ? 'secondaryGradient' : ''}
         variant={'outline'}
-        onClick={() => setOpenClaimAllRewardsDialog(canClaimAll)}
+        onClick={() => setOpenClaimAllRewardsDialog(true)}
         disabled={!canClaimAll}
       >
         Claim All
