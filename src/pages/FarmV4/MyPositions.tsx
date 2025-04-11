@@ -141,13 +141,12 @@ const MyPositionItem: FC<{
         }
   }, [pool.stats])
 
+  const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
   const apr = activeReward
-  ? numberFormatter(
-      new BigNumber(formattedAPR)
-        .plus(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())
-        .toNumber()
-    )
-  : numberFormatter(formattedAPR)
+    ? numberFormatter(
+        new BigNumber(formattedAPR).plus(activeRewardsAmount.multipliedBy(100).div(365).toNumber()).toNumber()
+      )
+    : numberFormatter(formattedAPR)
 
   return (
     <div
@@ -269,23 +268,25 @@ const MyPositionItem: FC<{
               <span className="font-display font-semibold text-[15px]">${kaminoUSD}</span>
             </div>
           )}
-          {activeReward ? (
-            <div>
-              <h2 className="text-[10px] text-primary-gradient">Boosted Rewards</h2>
+          {activeReward &&
+              activeReward.length > 0 &&
+              activeReward.map((reward) => (
+              <div>
+                <h2 className="text-[10px] text-primary-gradient">Boosted Rewards</h2>
 
-              <div className="flex flex-row items-center">
-                <IconWithFallback
-                  src={loadIconImage(activeReward.token.logoURI, mode)}
-                  className="border-solid dark:border-black-2 border-white
-                        border-[2px] rounded-full h-5 w-5"
-                />
-                <span className="font-poppins font-semibold text-[15px]">{activeReward.token.symbol}</span>
-                <span className="font-display font-semibold text-[15px] ml-auto">
-                  {numberFormatter(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())}%
-                </span>
+                <div className="flex flex-row items-center">
+                  <IconWithFallback
+                    src={loadIconImage(reward.token.logoURI, mode)}
+                    className="border-solid dark:border-black-2 border-white
+                          border-[2px] rounded-full h-5 w-5"
+                  />
+                  <span className="font-poppins font-semibold text-[15px]">{reward.token.symbol}</span>
+                  <span className="font-display font-semibold text-[15px] ml-auto">
+                    {numberFormatter(reward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())}%
+                  </span>
+                </div>
               </div>
-            </div>
-          ) : null}
+          ))}
           {parseFloat(kaminoUSD) > 0 || activeReward && (
             <div
               className="w-full h-[1px] border-t-1 border-border-lightmode-secondary 

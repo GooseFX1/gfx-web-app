@@ -27,11 +27,11 @@ export interface IBoostedRewardsConfig {
     token: TokenListToken
     pricePerDay: BigNumber
     pricePerDayUsd: BigNumber
-  } | null>
+  }[] | null>
   getClaimableRewardByPoolId: (
     poolId: PublicKey
   ) => Promise<
-    | (BoostedRewardInfo & { claimableAmount: BigNumber; claimableAmountUsd: BigNumber; token: TokenListToken })
+    | ({ claimableAmount: BigNumber; claimableAmountUsd: BigNumber; })
     | null
   >
   refreshRewards: () => void
@@ -141,33 +141,39 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
   const getActiveRewardByPoolId = useCallback(
     async (poolId: PublicKey) => {
       if (isLoadingActiveRewards) return null
-      const reward = allActiveRewards.find((reward) => reward.rewardInfo.pool.equals(poolId))
-      if (!reward) return null
+      const rewards = allActiveRewards.filter((reward) => reward.rewardInfo.pool.equals(poolId))
+      if (rewards.length == 0) return null
 
-      let _token = tokens.find((t) => t.address === reward.rewardInfo.mint.toString())
+      const response = await Promise.all(
+        rewards.map(async (reward) => {
+          let _token = tokens.find((t) => t.address === reward.rewardInfo.mint.toString())
 
-      if (!_token) {
-        const tokenListData = await fetchTokensByPublicKey(`${reward.rewardInfo.mint}`)
-        if (!tokenListData.success || tokenListData.data.tokens?.length !== 1) return
-        _token = tokenListData.data.tokens[0]
-      }
+          if (!_token) {
+            const tokenListData = await fetchTokensByPublicKey(`${reward.rewardInfo.mint}`)
+            if (!tokenListData.success || tokenListData.data.tokens?.length !== 1) return
+            _token = tokenListData.data.tokens[0]
+          }
 
-      const price = new BigNumber(reward.rewardInfo.totalToDisburse.toString())
-        .div(new BigNumber(10 ** _token.decimals))
-        .multipliedBy(86400)
+          const price = new BigNumber(reward.rewardInfo.totalToDisburse.toString())
+            .div(new BigNumber(10 ** _token.decimals))
+            .multipliedBy(86400)
 
-      const intervalSecDiff = new BigNumber(reward.rewardInfo.endRewardsAt.toString()).minus(
-        new BigNumber(reward.rewardInfo.startAt.toString())
+          const intervalSecDiff = new BigNumber(reward.rewardInfo.endRewardsAt.toString()).minus(
+            new BigNumber(reward.rewardInfo.startAt.toString())
+          )
+
+          const pricePerDay = price.div(intervalSecDiff)
+
+          return {
+            ...reward,
+            token: _token,
+            pricePerDay,
+            pricePerDayUsd: pricePerDay.multipliedBy(_token.price)
+          }
+        })
       )
 
-      const pricePerDay = price.div(intervalSecDiff)
-
-      return {
-        ...reward,
-        token: _token,
-        pricePerDay,
-        pricePerDayUsd: pricePerDay.multipliedBy(_token.price)
-      }
+      return response
     },
     [allActiveRewards, isLoadingActiveRewards, tokens]
   )
@@ -175,9 +181,11 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
   const getClaimableRewardByPoolId = useCallback(
     async (poolId: PublicKey) => {
       if (isLoadingClaimableRewards) return null
-      const reward = claimableRewards.find((reward) => reward.rewardInfo.pool.equals(poolId))
-      if (!reward) return null
+      const rewards = claimableRewards.filter((reward) => reward.rewardInfo.pool.equals(poolId))
+      if (!rewards) return null
 
+      const response = await Promise.all(
+        rewards.map(async (reward) => {
       let _token = tokens.find((t) => t.address === reward.rewardInfo.mint.toString())
 
       if (!_token) {
@@ -191,12 +199,15 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
         .div(new BigNumber(10 ** _token.decimals))
 
       const claimableAmountUsd = claimableAmount.multipliedBy(_token.price)
-
       return {
-        ...reward,
-        token: _token,
         claimableAmount,
         claimableAmountUsd
+      }
+      }))
+      
+      return {
+        claimableAmount: response.reduce((acc, curr) => acc.plus(curr.claimableAmount), new BigNumber(0)),
+        claimableAmountUsd: response.reduce((acc, curr) => acc.plus(curr.claimableAmountUsd), new BigNumber(0)),
       }
     },
     [claimableRewards, isLoadingClaimableRewards, tokens]
