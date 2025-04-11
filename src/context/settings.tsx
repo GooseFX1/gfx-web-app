@@ -31,7 +31,7 @@ import { GAMMA_SORT_CONFIG_DEFAULT } from '@/pages/FarmV4/constants'
 
 const countries = [
   { code: 'BY', name: 'Belarus' },
-  { code: 'CA', name: 'Canada' },
+  // { code: 'CA', name: 'Canada' },
   { code: 'CF', name: 'Central African Republic' },
   { code: 'CD', name: 'Congo, Democratic Republic of the' },
   { code: 'KP', name: 'North Korea' },
@@ -43,7 +43,7 @@ const countries = [
   { code: 'SS', name: 'South Sudan' },
   { code: 'SD', name: 'Sudan' },
   { code: 'SY', name: 'Syrian Arab Republic' },
-  { code: 'US', name: 'United States of America' },
+  // { code: 'US', name: 'United States of America' },
   { code: 'YE', name: 'Yemen' },
   { code: 'ZW', name: 'Zimbabwe' }
 ]

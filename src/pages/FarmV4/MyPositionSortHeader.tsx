@@ -12,29 +12,49 @@ const FarmRowItem: FC<{
   tooltip?: React.ReactNode
   iconRight?: boolean
 }> = ({ title, className, invert, tooltip, iconRight, onClick }) => {
-  const Comp = (
+  const buttonContent = (
+    <>
+      {title}
+      {iconRight && <CircularArrow className={`min-h-5 min-w-5`} invert={invert} />}
+    </>
+  )
+
+  if (tooltip) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant={'default'}
+            onClick={onClick}
+            className={cn(
+              `justify-center p-0 break-words text-h4 text-text-lightmode-secondary
+              dark:text-text-darkmode-secondary font-semibold font-nunito
+            `,
+              className,
+              'underline decoration-dotted'
+            )}
+          >
+            {buttonContent}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>{tooltip}</TooltipContent>
+      </Tooltip>
+    )
+  }
+
+  return (
     <Button
       variant={'default'}
       onClick={onClick}
       className={cn(
         `justify-center p-0 break-words text-h4 text-text-lightmode-secondary
-      dark:text-text-darkmode-secondary font-semibold font-nunito
-    `,
-        className,
-        tooltip ? 'underline decoration-dotted' : ''
+        dark:text-text-darkmode-secondary font-semibold font-nunito
+      `,
+        className
       )}
-      iconRight={iconRight ? <CircularArrow className={`min-h-5 min-w-5`} invert={invert} /> : <></>}
     >
-      {title}
+      {buttonContent}
     </Button>
-  )
-  return tooltip ? (
-    <Tooltip>
-      <TooltipTrigger>{Comp}</TooltipTrigger>
-      <TooltipContent>{tooltip}</TooltipContent>
-    </Tooltip>
-  ) : (
-    Comp
   )
 }
 
@@ -69,7 +89,7 @@ const MyPositionSortHeader: FC = () => {
       {isDesktop && (
         <FarmRowItem
           title={'Fee'}
-          tooltip={`The percentage fee taken by the pool, this influence the rewards you’ll earn.`}
+          tooltip={`The percentage fee taken by the pool, this influence the rewards you'll earn.`}
           invert={sort == 'DESC' && sortType == 'fee'}
           onClick={() => handlePoolSort(sort == 'ASC' ? '5' : '6')}
           iconRight={true}

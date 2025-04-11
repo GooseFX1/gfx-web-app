@@ -12,28 +12,48 @@ const FarmRowItem: FC<{
   tooltip?: React.ReactNode
   canSort?: boolean
 }> = ({ title, className, invert, onClick, tooltip, canSort = true }) => {
-  const Comp = (
+  const buttonContent = (
+    <>
+      {title}
+      {canSort && <CircularArrow className={`min-h-5 min-w-5`} invert={invert} />}
+    </>
+  )
+
+  if (tooltip) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant={'default'}
+            onClick={onClick}
+            className={cn(
+              `justify-center p-0 break-words text-h4 text-text-lightmode-secondary
+              dark:text-text-darkmode-secondary font-semibold font-nunito
+            `,
+              className
+            )}
+          >
+            {buttonContent}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>{tooltip}</TooltipContent>
+      </Tooltip>
+    )
+  }
+
+  return (
     <Button
       variant={'default'}
       onClick={onClick}
       className={cn(
         `justify-center p-0 break-words text-h4 text-text-lightmode-secondary
-      dark:text-text-darkmode-secondary font-semibold font-nunito
-    `,
+        dark:text-text-darkmode-secondary font-semibold font-nunito
+      `,
         className
       )}
-      iconRight={canSort ? <CircularArrow className={`min-h-5 min-w-5`} invert={invert} /> : undefined}
     >
-      {title}
+      {buttonContent}
     </Button>
-  )
-  return tooltip ? (
-    <Tooltip>
-      <TooltipTrigger>{Comp}</TooltipTrigger>
-      <TooltipContent>{tooltip}</TooltipContent>
-    </Tooltip>
-  ) : (
-    Comp
   )
 }
 const FarmItemsProSort: FC = () => {

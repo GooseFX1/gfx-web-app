@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react'
+import React, { FC, Fragment, useMemo, useState } from 'react'
 import { useConnectionConfig, useDarkMode, useGamma } from '../../context'
 import { bigNumberFormatter, truncateBigNumber } from '../../utils'
 import { POOL_TYPE } from './constants'
@@ -203,12 +203,12 @@ export const FarmHeader: FC = () => {
             options={options}
           />
           <div className="flex flex-row gap-2.5 self-stretch">
-            {infoCards?.map((card) =>
+            {infoCards?.map((card, index) =>
               card.name === '24H Fees' ? (
-                <></>
+                <Fragment key={`empty-${index}`}></Fragment>
               ) : (
                 <Container
-                  key={card.name}
+                  key={`${card.name}-${index}`}
                   className={'w-[130px] justify-center h-full'}
                   colorScheme={'primaryGradient'}
                   size={'lg'}

@@ -1,7 +1,7 @@
 import { loadIconImage } from '@/utils/misc'
 import { IconWithFallback } from '../common/IconWithFallback'
 import { RewardInfo, TokenListToken, useDarkMode, useConnectionConfig, usePriceFeedFarm } from '@/context'
-import { AccordionContent, AccordionItem, AccordionTrigger, Button } from 'gfx-component-lib'
+import { AccordionContent, AccordionItem, AccordionTrigger, Button, Icon } from 'gfx-component-lib'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
 import { GAMMAPool } from '@/types/gamma'
 import { PublicKey } from '@solana/web3.js'
@@ -78,27 +78,29 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
     <div className="w-full border-transparent bg-gradient-to-r from-[#F7931A] to-[#C31AE3] p-[1px] rounded-[4px]">
       <AccordionItem value="boosted-rewards" className="dark:bg-black-1 bg-grey-5 rounded-[4px]">
         <AccordionTrigger>
-          <h4 className="text-primary-gradient">Boosted Rewards</h4>
+          <div className="flex flex-row items-center gap-[5px]">
+            <Icon src={`/img/assets/rewards-icon-${mode}.svg`} className="h-[14px] w-[14px] mr-2" size="sm" />
+            <h4 className="text-primary-gradient">Boosted Rewards</h4>
+          </div>
         </AccordionTrigger>
         <AccordionContent>
-          <div className="flex flex-col gap-[10px]">
+          <div className="flex flex-col gap-[10px] pt-2">
             <div className="flex flex-row items-center justify-between">
               <div className="flex flex-row items-center gap-[5px]">
                 <IconWithFallback
                   src={loadIconImage(activeReward.token.logoURI, mode)}
-                  className="border-solid dark:border-black-2 border-white
-                          border-[2px] rounded-full h-[25px] w-[25px]"
+                  className=" rounded-full "
                 />
                 <p
                   className="font-display font-semibold text-[15px] 
-          text-text-lightmode-primary dark:text-text-darkmode-primary"
+                    text-text-lightmode-primary dark:text-text-darkmode-primary"
                 >
                   {activeReward.token.symbol}
                 </p>
               </div>
               <p
                 className="font-display font-semibold text-[15px] 
-        text-text-lightmode-secondary dark:text-text-darkmode-secondary"
+                      text-text-lightmode-secondary dark:text-text-darkmode-secondary"
               >
                 {numberFormatter(activeReward.pricePerDay.toNumber())} {activeReward.token.symbol} / day
               </p>
@@ -106,8 +108,7 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
             {activeReward && claimableReward && claimableReward.claimableAmountUsd.gte(0.5) && (
               <Button
                 className="w-full py-[5px] px-[10px] 
-        border-[1px] border-transparent bg-gradient-to-r from-[#F7931A] to-[#C31AE3] p-[1px]
-      "
+                    border-[1px] border-transparent bg-gradient-to-r from-[#F7931A] to-[#C31AE3] p-[1px]"
                 colorScheme={'blue'}
                 variant={'outline'}
                 onClick={handleClaimReward}
