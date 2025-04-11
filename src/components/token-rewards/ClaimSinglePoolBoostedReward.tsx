@@ -9,7 +9,7 @@ import { useEffect, useMemo } from 'react'
 import { useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { numberFormatter } from '@/utils'
-import { BoostedRewardInfo, claimRewards } from '@/web3/Farm'
+import { claimRewards } from '@/web3/Farm'
 import useTransaction from '@/hooks/useTransaction'
 import { useWallet } from '@solana/wallet-adapter-react'
 
