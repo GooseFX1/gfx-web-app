@@ -141,6 +141,14 @@ const MyPositionItem: FC<{
         }
   }, [pool.stats])
 
+  const apr = activeReward
+  ? numberFormatter(
+      new BigNumber(formattedAPR)
+        .plus(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())
+        .toNumber()
+    )
+  : numberFormatter(formattedAPR)
+
   return (
     <div
       className={cn(
@@ -218,10 +226,11 @@ const MyPositionItem: FC<{
         >
           {renderTokenBalance(pool)}
         </div>
-      )}              
-      <Tooltip>
-<TooltipTrigger className="no-underline">
-<div className="flex items-center justify-center">
+      )}  
+
+            <Tooltip>
+        <TooltipTrigger className="no-underline !cursor-default">
+        <div className="flex items-center justify-center">
         <Badge
           variant="default"
           size={'lg'}
@@ -232,80 +241,54 @@ const MyPositionItem: FC<{
           </span>
         </Badge>
       </div>
-</TooltipTrigger>
-<TooltipContent className="w-[266px] max-w-[266px]">
-  <div className="flex flex-col gap-1">
-    <div className="flex flex-row justify-between gap-5">
-      <div className="flex flex-row gap-1 items-center">
-        <Icon src="/img/assets/goosefx-small.png" alt="Goose Fx" className="w-5 h-5 max-w-5 max-h-5" />
-        <span className="font-poppins font-semibold my-0.5 text-[15px]">Trade APR</span>
-      </div>
-      <span className="font-display font-semibold my-0.5 text-[15px]">{tradeAPR}%</span>
-    </div>
-    <div className="flex flex-row justify-between gap-5">
-      <div className="flex flex-row gap-1 items-center">
-        <Icon src="/img/assets/kamino.svg" alt="Kamino" className="w-5 h-5 max-w-5 max-h-5" />
-        <span className="font-poppins font-semibold my-0.5 text-[15px]">Kamino APR</span>
-      </div>
-      <span className="font-display font-semibold my-0.5 text-[15px]">${kaminoUSD}</span>
-    </div>
-    {activeReward ? (
-      <div className="flex flex-row justify-between gap-5">
-        <div className="flex flex-row gap-1 items-center">
-          <IconWithFallback
-            src={loadIconImage(activeReward.token.logoURI, mode)}
-            className="border-solid dark:border-black-2 border-white
-                  border-[2px] rounded-full h-5 w-5"
-          />
-          <span className="font-poppins font-semibold my-0.5 text-[15px]">
-            {activeReward.token.symbol}
-          </span>
-        </div>
-        <span className="font-display font-semibold my-0.5 text-[15px]">
-          {numberFormatter(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())}%
-        </span>
-      </div>
-    ) : null}
-    <div className="flex flex-row justify-between gap-5">
-      <span className="font-poppins font-semibold my-0.5 text-[15px]">Total APR</span>
-      <span className="font-display font-semibold my-0.5 text-[15px]">
-        {formattedAPR}
-        %
-      </span>
-    </div>
-    {activeReward ? (
-      <>
-        <div
-          className="w-full h-[1px] border-t-1
- border-border-lightmode-secondary dark:border-border-darkmode-secondary"
-        />
+      </TooltipTrigger>
+      <TooltipContent className="w-[266px] max-w-[266px] p-2">
+        <div className="">
+          {/* should only show if kaminoUSD is greater than 0 or activeReward */}
+          {parseFloat(kaminoUSD) > 0 || activeReward && (
+            <div className="flex flex-row justify-between mb-3">
+              <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
+              <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
+            </div>
+          )}
 
-        <div className="flex flex-row justify-between gap-5">
-          <h2 className="text-[15px] text-primary-gradient">Boosted Rewards</h2>
-        </div>
+          {/* should only show if kaminoUSD is greater than 0 */}
+          {parseFloat(kaminoUSD) > 0 && (
+            <div className="flex flex-row justify-between mb-3">
+              <span className="font-poppins font-semibold text-[15px]">Lending APR</span>
+              <span className="font-display font-semibold text-[15px]">${kaminoUSD}</span>
+            </div>
+          )}
+          {activeReward ? (
+            <div>
+              <h2 className="text-[10px] text-primary-gradient">Boosted Rewards</h2>
 
-        <div className="flex flex-row justify-between gap-5">
-          <div className="flex flex-row gap-1 items-center">
-            <IconWithFallback
-              src={loadIconImage(activeReward.token.logoURI, mode)}
-              className="border-solid dark:border-black-2 border-white
-                  border-[2px] rounded-full h-5 w-5"
+              <div className="flex flex-row items-center">
+                <IconWithFallback
+                  src={loadIconImage(activeReward.token.logoURI, mode)}
+                  className="border-solid dark:border-black-2 border-white
+                        border-[2px] rounded-full h-5 w-5"
+                />
+                <span className="font-poppins font-semibold text-[15px]">{activeReward.token.symbol}</span>
+                <span className="font-display font-semibold text-[15px] ml-auto">
+                  {numberFormatter(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())}%
+                </span>
+              </div>
+            </div>
+          ) : null}
+          {parseFloat(kaminoUSD) > 0 || activeReward && (
+            <div
+              className="w-full h-[1px] border-t-1 border-border-lightmode-secondary 
+              dark:border-border-darkmode-secondary my-2"
             />
-            <span className="font-poppins font-semibold my-0.5 text-[15px]">
-              {activeReward.token.symbol}
-            </span>
+          )}
+          <div className="flex flex-row justify-between ">
+            <span className="font-poppins font-semibold text-[15px]">Total APR</span>
+            <span className="font-display font-semibold text-[15px]">{apr}%</span>
           </div>
-
-          <span className="font-display font-semibold my-0.5 text-[15px] whitespace-nowrap">
-            {numberFormatter(activeReward.pricePerDay.toNumber())} {activeReward.token.symbol} / day
-          </span>
         </div>
-      </>
-    ) : null}
-  </div>
-</TooltipContent>
-</Tooltip>
-
+      </TooltipContent>
+    </Tooltip>
 
       {/* actions */}
       {(isTablet || isDesktop) && (
