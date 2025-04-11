@@ -21,13 +21,16 @@ export interface IBoostedRewardsConfig {
   }
   isLoadingActiveRewards: boolean
   isLoadingClaimableRewards: boolean
-  getActiveRewardByPoolId: (poolId: PublicKey) => Promise<{
-    publicKey: PublicKey
-    rewardInfo: RewardInfo
-    token: TokenListToken
-    pricePerDay: BigNumber
-    pricePerDayUsd: BigNumber
-  } | null>
+  getActiveRewardByPoolId: (poolId: PublicKey) => Promise<
+    | {
+        publicKey: PublicKey
+        rewardInfo: RewardInfo
+        token: TokenListToken
+        pricePerDay: BigNumber
+        pricePerDayUsd: BigNumber
+      }[]
+    | null
+  >
   getClaimableRewardByPoolId: (
     poolId: PublicKey
   ) => Promise<
@@ -141,33 +144,39 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
   const getActiveRewardByPoolId = useCallback(
     async (poolId: PublicKey) => {
       if (isLoadingActiveRewards) return null
-      const reward = allActiveRewards.find((reward) => reward.rewardInfo.pool.equals(poolId))
-      if (!reward) return null
+      const rewards = allActiveRewards.filter((reward) => reward.rewardInfo.pool.equals(poolId))
+      if (rewards.length == 0) return null
 
-      let _token = tokens.find((t) => t.address === reward.rewardInfo.mint.toString())
+      const response = await Promise.all(
+        rewards.map(async (reward) => {
+          let _token = tokens.find((t) => t.address === reward.rewardInfo.mint.toString())
 
-      if (!_token) {
-        const tokenListData = await fetchTokensByPublicKey(`${reward.rewardInfo.mint}`)
-        if (!tokenListData.success || tokenListData.data.tokens?.length !== 1) return
-        _token = tokenListData.data.tokens[0]
-      }
+          if (!_token) {
+            const tokenListData = await fetchTokensByPublicKey(`${reward.rewardInfo.mint}`)
+            if (!tokenListData.success || tokenListData.data.tokens?.length !== 1) return
+            _token = tokenListData.data.tokens[0]
+          }
 
-      const price = new BigNumber(reward.rewardInfo.totalToDisburse.toString())
-        .div(new BigNumber(10 ** _token.decimals))
-        .multipliedBy(86400)
+          const price = new BigNumber(reward.rewardInfo.totalToDisburse.toString())
+            .div(new BigNumber(10 ** _token.decimals))
+            .multipliedBy(86400)
 
-      const intervalSecDiff = new BigNumber(reward.rewardInfo.endRewardsAt.toString()).minus(
-        new BigNumber(reward.rewardInfo.startAt.toString())
+          const intervalSecDiff = new BigNumber(reward.rewardInfo.endRewardsAt.toString()).minus(
+            new BigNumber(reward.rewardInfo.startAt.toString())
+          )
+
+          const pricePerDay = price.div(intervalSecDiff)
+
+          return {
+            ...reward,
+            token: _token,
+            pricePerDay,
+            pricePerDayUsd: pricePerDay.multipliedBy(_token.price)
+          }
+        })
       )
 
-      const pricePerDay = price.div(intervalSecDiff)
-
-      return {
-        ...reward,
-        token: _token,
-        pricePerDay,
-        pricePerDayUsd: pricePerDay.multipliedBy(_token.price)
-      }
+      return response
     },
     [allActiveRewards, isLoadingActiveRewards, tokens]
   )

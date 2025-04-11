@@ -141,11 +141,10 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
     enabled: !!pool.id
   })
 
+  const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
   const apr = activeReward
     ? numberFormatter(
-        new BigNumber(formattedAPR)
-          .plus(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())
-          .toNumber()
+        new BigNumber(formattedAPR).plus(activeRewardsAmount.multipliedBy(100).div(365).toNumber()).toNumber()
       )
     : numberFormatter(formattedAPR)
 
@@ -166,17 +165,17 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
     >
       {pool.poolCreator === base58PublicKey && !isMobile && (
         <Tooltip>
-            <TooltipTrigger className='absolute'>
+          <TooltipTrigger className="absolute">
             <Icon
               src={`/img/assets/owner-${mode}.svg`}
               alt="pool-owner"
               size={'sm'}
               className=" absolute top-0.5 left-0.5"
             />
-            </TooltipTrigger>
-            <TooltipContent>
-              <span>You are the owner of this pool</span>
-            </TooltipContent>
+          </TooltipTrigger>
+          <TooltipContent>
+            <span>You are the owner of this pool</span>
+          </TooltipContent>
         </Tooltip>
       )}
       <div className="flex flex-row items-center">
@@ -197,13 +196,8 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
         {/* {!isMobile &&
           <IconWithFallback src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
         } */}
-        {activeReward && (
-            <Icon
-              src={`/img/assets/rewards-icon-${mode}.svg`}
-              alt="claim-rewards"
-              size={'sm'}
-              className='ml-2'
-            />
+        {activeReward && activeReward.length > 0 && (
+          <Icon src={`/img/assets/rewards-icon-${mode}.svg`} alt="claim-rewards" size={'sm'} className="ml-2" />
         )}
       </div>
       {!isMobile && (
@@ -252,12 +246,13 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
         <TooltipContent className="w-[266px] max-w-[266px] p-2">
           <div className="">
             {/* should only show if kaminoUSD is greater than 0 or activeReward */}
-            {parseFloat(kaminoUSD) > 0 || activeReward && (
-              <div className="flex flex-row justify-between mb-3">
-                <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
-                <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
-              </div>
-            )}
+            {parseFloat(kaminoUSD) > 0 ||
+              (activeReward && (
+                <div className="flex flex-row justify-between mb-3">
+                  <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
+                  <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
+                </div>
+              ))}
 
             {/* should only show if kaminoUSD is greater than 0 */}
             {parseFloat(kaminoUSD) > 0 && (
@@ -266,29 +261,32 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
                 <span className="font-display font-semibold text-[15px]">${kaminoUSD}</span>
               </div>
             )}
-            {activeReward ? (
-              <div>
-                <h2 className="text-[10px] text-primary-gradient">Boosted Rewards</h2>
+            {activeReward &&
+              activeReward.length > 0 &&
+              activeReward.map((reward) => (
+                <div key={reward.publicKey.toString()}>
+                  <h2 className="text-[10px] text-primary-gradient">Boosted Rewards</h2>
 
-                <div className="flex flex-row items-center">
-                  <IconWithFallback
-                    src={loadIconImage(activeReward.token.logoURI, mode)}
-                    className="border-solid dark:border-black-2 border-white
+                  <div className="flex flex-row items-center">
+                    <IconWithFallback
+                      src={loadIconImage(reward.token.logoURI, mode)}
+                      className="border-solid dark:border-black-2 border-white
                           border-[2px] rounded-full h-5 w-5"
-                  />
-                  <span className="font-poppins font-semibold text-[15px]">{activeReward.token.symbol}</span>
-                  <span className="font-display font-semibold text-[15px] ml-auto">
-                    {numberFormatter(activeReward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())}%
-                  </span>
+                    />
+                    <span className="font-poppins font-semibold text-[15px]">{reward.token.symbol}</span>
+                    <span className="font-display font-semibold text-[15px] ml-auto">
+                      {numberFormatter(reward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())}%
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ) : null}
-            {parseFloat(kaminoUSD) > 0 || activeReward && (
-              <div
-                className="w-full h-[1px] border-t-1 border-border-lightmode-secondary 
+              ))}
+            {parseFloat(kaminoUSD) > 0 ||
+              (activeReward && (
+                <div
+                  className="w-full h-[1px] border-t-1 border-border-lightmode-secondary 
                 dark:border-border-darkmode-secondary my-2"
-              />
-            )}
+                />
+              ))}
             <div className="flex flex-row justify-between ">
               <span className="font-poppins font-semibold text-[15px]">Total APR</span>
               <span className="font-display font-semibold text-[15px]">{apr}%</span>
