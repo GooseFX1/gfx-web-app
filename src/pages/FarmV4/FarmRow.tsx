@@ -39,101 +39,10 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
     const liquidity = parseFloat(pool.tvl)
     return liquidity ? numberFormatter(Math.max(0, liquidity)) : '0.00'
   }, [pool])
-  const { formattedVolume, formattedFees, formattedAPR, tradeAPR, kaminoUSD } = useMemo(() => {
-    if (!pool.stats) {
-      return {
-        formattedVolume: '0.00',
-        formattedFees: '0.00',
-        formattedAPR: 0,
-        tradeAPR: '0.00',
-        kaminoAPR: '0.00',
-        kaminoUSD: '0.00'
-      }
-    }
-    switch (viewRange) {
-      case 0:
-        return {
-          formattedVolume: numberFormatter(
-            Math.max(0, pool.stats.daily.volumeTokenAUsd + pool.stats.daily.volumeTokenBUsd)
-          ),
-          formattedFees: numberFormatter(Math.max(0, pool.stats.daily.feesUsd)),
-          formattedAPR: Math.max(
-            0,
-            pool.stats.daily.feesAprUsd +
-              pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd +
-              pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
-          ),
-          tradeAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUsd)),
-          kaminoAPR: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd +
-                pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
-            )
-          ),
-          kaminoUSD: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.daily.withdrawnKaminoProfitTokenAUsd + pool.stats.daily.withdrawnKaminoProfitTokenBUsd
-            )
-          )
-        }
-      case 1:
-        return {
-          formattedVolume: numberFormatter(
-            Math.max(0, pool.stats.weekly.volumeTokenAUsd + pool.stats.weekly.volumeTokenBUsd)
-          ),
-          formattedFees: numberFormatter(Math.max(0, pool.stats.weekly.feesUsd)),
-          formattedAPR: Math.max(
-            0,
-            pool.stats.weekly.feesAprUsd +
-              pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
-              pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
-          ),
-          tradeAPR: numberFormatter(Math.max(0, pool.stats.weekly.feesAprUsd)),
-          kaminoAPR: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
-                pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
-            )
-          ),
-          kaminoUSD: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.weekly.withdrawnKaminoProfitTokenAUsd + pool.stats.weekly.withdrawnKaminoProfitTokenBUsd
-            )
-          )
-        }
-      case 2:
-        return {
-          formattedVolume: numberFormatter(
-            Math.max(0, pool.stats.monthly.volumeTokenAUsd + pool.stats.monthly.volumeTokenBUsd)
-          ),
-          formattedFees: numberFormatter(Math.max(0, pool.stats.monthly.feesUsd)),
-          formattedAPR: Math.max(
-            0,
-            pool.stats.monthly.feesAprUsd +
-              pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +
-              pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
-          ),
-          tradeAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUsd)),
-          kaminoAPR: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +
-                pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
-            )
-          ),
-          kaminoUSD: numberFormatter(
-            Math.max(
-              0,
-              pool.stats.monthly.withdrawnKaminoProfitTokenAUsd + pool.stats.monthly.withdrawnKaminoProfitTokenBUsd
-            )
-          )
-        }
-    }
-  }, [pool.stats, viewRange])
+  const { formattedVolume, formattedFees, formattedAPR, tradeAPR, kaminoUSD } = useMemo(
+    () => getPoolValuesByRange(pool, viewRange),
+    [pool.stats, viewRange]
+  )
 
   const { data: activeReward } = useQuery({
     queryKey: [QUERY_KEY, 'activeReward', pool.id],
@@ -354,3 +263,98 @@ export const FarmRowLoaderText: FC = () => (
     <span className="font-bold text-regular dark:text-grey-8 text-black-4">Loading more...</span>
   </div>
 )
+
+export const getPoolValuesByRange = (pool, viewRange) => {
+  if (!pool.stats) {
+    return {
+      formattedVolume: '0.00',
+      formattedFees: '0.00',
+      formattedAPR: 0,
+      tradeAPR: '0.00',
+      kaminoAPR: '0.00',
+      kaminoUSD: '0.00'
+    }
+  }
+  switch (viewRange) {
+    case 0:
+      return {
+        formattedVolume: numberFormatter(
+          Math.max(0, pool.stats.daily.volumeTokenAUsd + pool.stats.daily.volumeTokenBUsd)
+        ),
+        formattedFees: numberFormatter(Math.max(0, pool.stats.daily.feesUsd)),
+        formattedAPR: Math.max(
+          0,
+          pool.stats.daily.feesAprUsd +
+            pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd +
+            pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
+        ),
+        tradeAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUsd)),
+        kaminoAPR: numberFormatter(
+          Math.max(
+            0,
+            pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd + pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
+          )
+        ),
+        kaminoUSD: numberFormatter(
+          Math.max(
+            0,
+            pool.stats.daily.withdrawnKaminoProfitTokenAUsd + pool.stats.daily.withdrawnKaminoProfitTokenBUsd
+          )
+        )
+      }
+    case 1:
+      return {
+        formattedVolume: numberFormatter(
+          Math.max(0, pool.stats.weekly.volumeTokenAUsd + pool.stats.weekly.volumeTokenBUsd)
+        ),
+        formattedFees: numberFormatter(Math.max(0, pool.stats.weekly.feesUsd)),
+        formattedAPR: Math.max(
+          0,
+          pool.stats.weekly.feesAprUsd +
+            pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
+            pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
+        ),
+        tradeAPR: numberFormatter(Math.max(0, pool.stats.weekly.feesAprUsd)),
+        kaminoAPR: numberFormatter(
+          Math.max(
+            0,
+            pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
+              pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
+          )
+        ),
+        kaminoUSD: numberFormatter(
+          Math.max(
+            0,
+            pool.stats.weekly.withdrawnKaminoProfitTokenAUsd + pool.stats.weekly.withdrawnKaminoProfitTokenBUsd
+          )
+        )
+      }
+    case 2:
+      return {
+        formattedVolume: numberFormatter(
+          Math.max(0, pool.stats.monthly.volumeTokenAUsd + pool.stats.monthly.volumeTokenBUsd)
+        ),
+        formattedFees: numberFormatter(Math.max(0, pool.stats.monthly.feesUsd)),
+        formattedAPR: Math.max(
+          0,
+          pool.stats.monthly.feesAprUsd +
+            pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +
+            pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
+        ),
+        tradeAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUsd)),
+        kaminoAPR: numberFormatter(
+          Math.max(
+            0,
+            pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +
+              pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
+          )
+        ),
+        kaminoUSD: numberFormatter(
+          Math.max(
+            0,
+            pool.stats.monthly.withdrawnKaminoProfitTokenAUsd + pool.stats.monthly.withdrawnKaminoProfitTokenBUsd
+          )
+        )
+      }
+  }
+}

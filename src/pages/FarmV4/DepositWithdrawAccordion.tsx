@@ -11,7 +11,7 @@ const DepositWithdrawAccordion: FC<{
 }> = ({ withdrawableBalanceA, withdrawableBalanceB }): ReactElement => {
   const { selectedCard } = useGamma()
   const token = selectedCard?.mintA
-  // hasDeposit = pools flow ... currentPositionUSD = portfolio flow - this will be standardised once API is out
+  // hasDeposit = pools flow ... currentPositionUsd = portfolio flow - this will be standardised once API is out
   return (
     <Accordion
       collapsible="true"
@@ -26,7 +26,7 @@ const DepositWithdrawAccordion: FC<{
           <div className="h-[10px] bg-white dark:bg-black-2" />
         </>
       ) : null}
-      {selectedCard?.hasDeposit || +selectedCard?.currentPositionUSD > 0 ? (
+      {selectedCard?.hasDeposit || +selectedCard?.currentPositionUsd > 0 ? (
         <AccordionItem value="lp-stats">
           <AccordionTrigger>
             <h4>My Position</h4>
