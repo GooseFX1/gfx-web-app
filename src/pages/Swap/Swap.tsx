@@ -280,14 +280,18 @@ export const Swap: FC = () => {
     if (tokenBal.uiAmount == 0.0) {
       return
     }
-    amountTokenACommands.set(new Decimal(tokenBal.uiAmountString).div(2).toString())
+    amountTokenACommands.set(new Decimal(tokenBal.amount).div(Math.pow(10, tokenBal.decimals)).div(2).toString())
   }
   const handleMax = () => {
     const tokenBal: TokenAmount = balance[selectedTokenA?.address].tokenAmount
     if (tokenBal.uiAmount == 0.0) {
       return
     }
-    amountTokenACommands.set(tokenBal.uiAmountString)
+    let tokenValue = new Decimal(tokenBal.amount).div(Math.pow(10, tokenBal.decimals))
+    if (selectedTokenA.symbol.toLowerCase() === 'sol') {
+      tokenValue = tokenValue.minus(0.01)
+    }
+    amountTokenACommands.set(tokenValue.toString())
   }
   return (
     <div
@@ -408,7 +412,7 @@ mt-8 flex items-center justify-center
                   className={cn(
                     `ml-auto text-b2 cursor-pointer text-text-lightmode-primary dark:text-text-darkmode-primary`,
                     balance[selectedTokenA?.address].tokenAmount.uiAmount == 0 &&
-                    `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
+                      `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
                   )}
                   onClick={() => {
                     amountTokenACommands.set(balance[selectedTokenA?.address].tokenAmount.uiAmountString)
