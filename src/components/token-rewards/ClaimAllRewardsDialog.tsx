@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react'
+import React, { FC } from 'react'
 import 'styled-components/macro'
 import {
   Button,
@@ -19,7 +19,8 @@ import { useBoostedRewards } from '@/context/boostedRewardsContext'
 import { numberFormatter } from '@/utils'
 import { claimRewards } from '@/web3/Farm'
 import useTransaction from '@/hooks/useTransaction'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWalletBalance } from '@/context/walletBalanceContext'
+import { useMutation } from '@tanstack/react-query'
 
 type ClaimAllRewardsDialogProps = {
   openClaimAllRewardsDialog: boolean
@@ -33,19 +34,13 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
   const { mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
   const { claimableRewardsWithTokens, refreshRewards } = useBoostedRewards()
-  const [sendingTransaction, setSendingTransaction] = useState(false)
   const { sendTransaction, createTransactionBuilder } = useTransaction()
   const { connection } = useConnectionConfig()
-  const { wallet } = useWallet()
   const { GammaProgram } = usePriceFeedFarm()
-  const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const { publicKey: userPublicKey } = useWalletBalance()
 
-  if (!claimableRewardsWithTokens.totalClaimableRewardsUsd.gt(0)) return null
-  if (claimableRewardsWithTokens.rewards.length === 0) return null
-
-  const handleClaimAll = async () => {
-    try {
-      setSendingTransaction(true)
+  const claimAllMutation = useMutation({
+    mutationFn: async () => {
       const txBuilder = createTransactionBuilder()
 
       for (const reward of claimableRewardsWithTokens.rewards) {
@@ -66,22 +61,24 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
         true
       )
       if (!success) {
-        //off(connectionId)
+        //off(connectionId)a
         console.log('An error occurred while claiming rewards!')
-      } else {
-        const refreshSuccess = refreshRewards()
-        if (refreshSuccess) {
-          setSendingTransaction(false)
-          setOpenClaimAllRewardsDialog(false)
-        }
+        throw new Error('An error occurred while claiming rewards!')
       }
-    } catch (e) {
-      console.log('An error occurred while claiming rewards.', e)
-    } finally {
-      setSendingTransaction(false)
+    },
+    onError: (err) => {
+      console.log(err)
+    },
+    onSuccess: async () => {
+      await refreshRewards()
+    },
+    onSettled: () => {
       setOpenClaimAllRewardsDialog(false)
     }
-  }
+  })
+
+  if (!claimableRewardsWithTokens.totalClaimableRewardsUsd.gt(0)) return null
+  if (claimableRewardsWithTokens.rewards.length === 0) return null
 
   return (
     <Dialog open={openClaimAllRewardsDialog} onOpenChange={setOpenClaimAllRewardsDialog}>
@@ -150,8 +147,8 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
                 className="w-full py-[7.5px] px-[10px] mt-[10px]"
                 colorScheme={'blue'}
                 variant={'primary'}
-                onClick={handleClaimAll}
-                isLoading={sendingTransaction}
+                onClick={() => claimAllMutation.mutate}
+                isLoading={claimAllMutation.isLoading}
               >
                 Claim ${numberFormatter(claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber())}
               </Button>

@@ -35,7 +35,7 @@ export interface IBoostedRewardsConfig {
   getClaimableRewardByPoolId: (
     poolId: PublicKey
   ) => { claimableAmount: BigNumber; claimableAmountUsd: BigNumber } | null
-  refreshRewards: () => boolean
+  refreshRewards: () => Promise<boolean>
 }
 
 const BoostedRewardsContext = createContext<IBoostedRewardsConfig | null>(null)
@@ -122,7 +122,7 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
         token: TokenListToken
         pricePerDay: BigNumber
         pricePerDayUsd: BigNumber
-        rewards: { publicKey: PublicKey, rewardInfo: RewardInfo }[]
+        rewards: { publicKey: PublicKey; rewardInfo: RewardInfo }[]
       }
     >()
     for (const reward of activeRewards) {
@@ -196,9 +196,8 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
         getActiveRewardByPoolId,
         getClaimableRewardByPoolId,
         claimableRewardsWithTokens,
-        refreshRewards: () => {
-          allActiveRewardsQuery.refetch()
-          claimableRewardsQuery.refetch()
+        refreshRewards: async () => {
+          await Promise.all([allActiveRewardsQuery.refetch(), claimableRewardsQuery.refetch()])
           return true
         }
       }}
