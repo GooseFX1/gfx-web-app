@@ -1,12 +1,15 @@
-import React, { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 import { BoostedRewardInfo, getAllActiveRewards, getClaimRewardsAccounts } from '@/web3/Farm'
 import { usePriceFeedFarm } from './price_feed_farm'
 import { PublicKey } from '@solana/web3.js'
 import { RewardInfo } from './price_feed_farm'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { fetchTokensByPublicKey } from '@/api/gamma'
 import BigNumber from 'bignumber.js'
 import { TokenListToken } from './gamma'
+import { QUERY_KEY } from '@/queries/query.helper'
+import { useQuery } from '@tanstack/react-query'
+import { INTERVALS } from '@/utils/time'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 export interface IBoostedRewardsConfig {
   allActiveRewards: { publicKey: PublicKey; rewardInfo: RewardInfo }[]
@@ -21,233 +24,167 @@ export interface IBoostedRewardsConfig {
   }
   isLoadingActiveRewards: boolean
   isLoadingClaimableRewards: boolean
-  getActiveRewardByPoolId: (poolId: PublicKey) => Promise<{
-    publicKey: PublicKey
-    rewardInfo: RewardInfo
-    token: TokenListToken
-    pricePerDay: BigNumber
-    pricePerDayUsd: BigNumber
-  }[] | null>
+  getActiveRewardByPoolId: (poolId: PublicKey) =>
+    | {
+        publicKey: PublicKey
+        rewardInfo: RewardInfo
+        token: TokenListToken
+        pricePerDay: BigNumber
+        pricePerDayUsd: BigNumber
+      }[]
+    | null
   getClaimableRewardByPoolId: (
     poolId: PublicKey
-  ) => Promise<
-    | ({ claimableAmount: BigNumber; claimableAmountUsd: BigNumber; })
-    | null
-  >
+  ) => { claimableAmount: BigNumber; claimableAmountUsd: BigNumber } | null
   refreshRewards: () => boolean
 }
 
 const BoostedRewardsContext = createContext<IBoostedRewardsConfig | null>(null)
 
 export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [allActiveRewards, setAllActiveRewards] = useState<{ publicKey: PublicKey; rewardInfo: RewardInfo }[]>([])
-  const [claimableRewards, setClaimableRewards] = useState<BoostedRewardInfo[]>([])
-  const [claimableRewardsWithTokens, setClaimableRewardsWithTokens] = useState<
-    IBoostedRewardsConfig['claimableRewardsWithTokens']
-  >({
-    totalClaimableRewardsUsd: new BigNumber(0),
-    rewards: []
-  })
-  const [isLoadingActiveRewards, setIsLoadingActiveRewards] = useState(false)
-  const [isLoadingClaimableRewards, setIsLoadingClaimableRewards] = useState(false)
   const { GammaProgram } = usePriceFeedFarm()
-  const { wallet } = useWallet()
-  const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
-  const [tokens, setTokens] = useState<TokenListToken[]>([])
+  const { publicKey: userPublicKey } = useWalletBalance()
 
-  const fetchAllActiveRewards = async () => {
-    setIsLoadingActiveRewards(true)
-    const allActiveRewards = await getAllActiveRewards(GammaProgram)
-    setAllActiveRewards(allActiveRewards)
-    setIsLoadingActiveRewards(false)
-  }
+  const allActiveRewardsQuery = useQuery({
+    queryKey: [QUERY_KEY, 'boosted-all-active-rewards'],
+    queryFn: async () => await getAllActiveRewards(GammaProgram),
+    staleTime: INTERVALS.MINUTE * 2
+  })
 
-  const fetchClaimableRewards = async (_userPublicKey: PublicKey) => {
-    setIsLoadingClaimableRewards(true)
-    const clmRwds = await getClaimRewardsAccounts(GammaProgram, _userPublicKey)
-    setClaimableRewards(clmRwds)
-    setIsLoadingClaimableRewards(false)
-  }
+  const claimableRewardsQuery = useQuery({
+    queryKey: [QUERY_KEY, 'boosted-claimable-rewards', userPublicKey?.toString()],
+    queryFn: async () => {
+      if (!userPublicKey) return []
+      return await getClaimRewardsAccounts(GammaProgram, userPublicKey)
+    },
+    staleTime: INTERVALS.MINUTE * 2,
+    enabled: !!userPublicKey
+  })
 
-  useEffect(() => {
-    fetchAllActiveRewards()
-  }, [])
-
-  useEffect(() => {
-    if (!userPublicKey) {
-      resetClaimableToEmpty()
-    } else {  
-      fetchClaimableRewards(userPublicKey)
-    }
-  }, [userPublicKey])
-
-  const refreshRewards = useCallback(() => {
-    fetchAllActiveRewards()
-
-    if (!userPublicKey) {
-      resetClaimableToEmpty()
-    } else {
-      // uses timeout delay to avoid race condition
-      setTimeout(() => {
-        fetchClaimableRewards(userPublicKey)
-      }, 2000)
-    }
-    return () => true
-  }, [fetchAllActiveRewards, fetchClaimableRewards, userPublicKey])
-
-  useEffect(() => {
-    const fetchTokens = async () => {
-      if (allActiveRewards.length === 0 && claimableRewards.length === 0) return
-
+  const tokensInRewardsQuery = useQuery({
+    queryKey: [QUERY_KEY, 'boosted-tokens-rewards', allActiveRewardsQuery.data, claimableRewardsQuery.data],
+    queryFn: async () => {
+      const allActiveRewards = allActiveRewardsQuery.data || []
+      const claimableRewards = claimableRewardsQuery.data || []
       const allTokenAddresses = [
         ...new Set(allActiveRewards.map((reward) => reward.rewardInfo.mint)),
         ...new Set(claimableRewards.map((reward) => reward.rewardInfo.mint))
       ]
-
-      // If there is at least one public key in allTokenAddresses that doesn't have a matching token 
-      // in the tokens array,
-      // then fetch the tokens from the API
-      if (allTokenAddresses.some((pubKey) => !tokens.find((t) => t.address === pubKey.toString()))) {
-        const tokenListData = await fetchTokensByPublicKey(allTokenAddresses.join(','))
-        if (!tokenListData.success || tokenListData.data.tokens?.length === 0) return
-        setTokens(tokenListData.data.tokens)
-      }
+      const res = await fetchTokensByPublicKey(allTokenAddresses.join(','))
+      if (!res || !res.success || res.data.tokens?.length === 0) return []
+      return res.data.tokens
     }
-    fetchTokens()
-  }, [allActiveRewards, claimableRewards])
-
-  useEffect(() => {    
-    const fetchClaimableRewardsWithToken = async () => {
-      if (!claimableRewards.length) return
-      if (!tokens.length) return
-
-      const rewardsWithTokens = []
-
-      for (let i = 0; i < claimableRewards.length; i++) {
-        const reward = claimableRewards[i]
-
-        const _token = tokens.find((t) => t.address === reward.rewardInfo.mint.toString())
-        if (!_token) continue
-
-        const claimableAmount = new BigNumber(reward.userRewardInfo.totalRewards.toString())
-          .minus(new BigNumber(reward.userRewardInfo.totalClaimed.toString()))
-          .div(new BigNumber(10 ** _token.decimals))
-
-        const claimableAmountUsd = claimableAmount.multipliedBy(_token.price)
-
-        rewardsWithTokens.push({
-          ...reward,
-          claimableAmount,
-          claimableAmountUsd,
-          token: _token
-        })
+  })
+  const claimableRewardsWithTokens = useMemo(() => {
+    if (!claimableRewardsQuery.data || !tokensInRewardsQuery.data)
+      return {
+        totalClaimableRewardsUsd: new BigNumber(0),
+        rewards: []
       }
-      console.log('setting claimableRewardsWithTokens', rewardsWithTokens)
-      setClaimableRewardsWithTokens({
-        totalClaimableRewardsUsd: rewardsWithTokens.reduce(
-          (acc, reward) => acc.plus(reward.claimableAmountUsd),
-          new BigNumber(0)
-        ),
-        rewards: rewardsWithTokens
-      })
-    }
-    fetchClaimableRewardsWithToken()
-  }, [claimableRewards, tokens])
+    const rewardsWithTokens = []
+    const tokesLookup = new Map<string, TokenListToken>(tokensInRewardsQuery.data.map((t) => [t.address, t]))
+    for (let i = 0; i < claimableRewardsQuery.data.length; i++) {
+      const reward = claimableRewardsQuery.data[i]
 
-  const getActiveRewardByPoolId = useCallback(
-    async (poolId: PublicKey) => {
-      if (isLoadingActiveRewards) return null
-      const rewards = allActiveRewards.filter((reward) => reward.rewardInfo.pool.equals(poolId))
-      if (rewards.length == 0) return null
-
-      const response = await Promise.all(
-        rewards.map(async (reward) => {
-          let _token = tokens.find((t) => t.address === reward.rewardInfo.mint.toString())
-
-          if (!_token) {
-            const tokenListData = await fetchTokensByPublicKey(`${reward.rewardInfo.mint}`)
-            if (!tokenListData.success || tokenListData.data.tokens?.length !== 1) return
-            _token = tokenListData.data.tokens[0]
-          }
-
-          const price = new BigNumber(reward.rewardInfo.totalToDisburse.toString())
-            .div(new BigNumber(10 ** _token.decimals))
-            .multipliedBy(86400)
-
-          const intervalSecDiff = new BigNumber(reward.rewardInfo.endRewardsAt.toString()).minus(
-            new BigNumber(reward.rewardInfo.startAt.toString())
-          )
-
-          const pricePerDay = price.div(intervalSecDiff)
-
-          return {
-            ...reward,
-            token: _token,
-            pricePerDay,
-            pricePerDayUsd: pricePerDay.multipliedBy(_token.price)
-          }
-        })
-      )
-
-      return response
-    },
-    [allActiveRewards, isLoadingActiveRewards, tokens]
-  )
-
-  const getClaimableRewardByPoolId = useCallback(
-    async (poolId: PublicKey) => {
-      if (isLoadingClaimableRewards) return null
-      const rewards = claimableRewards.filter((reward) => reward.rewardInfo.pool.equals(poolId))
-      if (!rewards) return null
-
-      const response = await Promise.all(
-        rewards.map(async (reward) => {
-      let _token = tokens.find((t) => t.address === reward.rewardInfo.mint.toString())
-
-      if (!_token) {
-        const tokenListData = await fetchTokensByPublicKey(`${reward.rewardInfo.mint}`)
-        if (!tokenListData.success || tokenListData.data.tokens?.length !== 1) return
-        _token = tokenListData.data.tokens[0]
-      }
+      const _token = tokesLookup.get(reward.rewardInfo.mint.toBase58())
+      if (!_token) continue
 
       const claimableAmount = new BigNumber(reward.userRewardInfo.totalRewards.toString())
         .minus(new BigNumber(reward.userRewardInfo.totalClaimed.toString()))
         .div(new BigNumber(10 ** _token.decimals))
 
       const claimableAmountUsd = claimableAmount.multipliedBy(_token.price)
-      return {
-        claimableAmount,
-        claimableAmountUsd
-      }
-      }))
-      
-      return {
-        claimableAmount: response.reduce((acc, curr) => acc.plus(curr.claimableAmount), new BigNumber(0)),
-        claimableAmountUsd: response.reduce((acc, curr) => acc.plus(curr.claimableAmountUsd), new BigNumber(0)),
-      }
-    },
-    [claimableRewards, isLoadingClaimableRewards, tokens]
-  )
 
-  const resetClaimableToEmpty = useCallback(() => {
-    setClaimableRewards([])
-    setClaimableRewardsWithTokens({
-      totalClaimableRewardsUsd: new BigNumber(0),
-      rewards: []
+      rewardsWithTokens.push({
+        ...reward,
+        claimableAmount,
+        claimableAmountUsd,
+        token: _token
+      })
+    }
+    return {
+      totalClaimableRewardsUsd: rewardsWithTokens.reduce(
+        (acc, reward) => acc.plus(reward.claimableAmountUsd),
+        new BigNumber(0)
+      ),
+      rewards: rewardsWithTokens
+    }
+  }, [claimableRewardsQuery.data, tokensInRewardsQuery.data])
+
+  const getActiveRewardByPoolId = (poolId: PublicKey) => {
+    if (!allActiveRewardsQuery.data || !tokensInRewardsQuery.data) return []
+
+    const rewards = allActiveRewardsQuery.data.filter((reward) => reward.rewardInfo.pool.equals(poolId))
+    if (rewards.length == 0) return []
+    const tokensLookup = new Map<string, TokenListToken>(tokensInRewardsQuery.data.map((t) => [t.address, t]))
+    const mappedRewards = []
+    for (const reward of rewards) {
+      const token = tokensLookup.get(reward.rewardInfo.mint.toBase58())
+
+      if (!token) {
+        continue
+      }
+
+      const price = new BigNumber(reward.rewardInfo.totalToDisburse.toString())
+        .div(new BigNumber(10 ** token.decimals))
+        .multipliedBy(86400)
+
+      const intervalSecDiff = new BigNumber(reward.rewardInfo.endRewardsAt.toString()).minus(
+        new BigNumber(reward.rewardInfo.startAt.toString())
+      )
+
+      const pricePerDay = price.div(intervalSecDiff)
+
+      mappedRewards.push({
+        ...reward,
+        token: token,
+        pricePerDay,
+        pricePerDayUsd: pricePerDay.multipliedBy(token.price)
+      })
+    }
+
+    return mappedRewards
+  }
+  const getClaimableRewardByPoolId = (poolId: PublicKey) => {
+    if (!claimableRewardsQuery.data || !tokensInRewardsQuery.data) return null
+    const rewards = claimableRewardsQuery.data.filter((reward) => reward.rewardInfo.pool.equals(poolId))
+    if (!rewards) return null
+    const mappedRewards = rewards.map((reward) => {
+      const token = tokensInRewardsQuery.data.find((t) => t.address === reward.rewardInfo.mint.toString())
+      if (!token) return
+      const claimableAmount = new BigNumber(reward.userRewardInfo.totalRewards.toString())
+        .minus(new BigNumber(reward.userRewardInfo.totalClaimed.toString()))
+        .div(new BigNumber(10 ** token.decimals))
+
+      const claimableAmountUsd = claimableAmount.multipliedBy(token.price)
+      return {
+        ...reward,
+        claimableAmount,
+        claimableAmountUsd,
+        token
+      }
     })
-  }, [])
+    return {
+      claimableAmount: mappedRewards.reduce((acc, curr) => acc.plus(curr.claimableAmount), new BigNumber(0)),
+      claimableAmountUsd: mappedRewards.reduce((acc, curr) => acc.plus(curr.claimableAmountUsd), new BigNumber(0))
+    }
+  }
 
   return (
     <BoostedRewardsContext.Provider
       value={{
-        allActiveRewards,
-        claimableRewards,
-        isLoadingActiveRewards,
-        isLoadingClaimableRewards,
+        allActiveRewards: allActiveRewardsQuery.data || [],
+        claimableRewards: claimableRewardsQuery.data || [],
+        isLoadingActiveRewards: allActiveRewardsQuery.isLoading,
+        isLoadingClaimableRewards: claimableRewardsQuery.isLoading,
         getActiveRewardByPoolId,
         getClaimableRewardByPoolId,
         claimableRewardsWithTokens,
-        refreshRewards
+        refreshRewards: () => {
+          allActiveRewardsQuery.refetch()
+          claimableRewardsQuery.refetch()
+          return true
+        }
       }}
     >
       {children}

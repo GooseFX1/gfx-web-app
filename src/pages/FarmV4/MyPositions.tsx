@@ -60,7 +60,7 @@ const MyPositions: FC<{
       const results = {};
       for (const poolId of poolIds) {
         if (poolId) {
-          results[poolId] = await getActiveRewardByPoolId(new PublicKey(poolId));
+          results[poolId] = getActiveRewardByPoolId(new PublicKey(poolId));
         }
       }
       return results;

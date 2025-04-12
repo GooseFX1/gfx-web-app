@@ -40,8 +40,10 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
 
   useEffect(() => {
-    getActiveRewardByPoolId(new PublicKey(pool.id)).then((reward) => setActiveReward(reward))
-    getClaimableRewardByPoolId(new PublicKey(pool.id)).then((reward) => setClaimableReward(reward))
+    setActiveReward(getActiveRewardByPoolId(new PublicKey(pool.id)))
+    setClaimableReward(
+      getClaimableRewardByPoolId(new PublicKey(pool.id))
+    )
   }, [getActiveRewardByPoolId, getClaimableRewardByPoolId, pool.id])
 
   if (!activeReward) return null
