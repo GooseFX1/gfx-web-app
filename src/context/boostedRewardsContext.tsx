@@ -26,8 +26,7 @@ export interface IBoostedRewardsConfig {
   isLoadingClaimableRewards: boolean
   getActiveRewardByPoolId: (poolId: PublicKey) =>
     | {
-        publicKey: PublicKey
-        rewardInfo: RewardInfo
+        rewards: { publicKey: PublicKey; rewardInfo: RewardInfo }[]
         token: TokenListToken
         pricePerDay: BigNumber
         pricePerDayUsd: BigNumber
@@ -114,11 +113,19 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
   const getActiveRewardByPoolId = (poolId: PublicKey) => {
     if (!allActiveRewardsQuery.data || !tokensInRewardsQuery.data) return []
 
-    const rewards = allActiveRewardsQuery.data.filter((reward) => reward.rewardInfo.pool.equals(poolId))
-    if (rewards.length == 0) return []
+    const activeRewards = allActiveRewardsQuery.data.filter((reward) => reward.rewardInfo.pool.equals(poolId))
+    if (activeRewards.length == 0) return []
     const tokensLookup = new Map<string, TokenListToken>(tokensInRewardsQuery.data.map((t) => [t.address, t]))
-    const mappedRewards = []
-    for (const reward of rewards) {
+    const mappedRewards = new Map<
+      string,
+      {
+        token: TokenListToken
+        pricePerDay: BigNumber
+        pricePerDayUsd: BigNumber
+        rewards: { publicKey: PublicKey, rewardInfo: RewardInfo }[]
+      }
+    >()
+    for (const reward of activeRewards) {
       const token = tokensLookup.get(reward.rewardInfo.mint.toBase58())
 
       if (!token) {
@@ -134,16 +141,25 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
       )
 
       const pricePerDay = price.div(intervalSecDiff)
-
-      mappedRewards.push({
-        ...reward,
-        token: token,
-        pricePerDay,
-        pricePerDayUsd: pricePerDay.multipliedBy(token.price)
+      // aggregate multiple rewards of same token type
+      if (!mappedRewards.has(reward.rewardInfo.mint.toBase58())) {
+        mappedRewards.set(reward.rewardInfo.mint.toBase58(), {
+          token,
+          pricePerDay: new BigNumber(0),
+          pricePerDayUsd: new BigNumber(0),
+          rewards: []
+        })
+      }
+      const currentReward = mappedRewards.get(reward.rewardInfo.mint.toBase58())
+      mappedRewards.set(reward.rewardInfo.mint.toBase58(), {
+        ...currentReward,
+        rewards: [...currentReward.rewards, reward],
+        pricePerDay: currentReward.pricePerDay.plus(pricePerDay),
+        pricePerDayUsd: currentReward.pricePerDayUsd.plus(pricePerDay.multipliedBy(token.price))
       })
     }
 
-    return mappedRewards
+    return Array.from(mappedRewards.values())
   }
   const getClaimableRewardByPoolId = (poolId: PublicKey) => {
     if (!claimableRewardsQuery.data || !tokensInRewardsQuery.data) return null

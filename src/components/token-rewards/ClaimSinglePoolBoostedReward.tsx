@@ -90,7 +90,7 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
         <AccordionContent>
           <div className="flex flex-col gap-[10px] pt-2">
           {activeReward.map((reward) => (
-            <div key={reward.publicKey.toString()} className="flex flex-row items-center justify-between">
+            <div key={reward.token.address.toString()} className="flex flex-row items-center justify-between">
               <div className="flex flex-row items-center gap-[5px]">
                 <IconWithFallback
                   src={loadIconImage(reward.token.logoURI, mode)}
