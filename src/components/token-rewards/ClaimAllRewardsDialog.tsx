@@ -48,32 +48,47 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
       setSendingTransaction(true)
       const txBuilder = createTransactionBuilder()
 
-      for (const reward of claimableRewardsWithTokens.rewards) {
-        const tx = await claimRewards(GammaProgram, userPublicKey, connection, reward)
-        txBuilder.add(tx)
+      // Split rewards into batches of 5
+      const batchSize = 5
+      const rewards = claimableRewardsWithTokens.rewards
+      const batches = []
+      
+      for (let i = 0; i < rewards.length; i += batchSize) {
+        batches.push(rewards.slice(i, i + batchSize))
       }
 
-      const { success } = await sendTransaction(
-        txBuilder,
-        {
-          successMessage: `You claimed $${numberFormatter(
-            claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber(),
-            4
-          )} in rewards`
-        },
-        undefined,
-        undefined,
-        true
-      )
-      if (!success) {
-        //off(connectionId)
-        console.log('An error occurred while claiming rewards!')
-      } else {
-        const refreshSuccess = refreshRewards()
-        if (refreshSuccess) {
-          setSendingTransaction(false)
-          setOpenClaimAllRewardsDialog(false)
+      // Process each batch
+      for (const batch of batches) {
+        const batchTxBuilder = createTransactionBuilder()
+        
+        for (const reward of batch) {
+          const tx = await claimRewards(GammaProgram, userPublicKey, connection, reward)
+          batchTxBuilder.add(tx)
         }
+
+        const { success } = await sendTransaction(
+          batchTxBuilder,
+          {
+            successMessage: `You claimed $${numberFormatter(
+              claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber(),
+              4
+            )} in rewards`
+          },
+          undefined,
+          undefined,
+          true
+        )
+
+        if (!success) {
+          console.log('An error occurred while claiming rewards!')
+          break
+        }
+      }
+
+      const refreshSuccess = refreshRewards()
+      if (refreshSuccess) {
+        setSendingTransaction(false)
+        setOpenClaimAllRewardsDialog(false)
       }
     } catch (e) {
       console.log('An error occurred while claiming rewards.', e)
@@ -163,7 +178,7 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
                 className="text-center mt-[10px] 
               text-[13px] text-text-lightmode-secondary dark:text-text-darkmode-secondary"
               >
-                By selecting “withdraw” you agree to{' '}
+                By selecting "withdraw" you agree to{' '}
                 <a href={TERMS_OF_SERVICE} className="text-blue-500 dark:text-white underline">
                   Terms of Service
                 </a>
