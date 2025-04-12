@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import 'styled-components/macro'
 import {
   Button,
@@ -11,8 +11,8 @@ import {
   Icon
 } from 'gfx-component-lib'
 import { useConnectionConfig, useDarkMode, usePriceFeedFarm } from '@/context'
-import { IconWithFallback } from '../common/IconWithFallback'
-import { loadIconImage } from '@/utils/misc'
+// import { IconWithFallback } from '../common/IconWithFallback'
+// import { loadIconImage } from '@/utils/misc'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { TERMS_OF_SERVICE } from '@/constants'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
@@ -122,23 +122,23 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
                         Claiming Yield
                       </p>
                     </div>
-                    <div className="flex-1 flex flex-col items-center gap-2">
+                    <div className="flex flex-col items-center gap-2">
                       {claimableRewardsWithTokens.rewards.map((reward, index) => (
                         <div
                           key={`${reward.token.address}-${index}`}
-                          className="flex flex-row items-center gap-[5px]"
+                          className="flex flex-row items-center"
                         >
-                          <IconWithFallback
+                          {/* <IconWithFallback
                             src={loadIconImage(reward.token.logoURI, mode)}
                             className="border-solid dark:border-black-2 border-white
                           border-[2px] rounded-full h-[25px] w-[25px]"
-                          />
+                          /> */}
                           <p
                             className="font-display font-semibold text-[15px] 
                           text-text-lightmode-primary dark:text-text-darkmode-primary"
                           >
-                            {numberFormatter(reward.claimableAmount.toNumber())}
-                            {reward.token.symbol}
+                            {numberFormatter(reward.claimableAmount.toNumber())}{'  '}
+                            {reward.token.symbol}{'  '}
                             <span className="text-text-lightmode-tertiary dark:text-text-darkmode-tertiary">
                               (~$
                               {numberFormatter(reward.claimableAmountUsd.toNumber())})
@@ -163,8 +163,11 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
                 className="text-center mt-[10px] 
               text-[13px] text-text-lightmode-secondary dark:text-text-darkmode-secondary"
               >
-                By selecting “withdraw” you agree to{' '}
-                <a href={TERMS_OF_SERVICE} className="text-blue-500 dark:text-white underline">
+                By selecting “Claim” you agree to{' '}
+                <a href={TERMS_OF_SERVICE} 
+                  target='_blank'
+                  rel="noopener noreferrer"
+                  className="text-blue-500 dark:text-white underline">
                   Terms of Service
                 </a>
               </p>
