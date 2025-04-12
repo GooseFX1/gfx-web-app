@@ -48,6 +48,7 @@ import useGammaProgramAmmConfig from '@/queries/GAMMA/pools/useGammaProgramAmmCo
 import { QUERY_KEY } from '@/queries/query.helper'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import useGetGammaSwapAccounts from '@/queries/GAMMA/pools/useGetGammaSwapAccounts'
+import { TokenAmount } from '@solana/web3.js'
 
 export const Swap: FC = () => {
   const { isDarkMode, mode } = useDarkMode()
@@ -274,7 +275,20 @@ export const Swap: FC = () => {
     swapAccountsQuery.isFetching ||
     swapMutation.isLoading
   const doesPoolExist = poolStateQuery.isFetched ? !!poolStateQuery.data : true
-
+  const handleHalf = () => {
+    const tokenBal: TokenAmount = balance[selectedTokenA?.address].tokenAmount
+    if (tokenBal.uiAmount == 0.0) {
+      return
+    }
+    amountTokenACommands.set(new Decimal(tokenBal.uiAmountString).div(2).toString())
+  }
+  const handleMax = () => {
+    const tokenBal: TokenAmount = balance[selectedTokenA?.address].tokenAmount
+    if (tokenBal.uiAmount == 0.0) {
+      return
+    }
+    amountTokenACommands.set(tokenBal.uiAmountString)
+  }
   return (
     <div
       className={`
@@ -387,21 +401,43 @@ mt-8 flex items-center justify-center
         </div>
         <div className={'flex flex-col px-2.5 py-3.75 gap-3.75'}>
           <div className={'flex w-full flex-col gap-3.75'}>
-            <div className={'flex w-full'}>
-              <h4 className={'text-text-lightmode-primary dark:text-text-darkmode-primary'}>You're Selling:</h4>
-              <p
-                className={cn(
-                  `ml-auto text-b2 cursor-pointer text-text-lightmode-primary dark:text-text-darkmode-primary`,
-                  balance[selectedTokenA?.address].tokenAmount.uiAmount == 0 &&
+            <div className={'flex w-full md:items-center gap-2 flex-col md:flex-row'}>
+              <div className={'flex w-full'}>
+                <h4 className={'text-text-lightmode-primary dark:text-text-darkmode-primary'}>You're Selling:</h4>
+                <p
+                  className={cn(
+                    `ml-auto text-b2 cursor-pointer text-text-lightmode-primary dark:text-text-darkmode-primary`,
+                    balance[selectedTokenA?.address].tokenAmount.uiAmount == 0 &&
                     `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
-                )}
-                onClick={() => {
-                  amountTokenACommands.set(balance[selectedTokenA?.address].tokenAmount.uiAmountString)
-                }}
-              >
-                Balance: {numberFormatter(balance[selectedTokenA?.address].tokenAmount.uiAmount)}{' '}
-                {selectedTokenA?.symbol}
-              </p>
+                  )}
+                  onClick={() => {
+                    amountTokenACommands.set(balance[selectedTokenA?.address].tokenAmount.uiAmountString)
+                  }}
+                >
+                  Balance: {numberFormatter(balance[selectedTokenA?.address].tokenAmount.uiAmount)}{' '}
+                  {selectedTokenA?.symbol}
+                </p>
+              </div>
+              {selectedTokenA && (
+                <div className={'flex gap-2'}>
+                  <Button
+                    variant={'outline'}
+                    size={'sm'}
+                    colorScheme={!isDarkMode ? 'blue' : 'default'}
+                    onClick={handleHalf}
+                  >
+                    Half
+                  </Button>
+                  <Button
+                    variant={'outline'}
+                    size={'sm'}
+                    colorScheme={!isDarkMode ? 'blue' : 'default'}
+                    onClick={handleMax}
+                  >
+                    Max
+                  </Button>
+                </div>
+              )}
             </div>
             <div className={'flex flex-col gap-1.5'}>
               <TokenSelectInput
