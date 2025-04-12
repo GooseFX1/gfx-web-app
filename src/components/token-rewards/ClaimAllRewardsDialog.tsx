@@ -46,8 +46,6 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
   const handleClaimAll = async () => {
     try {
       setSendingTransaction(true)
-      const txBuilder = createTransactionBuilder()
-
       // Split rewards into batches of 5
       const batchSize = 5
       const rewards = claimableRewardsWithTokens.rewards
@@ -178,7 +176,7 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
                 className="text-center mt-[10px] 
               text-[13px] text-text-lightmode-secondary dark:text-text-darkmode-secondary"
               >
-                By selecting "withdraw" you agree to{' '}
+                By selecting “withdraw” you agree to{' '}
                 <a href={TERMS_OF_SERVICE} className="text-blue-500 dark:text-white underline">
                   Terms of Service
                 </a>
