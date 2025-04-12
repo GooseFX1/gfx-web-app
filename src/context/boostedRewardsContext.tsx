@@ -25,19 +25,19 @@ export interface IBoostedRewardsConfig {
   isLoadingActiveRewards: boolean
   isLoadingClaimableRewards: boolean
   getActiveRewardByPoolId: (poolId: PublicKey) =>
-    | {
-        rewards: { publicKey: PublicKey; rewardInfo: RewardInfo }[]
-        token: TokenListToken
-        pricePerDay: BigNumber
-        pricePerDayUsd: BigNumber
-      }[]
+    | ActiveReward[]
     | null
   getClaimableRewardByPoolId: (
     poolId: PublicKey
   ) => { claimableAmount: BigNumber; claimableAmountUsd: BigNumber } | null
   refreshRewards: () => Promise<boolean>
 }
-
+export type ActiveReward = {
+  rewards: { publicKey: PublicKey; rewardInfo: RewardInfo }[]
+  token: TokenListToken
+  pricePerDay: BigNumber
+  pricePerDayUsd: BigNumber
+}
 const BoostedRewardsContext = createContext<IBoostedRewardsConfig | null>(null)
 
 export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -69,7 +69,9 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
         ...new Set(allActiveRewards.map((reward) => reward.rewardInfo.mint)),
         ...new Set(claimableRewards.map((reward) => reward.rewardInfo.mint))
       ]
+      if (allTokenAddresses.length === 0) return []
       const res = await fetchTokensByPublicKey(allTokenAddresses.join(','))
+
       if (!res || !res.success || res.data.tokens?.length === 0) return []
       return res.data.tokens
     }
@@ -118,12 +120,7 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
     const tokensLookup = new Map<string, TokenListToken>(tokensInRewardsQuery.data.map((t) => [t.address, t]))
     const mappedRewards = new Map<
       string,
-      {
-        token: TokenListToken
-        pricePerDay: BigNumber
-        pricePerDayUsd: BigNumber
-        rewards: { publicKey: PublicKey; rewardInfo: RewardInfo }[]
-      }
+      ActiveReward
     >()
     for (const reward of activeRewards) {
       const token = tokensLookup.get(reward.rewardInfo.mint.toBase58())

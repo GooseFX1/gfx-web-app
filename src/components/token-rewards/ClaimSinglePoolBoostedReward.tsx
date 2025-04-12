@@ -1,82 +1,19 @@
 import { loadIconImage } from '@/utils/misc'
 import { IconWithFallback } from '../common/IconWithFallback'
-import { RewardInfo, TokenListToken, useDarkMode, useConnectionConfig, usePriceFeedFarm } from '@/context'
-import { AccordionContent, AccordionItem, AccordionTrigger, Button, Icon } from 'gfx-component-lib'
+import { useDarkMode } from '@/context'
+import { AccordionContent, AccordionItem, AccordionTrigger, Icon } from 'gfx-component-lib'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
 import { GAMMAPool } from '@/types/gamma'
 import { PublicKey } from '@solana/web3.js'
-import { useEffect, useMemo } from 'react'
-import { useState } from 'react'
-import BigNumber from 'bignumber.js'
 import { numberFormatter } from '@/utils'
-import { claimRewards } from '@/web3/Farm'
-import useTransaction from '@/hooks/useTransaction'
-import { useWallet } from '@solana/wallet-adapter-react'
 
 export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
   const { mode } = useDarkMode()
-  const { getActiveRewardByPoolId, getClaimableRewardByPoolId, refreshRewards } = useBoostedRewards()
+  const { getActiveRewardByPoolId } = useBoostedRewards()
 
-  const [activeReward, setActiveReward] = useState<
-    | {
-        publicKey: PublicKey
-        rewardInfo: RewardInfo
-        token: TokenListToken
-        pricePerDay: BigNumber
-      }[]
-    | null
-  >(null)
-
-  const [claimableReward, setClaimableReward] = useState<
-    | ({ claimableAmount: BigNumber; claimableAmountUsd: BigNumber; })
-    | null
-  >(null)
-
-  const [sendingTransaction, setSendingTransaction] = useState(false)
-  const { sendTransaction, createTransactionBuilder } = useTransaction()
-  const { connection } = useConnectionConfig()
-  const { wallet } = useWallet()
-  const { GammaProgram } = usePriceFeedFarm()
-  const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
-
-  useEffect(() => {
-    setActiveReward(getActiveRewardByPoolId(new PublicKey(pool.id)))
-    setClaimableReward(
-      getClaimableRewardByPoolId(new PublicKey(pool.id))
-    )
-  }, [getActiveRewardByPoolId, getClaimableRewardByPoolId, pool.id])
+  const activeReward = getActiveRewardByPoolId(new PublicKey(pool.id))
 
   if (!activeReward) return null
-
-  const handleClaimReward = async () => {
-    try {
-      setSendingTransaction(true)
-      const txBuilder = createTransactionBuilder()
-
-      const tx = await claimRewards(GammaProgram, userPublicKey, connection, claimableReward)
-      txBuilder.add(tx)
-
-      const { success } = await sendTransaction(
-        txBuilder,
-        {
-          // eslint-disable-next-line max-len
-          successMessage: `You claimed $${claimableReward.claimableAmountUsd.toNumber()} in rewards`
-        },
-        undefined,
-        undefined,
-        true
-      )
-      if (!success) {
-        console.log('An error occurred while claiming rewards!')
-      } else {
-        const refreshSuccess = refreshRewards()
-        console.log('refresh Rewards Success', refreshSuccess)
-      }
-    } catch (e) {
-      console.log('An error occurred while claiming rewards.', e)
-    }
-    setSendingTransaction(false)
-  }
 
   return (
     <div className="w-full border-transparent bg-gradient-to-r from-[#F7931A] to-[#C31AE3] p-[1px] rounded-[4px]">
@@ -89,46 +26,25 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
         </AccordionTrigger>
         <AccordionContent>
           <div className="flex flex-col gap-[10px] pt-2">
-          {activeReward.map((reward) => (
-            <div key={reward.token.address.toString()} className="flex flex-row items-center justify-between">
-              <div className="flex flex-row items-center gap-[5px]">
-                <IconWithFallback
-                  src={loadIconImage(reward.token.logoURI, mode)}
-                  className=" rounded-full "
-                />
+            {activeReward.map((reward) => (
+              <div key={reward.token.address.toString()} className="flex flex-row items-center justify-between">
+                <div className="flex flex-row items-center gap-[5px]">
+                  <IconWithFallback src={loadIconImage(reward.token.logoURI, mode)} className=" rounded-full " />
+                  <p
+                    className="font-display font-semibold text-[15px] 
+                    text-text-lightmode-primary dark:text-text-darkmode-primary"
+                  >
+                    {reward.token.symbol}
+                  </p>
+                </div>
                 <p
                   className="font-display font-semibold text-[15px] 
-                    text-text-lightmode-primary dark:text-text-darkmode-primary"
+                      text-text-lightmode-secondary dark:text-text-darkmode-secondary"
                 >
-                  {reward.token.symbol}
+                  {numberFormatter(reward.pricePerDay.toNumber())} {reward.token.symbol} / day
                 </p>
               </div>
-              <p
-                className="font-display font-semibold text-[15px] 
-                      text-text-lightmode-secondary dark:text-text-darkmode-secondary"
-              >
-                {numberFormatter(reward.pricePerDay.toNumber())} {reward.token.symbol} / day
-              </p>
-            </div>
-          ))}
-
-            {false && (
-              <Button
-                className="w-full py-[5px] px-[10px] 
-                    border-[1px] border-transparent bg-gradient-to-r from-[#F7931A] to-[#C31AE3] p-[1px]"
-                colorScheme={'blue'}
-                variant={'outline'}
-                onClick={handleClaimReward}
-                isLoading={sendingTransaction}
-              >
-                <div
-                  className="bg-white dark:bg-black-1 h-full w-full rounded-[999px] 
-                              flex items-center justify-center"
-                >
-                  Claim ${numberFormatter(claimableReward.claimableAmountUsd.toNumber())}
-                </div>
-              </Button>
-            )}
+            ))}
           </div>
         </AccordionContent>
       </AccordionItem>
