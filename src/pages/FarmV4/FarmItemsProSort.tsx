@@ -28,7 +28,7 @@ const FarmRowItem: FC<{
             onClick={onClick}
             className={cn(
               `justify-center p-0 break-words text-h4 text-text-lightmode-secondary
-              dark:text-text-darkmode-secondary font-semibold font-nunito
+              dark:text-text-darkmode-secondary font-semibold font-nunito no-underline
             `,
               className
             )}
@@ -80,24 +80,26 @@ const FarmItemsProSort: FC = () => {
           className={'sm-lg:hidden'}
         />
       )}
-      {isDesktop &&
+      {isDesktop && (
         <FarmRowItem
           title={'Fee Tier'}
+          tooltip={`The percentage fee taken by the pool, this influence the rewards you'll earn.`}
           canSort={false}
         />
-      }
+      )}
       <FarmRowItem
         title={`${computedViewRange} ${isMobile || isTablet ? 'Vol' : 'Volume'}`}
         tooltip={`${computedViewRange} Volume is reset daily at 10PM UTC`}
         onClick={() => handlePoolSort(currentSort === '3' ? '4' : '3')}
         invert={currentSort == '3'}
       />
-      {isDesktop &&
-        <FarmRowItem title={`${computedViewRange} Fees`}
+      {isDesktop && (
+        <FarmRowItem
+          title={`${computedViewRange} Fees`}
           onClick={() => handlePoolSort(currentSort === '5' ? '6' : '5')}
           invert={currentSort == '5'}
         />
-      }
+      )}
       <FarmRowItem
         title={`${computedViewRange} APR`}
         tooltip={'Values are displayed in native token'}
@@ -105,13 +107,7 @@ const FarmItemsProSort: FC = () => {
         invert={currentSort == '7'}
         className={'max-sm:w-full max-sm:justify-end sm-lg:w-full sm-lg:justify-end'}
       />
-      {!isMobile &&
-        <FarmRowItem
-          title={'Actions'}
-          canSort={false}
-          className={'sm-lg:hidden'}
-        />
-      }
+      {!isMobile && <FarmRowItem title={'Actions'} canSort={false} className={'sm-lg:hidden'} />}
     </div>
   )
 }

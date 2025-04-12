@@ -28,10 +28,9 @@ const FarmRowItem: FC<{
             onClick={onClick}
             className={cn(
               `justify-center p-0 break-words text-h4 text-text-lightmode-secondary
-              dark:text-text-darkmode-secondary font-semibold font-nunito
+              dark:text-text-darkmode-secondary font-semibold font-nunito no-underline
             `,
-              className,
-              'underline decoration-dotted'
+              className
             )}
           >
             {buttonContent}
@@ -81,7 +80,7 @@ const MyPositionSortHeader: FC = () => {
       />
       <FarmRowItem
         title={'Position'}
-        onClick={()=>handlePoolSort(sort == 'ASC' ? '9' : '10')}
+        onClick={() => handlePoolSort(sort == 'ASC' ? '9' : '10')}
         tooltip={'Current deposit in the pool, displayed in approximate USD value.'}
         invert={sort == 'DESC' && sortType == 'position'}
         iconRight={true}
@@ -98,16 +97,12 @@ const MyPositionSortHeader: FC = () => {
       {isDesktop && <FarmRowItem title={'Token A/B'} />}
       <FarmRowItem
         title={'APR'}
+        tooltip={`Values are displayed in native token`}
         onClick={() => handlePoolSort(sort == 'ASC' ? '7' : '8')}
         invert={sort == 'DESC' && sortType == 'apr'}
         iconRight={true}
       />
-      {(isTablet || isDesktop) && (
-        <FarmRowItem
-          title={'Actions'}
-          iconRight={false}
-        />
-      )}
+      {(isTablet || isDesktop) && <FarmRowItem title={'Actions'} iconRight={false} />}
     </div>
   )
 }
