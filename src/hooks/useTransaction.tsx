@@ -57,7 +57,7 @@ function useTransaction(): useTransactionReturn {
         (txnIn instanceof TransactionBuilder ? await txnIn
           ._getTransactionWithoutPriorityFee(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0)) : txnIn)
       )
-      const priorityFromLevel = getPriorityFeeFromLevel(priorityFee, result)
+      const priorityFromLevel = typeof result === 'number' ? result : getPriorityFeeFromLevel(priorityFee, result)
       console.log({ result, priorityFromLevel })
       const txn = txnIn instanceof TransactionBuilder ?
         await txnIn
