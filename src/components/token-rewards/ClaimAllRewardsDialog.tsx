@@ -87,7 +87,7 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
     <Dialog open={openClaimAllRewardsDialog} onOpenChange={setOpenClaimAllRewardsDialog}>
       <DialogPortal>
         <DialogOverlay />
-        <DialogContent className="z-[1002]" placement={isMobile ? 'bottom' : 'default'} size={'lg'}>
+        <DialogContent className="z-[1002] w-[400px]" placement={isMobile ? 'bottom' : 'default'} size={'lg'}>
           <DialogBody>
             <div className="flex flex-col p-[10px] pt-[12px] w-full">
               <div className="flex flex-row items-center justify-between w-full">
@@ -101,7 +101,7 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
                   <Icon
                     src={`/img/assets/rewards_close-${mode}.svg`}
                     alt="Close"
-                    className="w-4 h-4 min-w-[25px] min-h-[25px]"
+                    className="w-3.75 h-3.75 min-w-[15px] min-h-[15px]"
                   />
                 </DialogClose>
               </div>
@@ -112,17 +112,15 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
                 >
                   By claiming, you will get any pending yield available.
                 </p>
-                <div className="flex flex-col justify-between">
-                  <div className="flex flex-row items-center justify-between">
+                <div className="flex flex-col">
+                  <div className="flex flex-row items-center">
                     <div className="flex-1">
                       <p
                         className="font-display font-semibold text-[15px] 
                       text-text-lightmode-secondary dark:text-text-darkmode-secondary"
-                      >
-                        Claiming Yield
-                      </p>
+                      >{' '}</p>
                     </div>
-                    <div className="flex flex-col items-center gap-2">
+                    <div className="flex flex-col gap-2 items-end">
                       {claimableRewardsWithTokens.rewards.map((reward, index) => (
                         <div
                           key={`${reward.token.address}-${index}`}
