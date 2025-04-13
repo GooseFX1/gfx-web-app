@@ -8,8 +8,11 @@ import MyPositionItems from './MyPositions'
 import FarmSort from '@/pages/FarmV4/FarmSort'
 import useBoolean from '@/hooks/useBoolean'
 import TokenSearchBar from '@/pages/FarmV4/TokenSearchBar'
+import { ClaimAllRewards } from '@/components/token-rewards/ClaimAllButton'
+import { ClaimAllRewardsDialog } from '@/components/token-rewards/ClaimAllRewardsDialog'
 
 const ProPositions: FC = () => {
+  const [openClaimAllRewardsDialog, setOpenClaimAllRewardsDialog] = useBoolean(false)
   const {
     currentPoolType,
     setCurrentPoolType,
@@ -72,7 +75,15 @@ const ProPositions: FC = () => {
         />
         <div className="flex w-full items-center justify-between">
           <TokenSearchBar />
-          <div className="ml-auto">
+          <div className="flex justify-between items-center gap-[15px]">
+                <ClaimAllRewards
+                  openClaimAllRewardsDialog={openClaimAllRewardsDialog}
+                  setOpenClaimAllRewardsDialog={setOpenClaimAllRewardsDialog.set}
+                />
+                <ClaimAllRewardsDialog
+                  openClaimAllRewardsDialog={openClaimAllRewardsDialog}
+                  setOpenClaimAllRewardsDialog={setOpenClaimAllRewardsDialog.set}
+                />
             <FarmSort isOpen={isOpen} setIsOpen={setIsOpen.set} />
           </div>
         </div>
