@@ -11,8 +11,8 @@ import {
   Icon
 } from 'gfx-component-lib'
 import { useConnectionConfig, useDarkMode, usePriceFeedFarm } from '@/context'
-// import { IconWithFallback } from '../common/IconWithFallback'
-// import { loadIconImage } from '@/utils/misc'
+import { IconWithFallback } from '../common/IconWithFallback'
+import { loadIconImage } from '@/utils/misc'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { TERMS_OF_SERVICE } from '@/constants'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
@@ -87,7 +87,11 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
     <Dialog open={openClaimAllRewardsDialog} onOpenChange={setOpenClaimAllRewardsDialog}>
       <DialogPortal>
         <DialogOverlay />
-        <DialogContent className="z-[1002] w-[400px]" placement={isMobile ? 'bottom' : 'default'} size={'lg'}>
+        <DialogContent
+          className="z-[1002] w-[340px] max-sm:w-full"
+          placement={isMobile ? 'bottom' : 'default'}
+          size={'lg'}
+        >
           <DialogBody>
             <div className="flex flex-col p-[10px] pt-[12px] w-full">
               <div className="flex flex-row items-center justify-between w-full">
@@ -112,39 +116,33 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
                 >
                   By claiming, you will get any pending yield available.
                 </p>
-                <div className="flex flex-col">
-                  <div className="flex flex-row items-center">
-                    <div className="flex-1">
-                      <p
-                        className="font-display font-semibold text-[15px] 
-                      text-text-lightmode-secondary dark:text-text-darkmode-secondary"
-                      >{' '}</p>
-                    </div>
-                    <div className="flex flex-col gap-2 items-end">
-                      {claimableRewardsWithTokens.rewards.map((reward, index) => (
-                        <div
-                          key={`${reward.token.address}-${index}`}
-                          className="flex flex-row items-center"
-                        >
-                          {/* <IconWithFallback
+                <div className="px-2 py-1">
+                  <div className="flex flex-col gap-1 w-full">
+                    {claimableRewardsWithTokens.rewards.map((reward, index) => (
+                      <div
+                        key={`${reward.token.address}-${index}`}
+                        className="flex flex-row items-center justify-between w-full"
+                      >
+                        <div className="flex flex-row items-center">
+                          <IconWithFallback
                             src={loadIconImage(reward.token.logoURI, mode)}
                             className="border-solid dark:border-black-2 border-white
-                          border-[2px] rounded-full h-[25px] w-[25px]"
-                          /> */}
-                          <p
-                            className="font-display font-semibold text-[15px] 
-                          text-text-lightmode-primary dark:text-text-darkmode-primary"
-                          >
-                            {numberFormatter(reward.claimableAmount.toNumber())}{'  '}
-                            {reward.token.symbol}{'  '}
-                            <span className="text-text-lightmode-tertiary dark:text-text-darkmode-tertiary">
-                              (~$
-                              {numberFormatter(reward.claimableAmountUsd.toNumber())})
-                            </span>
-                          </p>
+                            border-[2px] rounded-full h-[25px] w-[25px]"
+                          />
+                          <span className="ml-2">{reward.token.symbol}</span>
                         </div>
-                      ))}
-                    </div>
+                        <div
+                          className="font-display font-semibold text-[15px] 
+                          text-text-lightmode-primary dark:text-text-darkmode-primary"
+                        >
+                          {numberFormatter(reward.claimableAmount.toNumber())}
+                          {'  '}
+                          <span className="text-text-lightmode-tertiary dark:text-text-darkmode-tertiary">
+                            (${numberFormatter(reward.claimableAmountUsd.toNumber())})
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -162,10 +160,12 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
               text-[13px] text-text-lightmode-secondary dark:text-text-darkmode-secondary"
               >
                 By selecting “Claim” you agree to{' '}
-                <a href={TERMS_OF_SERVICE} 
-                  target='_blank'
+                <a
+                  href={TERMS_OF_SERVICE}
+                  target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-500 dark:text-white underline">
+                  className="text-blue-500 dark:text-white underline"
+                >
                   Terms of Service
                 </a>
               </p>
