@@ -43,14 +43,7 @@ const PriorityFee: FC = () => {
     }
   }, [priorityFee])
   const saveDisabled = priorityFee === localPriorityFee
-
-  // removing for now as per Gluke's feedback
-  // useEffect(() => {
-  //   if (status >= 1) {
-  //     setPriorityFee('Turbo')
-  //   }
-  // }, [status])
-
+  
   const handleSave = useCallback(() => {
     setIsOpen.off()
     if (priorityFee !== localPriorityFee) {
