@@ -128,14 +128,9 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
                           />
                           <p
                             className="font-display font-semibold text-[15px] 
-                          text-text-lightmode-primary dark:text-text-darkmode-primary"
+                          text-text-lightmode-primary dark:text-text-darkmode-primary ml-2"
                           >
-                            {numberFormatter(reward.claimableAmount.toNumber())}
                             {reward.token.symbol}
-                            <span className="text-text-lightmode-tertiary dark:text-text-darkmode-tertiary">
-                              (~$
-                              {numberFormatter(+reward.claimableAmountUsd.toFixed(2))})
-                            </span>
                           </p>
                         </div>
                         <div
