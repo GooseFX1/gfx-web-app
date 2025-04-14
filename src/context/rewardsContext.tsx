@@ -242,10 +242,13 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const claimFeesMutation = useMutation({
     mutationFn: async () => {
       const txn = await checkForUserAccount(async () => programQuery.data.claimFees(publicKey))
-      await sendTransaction(txn)
+      const {success} = await sendTransaction(txn)
+      if (!success) {
+        throw new Error('claim fee failed')
+      }
     },
-    onSuccess: () => {
-      userDataQuery.refetch()
+    onSuccess: async () => {
+      await userDataQuery.refetch()
     }
   })
   const redeemUnstakingTicketsMutation = useMutation({
@@ -258,8 +261,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       )
       await sendTransaction(txn)
     },
-    onSuccess: () => {
-      userDataQuery.refetch()
+    onSuccess: async () => {
+      await userDataQuery.refetch()
     }
   })
 
