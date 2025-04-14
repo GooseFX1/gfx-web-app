@@ -100,12 +100,12 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const userDataQuery = useQuery({
     queryKey: [QUERY_KEY, 'gfx-stake-user', base58PublicKey],
     queryFn: async () => {
-      const [userMetadata, unstakingTickets, userHoldingAccount] = await Promise.all([
+      const [userMetadata, unstakingTickets, claimable] = await Promise.all([
         programQuery.data.getUserMetaData(publicKey),
         programQuery.data.getUnstakingTickets(publicKey),
-        programQuery.data.getUserRewardsHoldingAccount(publicKey)
+        programQuery.data.getUserRewardsHoldingAmount(publicKey)
       ])
-      const claimable = await programQuery.data.getUserRewardsHoldingAmount(userHoldingAccount)
+
       const unstakeableTickets = programQuery.data.getUnstakeableTickets(unstakingTickets)
       return {
         userMetadata,
@@ -135,6 +135,10 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     hasRewards,
     claimable: userDataQuery.data?.claimable,
     userStakeRatio
+  })
+  console.log('STAKE REWARDS',{
+    hasRewards,
+    userData: userDataQuery.data
   })
   const { createTransactionBuilder, sendTransaction } = useTransaction()
 
