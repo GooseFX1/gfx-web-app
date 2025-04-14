@@ -147,7 +147,7 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
                 className="w-full py-[7.5px] px-[10px] mt-[10px]"
                 colorScheme={'blue'}
                 variant={'primary'}
-                onClick={() => claimAllMutation.mutate}
+                onClick={() => claimAllMutation.mutate()}
                 isLoading={claimAllMutation.isLoading}
               >
                 Claim ${numberFormatter(claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber())}
