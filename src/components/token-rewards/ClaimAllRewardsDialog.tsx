@@ -126,7 +126,17 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
                             className="border-solid dark:border-black-2 border-white
                             border-[2px] rounded-full h-[25px] w-[25px]"
                           />
-                          <span className="ml-2">{reward.token.symbol}</span>
+                          <p
+                            className="font-display font-semibold text-[15px] 
+                          text-text-lightmode-primary dark:text-text-darkmode-primary"
+                          >
+                            {numberFormatter(reward.claimableAmount.toNumber())}
+                            {reward.token.symbol}
+                            <span className="text-text-lightmode-tertiary dark:text-text-darkmode-tertiary">
+                              (~$
+                              {numberFormatter(+reward.claimableAmountUsd.toFixed(2))})
+                            </span>
+                          </p>
                         </div>
                         <div
                           className="font-display font-semibold text-[15px] 
@@ -150,7 +160,7 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
                 onClick={() => claimAllMutation.mutate()}
                 isLoading={claimAllMutation.isLoading}
               >
-                Claim ${numberFormatter(claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber())}
+                Claim ${numberFormatter(+claimableRewardsWithTokens.totalClaimableRewardsUsd.toFixed(2))}
               </Button>
               <p
                 className="text-center mt-[10px] 

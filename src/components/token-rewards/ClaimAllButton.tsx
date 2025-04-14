@@ -47,7 +47,7 @@ export function ClaimAllRewards({ setOpenClaimAllRewardsDialog }: ClaimAllReward
           className="text-[15px] font-semibold text-black-1
           dark:text-white font-poppins"
         >
-          ${numberFormatter(claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber())}
+          ${numberFormatter(+claimableRewardsWithTokens.totalClaimableRewardsUsd.toFixed(2))}
         </p>
       </div>
       <Button
