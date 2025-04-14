@@ -100,12 +100,12 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const userDataQuery = useQuery({
     queryKey: [QUERY_KEY, 'gfx-stake-user', base58PublicKey],
     queryFn: async () => {
-      const [userMetadata, unstakingTickets, userHoldingAccount] = await Promise.all([
+      const [userMetadata, unstakingTickets, claimable] = await Promise.all([
         programQuery.data.getUserMetaData(publicKey),
         programQuery.data.getUnstakingTickets(publicKey),
-        programQuery.data.getUserRewardsHoldingAccount(publicKey)
+        programQuery.data.getUserRewardsHoldingAmount(publicKey)
       ])
-      const claimable = await programQuery.data.getUserRewardsHoldingAmount(userHoldingAccount)
+
       const unstakeableTickets = programQuery.data.getUnstakeableTickets(unstakingTickets)
       return {
         userMetadata,
@@ -131,11 +131,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   })
   const userStakeRatio = (Number(userDataQuery.data?.totalStaked) / poolStateQuery.data?.totalStakedGlobally) * 100
   const hasRewards = userDataQuery.data?.claimable > 0 || userDataQuery.data?.unstakeableTickets?.length > 0
-  console.log({
-    hasRewards,
-    claimable: userDataQuery.data?.claimable,
-    userStakeRatio
-  })
+
   const { createTransactionBuilder, sendTransaction } = useTransaction()
 
   const checkForUserAccount = async (
@@ -205,9 +201,11 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const txn = await checkForUserAccount(async () => programQuery.data.stake(stakeAmount, publicKey))
       await sendTransaction(txn)
     },
-    onSuccess: () => {
-      userDataQuery.refetch()
-      poolStateQuery.refetch()
+    onSuccess: async () => {
+      await Promise.all([
+        userDataQuery.refetch(),
+        poolStateQuery.refetch()
+      ])
     }
   })
   const unstakeMutation = useMutation({
@@ -229,19 +227,24 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       txBuilder.add(txn._instructions)
       await sendTransaction(txBuilder)
     },
-    onSuccess: () => {
-      userDataQuery.refetch()
-      poolStateQuery.refetch()
+    onSuccess: async () => {
+      await Promise.all([
+        userDataQuery.refetch(),
+        poolStateQuery.refetch()
+      ])
     }
   })
 
   const claimFeesMutation = useMutation({
     mutationFn: async () => {
       const txn = await checkForUserAccount(async () => programQuery.data.claimFees(publicKey))
-      await sendTransaction(txn)
+      const {success} = await sendTransaction(txn)
+      if (!success) {
+        throw new Error('claim fee failed')
+      }
     },
-    onSuccess: () => {
-      userDataQuery.refetch()
+    onSuccess: async () => {
+      await userDataQuery.refetch()
     }
   })
   const redeemUnstakingTicketsMutation = useMutation({
@@ -254,8 +257,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       )
       await sendTransaction(txn)
     },
-    onSuccess: () => {
-      userDataQuery.refetch()
+    onSuccess: async () => {
+      await userDataQuery.refetch()
     }
   })
 
