@@ -51,8 +51,6 @@ function useGetGammaSwapAccounts({
     enabled:
       Boolean(mintA) &&
       Boolean(mintB) &&
-      Boolean(userSourceTokenType) &&
-      Boolean(userTargetTokenType) &&
       Boolean(poolIdKey) &&
       Boolean(poolState) &&
       Boolean(ammConfigId) &&
