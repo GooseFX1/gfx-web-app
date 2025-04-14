@@ -86,7 +86,8 @@ export const Swap: FC = () => {
   const observationStateQuery = useGammaProgramObservationState({
     observerKey: poolStateQuery.data?.observationKey
   })
-  const swapAccountsQuery = useGetGammaSwapAccounts({
+  console.log('poolStateQuery', poolStateQuery.data)
+  console.log('input', {
     mintA: selectedTokenA?.address,
     mintB: selectedTokenB?.address,
     userSourceTokenType: balance[selectedTokenA?.address].tokenType,
@@ -95,6 +96,16 @@ export const Swap: FC = () => {
     ammConfigId: ammQuery.data,
     poolIdKey: poolIdQuery.data
   })
+  const swapAccountsQuery = useGetGammaSwapAccounts({
+    mintA: selectedTokenA?.address,
+    mintB: selectedTokenB?.address,
+    userSourceTokenType: balance[selectedTokenA?.address].tokenType,
+    userTargetTokenType: balance[selectedTokenB?.address].tokenType ?? 'spl-token',
+    poolState: poolStateQuery.data,
+    ammConfigId: ammQuery.data,
+    poolIdKey: poolIdQuery.data
+  })
+  console.log('swapAccountsQuery', swapAccountsQuery.data)
 
   const approxSwapQuery = useQuery({
     queryKey: [
@@ -301,7 +312,7 @@ mt-8 flex items-center justify-center
                 className={cn(``, loadingPriceQuote && 'animate-spin')}
               />
             }
-            disabled={loadingPriceQuote || !selectedTokenA || !selectedTokenB || !poolStateQuery.data}
+            // disabled={loadingPriceQuote || !selectedTokenA || !selectedTokenB || !poolStateQuery.data}
             onClick={handleRefresh}
             className={'p-1.25 aspect-square'}
           />

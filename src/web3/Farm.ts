@@ -224,9 +224,12 @@ export const getAccountsForSwappingTokens = async (
   ammConfigId: PublicKey,
   poolIdKey: PublicKey
 ) => {
+  console.log('I was called');
   const mintAPublicKey = new PublicKey(mintA)
   const mintBPublickey = new PublicKey(mintB)
-  const [authorityKey,inputTokenAccount,outputTokenAccount] = await Promise.all([
+  console.log('mintAPublicKey', mintAPublicKey)
+  console.log('mintBPublickey', mintBPublickey)
+  const [authorityKey, inputTokenAccount, outputTokenAccount] = await Promise.all([
     getAuthorityKey(),
     getAssociatedTokenAddress(
       mintAPublicKey,
@@ -244,6 +247,21 @@ export const getAccountsForSwappingTokens = async (
 
   const compare = mintAPublicKey?.toBuffer()?.compare(poolState.token0Mint?.toBuffer())
 
+  console.log('compare', {
+    ammConfig: ammConfigId,
+    poolState: poolIdKey,
+    inputVault: compare > 0 ? poolState.token1Vault : poolState.token0Vault,
+    outputVault: compare > 0 ? poolState.token0Vault : poolState.token1Vault,
+    observationState: poolState.observationKey,
+    payer: userPublicKey,
+    inputTokenAccount: inputTokenAccount,
+    outputTokenAccount: outputTokenAccount,
+    inputTokenMint: mintAPublicKey,
+    outputTokenMint: mintBPublickey,
+    inputTokenProgram: userSourceTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID,
+    outputTokenProgram: userTargetTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID,
+    authority: authorityKey
+  })
   return {
     ammConfig: ammConfigId,
     poolState: poolIdKey,
@@ -805,6 +823,7 @@ export const swapTokens = async (
   observationState: GammaObservationState,
   accounts: any
 ) => {
+  console.log('accounts', accounts)
   const mintAPublicKey = new PublicKey(mintA?.address)
   const mintBPublickey = new PublicKey(mintB?.address)
 
