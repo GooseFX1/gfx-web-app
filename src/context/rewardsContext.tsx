@@ -131,15 +131,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   })
   const userStakeRatio = (Number(userDataQuery.data?.totalStaked) / poolStateQuery.data?.totalStakedGlobally) * 100
   const hasRewards = userDataQuery.data?.claimable > 0 || userDataQuery.data?.unstakeableTickets?.length > 0
-  console.log({
-    hasRewards,
-    claimable: userDataQuery.data?.claimable,
-    userStakeRatio
-  })
-  console.log('STAKE REWARDS',{
-    hasRewards,
-    userData: userDataQuery.data
-  })
+
   const { createTransactionBuilder, sendTransaction } = useTransaction()
 
   const checkForUserAccount = async (
