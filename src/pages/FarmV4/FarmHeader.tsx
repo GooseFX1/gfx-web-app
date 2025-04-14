@@ -155,6 +155,7 @@ export const FarmHeader: FC = () => {
                     setCurrentSort('9')
                     setShowDeposited(false)
                     setShowCreatedPools(false)
+                    setRange(0)
                     setIsPortfolio.on()
                   }
                 }
