@@ -20,8 +20,6 @@ import { IconWithFallback } from '@/components/common/IconWithFallback'
 import BigNumber from 'bignumber.js'
 import { PublicKey } from '@solana/web3.js'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
-import { useQuery } from '@tanstack/react-query'
-import { QUERY_KEY } from '@/queries/query.helper'
 
 type FarmRowProps = {
   pool: GAMMAPoolWithUserLiquidity
@@ -44,11 +42,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
     [pool.stats, viewRange]
   )
 
-  const { data: activeReward } = useQuery({
-    queryKey: [QUERY_KEY, 'activeReward', pool.id],
-    queryFn: () => getActiveRewardByPoolId(new PublicKey(pool.id)),
-    enabled: !!pool.id
-  })
+  const activeReward = getActiveRewardByPoolId(new PublicKey(pool.id))
 
   const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
   const apr = activeReward

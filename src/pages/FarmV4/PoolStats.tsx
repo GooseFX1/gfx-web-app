@@ -6,9 +6,7 @@ import BigNumber from 'bignumber.js'
 import { fetchTokensByPublicKey } from '@/api/gamma'
 import { getPoolValuesByRange } from '@/pages/FarmV4/FarmRow'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
-import { useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
-import { QUERY_KEY } from '@/queries/query.helper'
 import { useGamma } from '@/context'
 
 export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
@@ -25,16 +23,8 @@ export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
 
   const [fees, setFees] = useState<string>('Loading')
 
-  const { data: activeReward } = useQuery({
-    queryKey: [QUERY_KEY, 'activeReward', pool.id],
-    queryFn: () => getActiveRewardByPoolId(new PublicKey(pool.id)),
-    enabled: !!pool.id
-  })
-
-  const { formattedAPR } = useMemo(
-    () => getPoolValuesByRange(pool, viewRange),
-    [pool.stats, viewRange]
-  )
+  const activeReward = getActiveRewardByPoolId(new PublicKey(pool.id))
+  const { formattedAPR } = useMemo(() => getPoolValuesByRange(pool, viewRange), [pool.stats, viewRange])
 
   const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
   const apr = activeReward
