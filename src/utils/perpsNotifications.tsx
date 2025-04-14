@@ -169,8 +169,8 @@ export const notifyUsingPromise = async (
   tentativeTxId?: string,
   successMessage?: ReactNode,
   errorMessage?: ReactNode,
-  transactionLoadingDuration = 60000,
-  transactionDuration = 45000,
+  transactionLoadingDuration = 20000,
+  transactionDuration = 20000,
   id: string | number | undefined = undefined
 ): Promise<boolean> => {
   const config = {
