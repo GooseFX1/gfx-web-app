@@ -403,8 +403,8 @@ mt-8 flex items-center justify-center
             </PopoverContent>
           </Popover>
         </div>
-        <div className={'flex flex-col px-2.5 py-3.75 gap-3.75'}>
-          <div className={'flex w-full flex-col gap-3.75'}>
+        <div className={'flex flex-col px-2.5 py-3.75 gap-3'}>
+          <div className={'flex w-full flex-col gap-3'}>
             <div className={'flex w-full md:items-center gap-2 flex-col md:flex-row'}>
               <div className={'flex w-full'}>
                 <h4 className={'text-text-lightmode-primary dark:text-text-darkmode-primary'}>You're Selling:</h4>
@@ -478,7 +478,7 @@ mt-8 flex items-center justify-center
               amountTokenBCommands.set(amountTokenA)
             }}
           />
-          <div className={'flex w-full flex-col gap-3.75'}>
+          <div className={'flex w-full flex-col gap-3'}>
             <div className={'flex w-full'}>
               <h4 className={'text-text-lightmode-primary dark:text-text-darkmode-primary'}>You're Buying:</h4>
               <p
@@ -613,6 +613,7 @@ mt-8 flex items-center justify-center
               variant={'primary'}
               colorScheme={'blue'}
               fullWidth
+              className={'mt-1'}
               disabled={
                 swapNotValid || loadingPriceQuote || isLoading || !swapAccountsQuery.data || !doesPoolExist
               }
