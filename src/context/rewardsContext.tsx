@@ -209,9 +209,11 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const txn = await checkForUserAccount(async () => programQuery.data.stake(stakeAmount, publicKey))
       await sendTransaction(txn)
     },
-    onSuccess: () => {
-      userDataQuery.refetch()
-      poolStateQuery.refetch()
+    onSuccess: async () => {
+      await Promise.all([
+        userDataQuery.refetch(),
+        poolStateQuery.refetch()
+      ])
     }
   })
   const unstakeMutation = useMutation({
@@ -233,9 +235,11 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       txBuilder.add(txn._instructions)
       await sendTransaction(txBuilder)
     },
-    onSuccess: () => {
-      userDataQuery.refetch()
-      poolStateQuery.refetch()
+    onSuccess: async () => {
+      await Promise.all([
+        userDataQuery.refetch(),
+        poolStateQuery.refetch()
+      ])
     }
   })
 
