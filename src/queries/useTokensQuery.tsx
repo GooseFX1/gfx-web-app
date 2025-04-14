@@ -10,21 +10,19 @@ import { DEFAULT_INFINITE_QUERY_RESPONSE, getQueryKeys } from '@/queries/query.h
 
 type TokenQueryProps = {
   searchValue?: string
-  poolType?: string
 }
 type TokenListAPIResponse = InfiniteDataAPIResponse<TokenListToken[]>
 
 type TokenQueryResponse = InfiniteDataQueryResponse<TokenListAPIResponse, TokenListToken>
 
-function useTokensQuery({ searchValue = '', poolType = 'all' }: TokenQueryProps) {
+function useTokensQuery({ searchValue = '' }: TokenQueryProps) {
   const { topBalances, balance } = useWalletBalance()
-  const keys = getQueryKeys('GAMMA-tokens', searchValue, poolType)
+  const keys = getQueryKeys('GAMMA-tokens', searchValue)
   const query = useInfiniteQuery({
     queryKey: keys,
     queryFn: async ({ pageParam, signal, queryKey }) =>
       getTokens({
         searchValue: queryKey[1],
-        poolType: queryKey[3],
         pageParam,
         signal
       }),
@@ -80,19 +78,17 @@ function getTopBalancesWithTokenList(
   return data.sort((a, b) => (balance[a.address].value.gt(balance[b.address].value) ? -1 : 1))
 }
 
-async function getTokens({ searchValue, signal, pageParam = 1, poolType = 'all' }): Promise<TokenListAPIResponse> {
-  const searchQuery = searchValue ? `&search=${searchValue}` : ''
-  const poolTypeQuery = poolType ? `&tokenType=${poolType}` : ''
+async function getTokens({ searchValue, signal, pageParam = 1 }): Promise<TokenListAPIResponse> {
+  const searchQuery = searchValue ? `&search=${searchValue.trim()}` : ''
   const pageQuery = `?&page=${pageParam}&pageSize=${TOKEN_LIST_PAGE_SIZE}`
   const response = (await fetch(
     `https://${GAMMA_API_BASE}.goosefx.io` +
       GAMMA_ENDPOINTS_V1.TOKEN_LIST +
       pageQuery +
-      searchQuery +
-      poolTypeQuery,
-    {
-      signal
-    }
+      searchQuery,
+      {
+        signal
+      }
   ).then((res) => res.json())) as GAMMAListTokenResponse
 
   return {

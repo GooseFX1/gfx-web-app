@@ -109,7 +109,7 @@ async function fetchPoolsByMints({
 }): Promise<PoolsAPIResponse> {
   const pageQuery = `?page=${pageParam}&${POOL_LIST_PAGE_SIZE}`
   const sortQuery = `&sortBy=${sortBy}&sortOrder=${sortDirection}`
-  const mintQuery = `&mintA=${mintA}${mintB ? `&mintB=${mintB}` : ''}`
+  const mintQuery = `&mintA=${mintA.trim()}${mintB ? `&mintB=${mintB.trim()}` : ''}`
   const poolTypeQuery = `&poolType=${poolType}`
   let userQuery = ``
   if (userPublicKey) {
