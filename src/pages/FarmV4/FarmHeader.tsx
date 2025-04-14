@@ -90,18 +90,18 @@ export const FarmHeader: FC = () => {
   const options = useMemo(
     () => [
       {
-        value: '24h',
+        value: "0",
         label: '24H',
         onClick: () => setRange(0)
       },
       {
-        value: '7D',
+        value: "1",
         label: '7D',
         onClick: () => setRange(1),
         className: 'hidden min-md:inline-block'
       },
       {
-        value: '30D',
+        value: "2",
         label: '30D',
         onClick: () => setRange(2)
       }
@@ -182,10 +182,11 @@ export const FarmHeader: FC = () => {
         >
           <RadioOptionGroup
             optionSize={isMobile ? 'xl' : 'sm'}
-            defaultValue={'24h'}
+            defaultValue={'0'}
             orientation={'vertical'}
             className={'gap-0'}
             options={options}
+            value={range.toString()}
           />
           <div className="flex flex-row gap-2.5 self-stretch">
             {infoCards?.map((card, index) =>
