@@ -1,6 +1,5 @@
 import { Dispatch, ElementType, FC, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import {
-  Badge,
   Button,
   cn,
   Container,
@@ -49,7 +48,6 @@ const CreatePoolChooseTokenStep: FC<{
   walletTokenA: string
   walletTokenB: string
   setIsCreatePool: Dispatch<SetStateAction<boolean>>
-  poolType: string | null
 }> = ({
   tokenA,
   setTokenA,
@@ -58,8 +56,6 @@ const CreatePoolChooseTokenStep: FC<{
   handleChange,
   amountTokenA,
   amountTokenB,
-  // feeTier,
-  // setFeeTier,
   poolExists,
   setPoolExists,
   initialPrice,
@@ -67,7 +63,6 @@ const CreatePoolChooseTokenStep: FC<{
   walletTokenA,
   walletTokenB,
   setIsCreatePool,
-  poolType
 }) => {
   const { mode } = useDarkMode()
   const [priceSwitch, setPriceSwitch] = useState(false)
@@ -308,79 +303,7 @@ const CreatePoolChooseTokenStep: FC<{
             </div>
           )}
         </div>
-        <div className="flex flex-row justify-between items-center">
-          <Tooltip>
-            <TooltipTrigger className={`dark:text-grey-8 text-black-4 underline !decoration-dotted`}>
-              <h4>4. Type</h4>
-            </TooltipTrigger>
-            <TooltipContent className={'z-[1001]'} align={'start'}>
-              Stable: Stablecoin to stablecoin token pools only <br />
-              Primary: Tokens such as SOL, LSTs and bluechips <br />
-              Hyper: Any other tokens or memecoins
-            </TooltipContent>
-          </Tooltip>
 
-          {poolType ? (
-            <Badge
-              size={'lg'}
-              className={`py-1.75 pl-1.75 pr-3 from-brand-secondaryGradient-primary/30
-                                 to-brand-secondaryGradient-secondary/30`}
-            >
-              <img
-                src={
-                  poolType === 'Stable'
-                    ? `/img/assets/farm_primary.svg`
-                    : `/img/assets/farm_${poolType.toLowerCase()}.svg`
-                }
-                alt={poolType}
-                height={20}
-                width={20}
-                className="mr-[5px]"
-              />
-              {poolType === 'Stable' ? 'Primary' : poolType}
-            </Badge>
-          ) : (
-            <div
-              className={`border border-solid dark:border-black-4 border-grey-4 rounded-[3px]
-              py-1.75 px-3 bg-grey-5 dark:bg-black-1`}
-            >
-              <h5 className="text-grey-1">No Type</h5>
-            </div>
-          )}
-        </div>
-        {/* <div>
-            <div className="font-sans text-regular font-semibold dark:text-grey-8 text-black-4">
-              4. Fee Tier
-            </div>
-            <RadioOptionGroup
-              defaultValue={'deposit'}
-              value={feeTier}
-              className={`w-full mt-3 max-sm:mt-1`}
-              optionClassName={`w-full text-h5`}
-              options={[
-                {
-                  value: '0.01',
-                  label: '0.01%',
-                  onClick: () => setFeeTier('0.01')
-                },
-                {
-                  value: '0.04',
-                  label: '0.04%',
-                  onClick: () => setFeeTier('0.04')
-                },
-                {
-                  value: '0.7',
-                  label: '0.7%',
-                  onClick: () => setFeeTier('0.7')
-                },
-                {
-                  value: '1',
-                  label: '1%',
-                  onClick: () => setFeeTier('1')
-                }
-              ]}
-            />
-          </div> */}
         {/* We need the swap component here but later */}
         {tokenA &&
         tokenB &&

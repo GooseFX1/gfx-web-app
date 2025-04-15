@@ -232,7 +232,6 @@ export const CreatePool: FC<{
                   walletTokenA={walletTokenA}
                   walletTokenB={walletTokenB}
                   setIsCreatePool={setIsCreatePool}
-                  poolType={poolType}
                 />
               </div>
               <div className="slide">
@@ -241,7 +240,6 @@ export const CreatePool: FC<{
                   tokenB={tokenB}
                   amountTokenA={amountTokenA}
                   amountTokenB={amountTokenB}
-                  poolType={poolType}
                   initialPrice={initialPrice}
                 />
               </div>

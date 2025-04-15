@@ -46,7 +46,6 @@ function usePoolsQuery({
   sortDirection,
   showCreated,
   showDeposited,
-  poolType,
   searchValue,
   enabled = true
 }: PoolQueryProps) {
@@ -63,7 +62,6 @@ function usePoolsQuery({
     sortDirection,
     showCreated,
     showDeposited,
-    poolType,
     searchValue,
     enabled
   )
@@ -82,13 +80,11 @@ function usePoolsQuery({
           showCreated: showCreated,
           showDeposited: showDeposited,
           userPublicKey: base58PublicKey,
-          poolType: poolType
         })
       } else {
         return await fetchPools({
           pageParam,
           signal,
-          poolType: poolType,
           sortBy: sortBy,
           sortDirection: sortDirection,
           showCreated: showCreated,
@@ -129,13 +125,12 @@ async function fetchPoolsByMints({
   showCreated,
   showDeposited,
   userPublicKey,
-  poolType,
   pageParam = 1
 }): Promise<PoolsAPIResponse> {
   const pageQuery = `?page=${pageParam}&${POOL_LIST_PAGE_SIZE}`
   const sortQuery = `&sortBy=${sortBy}&sortOrder=${sortDirection}`
   const mintQuery = `&mint1=${mintA.trim()}${mintB ? `&mint2=${mintB.trim()}` : ''}`
-  const poolTypeQuery = `&poolType=${poolType}`
+  const poolTypeQuery = `&poolType=all`
   let userQuery = ``
   if (userPublicKey) {
     userQuery = `&userPublicKey=${userPublicKey}&showCreated=${showCreated}&showDeposited=${showDeposited}`
@@ -167,13 +162,12 @@ async function fetchPools({
   showCreated,
   showDeposited,
   userPublicKey,
-  poolType,
   searchValue,
   pageParam = 1
 }): Promise<PoolsAPIResponse> {
   const pageQuery = `?page=${pageParam}&pageSize=${POOL_LIST_PAGE_SIZE}`
   const sortQuery = `&sortBy=${sortBy}&sortOrder=${sortDirection}`
-  const poolTypeQuery = `&poolType=${poolType}`
+  const poolTypeQuery = `&poolType=all`
   const searchQuery = searchValue ? `&search=${searchValue.trim()}` : ''
   let userQuery = ``
   if (userPublicKey) {

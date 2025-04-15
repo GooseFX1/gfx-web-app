@@ -47,8 +47,7 @@ export const ReviewConfirm: FC<{
               Pool Fee Rate
             </TooltipTrigger>
             <TooltipContent>
-              This fee is dynamically calculated based on volatility in the pools to provide the best returns for LPs.
-              Ranging between 0.1% to 10%.
+              This is a dynamic fee that can vary between 0.01-10% depending on the token volatility
             </TooltipContent>
           </Tooltip>
 

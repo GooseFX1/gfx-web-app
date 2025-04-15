@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { useConnectionConfig, useDarkMode, useGamma } from '../../context'
-import { GAMMA_SORT_CONFIG, POOL_TYPE, GAMMA_SORT_CONFIG_DEFAULT } from './constants'
+import { GAMMA_SORT_CONFIG, GAMMA_SORT_CONFIG_DEFAULT } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
   Badge,
@@ -15,7 +15,6 @@ import {
   DialogPortal,
   Switch
 } from 'gfx-component-lib'
-import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
 import FarmItems from './FarmItems'
 import Portfolio from './Portfolio'
@@ -31,9 +30,7 @@ export const FarmContainer: FC = () => {
   const breakpoint = useBreakPoint()
   const { userCache, updateUserCache } = useConnectionConfig()
   const {
-    currentPoolType,
     openDepositWithdrawSlider,
-    setCurrentPoolType,
     showCreatedPools,
     setShowCreatedPools,
     currentSort,
@@ -127,34 +124,6 @@ export const FarmContainer: FC = () => {
       {!isPortfolio ? (
         <>
           <div className="flex items-center max-sm:flex-col max-sm:gap-2 sm-lg:flex-col sm-lg:gap-2 mt-4.5">
-            <RadioOptionGroup
-              defaultValue={'all'}
-              value={currentPoolType.type}
-              className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 min-md:mr-2 items-center'}
-              optionClassName={`min-md:w-[85px]`}
-              options={[
-                {
-                  value: POOL_TYPE.all.type,
-                  label: 'All',
-                  onClick: () => setCurrentPoolType(POOL_TYPE.all)
-                },
-                {
-                  value: POOL_TYPE.primary.type,
-                  label: 'Primary',
-                  onClick: () => setCurrentPoolType(POOL_TYPE.primary)
-                },
-                {
-                  value: POOL_TYPE.hyper.type,
-                  label: 'Hyper',
-                  onClick: () => setCurrentPoolType(POOL_TYPE.hyper)
-                }
-                // {
-                //   value: POOL_TYPE.migrate.name,
-                //   label: 'Migrate',
-                //   onClick: () => setCurrentPoolType(POOL_TYPE.migrate)
-                // }
-              ]}
-            />
             <div className="flex items-center w-full justify-between relative">
               <TokenSearchBar />
               <div className="flex justify-between items-center gap-[15px]">

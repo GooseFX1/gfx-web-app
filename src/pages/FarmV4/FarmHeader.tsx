@@ -1,7 +1,6 @@
 import React, { FC, Fragment, useMemo, useState } from 'react'
 import { useConnectionConfig, useDarkMode, useGamma } from '../../context'
 import { bigNumberFormatter, truncateBigNumber } from '../../utils'
-import { POOL_TYPE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
   Button,
@@ -34,10 +33,9 @@ export const FarmHeader: FC = () => {
     setViewRange: setRange,
     setIsPortfolio,
     isPortfolio,
-    setCurrentPoolType,
     setCurrentSort,
-    selectedTokens,
-    setShowDeposited
+    setShowDeposited,
+    setShowCreatedPools
   } = useGamma()
   const statsQuery = useStatsQuery()
   const { wallet } = useWallet()
@@ -92,18 +90,18 @@ export const FarmHeader: FC = () => {
   const options = useMemo(
     () => [
       {
-        value: '24h',
+        value: "0",
         label: '24H',
         onClick: () => setRange(0)
       },
       {
-        value: '7D',
+        value: "1",
         label: '7D',
         onClick: () => setRange(1),
         className: 'hidden min-md:inline-block'
       },
       {
-        value: '30D',
+        value: "2",
         label: '30D',
         onClick: () => setRange(2)
       }
@@ -145,15 +143,7 @@ export const FarmHeader: FC = () => {
                     setCurrentSort('1')
                     if (isPortfolio) {
                       setShowDeposited(false)
-                    }
-                    if (selectedTokens.length != 0) {
-                      if (selectedTokens.every((t) => t.isPrimary)) {
-                        setCurrentPoolType(POOL_TYPE.primary)
-                      } else {
-                        setCurrentPoolType(POOL_TYPE.hyper)
-                      }
-                    } else {
-                      setCurrentPoolType(POOL_TYPE.all)
+                      setShowCreatedPools(false)
                     }
                     setIsPortfolio.off()
                   }
@@ -163,13 +153,9 @@ export const FarmHeader: FC = () => {
                   label: 'Portfolio',
                   onClick: () => {
                     setCurrentSort('9')
-                    if (selectedTokens.length == 0) {
-                      setCurrentPoolType(POOL_TYPE.all)
-                    } else if (selectedTokens.every((t) => t.isPrimary)) {
-                      setCurrentPoolType(POOL_TYPE.primary)
-                    } else {
-                      setCurrentPoolType(POOL_TYPE.hyper)
-                    }
+                    setShowDeposited(false)
+                    setShowCreatedPools(false)
+                    setRange(0)
                     setIsPortfolio.on()
                   }
                 }
@@ -197,10 +183,11 @@ export const FarmHeader: FC = () => {
         >
           <RadioOptionGroup
             optionSize={isMobile ? 'xl' : 'sm'}
-            defaultValue={'24h'}
+            defaultValue={'0'}
             orientation={'vertical'}
             className={'gap-0'}
             options={options}
+            value={range.toString()}
           />
           <div className="flex flex-row gap-2.5 self-stretch">
             {infoCards?.map((card, index) =>
@@ -233,22 +220,6 @@ export const FarmHeader: FC = () => {
                 </Container>
               )
             )}
-            {/* {isCardMode && (
-              <div className="flex flex-col justify-around">
-                <div className="text-lg font-semibold font-poppins dark:text-grey-8 text-black-4">
-                  More metrics?
-                </div>
-                <div
-                  className="text-regular font-semibold dark:text-white text-blue-1 underline cursor-pointer"
-                  onClick={() => {
-                    setIsPortfolio.on()
-                    setCurrentPoolType(POOL_TYPE?.all)
-                  }}
-                >
-                  Go to Portfolio
-                </div>
-              </div>
-            )} */}
           </div>
         </div>
       )}
