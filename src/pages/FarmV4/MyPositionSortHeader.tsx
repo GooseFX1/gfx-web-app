@@ -87,7 +87,7 @@ const MyPositionSortHeader: FC = () => {
       />
       {isDesktop && (
         <FarmRowItem
-          title={'Fee'}
+          title={'Fee Tier'}
           tooltip={`The percentage fee taken by the pool, this influence the rewards you'll earn.`}
           invert={sort == 'DESC' && sortType == 'fee'}
           onClick={() => handlePoolSort(sort == 'ASC' ? '5' : '6')}
