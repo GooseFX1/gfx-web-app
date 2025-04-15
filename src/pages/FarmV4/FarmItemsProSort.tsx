@@ -78,6 +78,7 @@ const FarmItemsProSort: FC = () => {
           onClick={() => handlePoolSort(currentSort === '1' ? '2' : '1')}
           invert={currentSort == '1'}
           className={'sm-lg:hidden'}
+          tooltip={"The total value locked of assets in the pool"}
         />
       )}
       {isDesktop && (
