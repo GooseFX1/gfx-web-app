@@ -41,29 +41,41 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
 
   const claimAllMutation = useMutation({
     mutationFn: async () => {
-      const txBuilder = createTransactionBuilder()
+      // Split rewards into batches of 5
+      const batchSize = 5
+      const rewards = claimableRewardsWithTokens.rewards
+      const batches = []
 
-      for (const reward of claimableRewardsWithTokens.rewards) {
-        const tx = await claimRewards(GammaProgram, userPublicKey, connection, reward)
-        txBuilder.add(tx)
+      for (let i = 0; i < rewards.length; i += batchSize) {
+        batches.push(rewards.slice(i, i + batchSize))
       }
 
-      const { success } = await sendTransaction(
-        txBuilder,
-        {
-          successMessage: `You claimed $${numberFormatter(
-            claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber(),
-            4
-          )} in rewards`
-        },
-        undefined,
-        undefined,
-        true
-      )
-      if (!success) {
-        //off(connectionId)a
-        console.log('An error occurred while claiming rewards!')
-        throw new Error('An error occurred while claiming rewards!')
+      // Process each batch
+      for (const batch of batches) {
+        const batchTxBuilder = createTransactionBuilder()
+
+        for (const reward of batch) {
+          const tx = await claimRewards(GammaProgram, userPublicKey, connection, reward)
+          batchTxBuilder.add(tx)
+        }
+
+        const { success } = await sendTransaction(
+          batchTxBuilder,
+          {
+            successMessage: `You claimed $${numberFormatter(
+              claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber(),
+              4
+            )} in rewards`
+          },
+          undefined,
+          undefined,
+          true
+        )
+
+        if (!success) {
+          console.log('An error occurred while claiming rewards!')
+          throw new Error('An error occurred while claiming rewards!')
+        }
       }
     },
     onError: (err) => {
