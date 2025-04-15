@@ -51,6 +51,7 @@ export const TokenRewardsDrawer = ({ isOpen, setOpen }: { isOpen: boolean; setOp
       startDate={startDate}
       endDate={endDate}
       activeStep={currentStep}
+      setOpen={setOpen}
     />
   )
 
