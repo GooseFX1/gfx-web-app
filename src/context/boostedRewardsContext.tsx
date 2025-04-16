@@ -16,11 +16,7 @@ export interface IBoostedRewardsConfig {
   claimableRewards?: BoostedRewardInfo[]
   claimableRewardsWithTokens: {
     totalClaimableRewardsUsd: BigNumber
-    rewards: (BoostedRewardInfo & {
-      claimableAmount: BigNumber
-      claimableAmountUsd: BigNumber
-      token: TokenListToken
-    })[]
+    rewards: BoostedReward[]
   }
   isLoadingActiveRewards: boolean
   isLoadingClaimableRewards: boolean
@@ -37,6 +33,12 @@ export type ActiveReward = {
   token: TokenListToken
   pricePerDay: BigNumber
   pricePerDayUsd: BigNumber
+}
+export type BoostedReward = {
+  claimableAmount: BigNumber
+  claimableAmountUsd: BigNumber
+  token: TokenListToken,
+  rewards: BoostedRewardInfo[]
 }
 const BoostedRewardsContext = createContext<IBoostedRewardsConfig | null>(null)
 
@@ -82,7 +84,8 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
         totalClaimableRewardsUsd: new BigNumber(0),
         rewards: []
       }
-    const rewardsWithTokens = []
+    const mappedRewards = new Map<string, BoostedReward>();
+    let totalClaimableRewardsUsd = new BigNumber(0);
     const tokesLookup = new Map<string, TokenListToken>(tokensInRewardsQuery.data.map((t) => [t.address, t]))
     for (let i = 0; i < claimableRewardsQuery.data.length; i++) {
       const reward = claimableRewardsQuery.data[i]
@@ -95,20 +98,27 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
         .div(new BigNumber(10 ** _token.decimals))
 
       const claimableAmountUsd = claimableAmount.multipliedBy(_token.price)
-
-      rewardsWithTokens.push({
-        ...reward,
-        claimableAmount,
-        claimableAmountUsd,
-        token: _token
+      totalClaimableRewardsUsd = totalClaimableRewardsUsd.plus(claimableAmountUsd)
+      if (!mappedRewards.has(reward.rewardInfo.mint.toBase58())) {
+        mappedRewards.set(reward.rewardInfo.mint.toBase58(), {
+          token: _token,
+          claimableAmount: new BigNumber(0),
+          claimableAmountUsd: new BigNumber(0),
+          rewards: []
+        })
+      }
+      const currentReward = mappedRewards.get(reward.rewardInfo.mint.toBase58())
+      mappedRewards.set(reward.rewardInfo.mint.toBase58(), {
+        ...currentReward,
+        rewards: [...currentReward.rewards, reward],
+        claimableAmount: currentReward.claimableAmount.plus(claimableAmount),
+        claimableAmountUsd: currentReward.claimableAmountUsd.plus(claimableAmountUsd)
       })
     }
+
     return {
-      totalClaimableRewardsUsd: rewardsWithTokens.reduce(
-        (acc, reward) => acc.plus(reward.claimableAmountUsd),
-        new BigNumber(0)
-      ),
-      rewards: rewardsWithTokens
+      totalClaimableRewardsUsd,
+      rewards: Array.from(mappedRewards.values())
     }
   }, [claimableRewardsQuery.data, tokensInRewardsQuery.data])
 
