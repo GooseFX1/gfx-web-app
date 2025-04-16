@@ -58,7 +58,7 @@ import {
   RewardInfo,
   UserRewardInfo
 } from '@/context/price_feed_farm'
-import { GAMMAIDL } from '@/pages/FarmV4/idl/gamma'
+import { Gamma } from '@/pages/FarmV4/idl/gamma.type'
 
 enum TokenType {
   Token0,
@@ -151,7 +151,7 @@ const createLiquidityAccountIX = async (
   userPublicKey: PublicKey,
   poolIdKey: PublicKey,
   liquidityAccountKey: PublicKey,
-  program: Program<GAMMAIDL>
+  program: Program<Gamma>
 ): Promise<TransactionInstruction> => {
   const createLiquidityInstructionAccount = {
     user: userPublicKey,
@@ -425,7 +425,7 @@ export const deposit = async (
   slippage: number,
   selectedCard: any,
   userPublicKey: PublicKey,
-  program: Program<GAMMAIDL>,
+  program: Program<Gamma>,
   connection: Connection,
   userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
@@ -586,7 +586,7 @@ export const withdraw = async (
   slippage: number,
   selectedCard: any,
   userPublicKey: PublicKey,
-  program: Program<GAMMAIDL>,
+  program: Program<Gamma>,
   connection: Connection,
   userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
@@ -686,7 +686,7 @@ export const createPool = async (
   amountTokenA: string,
   amountTokenB: string,
   userPubKey: PublicKey,
-  program: Program<GAMMAIDL>,
+  program: Program<Gamma>,
   connection: Connection,
   tokenAType: 'spl-token' | 'native' | 'spl-token-2022',
   tokenBType: 'spl-token' | 'native' | 'spl-token-2022',
@@ -798,7 +798,7 @@ export const swapTokens = async (
   mintB: GAMMAToken | JupToken,
   userPublicKey: PublicKey,
   slippage: number,
-  program: Program<GAMMAIDL>,
+  program: Program<Gamma>,
   connection: Connection,
   ammConfigState: GammaAmmConfig[],
   poolState: GammaPoolState,
@@ -862,7 +862,7 @@ export const swapTokens = async (
 }
 
 export const createTokenRewards = async (
-  program: Program<GAMMAIDL>,
+  program: Program<Gamma>,
   poolId: string,
   startTime: dayjs.Dayjs,
   endTime: dayjs.Dayjs,
@@ -979,7 +979,7 @@ const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, 
 export const doesPoolWithMintsExist = async (
   mintA: string,
   mintB: string,
-  program: Program<GAMMAIDL>,
+  program: Program<Gamma>,
   ammConfigId: PublicKey
 ): Promise<boolean> => {
   try {
@@ -1000,7 +1000,7 @@ export interface BoostedRewardInfo {
 }
 
 export const getClaimRewardsAccounts = async (
-  program: Program<GAMMAIDL>,
+  program: Program<Gamma>,
   userPublicKey: PublicKey
 ): Promise<BoostedRewardInfo[]> => {
   const userRewardInfos = await program.account.userRewardInfo.all([
@@ -1038,7 +1038,7 @@ export const getClaimRewardsAccounts = async (
 }
 
 export const getAllActiveRewards = async (
-  program: Program<GAMMAIDL>
+  program: Program<Gamma>
 ): Promise<{ publicKey: PublicKey; rewardInfo: RewardInfo }[]> => {
   const currentTime = new BN(dayjs().unix())
   const userRewardInfos = await program.account.rewardInfo.all()
