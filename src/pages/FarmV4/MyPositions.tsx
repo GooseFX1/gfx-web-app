@@ -158,7 +158,7 @@ const MyPositionItem: FC<{
         >
           {pool.mintA.symbol} - {pool.mintB.symbol}
         </div>
-        {activeReward && !isMobile && (
+        {activeReward && activeReward.length > 0 && !isMobile && (
           <Icon src={`/img/assets/rewards-icon-${mode}.svg`} alt="claim-rewards" size={'sm'} className="ml-2" />
         )}
       </div>
