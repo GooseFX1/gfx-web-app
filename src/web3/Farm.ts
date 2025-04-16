@@ -58,7 +58,7 @@ import {
   RewardInfo,
   UserRewardInfo
 } from '@/context/price_feed_farm'
-import { Gamma } from '@/pages/FarmV4/idl/gammats'
+import { Gamma } from '@/pages/FarmV4/idl/gamma.type'
 
 enum TokenType {
   Token0,

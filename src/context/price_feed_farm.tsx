@@ -18,7 +18,7 @@ import { useConnectionConfig } from './settings'
 import { PublicKey } from '@solana/web3.js'
 import sslJson from '../pages/FarmV3/idl/sslv2.json'
 import GammaJson from '../pages/FarmV4/idl/gamma.json'
-import { Gamma } from '../pages/FarmV4/idl/gammats'
+import { Gamma } from '../pages/FarmV4/idl/gamma.type'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 
 interface IPrices {
