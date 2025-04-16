@@ -13,8 +13,7 @@ const CreatePoolConfirmStep: FC<{
   amountTokenA: string
   amountTokenB: string
   initialPrice: string
-  poolType: string | null
-}> = ({ tokenA, tokenB, amountTokenA, amountTokenB, initialPrice, poolType }) => {
+}> = ({ tokenA, tokenB, amountTokenA, amountTokenB, initialPrice }) => {
   const { mode } = useDarkMode()
 
   return (
@@ -29,28 +28,6 @@ const CreatePoolConfirmStep: FC<{
         </div>
       </div>
       <div className="h-[340px] p-2.5 m-2.5 dark:bg-black-1 bg-grey-5 rounded-tiny">
-        <div className="flex justify-between mb-3">
-          <span className="text-regular font-semibold dark:text-grey-2 text-grey-1">Pool Type</span>
-          <div
-            className="text-regular font-semibold dark:text-grey-8 
-                        text-black-4 flex flex-row items-center"
-          >
-            {poolType && (
-              <>
-                <img
-                  src={poolType === 'Stable' ? `/img/assets/farm_primary.svg`
-                    : `/img/assets/farm_${poolType.toLowerCase()}.svg`
-                  }
-                  alt={poolType}
-                  height={20}
-                  width={20}
-                  className="mr-[5px]"
-                />
-                <span>{poolType === 'Stable' ? 'Primary' : poolType}</span>
-              </>
-            )}
-          </div>
-        </div>
         <div className="flex justify-between mb-3">
           <span className="text-regular font-semibold dark:text-grey-2 text-grey-1">Token Pair</span>
           <div
@@ -112,7 +89,7 @@ const CreatePoolConfirmStep: FC<{
                             Pool Fee Rate
                         </TooltipTrigger>
                         <TooltipContent className={'z-[1001]'}>
-                            This is the fee in bps % we charge per swap
+                          This is a dynamic fee that can vary between 0.01-10% depending on the token volatility
                         </TooltipContent>
                     </Tooltip>
                     <span className="text-regular font-semibold text-yellow-2">0.2%</span>

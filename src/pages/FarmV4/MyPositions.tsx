@@ -60,7 +60,7 @@ const MyPositions: FC<{
       const results = {};
       for (const poolId of poolIds) {
         if (poolId) {
-          results[poolId] = await getActiveRewardByPoolId(new PublicKey(poolId));
+          results[poolId] = getActiveRewardByPoolId(new PublicKey(poolId));
         }
       }
       return results;
@@ -304,12 +304,11 @@ const MyPositionItem: FC<{
 
 
 const MyPositionItems: FC = () => {
-  const { selectedTokens, sortConfig, showCreatedPools, currentPoolType, isPortfolio, viewRange } =
+  const { selectedTokens, sortConfig, showCreatedPools, isPortfolio, viewRange } =
     useGamma()
   const query = useUserPortfolioPools({
     mintA: selectedTokens[0]?.address,
     mintB: selectedTokens[1]?.address,
-    poolType: currentPoolType.type,
     sortBy: getSortKey(sortConfig, isPortfolio, viewRange),
     sortDirection: sortConfig.direction.toLowerCase(),
     showCreated: showCreatedPools,

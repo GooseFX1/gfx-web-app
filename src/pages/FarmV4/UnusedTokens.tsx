@@ -6,7 +6,6 @@ import { commafy, loadIconImage, numberFormatter } from '@/utils'
 import { fetchTokensByPublicKey } from '@/api/gamma'
 import { GAMMAListTokenResponse } from '@/types/gamma'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
-import { POOL_TYPE } from '@/pages/FarmV4/constants'
 
 const ExplorePools: FC<{ tokenMint: string }> = ({ tokenMint }) => {
   const {
@@ -15,7 +14,6 @@ const ExplorePools: FC<{ tokenMint: string }> = ({ tokenMint }) => {
     setIsPortfolio,
     setCurrentSort,
     selectedTokens,
-    setCurrentPoolType
   } = useGamma()
   const chooseToken = async () => {
     clearAllSelectedTokens()
@@ -29,13 +27,6 @@ const ExplorePools: FC<{ tokenMint: string }> = ({ tokenMint }) => {
       if (token.address === tokenMint) {
         newSelectedTokens.push(token)
         addSelectedToken(token)
-      }
-    }
-    if (newSelectedTokens.length > 0) {
-      if (newSelectedTokens.every((t) => t.isPrimary)) {
-        setCurrentPoolType(POOL_TYPE.primary)
-      } else {
-        setCurrentPoolType(POOL_TYPE.hyper)
       }
     }
   }

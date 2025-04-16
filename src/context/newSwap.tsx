@@ -94,7 +94,6 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [slippage, userCache])
   const tokensQuery = useTokensQuery({
     searchValue: searchValue,
-    poolType: 'all'
   });
   return (
     <SwapContext.Provider

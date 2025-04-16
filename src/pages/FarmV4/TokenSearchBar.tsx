@@ -1,15 +1,14 @@
-import React, { useRef, useCallback, useState, useMemo } from 'react'
+import React, { useRef, useState, useMemo } from 'react'
 import { Badge, Button, cn, Popover, PopoverAnchor, PopoverContent } from 'gfx-component-lib'
 import SearchBar from '@/components/common/SearchBar'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import { loadIconImage } from '@/utils'
 import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
-import { TokenListToken, useDarkMode, useGamma } from '@/context'
+import { useDarkMode, useGamma } from '@/context'
 import useBoolean from '@/hooks/useBoolean'
-import { Pool, POOL_TYPE } from './constants'
 import useTokensQuery from '@/queries/useTokensQuery'
 
-function TokenSearchBar({poolType = 'all'}:{poolType?:Pool['type']}) {
+function TokenSearchBar() {
   const searchBarRef = useRef(null)
   const [focusOnSearch, setFocusOnSearch] = useBoolean(false)
   const [searchValue, setSearchValue] = useState('')
@@ -20,23 +19,9 @@ function TokenSearchBar({poolType = 'all'}:{poolType?:Pool['type']}) {
     removeSelectedToken,
     addSelectedToken,
     hasSelectedToken,
-    setCurrentPoolType
   } = useGamma()
 
-  const query = useTokensQuery({ searchValue, poolType })
-  const checkAndSetPoolType = useCallback(
-    (t: TokenListToken) => {
-      // current selections are in selectedTokens - t is the token that is being added and visible on next render
-      const isHyperInSelectedTokens = selectedTokens.some((token) => !token.isPrimary)
-      // if the token being added is not primary or there is already a hyper token in the selected tokens
-      if (isHyperInSelectedTokens || !t.isPrimary) {
-        setCurrentPoolType(POOL_TYPE.hyper)
-      } else {
-        setCurrentPoolType(POOL_TYPE.primary)
-      }
-    },
-    [selectedTokens, setCurrentPoolType]
-  )
+  const query = useTokensQuery({ searchValue })
 
   const tokenList = query.data?.allPages ?? [];
 
@@ -155,7 +140,6 @@ function TokenSearchBar({poolType = 'all'}:{poolType?:Pool['type']}) {
             onTokenSelect={(t) => {
               setSearchValue('')
               addSelectedToken(t)
-              checkAndSetPoolType(t)
             }}
             checkDisabled={(t) => hasSelectedToken(t) || query.isFetching || selectedTokens.length == 2}
             RenderAs={({ children, className, ...props }) => (

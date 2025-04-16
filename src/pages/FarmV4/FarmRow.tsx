@@ -20,8 +20,6 @@ import { IconWithFallback } from '@/components/common/IconWithFallback'
 import BigNumber from 'bignumber.js'
 import { PublicKey } from '@solana/web3.js'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
-import { useQuery } from '@tanstack/react-query'
-import { QUERY_KEY } from '@/queries/query.helper'
 
 type FarmRowProps = {
   pool: GAMMAPoolWithUserLiquidity
@@ -44,11 +42,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
     [pool.stats, viewRange]
   )
 
-  const { data: activeReward } = useQuery({
-    queryKey: [QUERY_KEY, 'activeReward', pool.id],
-    queryFn: () => getActiveRewardByPoolId(new PublicKey(pool.id)),
-    enabled: !!pool.id
-  })
+  const activeReward = getActiveRewardByPoolId(new PublicKey(pool.id))
 
   const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
   const apr = activeReward
@@ -74,17 +68,17 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
     >
       {pool.poolCreator === base58PublicKey && !isMobile && (
         <Tooltip>
-            <TooltipTrigger className='absolute'>
+          <TooltipTrigger className="absolute">
             <Icon
               src={`/img/assets/owner-${mode}.svg`}
               alt="pool-owner"
               size={'sm'}
-              className=" absolute top-0.5 left-0.5"
+              className="absolute top-[-10px] left-0"
             />
-            </TooltipTrigger>
-            <TooltipContent>
-              <span>You are the owner of this pool</span>
-            </TooltipContent>
+          </TooltipTrigger>
+          <TooltipContent>
+            <span>You are the owner of this pool</span>
+          </TooltipContent>
         </Tooltip>
       )}
       <div className="flex flex-row items-center">
@@ -106,12 +100,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
           <IconWithFallback src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
         } */}
         {activeReward && activeReward.length > 0 && (
-            <Icon
-              src={`/img/assets/rewards-icon-${mode}.svg`}
-              alt="claim-rewards"
-              size={'sm'}
-              className='ml-2'
-            />
+          <Icon src={`/img/assets/rewards-icon-${mode}.svg`} alt="claim-rewards" size={'sm'} className="ml-2" />
         )}
       </div>
       {!isMobile && (
@@ -160,12 +149,13 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
         <TooltipContent className="w-[266px] max-w-[266px] p-2">
           <div className="">
             {/* should only show if kaminoUSD is greater than 0 or activeReward */}
-            {parseFloat(kaminoUSD) > 0 || activeReward && (
-              <div className="flex flex-row justify-between mb-3">
-                <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
-                <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
-              </div>
-            )}
+            {parseFloat(kaminoUSD) > 0 ||
+              (activeReward && (
+                <div className="flex flex-row justify-between mb-3">
+                  <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
+                  <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
+                </div>
+              ))}
 
             {/* should only show if kaminoUSD is greater than 0 */}
             {parseFloat(kaminoUSD) > 0 && (
@@ -174,13 +164,12 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
                 <span className="font-display font-semibold text-[15px]">${kaminoUSD}</span>
               </div>
             )}
-            {activeReward &&
-                activeReward.length > 0 &&
-                <div>
-                  <h2 className="text-[10px] text-primary-gradient">Boosted Rewards</h2>
+            {activeReward && activeReward.length > 0 && (
+              <div>
+                <h2 className="text-[10px] text-primary-gradient">Boosted Rewards</h2>
 
-                  {activeReward.map((reward) => (
-                  <div className="flex flex-row items-center mb-3">
+                {activeReward.map((reward, index) => (
+                  <div key={`${reward.token.symbol}-${index}`} className="flex flex-row items-center mb-3">
                     <IconWithFallback
                       src={loadIconImage(reward.token.logoURI, mode)}
                       className="border-solid dark:border-black-2 border-white
@@ -190,15 +179,17 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
                     <span className="font-display font-semibold text-[15px] ml-auto">
                       {numberFormatter(reward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())}%
                     </span>
-                  </div>))}
-                </div>
-            }
-            {parseFloat(kaminoUSD) > 0 || activeReward && (
-              <div
-                className="w-full h-[1px] border-t-1 border-border-lightmode-secondary 
-                dark:border-border-darkmode-secondary my-2"
-              />
+                  </div>
+                ))}
+              </div>
             )}
+            {parseFloat(kaminoUSD) > 0 ||
+              (activeReward && (
+                <div
+                  className="w-full h-[1px] border-t-1 border-border-lightmode-secondary 
+                dark:border-border-darkmode-secondary my-2"
+                />
+              ))}
             <div className="flex flex-row justify-between ">
               <span className="font-poppins font-semibold text-[15px]">Total APR</span>
               <span className="font-display font-semibold text-[15px]">{apr}%</span>

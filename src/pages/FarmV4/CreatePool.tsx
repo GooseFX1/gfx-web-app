@@ -41,11 +41,11 @@ export const CreatePool: FC<{
   const [tokenB, setTokenB] = useState(null)
   const [amountTokenB, setAmountTokenB] = useState<string>('')
   const [feeTier, setFeeTier] = useState<string>('0.01')
-  const { connected, wallet } = useWallet()
+  const { connected } = useWallet()
   const [poolExists, setPoolExists] = useBoolean(false)
   const [initialPrice, setInitialPrice] = useState<string>('')
   const [poolType, setPoolType] = useState<string | null>(null)
-  const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
   const {
@@ -55,7 +55,7 @@ export const CreatePool: FC<{
     forceCronAndUpdateLocalData,
     calculatePoolType
   } = useGamma()
-  const { balance } = useWalletBalance()
+  const { balance, publicKey } = useWalletBalance()
 
   const walletTokenA = balance[tokenA?.address].tokenAmount.uiAmountString
   const walletTokenB = balance[tokenB?.address].tokenAmount.uiAmountString
@@ -103,7 +103,7 @@ export const CreatePool: FC<{
           tokenB,
           amountTokenA,
           amountTokenB,
-          userPublicKey,
+          publicKey,
           GammaProgram,
           connection,
           tokenAType,
@@ -232,7 +232,6 @@ export const CreatePool: FC<{
                   walletTokenA={walletTokenA}
                   walletTokenB={walletTokenB}
                   setIsCreatePool={setIsCreatePool}
-                  poolType={poolType}
                 />
               </div>
               <div className="slide">
@@ -241,7 +240,6 @@ export const CreatePool: FC<{
                   tokenB={tokenB}
                   amountTokenA={amountTokenA}
                   amountTokenB={amountTokenB}
-                  poolType={poolType}
                   initialPrice={initialPrice}
                 />
               </div>

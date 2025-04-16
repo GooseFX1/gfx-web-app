@@ -47,7 +47,6 @@ export const SelectPoolStep = ({ currentStep, setCurrentStep, summary, pool, set
     poolsHasMoreData: poolsHasMoreDataCreatedPools,
     loadMorePools: loadMoreCreatedPools
   } = usePools({
-    poolType: 'all',
     sortKey: 'volume24h',
     searchTokens: '',
     showDeposited: false,
@@ -238,7 +237,6 @@ function PoolSelectInput({
   }, [pool])
 
   const poolsQuery = usePoolsQuery({
-    poolType: 'all',
     sortBy: 'volume24h',
     sortDirection: 'desc',
     showDeposited: false,

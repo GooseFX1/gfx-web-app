@@ -4,8 +4,14 @@ import { GAMMAPool } from '@/types/gamma'
 import { numberFormatter } from '@/utils'
 import BigNumber from 'bignumber.js'
 import { fetchTokensByPublicKey } from '@/api/gamma'
+import { getPoolValuesByRange } from '@/pages/FarmV4/FarmRow'
+import { useBoostedRewards } from '@/context/boostedRewardsContext'
+import { PublicKey } from '@solana/web3.js'
+import { useGamma } from '@/context'
 
 export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
+  const { viewRange } = useGamma()
+  const { getActiveRewardByPoolId } = useBoostedRewards()
   const poolTVL = useMemo(() => {
     const liquidity = parseFloat(pool.tvl)
     return liquidity ? numberFormatter(Math.max(0, liquidity)) : '0.00'
@@ -17,10 +23,15 @@ export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
 
   const [fees, setFees] = useState<string>('Loading')
 
-  const dailyAPR = useMemo(
-    () => numberFormatter(Math.max(0, pool?.stats?.daily?.feesAprUsd)),
-    [pool?.stats?.daily?.feesAprUsd]
-  )
+  const activeReward = getActiveRewardByPoolId(new PublicKey(pool.id))
+  const { formattedAPR } = useMemo(() => getPoolValuesByRange(pool, viewRange), [pool.stats, viewRange])
+
+  const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
+  const apr = activeReward
+    ? numberFormatter(
+        new BigNumber(formattedAPR).plus(activeRewardsAmount.multipliedBy(100).div(365).toNumber()).toNumber()
+      )
+    : numberFormatter(formattedAPR)
 
   useEffect(() => {
     ;(async () => {
@@ -104,7 +115,7 @@ export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
           <TooltipContent>This is the yield generated on a 24H basis annualized</TooltipContent>
         </Tooltip>
         <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
-          <span className={'font-poppins font-semibold my-0.5'}>{dailyAPR}%</span>
+          <span className={'font-poppins font-semibold my-0.5'}>{apr}%</span>
         </Badge>
       </div>
     </>
