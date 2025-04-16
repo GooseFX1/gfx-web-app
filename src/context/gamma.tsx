@@ -24,7 +24,7 @@ import {
   GAMMA_SORT_CONFIG_DEFAULT,
   GAMMASortConfig,
   JupToken,
-  ModeOfOperation,
+  ModeOfOperation
 } from '@/pages/FarmV4/constants'
 import { useConnectionConfig } from './settings'
 import useBoolean from '@/hooks/useBoolean'

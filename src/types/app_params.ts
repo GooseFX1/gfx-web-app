@@ -11,11 +11,14 @@ type UserGAMMAConfig = {
   showCreatedFilter: boolean
   docsBanner: boolean
   currentSort: string
-  viewMode: 'row' | 'card';
+  viewMode: 'row' | 'card'
+  jtoRewardsBanner: boolean
 }
+
 type UserSWAPConfig = {
   slippage: number
 }
+
 export interface USER_CONFIG_CACHE {
   hasDexOnboarded: boolean
   endpointName: EndPointName
@@ -25,5 +28,4 @@ export interface USER_CONFIG_CACHE {
   hasSignedTC: boolean
   priorityFee: PriorityFeeName
   swap: UserSWAPConfig
-  jtoRewardsBanner: boolean
 }

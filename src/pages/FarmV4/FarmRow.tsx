@@ -99,7 +99,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
         {/* {!isMobile &&
           <IconWithFallback src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
         } */}
-        {activeReward && activeReward.length > 0 && (
+        {activeReward && activeReward.length > 0 && !isMobile && (
           <Icon src={`/img/assets/rewards-icon-${mode}.svg`} alt="claim-rewards" size={'sm'} className="ml-2" />
         )}
       </div>
@@ -164,7 +164,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
                 <span className="font-display font-semibold text-[15px]">${kaminoUSD}</span>
               </div>
             )}
-            {activeReward && activeReward.length > 0 && (
+            {activeReward && activeReward.length > 0 && !isMobile && (
               <div>
                 <h2 className="text-[10px] text-primary-gradient">Boosted Rewards</h2>
 

@@ -57,7 +57,7 @@ export const Summary = ({
         totalRewards: 0.00
       }
 
-    const days = dayjs(endDate).diff(dayjs(startDate), 'days')
+    const days = endDate && startDate ? Math.ceil(dayjs(endDate).diff(startDate, 'days',true)): 0
     if (days <= 1) return { estimatedRewardsPerDay: amountToken, totalRewards: +amountToken }
     const totalRewards = new Decimal(amountToken).div(days).toNumber()
     const estimatedRewardsPerDay = numberFormatter(totalRewards)
@@ -250,7 +250,7 @@ export const Summary = ({
                     : 'text-text-lightmode-tertiary dark:text-text-darkmode-tertiary'
                 }`}
               >
-                {dayjs(endDate).diff(dayjs(startDate), 'days')} days
+                {endDate && startDate ? Math.ceil(dayjs(endDate).diff(startDate, 'days',true)): 0} days
               </span>
             ) : (
               <span className="text-[15px] text-text-lightmode-tertiary dark:text-text-darkmode-tertiary">
