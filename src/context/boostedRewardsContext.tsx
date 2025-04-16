@@ -86,11 +86,11 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
       }
     const mappedRewards = new Map<string, BoostedReward>();
     let totalClaimableRewardsUsd = new BigNumber(0);
-    const tokesLookup = new Map<string, TokenListToken>(tokensInRewardsQuery.data.map((t) => [t.address, t]))
+    const tokensLookup = new Map<string, TokenListToken>(tokensInRewardsQuery.data.map((t) => [t.address, t]))
     for (let i = 0; i < claimableRewardsQuery.data.length; i++) {
       const reward = claimableRewardsQuery.data[i]
 
-      const _token = tokesLookup.get(reward.rewardInfo.mint.toBase58())
+      const _token = tokensLookup.get(reward.rewardInfo.mint.toBase58())
       if (!_token) continue
 
       const claimableAmount = new BigNumber(reward.userRewardInfo.totalRewards.toString())
