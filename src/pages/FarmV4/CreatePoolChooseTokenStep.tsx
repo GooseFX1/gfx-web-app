@@ -62,7 +62,7 @@ const CreatePoolChooseTokenStep: FC<{
   setInitialPrice,
   walletTokenA,
   walletTokenB,
-  setIsCreatePool,
+  setIsCreatePool
 }) => {
   const { mode } = useDarkMode()
   const [priceSwitch, setPriceSwitch] = useState(false)

@@ -58,7 +58,7 @@ function useUserPortfolioPools({
           sortBy: sortBy,
           sortDirection: sortDirection,
           showCreated: showCreated,
-          userPublicKey: base58PublicKey,
+          userPublicKey: base58PublicKey
         })
       } else {
         return await fetchPools({
