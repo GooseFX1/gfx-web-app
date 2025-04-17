@@ -133,6 +133,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (prevState === sortValue) {
         return prevState
       }
+      console.trace('UPDATING CACHE', { prevState, sortValue })
       updateUserCache({
         gamma: {
           ...userCache.gamma,
@@ -211,13 +212,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 
   useEffect(() => {
-    if (!isCardMode && prevIsCardMode !== isCardMode && !isPortfolio) {
+    if (!isCardMode && prevIsCardMode !== isCardMode) {
       // reset based on mode
       if (viewRange != 0) {
         setViewRange(0)
-      }
-      if (currentSort != GAMMA_MAIN_SORT_CONFIG_DEFAULT) {
-        setCurrentSort(GAMMA_MAIN_SORT_CONFIG_DEFAULT)
       }
     }
   }, [isCardMode, viewRange, currentSort, prevIsCardMode, isPortfolio])
@@ -234,15 +232,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
     }
   }, [])
-
-  useEffect(() => {
-    if (!isPortfolio) {
-      setShowDeposited(false)
-      setCurrentSort(GAMMA_MAIN_SORT_CONFIG_DEFAULT)
-    } else {
-      setCurrentSort(GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT)
-    }
-  }, [isPortfolio])
 
   useEffect(() => {
     if (!base58PublicKey || poolsQuery.data?.allPages?.length == 0 || !selectedCard?.id) return
@@ -264,7 +253,14 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       portfolioPoolsQuery.refetch()
     }
   }
-
+  useEffect(() => {
+    console.log({isPortfolio, currentSort})
+    if (isPortfolio && !GAMMA_PORTFOLIO_SORT_CONFIG_MAP.has(currentSort)) {
+      setCurrentSort(GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT)
+    } else if (!isPortfolio && !GAMMA_MAIN_SORT_CONFIG_MAP.has(currentSort)) {
+      setCurrentSort(GAMMA_MAIN_SORT_CONFIG_DEFAULT)
+    }
+  }, [isPortfolio, currentSort])
   const computedViewRange = viewRange == 0 ? '24H' : viewRange == 1 ? '7D' : '30D'
 
   return (
