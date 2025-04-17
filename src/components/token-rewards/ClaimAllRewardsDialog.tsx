@@ -44,8 +44,10 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
       const txBuilder = createTransactionBuilder()
 
       for (const reward of claimableRewardsWithTokens.rewards) {
-        const tx = await claimRewards(GammaProgram, userPublicKey, connection, reward?.rewards?.[0])
-        txBuilder.add(tx)
+        for (const rewardInfo of reward.rewards) {
+          const tx = await claimRewards(GammaProgram, userPublicKey, connection, rewardInfo)
+          txBuilder.add(tx)
+        }
       }
 
       const { success } = await sendTransaction(
