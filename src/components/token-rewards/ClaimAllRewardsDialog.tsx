@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import 'styled-components/macro'
 import {
   Button,
@@ -21,6 +21,7 @@ import { claimRewards } from '@/web3/Farm'
 import useTransaction from '@/hooks/useTransaction'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { useMutation } from '@tanstack/react-query'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 type ClaimAllRewardsDialogProps = {
   openClaimAllRewardsDialog: boolean
@@ -34,10 +35,11 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
   const { mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
   const { claimableRewardsWithTokens, refreshRewards } = useBoostedRewards()
-  const { sendTransaction, createTransactionBuilder } = useTransaction()
+  const { createTransactionBuilder, sendBatchTransaction } = useTransaction()
   const { connection } = useConnectionConfig()
   const { GammaProgram } = usePriceFeedFarm()
   const { publicKey: userPublicKey } = useWalletBalance()
+  const {wallet} = useWallet();
 
   const claimAllMutation = useMutation({
     mutationFn: async () => {
@@ -50,6 +52,8 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
         batches.push(rewards.slice(i, i + batchSize))
       }
 
+      const transactions = [];
+
       // Process each batch
       for (const batch of batches) {
         const batchTxBuilder = createTransactionBuilder()
@@ -58,24 +62,26 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
           const tx = await claimRewards(GammaProgram, userPublicKey, connection, reward)
           batchTxBuilder.add(tx)
         }
+        transactions.push(batchTxBuilder);
+      }
+      console.log(wallet);
 
-        const { success } = await sendTransaction(
-          batchTxBuilder,
-          {
-            successMessage: `You claimed $${numberFormatter(
-              claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber(),
-              4
-            )} in rewards`
-          },
-          undefined,
-          undefined,
-          true
-        )
+      const { success } = await sendBatchTransaction(
+        transactions,
+        {
+          successMessage: `You claimed $${numberFormatter(
+            claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber(),
+            4
+          )} in rewards`
+        },
+        undefined,
+        undefined,
+        true
+      )
 
-        if (!success) {
-          console.log('An error occurred while claiming rewards!')
-          throw new Error('An error occurred while claiming rewards!')
-        }
+      if (!success) {
+        console.log('An error occurred while claiming rewards!')
+        throw new Error('An error occurred while claiming rewards!')
       }
     },
     onError: (err) => {
