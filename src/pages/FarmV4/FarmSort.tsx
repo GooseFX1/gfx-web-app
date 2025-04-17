@@ -13,10 +13,14 @@ import {
   RadioGroupItemAsIndicator,
   Switch
 } from 'gfx-component-lib'
-import { GAMMA_SORT_CONFIG } from '@/pages/FarmV4/constants'
+import {
+  GAMMA_MAIN_SORT_CONFIG,
+  GAMMA_MAIN_SORT_CONFIG_DEFAULT,
+  GAMMA_PORTFOLIO_SORT_CONFIG,
+  GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT,
+} from '@/pages/FarmV4/constants'
 import { useConnectionConfig, useDarkMode, useGamma } from '@/context'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { GAMMA_SORT_CONFIG_DEFAULT } from '@/pages/FarmV4/constants'
 
 function FarmSort({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: boolean) => void }) {
   const { userCache, updateUserCache } = useConnectionConfig()
@@ -82,8 +86,8 @@ function FarmSort({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: 
             size={'md'}
             className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
           />
-          {(!isPortfolio && currentSort !== GAMMA_SORT_CONFIG_DEFAULT) ||
-          (isPortfolio && currentSort != '9') ||
+          {(!isPortfolio && currentSort !== GAMMA_MAIN_SORT_CONFIG_DEFAULT) ||
+          (isPortfolio && currentSort != GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT) ||
           showCreatedPools ||
           showDeposited ? (
             <img
@@ -158,28 +162,20 @@ function FarmSort({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: 
         <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
         <DropdownMenuRadioGroup asChild value={currentSort} onValueChange={(id) => handlePoolSort(id)}>
           <div className={'grid grid-cols-2 gap-1.5 items-center'}>
-            {GAMMA_SORT_CONFIG.map((s) => {
-              const component = (
-                <DropdownMenuItem isActive={currentSort == s.id} asChild key={s.id}>
-                  <DropdownMenuRadioItem value={s.id}>
-                    <DropdownMenuItemIndicator asChild forceMount className={'hidden'}>
-                      <RadioGroup value={currentSort}>
-                        <RadioGroupItemAsIndicator value={s.id} />
-                      </RadioGroup>
-                    </DropdownMenuItemIndicator>
-                    <div className={'w-full text-center'}>
-                      <p className={'text-b3 px-2 font-bold'}>{s.name}</p>
-                    </div>
-                  </DropdownMenuRadioItem>
-                </DropdownMenuItem>
-              )
-              if ((!isPortfolio && +s.id < 9) ||
-                (isPortfolio && (+s.id > 4))) {
-                return component
-              } else {
-                return null
-              }
-            })}
+            {(isPortfolio ? GAMMA_PORTFOLIO_SORT_CONFIG : GAMMA_MAIN_SORT_CONFIG).map((s) => (
+              <DropdownMenuItem isActive={currentSort == s.id} asChild key={s.id}>
+                <DropdownMenuRadioItem value={s.id}>
+                  <DropdownMenuItemIndicator asChild forceMount className={'hidden'}>
+                    <RadioGroup value={currentSort}>
+                      <RadioGroupItemAsIndicator value={s.id} />
+                    </RadioGroup>
+                  </DropdownMenuItemIndicator>
+                  <div className={'w-full text-center'}>
+                    <p className={'text-b3 px-2 font-bold'}>{s.name}</p>
+                  </div>
+                </DropdownMenuRadioItem>
+              </DropdownMenuItem>
+            ))}
           </div>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>

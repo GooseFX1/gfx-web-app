@@ -27,7 +27,7 @@ import { USER_CONFIG_CACHE } from '@/types/app_params'
 import bs58 from 'bs58'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEY } from '@/queries/query.helper'
-import { GAMMA_SORT_CONFIG_DEFAULT } from '@/pages/FarmV4/constants'
+import { GAMMA_MAIN_SORT_CONFIG_DEFAULT } from '@/pages/FarmV4/constants'
 
 const countries = [
   { code: 'BY', name: 'Belarus' },
@@ -121,7 +121,7 @@ function newCache(): USER_CONFIG_CACHE {
       showDepositedFilter: false,
       showCreatedFilter: false,
       docsBanner: true,
-      currentSort: GAMMA_SORT_CONFIG_DEFAULT,
+      currentSort: GAMMA_MAIN_SORT_CONFIG_DEFAULT,
       viewMode: 'row',
       jtoRewardsBanner: true
     },

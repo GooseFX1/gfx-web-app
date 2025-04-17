@@ -1,7 +1,10 @@
 import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { useConnectionConfig, useDarkMode, useGamma } from '../../context'
-import { GAMMA_SORT_CONFIG, GAMMA_SORT_CONFIG_DEFAULT } from './constants'
+import {
+  GAMMA_MAIN_SORT_CONFIG, GAMMA_MAIN_SORT_CONFIG_DEFAULT,
+  GAMMA_PORTFOLIO_SORT_CONFIG, GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT,
+} from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
   Badge,
@@ -145,8 +148,8 @@ export const FarmContainer: FC = () => {
                         className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
                         onClick={() => (isSortFilterOpen ? setIsSortFilterOpen.off() : setIsSortFilterOpen.on())}
                       />
-                      {(!isPortfolio && currentSort !== GAMMA_SORT_CONFIG_DEFAULT) ||
-                      (isPortfolio && currentSort != '9') ||
+                      {(!isPortfolio && currentSort !== GAMMA_MAIN_SORT_CONFIG_DEFAULT) ||
+                      (isPortfolio && currentSort != GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT) ||
                       showCreatedPools ||
                       showDeposited ? (
                         <img
@@ -245,13 +248,12 @@ export const FarmContainer: FC = () => {
                             </div>
                             <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
                             <div className={'grid grid-cols-2 gap-3'}>
-                              {GAMMA_SORT_CONFIG.map((s) => {
-                                const component = (
-                                  <label className={`flex items-center`} key={s.id}>
-                                    <Badge
-                                      className={cn(
-                                        currentSort !== s.id &&
-                                          `dark:bg-black-1
+                              {(isPortfolio ? GAMMA_PORTFOLIO_SORT_CONFIG : GAMMA_MAIN_SORT_CONFIG).map((s) => (
+                                <label className={`flex items-center`} key={s.id}>
+                                  <Badge
+                                    className={cn(
+                                      currentSort !== s.id &&
+                                        `dark:bg-black-1
                                       bg-white
                                       dark:before:to-black-4
                                       dark:before:from-black-4
@@ -263,35 +265,29 @@ export const FarmContainer: FC = () => {
                                       to-from-white
                                       justify-start p-1.25
                                       `,
-                                        `w-full h-[35px]`
-                                      )}
-                                    >
-                                      <input
-                                        type="radio"
-                                        name="sort"
-                                        value={s.id}
-                                        checked={currentSort === s.id}
-                                        onChange={() => handlePoolSort(s.id)}
-                                        className={'hidden'}
-                                        disabled={Number(s.id) >= 9 && !publicKey}
-                                      />
-                                      <span
-                                        className={`m-0 text-regular font-bold
+                                      `w-full h-[35px]`
+                                    )}
+                                  >
+                                    <input
+                                      type="radio"
+                                      name="sort"
+                                      value={s.id}
+                                      checked={currentSort === s.id}
+                                      onChange={() => handlePoolSort(s.id)}
+                                      className={'hidden'}
+                                      disabled={Number(s.id) >= 9 && !publicKey}
+                                    />
+                                    <span
+                                      className={`m-0 text-regular font-bold
                                      overflow-hidden
                                       overflow-ellipsis
                                       whitespace-nowrap`}
-                                      >
-                                        {s.name}
-                                      </span>
-                                    </Badge>
-                                  </label>
-                                )
-                                if ((!isPortfolio && +s.id < 9) || (isPortfolio && +s.id > 4)) {
-                                  return component
-                                } else {
-                                  return null
-                                }
-                              })}
+                                    >
+                                      {s.name}
+                                    </span>
+                                  </Badge>
+                                </label>
+                              ))}
                             </div>
                           </DialogBody>
                         </DialogContent>

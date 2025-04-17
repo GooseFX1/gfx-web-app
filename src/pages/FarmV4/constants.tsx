@@ -17,16 +17,16 @@ export type Pool = {
 }
 
 export type JupToken = {
-  "address": string,
-  "name": string,
-  "symbol": string,
-  "decimals": number,
-  "logoURI": string,
-  "price": number
+  address: string
+  name: string
+  symbol: string
+  decimals: number
+  logoURI: string
+  price: number
 }
 
 export type PoolType = {
-  all: Pool,
+  all: Pool
   primary: Pool
   hyper: Pool
   migrate: Pool
@@ -59,19 +59,15 @@ export const faqs = [
     question: 'What are the dynamic fee min and max ranges?',
     answer: (
       <div>
-        The distinction among stable, primary, and hyper pools lies in the types of assets they hold. Stable pools are
-        composed of stablecoins, primary pools house prevalent ecosystem tokens, while hyper pools cater to more
-        volatile assets.
+        The distinction among stable, primary, and hyper pools lies in the types of assets they hold. Stable pools
+        are composed of stablecoins, primary pools house prevalent ecosystem tokens, while hyper pools cater to
+        more volatile assets.
       </div>
     )
   },
   {
     question: 'What are the fees for depositing, withdrawing, claiming, and creating a pool?',
-    answer: (
-      <div>
-        Deposit: None, Withdraw: None, Claim: None. Pool Creation: 0.2 SOL
-      </div>
-    )
+    answer: <div>Deposit: None, Withdraw: None, Claim: None. Pool Creation: 0.2 SOL</div>
   },
   {
     question: 'How often can I claim my LP rewards?',
@@ -83,8 +79,8 @@ export const faqsMigrate = [
     question: 'What is migration?',
     answer: (
       <div>
-        Migration allows you to transfer your existing LP positions from other AMMs on Solana, such as Raydium/Orca/etc.
-        , directly to GAMMA.
+        Migration allows you to transfer your existing LP positions from other AMMs on Solana, such as
+        Raydium/Orca/etc. , directly to GAMMA.
       </div>
     )
   },
@@ -92,8 +88,8 @@ export const faqsMigrate = [
     question: 'Can I partially migrate my LP position from other AMMs to GAMMA?',
     answer: (
       <div>
-        No, partial migration isn’t supported. When you migrate an LP position, it is fully withdrawn from the other AMM
-        and deposited into GAMMA.
+        No, partial migration isn’t supported. When you migrate an LP position, it is fully withdrawn from the
+        other AMM and deposited into GAMMA.
       </div>
     )
   },
@@ -108,17 +104,16 @@ export const faqsMigrate = [
   },
   {
     question: 'Which AMMs are supported for migration?',
-    answer: (
-      <div>
-        Currently, GAMMA supports migration from Raydium and Orca pools.
-      </div>
-    )
+    answer: <div>Currently, GAMMA supports migration from Raydium and Orca pools.</div>
   },
   {
     question: 'What is the lock-in period for migrated LP positions?',
-    answer: <div>Migrated LP positions are locked for 2 days, during which they earn extra $GOFX rewards on selected
-      pools. This is to prevent abuse from migrating back and forth and claiming extra $GOFX.
-    </div>
+    answer: (
+      <div>
+        Migrated LP positions are locked for 2 days, during which they earn extra $GOFX rewards on selected pools.
+        This is to prevent abuse from migrating back and forth and claiming extra $GOFX.
+      </div>
+    )
   }
 ]
 
@@ -178,18 +173,33 @@ export const sslErrorMessage = (): Message => ({
 //   'fee7d',
 //   'apr24h',
 //   'apr7d'
-export const GAMMA_SORT_CONFIG: GAMMASortConfig[] = [
-  { id: '1', name: 'Liquidity: High to Low', direction: 'DESC',  key:'liquidity' },
-  { id: '2', name: 'Liquidity: Low to High', direction: 'ASC',  key: 'liquidity'},
-  { id: '3', name: 'Volume: High to Low', direction: 'DESC',  key: 'volume'},
-  { id: '4', name: 'Volume: Low to High', direction: 'ASC',  key: 'volume'},
-  { id: '5', name: 'Fees: High to Low', direction: 'DESC',  key:'fee'},
-  { id: '6', name: 'Fees: Low to High', direction: 'ASC', key: 'fee'},
-  { id: '7', name: 'APR: High to Low', direction: 'DESC',  key: 'apr'},
-  { id: '8', name: 'APR: Low to High', direction: 'ASC', key: 'apr'},
-  { id: '9', name: 'Position: High to Low', direction: 'DESC',  key: 'position'},
-  { id: '10', name: 'Position: Low to High', direction: 'ASC', key: 'position'}
+export const GAMMA_MAIN_SORT_CONFIG: GAMMASortConfig[] = [
+  { id: '1', name: 'Liquidity: High to Low', direction: 'DESC', key: 'liquidity' },
+  { id: '2', name: 'Liquidity: Low to High', direction: 'ASC', key: 'liquidity' },
+  { id: '3', name: 'Volume: High to Low', direction: 'DESC', key: 'volume' },
+  { id: '4', name: 'Volume: Low to High', direction: 'ASC', key: 'volume' },
+  { id: '5', name: 'Fees: High to Low', direction: 'DESC', key: 'fee' },
+  { id: '6', name: 'Fees: Low to High', direction: 'ASC', key: 'fee' },
+  { id: '7', name: 'APR: High to Low', direction: 'DESC', key: 'apr' },
+  { id: '8', name: 'APR: Low to High', direction: 'ASC', key: 'apr' }
 ]
+export const GAMMA_MAIN_SORT_CONFIG_DEFAULT = '3'
+export const GAMMA_MAIN_SORT_CONFIG_MAP: Map<string, GAMMASortConfig> = new Map(
+  GAMMA_MAIN_SORT_CONFIG.map((item) => [item.id, item])
+)
+
+export const GAMMA_PORTFOLIO_SORT_CONFIG: GAMMASortConfig[] = [
+  { id: '9', name: 'Position: High to Low', direction: 'DESC', key: 'position' },
+  { id: '10', name: 'Position: Low to High', direction: 'ASC', key: 'position' },
+  { id: '5', name: 'Fees: High to Low', direction: 'DESC', key: 'fee' },
+  { id: '6', name: 'Fees: Low to High', direction: 'ASC', key: 'fee' },
+  { id: '7', name: 'APR: High to Low', direction: 'DESC', key: 'apr' },
+  { id: '8', name: 'APR: Low to High', direction: 'ASC', key: 'apr' }
+]
+export const GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT = '9'
+export const GAMMA_PORTFOLIO_SORT_CONFIG_MAP: Map<string, GAMMASortConfig> = new Map(
+  GAMMA_PORTFOLIO_SORT_CONFIG.map((item) => [item.id, item])
+)
 
 export type GAMMASortConfig = {
   id: string
@@ -197,13 +207,8 @@ export type GAMMASortConfig = {
   direction: 'ASC' | 'DESC'
   key: string
 }
-export const GAMMA_SORT_CONFIG_DEFAULT = '3'
-export const GAMMA_SORT_CONFIG_PUBKEY_REQUIRED = ['9','10']
-export const GAMMA_SORT_PORTFOLIO_BLACKLIST = ['1','2', '3', '4']
-export const GAMMA_SORT_CONFIG_BLACKLIST = ['9','10']
-export const GAMMA_SORT_CONFIG_MAP: Map<string, GAMMASortConfig> =
-  new Map(GAMMA_SORT_CONFIG.map((item) => [item.id, item]))
-export type PoolSortId = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8'
+export const GAMMA_SORT_CONFIG_PUBKEY_REQUIRED = ['9', '10']
+
 export const BASE_SLIPPAGE = [0.1, 0.5, 1.0]
 export const TOKEN_LIST_PAGE_SIZE = 50
 export const POOL_LIST_PAGE_SIZE = 16
@@ -215,9 +220,9 @@ export const POPULAR_TOKENS = new Set([
   '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'
 ])
 export const GAMMA_STABLE_TOKENS = [
-   'USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA', //USDS
-   'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', //USDT
-   'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', //USDC
-   '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo' //PYUSD
+  'USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA', //USDS
+  'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', //USDT
+  'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', //USDC
+  '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo' //PYUSD
 ]
 export const GAMMA_POOL_CREATION_FEE = '0.04'
