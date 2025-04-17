@@ -133,7 +133,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (prevState === sortValue) {
         return prevState
       }
-      console.trace('UPDATING CACHE', { prevState, sortValue })
       updateUserCache({
         gamma: {
           ...userCache.gamma,
@@ -254,7 +253,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }
   useEffect(() => {
-    console.log({isPortfolio, currentSort})
     if (isPortfolio && !GAMMA_PORTFOLIO_SORT_CONFIG_MAP.has(currentSort)) {
       setCurrentSort(GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT)
     } else if (!isPortfolio && !GAMMA_MAIN_SORT_CONFIG_MAP.has(currentSort)) {
