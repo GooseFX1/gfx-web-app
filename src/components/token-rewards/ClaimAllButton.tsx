@@ -22,7 +22,7 @@ export function ClaimAllRewards({ setOpenClaimAllRewardsDialog }: ClaimAllReward
   }, [claimableRewardsWithTokens])
   
   // Early returns after all hooks have been called
-  const shouldRender = claimableRewardsWithTokens.totalClaimableRewardsUsd.gt(0.1) && 
+  const shouldRender = claimableRewardsWithTokens.totalClaimableRewardsUsd.gt(0) && 
                        claimableRewardsWithTokens.rewards.length > 0
   
   if (!shouldRender) return null

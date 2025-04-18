@@ -59,6 +59,7 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
         const batchTxBuilder = createTransactionBuilder()
 
         for (const reward of batch) {
+          console.log(reward);
           const tx = await claimRewards(GammaProgram, userPublicKey, connection, reward)
           batchTxBuilder.add(tx)
         }
