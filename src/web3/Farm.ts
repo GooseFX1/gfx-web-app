@@ -14,7 +14,7 @@ import {
   NATIVE_MINT,
   TOKEN_PROGRAM_ID
 } from '@solana/spl-token-v2'
-import { Idl, Program } from '@coral-xyz/anchor'
+import { Program } from '@coral-xyz/anchor'
 import BN from 'bn.js'
 import {
   AUTHORITY_PREFIX,
@@ -1055,7 +1055,7 @@ export const getAllActiveRewards = async (
 }
 
 export const claimRewards = async (
-  program: Program<Idl>,
+  program: Program<Gamma>,
   userPublicKey: PublicKey,
   connection: Connection,
   boostedRewardInfo: BoostedRewardInfo
