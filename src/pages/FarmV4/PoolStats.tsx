@@ -112,7 +112,7 @@ export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
               APR
             </span>
           </TooltipTrigger>
-          <TooltipContent>This is the yield generated on a 24H basis annualized</TooltipContent>
+          <TooltipContent>APR is determined by trade fees or rewards generated on each pool</TooltipContent>
         </Tooltip>
         <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
           <span className={'font-poppins font-semibold my-0.5'}>{apr}%</span>
