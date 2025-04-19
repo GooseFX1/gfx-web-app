@@ -103,7 +103,7 @@ const FarmItemsProSort: FC = () => {
       )}
       <FarmRowItem
         title={`${computedViewRange} APR`}
-        tooltip={'APR is determined by trade fees or rewards generated on each pool§'}
+        tooltip={'APR is determined by trade fees or rewards generated on each pool'}
         onClick={() => handlePoolSort(currentSort === '7' ? '8' : '7')}
         invert={currentSort == '7'}
         className={'max-sm:w-full max-sm:justify-end sm-lg:w-full sm-lg:justify-end'}
