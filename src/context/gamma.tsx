@@ -34,6 +34,7 @@ import useUserLiquidityQuery from '@/queries/GAMMA/user/useUserLiquidityQuery'
 import usePoolsQuery, { UsePoolQueryResponse } from '@/queries/GAMMA/pools/usePoolsQuery'
 import { getSortKey } from '@/queries/GAMMA/gammaQueries.helpers'
 import useUserPortfolioPools from '@/queries/GAMMA/pools/useUserPortfolioPools'
+import usePoolDeepLink from '@/hooks/gamma/usePoolDeepLink'
 
 type ViewRange = 0 | 1 | 2
 
@@ -120,7 +121,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [calculatePoolType, setCalculatePoolType] = useState<Set<string>>(new Set())
 
   const userLiqQuery = useUserLiquidityQuery()
-
+  const deepLink = usePoolDeepLink();
+  // TODO: remove and use for query
+  console.log(deepLink)
   const setCurrentSort = (value: string) => {
     let sortValue = value
     if (!publicKey && isPortfolio && !GAMMA_PORTFOLIO_SORT_CONFIG_MAP.has(value)) {
@@ -317,3 +320,4 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 }
 
 export const useGamma = (): GAMMADataModel => useContext(GAMMAContext)
+
