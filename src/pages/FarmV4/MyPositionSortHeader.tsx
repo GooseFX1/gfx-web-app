@@ -97,7 +97,7 @@ const MyPositionSortHeader: FC = () => {
       {isDesktop && <FarmRowItem title={'Token A/B'} />}
       <FarmRowItem
         title={'APR'}
-        tooltip={`Values are displayed in native token`}
+        tooltip={`APR is determined by trade fees or rewards generated on each pool`}
         onClick={() => handlePoolSort(sort == 'ASC' ? '7' : '8')}
         invert={sort == 'DESC' && sortType == 'apr'}
         iconRight={true}
