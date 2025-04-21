@@ -13,7 +13,7 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
 
   const activeReward = getActiveRewardByPoolId(new PublicKey(pool.id))
 
-  if (!activeReward) return null
+  if (!activeReward || activeReward?.length === 0) return null
 
   return (
     <div className="w-full border-transparent bg-gradient-to-r from-[#F7931A] to-[#C31AE3] p-[1px] rounded-[4px]">

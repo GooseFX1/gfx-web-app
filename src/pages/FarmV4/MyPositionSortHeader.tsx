@@ -87,8 +87,8 @@ const MyPositionSortHeader: FC = () => {
       />
       {isDesktop && (
         <FarmRowItem
-          title={'Fee'}
-          tooltip={`The percentage fee taken by the pool, this influence the rewards you'll earn.`}
+          title={'Fee Tier'}
+          tooltip={`This is a dynamic fee that can vary between 0.01-10% depending on the token volatility`}
           invert={sort == 'DESC' && sortType == 'fee'}
           onClick={() => handlePoolSort(sort == 'ASC' ? '5' : '6')}
           iconRight={true}
@@ -97,7 +97,7 @@ const MyPositionSortHeader: FC = () => {
       {isDesktop && <FarmRowItem title={'Token A/B'} />}
       <FarmRowItem
         title={'APR'}
-        tooltip={`Values are displayed in native token`}
+        tooltip={`APR is determined by trade fees or rewards generated on each pool`}
         onClick={() => handlePoolSort(sort == 'ASC' ? '7' : '8')}
         invert={sort == 'DESC' && sortType == 'apr'}
         iconRight={true}
