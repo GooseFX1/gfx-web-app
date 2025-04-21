@@ -39,7 +39,7 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
   const { connection } = useConnectionConfig()
   const { GammaProgram } = usePriceFeedFarm()
   const { publicKey: userPublicKey } = useWalletBalance()
-  const {wallet} = useWallet();
+  const { wallet } = useWallet();
 
   const claimAllMutation = useMutation({
     mutationFn: async () => {

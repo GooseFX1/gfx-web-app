@@ -1,8 +1,10 @@
 import { useCallback, useMemo } from 'react'
 import TransactionBuilder, { TXN } from '@/web3/Builders/transaction.builder'
 import { getLatestPriorityFees, getPriorityFeeFromLevel, useConnectionConfig } from '@/context'
-import { BlockheightBasedTransactionConfirmationStrategy, 
-  Commitment, Connection, Transaction  } from '@solana/web3.js'
+import {
+  BlockheightBasedTransactionConfirmationStrategy,
+  Commitment, Connection, Transaction
+} from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { SendTransactionOptions } from '@solana/wallet-adapter-base'
 import { notifyUsingPromise, promiseBuilder, SpawnLoaderToast } from '@/utils/perpsNotifications'
@@ -48,9 +50,9 @@ function useTransaction(): useTransactionReturn {
   const supportedTransactionTypes = useMemo(() =>
     wallet?.adapter?.supportedTransactionVersions ?? baseSet, [wallet])
   const sendTransaction =
-    async (txnIn: Transaction | TransactionBuilder, 
-      connectionData?: SendTxnOptions, 
-      notify = notifyUsingPromise, 
+    async (txnIn: Transaction | TransactionBuilder,
+      connectionData?: SendTxnOptions,
+      notify = notifyUsingPromise,
       isCreatePoolInx?: boolean,
       skipComputeUnitsLimit = true) => {
       console.log('STARTING SEND TXN')
@@ -71,10 +73,10 @@ function useTransaction(): useTransactionReturn {
         await txnIn
           .setPriorityFee(priorityFromLevel)
           ._getTransaction(
-            publicKey, 
-            blockHash.blockhash, 
-            supportedTransactionTypes.has(0), 
-            isCreatePoolInx, 
+            publicKey,
+            blockHash.blockhash,
+            supportedTransactionTypes.has(0),
+            isCreatePoolInx,
             skipComputeUnitsLimit) :
         txnIn
       console.log('signing txn', txn)
@@ -138,53 +140,54 @@ function useTransaction(): useTransactionReturn {
       return { txSig, success }
     }
 
-    const sendBatchTransaction =
-    async (txnIns: (Transaction | TransactionBuilder)[], 
-      connectionData?: SendTxnOptions, 
+  const sendBatchTransaction =
+    async (txnIns: (Transaction | TransactionBuilder)[],
+      connectionData?: SendTxnOptions,
       notify = notifyUsingPromise,
       isCreatePoolInx?: boolean,
-      skipComputeUnitsLimit = true ) => {
+      skipComputeUnitsLimit = true) => {
       console.log('STARTING SEND TXN')
       const connection = connectionData?.connection ?? originalConnection
       const blockHash = await connection.getLatestBlockhash('confirmed')
       const result = await getLatestPriorityFees(
         (txnIns[0] instanceof TransactionBuilder ? await txnIns[0]
-          ._getTransactionWithoutPriorityFee(publicKey, blockHash.blockhash, 
+          ._getTransactionWithoutPriorityFee(publicKey, blockHash.blockhash,
             supportedTransactionTypes.has(0)) : txnIns[0])
       )
-      const priorityFromLevel = typeof result === 'number' 
-      ? result : getPriorityFeeFromLevel(priorityFee, result)
+      const priorityFromLevel = typeof result === 'number'
+        ? result : getPriorityFeeFromLevel(priorityFee, result)
       console.log({ result, priorityFromLevel })
       console.log('signing txn', txnIns)
       const id = SpawnLoaderToast({ duration: connectionData?.transactionDuration ?? 60000 })
 
       const txns = await Promise.all(txnIns.map(async (txnIn) => txnIn instanceof TransactionBuilder ?
-      await txnIn
-        .setPriorityFee(priorityFromLevel)
-        ._getTransaction(
-          publicKey, 
-          blockHash.blockhash, 
-          supportedTransactionTypes.has(0), 
-          isCreatePoolInx, 
-          skipComputeUnitsLimit) :
-      txnIn)
+        await txnIn
+          .setPriorityFee(priorityFromLevel)
+          ._getTransaction(
+            publicKey,
+            blockHash.blockhash,
+            supportedTransactionTypes.has(0),
+            isCreatePoolInx,
+            skipComputeUnitsLimit) :
+        txnIn)
       )
 
       const signedTransactions = await signAllTransactions(txns)
 
-      console.log("user has signed "+signedTransactions.length+ " transactions");
+      console.log("user has signed " + signedTransactions.length + " transactions");
 
       const promises = [];
 
-      for (const ta of signedTransactions){
-          promises.push(async () => {
-            const txid = await connection.sendRawTransaction(
-              ta.serialize(),
-              {
-                skipPreflight: false,
-              }
-            );
-            console.log(txid);
+      for (const ta of signedTransactions) {
+        promises.push(async () => {
+          const txid = await connection.sendRawTransaction(
+            ta.serialize(),
+            {
+              skipPreflight: false,
+            }
+          );
+          console.log(txid);
+          return txid;
         })
       }
 
@@ -193,7 +196,7 @@ function useTransaction(): useTransactionReturn {
       console.log('results', JSON.stringify(results, null, 2))
 
       const txSig = results[0];
-          
+
       console.log('got signature response', { txSig })
       if (!txSig) {
         toast.dismiss(id)
