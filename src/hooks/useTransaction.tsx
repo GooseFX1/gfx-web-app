@@ -183,7 +183,7 @@ function useTransaction(): useTransactionReturn {
           const txid = await connection.sendRawTransaction(
             ta.serialize(),
             {
-              skipPreflight: false,
+              skipPreflight: false
             }
           );
           console.log(txid);
