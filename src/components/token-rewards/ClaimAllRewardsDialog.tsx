@@ -56,14 +56,15 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
 
       // Process each batch
       for (const batch of batches) {
-        const batchTxBuilder = createTransactionBuilder()
-
         for (const reward of batch) {
+          const batchTxBuilder = createTransactionBuilder()
           console.log(reward);
-          const tx = await claimRewards(GammaProgram, userPublicKey, connection, reward)
-          batchTxBuilder.add(tx)
+          for (const rewardInfo of reward.rewards) {
+            const tx = await claimRewards(GammaProgram, userPublicKey, connection, rewardInfo)
+            batchTxBuilder.add(tx)
+          }
+          transactions.push(batchTxBuilder);
         }
-        transactions.push(batchTxBuilder);
       }
       console.log(wallet);
 
