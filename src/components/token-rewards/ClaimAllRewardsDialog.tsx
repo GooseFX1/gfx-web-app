@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import 'styled-components/macro'
 import {
   Button,
@@ -21,6 +21,7 @@ import { claimRewards } from '@/web3/Farm'
 import useTransaction from '@/hooks/useTransaction'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { useMutation } from '@tanstack/react-query'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 type ClaimAllRewardsDialogProps = {
   openClaimAllRewardsDialog: boolean
@@ -34,24 +35,41 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
   const { mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
   const { claimableRewardsWithTokens, refreshRewards } = useBoostedRewards()
-  const { sendTransaction, createTransactionBuilder } = useTransaction()
+  const { createTransactionBuilder, sendBatchTransaction } = useTransaction()
   const { connection } = useConnectionConfig()
   const { GammaProgram } = usePriceFeedFarm()
   const { publicKey: userPublicKey } = useWalletBalance()
+  const { wallet } = useWallet();
 
   const claimAllMutation = useMutation({
     mutationFn: async () => {
-      const txBuilder = createTransactionBuilder()
+      // Split rewards into batches of 5
+      const batchSize = 5
+      const rewards = claimableRewardsWithTokens.rewards
+      const batches = []
 
-      for (const reward of claimableRewardsWithTokens.rewards) {
-        for (const rewardInfo of reward.rewards) {
-          const tx = await claimRewards(GammaProgram, userPublicKey, connection, rewardInfo)
-          txBuilder.add(tx)
-        }
+      for (let i = 0; i < rewards.length; i += batchSize) {
+        batches.push(rewards.slice(i, i + batchSize))
       }
 
-      const { success } = await sendTransaction(
-        txBuilder,
+      const transactions = [];
+
+      // Process each batch
+      for (const batch of batches) {
+        for (const reward of batch) {
+          const batchTxBuilder = createTransactionBuilder()
+          console.log(reward);
+          for (const rewardInfo of reward.rewards) {
+            const tx = await claimRewards(GammaProgram, userPublicKey, connection, rewardInfo)
+            batchTxBuilder.add(tx)
+          }
+          transactions.push(batchTxBuilder);
+        }
+      }
+      console.log(wallet);
+
+      const { success } = await sendBatchTransaction(
+        transactions,
         {
           successMessage: `You claimed $${numberFormatter(
             claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber(),
@@ -62,8 +80,8 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
         undefined,
         true
       )
+
       if (!success) {
-        //off(connectionId)a
         console.log('An error occurred while claiming rewards!')
         throw new Error('An error occurred while claiming rewards!')
       }

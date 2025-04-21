@@ -400,6 +400,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 }
 
 export async function getLatestPriorityFees(txn: Transaction | VersionedTransaction) {
+  try{
   const response = await fetch(HELIUS_RPC.endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -420,6 +421,12 @@ export async function getLatestPriorityFees(txn: Transaction | VersionedTransact
   const data = await response.json()
   console.log('Fee in function for ', data.result)
   return data.result.priorityFeeLevels as PriorityFeeLevelsFromHelius
+}catch(error){
+  console.log("Failed to fetch getLatestPriorityFees", error)
+
+  // default
+  return 0.0001;
+}
 }
 
 type PriorityFeeLevelsFromHelius = {

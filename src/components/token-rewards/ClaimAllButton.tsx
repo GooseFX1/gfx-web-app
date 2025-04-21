@@ -20,11 +20,11 @@ export function ClaimAllRewards({ setOpenClaimAllRewardsDialog }: ClaimAllReward
   useEffect(() => {
     console.log('claimableRewardsWithTokens', claimableRewardsWithTokens.totalClaimableRewardsUsd.toNumber())
   }, [claimableRewardsWithTokens])
-  
+
   // Early returns after all hooks have been called
-  const shouldRender = claimableRewardsWithTokens.totalClaimableRewardsUsd.gt(0.1) && 
-                       claimableRewardsWithTokens.rewards.length > 0
-  
+  const shouldRender = claimableRewardsWithTokens.totalClaimableRewardsUsd.gt(0.1) &&
+    claimableRewardsWithTokens.rewards.length > 0
+
   if (!shouldRender) return null
 
   const content = (className?: string) => (
