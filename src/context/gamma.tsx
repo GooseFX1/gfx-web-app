@@ -16,12 +16,11 @@ import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   BASE_SLIPPAGE,
-  GAMMA_SORT_CONFIG,
-  GAMMA_SORT_CONFIG_BLACKLIST,
-  GAMMA_SORT_CONFIG_MAP,
+  GAMMA_MAIN_SORT_CONFIG_DEFAULT,
+  GAMMA_MAIN_SORT_CONFIG_MAP,
+  GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT,
+  GAMMA_PORTFOLIO_SORT_CONFIG_MAP,
   GAMMA_SORT_CONFIG_PUBKEY_REQUIRED,
-  GAMMA_SORT_PORTFOLIO_BLACKLIST,
-  GAMMA_SORT_CONFIG_DEFAULT,
   GAMMASortConfig,
   JupToken,
   ModeOfOperation
@@ -124,10 +123,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const setCurrentSort = (value: string) => {
     let sortValue = value
-    if (!publicKey && isPortfolio && GAMMA_SORT_PORTFOLIO_BLACKLIST.includes(value)) {
-      sortValue = '9'
-    } else if (!isPortfolio && GAMMA_SORT_CONFIG_BLACKLIST.includes(value)) {
-      sortValue = GAMMA_SORT_CONFIG_DEFAULT
+    if (!publicKey && isPortfolio && !GAMMA_PORTFOLIO_SORT_CONFIG_MAP.has(value)) {
+      sortValue = GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT
+    } else if (!isPortfolio && !GAMMA_MAIN_SORT_CONFIG_MAP.has(value)) {
+      sortValue = GAMMA_MAIN_SORT_CONFIG_DEFAULT
     }
 
     setCurrentSortState((prevState) => {
@@ -147,18 +146,24 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useLayoutEffect(() => {
     if (!publicKey) {
       if (GAMMA_SORT_CONFIG_PUBKEY_REQUIRED.includes(userCache.gamma.currentSort)) {
-        setCurrentSort(GAMMA_SORT_CONFIG_DEFAULT)
+        setCurrentSort(GAMMA_MAIN_SORT_CONFIG_DEFAULT)
       }
     }
   }, [publicKey, userCache])
   const [createPoolType, setCreatePoolType] = useState<string>('')
   const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
   const [viewRange, setViewRange] = useState<ViewRange>(0)
-  const sortConfig = useMemo(
-    () =>
-      GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[isPortfolio ? GAMMA_SORT_CONFIG.length - 2 : 0],
-    [currentSort, isPortfolio]
-  )
+  const sortConfig = useMemo(() => {
+    const choice = isPortfolio
+      ? GAMMA_PORTFOLIO_SORT_CONFIG_MAP.get(currentSort)
+      : GAMMA_MAIN_SORT_CONFIG_MAP.get(currentSort)
+    if (!choice) {
+      return isPortfolio
+        ? GAMMA_PORTFOLIO_SORT_CONFIG_MAP.get(GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT)
+        : GAMMA_MAIN_SORT_CONFIG_MAP.get(GAMMA_MAIN_SORT_CONFIG_DEFAULT)
+    }
+    return choice
+  }, [currentSort, isPortfolio])
   const [isCardMode, setIsCardMode] = useState<string>(userCache.gamma.viewMode)
   const prevIsCardMode = usePrevious(isCardMode)
   const {
@@ -211,11 +216,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (viewRange != 0) {
         setViewRange(0)
       }
-      if (currentSort != GAMMA_SORT_CONFIG_DEFAULT) {
-        setCurrentSort(GAMMA_SORT_CONFIG_DEFAULT)
-      }
     }
-  }, [isCardMode, viewRange, currentSort, prevIsCardMode])
+  }, [isCardMode, viewRange, currentSort, prevIsCardMode, isPortfolio])
   useEffect(() => {
     if (calculatePoolType.size == 0) {
       const abortSig = 'tokenListCalcPoolTypeGamma'
@@ -229,15 +231,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
     }
   }, [])
-
-  useEffect(() => {
-    if (!isPortfolio) {
-      setShowDeposited(false)
-      setCurrentSort(GAMMA_SORT_CONFIG_DEFAULT)
-    } else {
-      setCurrentSort('9')
-    }
-  }, [isPortfolio])
 
   useEffect(() => {
     if (!base58PublicKey || poolsQuery.data?.allPages?.length == 0 || !selectedCard?.id) return
@@ -259,7 +252,13 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       portfolioPoolsQuery.refetch()
     }
   }
-
+  useEffect(() => {
+    if (isPortfolio && !GAMMA_PORTFOLIO_SORT_CONFIG_MAP.has(currentSort)) {
+      setCurrentSort(GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT)
+    } else if (!isPortfolio && !GAMMA_MAIN_SORT_CONFIG_MAP.has(currentSort)) {
+      setCurrentSort(GAMMA_MAIN_SORT_CONFIG_DEFAULT)
+    }
+  }, [isPortfolio, currentSort])
   const computedViewRange = viewRange == 0 ? '24H' : viewRange == 1 ? '7D' : '30D'
 
   return (

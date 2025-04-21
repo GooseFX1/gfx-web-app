@@ -33,7 +33,6 @@ export const FarmHeader: FC = () => {
     setViewRange: setRange,
     setIsPortfolio,
     isPortfolio,
-    setCurrentSort,
     setShowDeposited,
     setShowCreatedPools
   } = useGamma()
@@ -140,7 +139,6 @@ export const FarmHeader: FC = () => {
                   value: 'Pools',
                   label: 'Pools',
                   onClick: () => {
-                    setCurrentSort('1')
                     if (isPortfolio) {
                       setShowDeposited(false)
                       setShowCreatedPools(false)
@@ -152,7 +150,6 @@ export const FarmHeader: FC = () => {
                   value: 'Portfolio',
                   label: 'Portfolio',
                   onClick: () => {
-                    setCurrentSort('9')
                     setShowDeposited(false)
                     setShowCreatedPools(false)
                     setRange(0)
