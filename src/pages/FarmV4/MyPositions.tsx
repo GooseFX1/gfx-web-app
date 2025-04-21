@@ -72,7 +72,7 @@ const MyPositions: FC<{
   return (
     <div className={`flex flex-col gap-[15px] mt-[15px]`}>
       {queryPositions.length > 0 ? (
-          queryPositions.map((pool) => <MyPositionItem pool={pool} activeRewards={activeRewards} />)
+          queryPositions.map((pool) => <MyPositionItem key={pool.id} pool={pool} activeRewards={activeRewards} />)
       ) : (
         <NoResultsFound requestPool={false} str={noResultsTitle} subText={noResultsSubText} />
       )}
@@ -158,7 +158,7 @@ const MyPositionItem: FC<{
         >
           {pool.mintA.symbol} - {pool.mintB.symbol}
         </div>
-        {activeReward && !isMobile && (
+        {activeReward && activeReward.length > 0 && !isMobile && (
           <Icon src={`/img/assets/rewards-icon-${mode}.svg`} alt="claim-rewards" size={'sm'} className="ml-2" />
         )}
       </div>
@@ -229,8 +229,8 @@ const MyPositionItem: FC<{
               <div>
                 <h2 className="text-[10px] text-primary-gradient">Boosted Rewards</h2>
 
-                {activeReward.map((reward) => (
-                <div className="flex flex-row items-center mb-3">
+                {activeReward.map((reward, index) => (
+                <div key={`${reward.token.symbol}-${index}`} className="flex flex-row items-center mb-3">
                   <IconWithFallback
                     src={loadIconImage(reward.token.logoURI, mode)}
                     className="border-solid dark:border-black-2 border-white

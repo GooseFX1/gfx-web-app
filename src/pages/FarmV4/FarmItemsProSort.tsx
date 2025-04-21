@@ -78,6 +78,7 @@ const FarmItemsProSort: FC = () => {
           onClick={() => handlePoolSort(currentSort === '1' ? '2' : '1')}
           invert={currentSort == '1'}
           className={'sm-lg:hidden'}
+          tooltip={"The total value locked of assets in the pool"}
         />
       )}
       {isDesktop && (
@@ -102,7 +103,7 @@ const FarmItemsProSort: FC = () => {
       )}
       <FarmRowItem
         title={`${computedViewRange} APR`}
-        tooltip={'Values are displayed in native token'}
+        tooltip={'APR is determined by trade fees or rewards generated on each pool'}
         onClick={() => handlePoolSort(currentSort === '7' ? '8' : '7')}
         invert={currentSort == '7'}
         className={'max-sm:w-full max-sm:justify-end sm-lg:w-full sm-lg:justify-end'}

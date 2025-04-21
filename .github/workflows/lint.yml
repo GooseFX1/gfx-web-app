@@ -10,8 +10,8 @@ jobs:
     name: Run ESLint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20.13.1'
           cache: 'yarn'
@@ -22,8 +22,8 @@ jobs:
     name: Run Type Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20.13.1'
           cache: 'yarn'
@@ -34,8 +34,8 @@ jobs:
     name: Run Prettier Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20.13.1'
           cache: 'yarn'
@@ -53,3 +53,4 @@ jobs:
   #         cache: 'yarn'
   #     - run: yarn
   #     - run: yarn test
+  

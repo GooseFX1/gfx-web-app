@@ -18,7 +18,7 @@ function TokenSearchBar() {
     selectedTokens,
     removeSelectedToken,
     addSelectedToken,
-    hasSelectedToken,
+    hasSelectedToken
   } = useGamma()
 
   const query = useTokensQuery({ searchValue })

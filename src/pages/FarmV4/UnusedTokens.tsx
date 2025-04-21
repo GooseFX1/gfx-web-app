@@ -13,7 +13,7 @@ const ExplorePools: FC<{ tokenMint: string }> = ({ tokenMint }) => {
     clearAllSelectedTokens,
     setIsPortfolio,
     setCurrentSort,
-    selectedTokens,
+    selectedTokens
   } = useGamma()
   const chooseToken = async () => {
     clearAllSelectedTokens()

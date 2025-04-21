@@ -79,7 +79,7 @@ function usePoolsQuery({
           sortDirection: sortDirection,
           showCreated: showCreated,
           showDeposited: showDeposited,
-          userPublicKey: base58PublicKey,
+          userPublicKey: base58PublicKey
         })
       } else {
         return await fetchPools({
