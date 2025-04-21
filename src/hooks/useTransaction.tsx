@@ -179,7 +179,7 @@ function useTransaction(): useTransactionReturn {
       const promises = [];
 
       for (const ta of signedTransactions) {
-        promises.push(async () => {
+        const promise = (async () => {
           const txid = await connection.sendRawTransaction(
             ta.serialize(),
             {
@@ -189,6 +189,8 @@ function useTransaction(): useTransactionReturn {
           console.log(txid);
           return txid;
         })
+
+        promises.push(promise())
       }
 
       const results = await Promise.all(promises);
