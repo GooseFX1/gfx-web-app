@@ -31,7 +31,7 @@ export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
     ? numberFormatter(
       new BigNumber(formattedAPR)
         .plus(activeRewardsAmount.div(pool.tvl)
-          .multipliedBy(100).div(365).toNumber())
+          .multipliedBy(100).multipliedBy(365).toNumber())
         .toNumber()
     )
     : numberFormatter(formattedAPR)

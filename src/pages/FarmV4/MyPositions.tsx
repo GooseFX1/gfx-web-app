@@ -107,7 +107,7 @@ const MyPositionItem: FC<{
     ? numberFormatter(
       new BigNumber(formattedAPR)
         .plus(activeRewardsAmount.div(pool.tvl)
-          .multipliedBy(100).div(365).toNumber())
+          .multipliedBy(100).multipliedBy(365).toNumber())
         .toNumber()
     )
     : numberFormatter(formattedAPR)
@@ -242,7 +242,7 @@ const MyPositionItem: FC<{
                       <span className="font-poppins font-semibold text-[15px]">{reward.token.symbol}</span>
                       <span className="font-display font-semibold text-[15px] ml-auto">
                         {numberFormatter(reward.pricePerDayUsd.div(pool.tvl)
-                          .multipliedBy(100).div(365).toNumber())}%
+                          .multipliedBy(100).multipliedBy(365).toNumber())}%
                       </span>
                     </div>))}
                 </div>
