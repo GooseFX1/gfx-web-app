@@ -105,7 +105,10 @@ const MyPositionItem: FC<{
   const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
   const apr = activeReward
     ? numberFormatter(
-      new BigNumber(formattedAPR).plus(activeRewardsAmount.div(pool.tvl).multipliedBy(100).div(365).toNumber()).toNumber()
+      new BigNumber(formattedAPR)
+        .plus(activeRewardsAmount.div(pool.tvl)
+          .multipliedBy(100).div(365).toNumber())
+        .toNumber()
     )
     : numberFormatter(formattedAPR)
 
