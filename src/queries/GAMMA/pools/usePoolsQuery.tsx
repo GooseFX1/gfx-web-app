@@ -28,7 +28,7 @@ import { useLocation } from 'react-router-dom'
 import { ROUTES } from '@/Router'
 import BN from 'bn.js'
 
-type PoolsAPIResponse = InfiniteDataAPIResponse<GAMMAPool[]>
+export type PoolsAPIResponse = InfiniteDataAPIResponse<GAMMAPool[]>
 type MintSearchProps = {
   searchValue?: string
   mintA?: string
@@ -127,7 +127,7 @@ async function fetchPoolsByMints({
   userPublicKey,
   pageParam = 1
 }): Promise<PoolsAPIResponse> {
-  const pageQuery = `?page=${pageParam}&${POOL_LIST_PAGE_SIZE}`
+  const pageQuery = `?page=${pageParam}&pageSize=${POOL_LIST_PAGE_SIZE}`
   const sortQuery = `&sortBy=${sortBy}&sortOrder=${sortDirection}`
   const mintQuery = `&mint1=${mintA.trim()}${mintB ? `&mint2=${mintB.trim()}` : ''}`
   const poolTypeQuery = `&poolType=all`

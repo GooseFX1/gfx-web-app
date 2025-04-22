@@ -35,6 +35,7 @@ import usePoolsQuery, { UsePoolQueryResponse } from '@/queries/GAMMA/pools/usePo
 import { getSortKey } from '@/queries/GAMMA/gammaQueries.helpers'
 import useUserPortfolioPools from '@/queries/GAMMA/pools/useUserPortfolioPools'
 import usePoolDeepLink from '@/hooks/gamma/usePoolDeepLink'
+import useSelectPoolByMints from '@/queries/GAMMA/pools/useSelectPoolByMints'
 
 type ViewRange = 0 | 1 | 2
 
@@ -121,9 +122,13 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [calculatePoolType, setCalculatePoolType] = useState<Set<string>>(new Set())
 
   const userLiqQuery = useUserLiquidityQuery()
-  const deepLink = usePoolDeepLink();
+  const [deepLink] = usePoolDeepLink();
   // TODO: remove and use for query
-  console.log(deepLink)
+  const selectPoolByDeeplinkQuery = useSelectPoolByMints({
+    symbolA: deepLink.symbolA,
+    symbolB: deepLink.symbolB
+  })
+  console.log('selectPoolByDeeplinkQuery', selectPoolByDeeplinkQuery.data)
   const setCurrentSort = (value: string) => {
     let sortValue = value
     if (!publicKey && isPortfolio && !GAMMA_PORTFOLIO_SORT_CONFIG_MAP.has(value)) {
@@ -234,13 +239,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
     }
   }, [])
-
-  useEffect(() => {
-    if (!base58PublicKey || poolsQuery.data?.allPages?.length == 0 || !selectedCard?.id) return
-    const pool = poolsQuery.data.allPages.filter((pool) => pool.id === selectedCard.id)
-    if (pool.length == 0) return
-    setSelectedCard(pool[0])
-  }, [base58PublicKey, poolsQuery.data])
 
   const isSearchActive = searchTokens.trim().length > 0
   const forceCronAndUpdateLocalData = async (txSig?: string) => {
