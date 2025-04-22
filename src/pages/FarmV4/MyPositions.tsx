@@ -26,7 +26,7 @@ const renderTokenBalance = (p: GAMMAPortfolioPool) => {
 
 const MyPositions: FC<{
   queryPositions: GAMMAPortfolioPool[]
-}> = ({queryPositions}) => {
+}> = ({ queryPositions }) => {
   const { isSearchActive, showCreatedPools } = useGamma()
 
   const { getActiveRewardByPoolId } = useBoostedRewards()
@@ -53,7 +53,7 @@ const MyPositions: FC<{
   }
 
   const poolIds = queryPositions.map(pool => pool.id);
-  
+
   const { data: activeRewards } = useQuery({
     queryKey: [QUERY_KEY, 'activeRewards', poolIds],
     queryFn: async () => {
@@ -72,7 +72,7 @@ const MyPositions: FC<{
   return (
     <div className={`flex flex-col gap-[15px] mt-[15px]`}>
       {queryPositions.length > 0 ? (
-          queryPositions.map((pool) => <MyPositionItem key={pool.id} pool={pool} activeRewards={activeRewards} />)
+        queryPositions.map((pool) => <MyPositionItem key={pool.id} pool={pool} activeRewards={activeRewards} />)
       ) : (
         <NoResultsFound requestPool={false} str={noResultsTitle} subText={noResultsSubText} />
       )}
@@ -97,7 +97,7 @@ const MyPositionItem: FC<{
 
   const { isTablet, isDesktop, isMobile } = useBreakPoint()
   const { mode } = useDarkMode()
-  
+
   const activeReward = activeRewards?.[pool.id];
   const isOwner = base58PublicKey === pool.poolCreator;
   const { formattedAPR, kaminoUSD, tradeAPR } = getPoolValuesByRange(pool, viewRange)
@@ -105,8 +105,11 @@ const MyPositionItem: FC<{
   const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
   const apr = activeReward
     ? numberFormatter(
-        new BigNumber(formattedAPR).plus(activeRewardsAmount.multipliedBy(100).div(365).toNumber()).toNumber()
-      )
+      new BigNumber(formattedAPR)
+        .plus(activeRewardsAmount.div(pool.tvl)
+          .multipliedBy(100).multipliedBy(365).toNumber())
+        .toNumber()
+    )
     : numberFormatter(formattedAPR)
 
   return (
@@ -217,46 +220,47 @@ const MyPositionItem: FC<{
                   </div>
                 ))}
 
-          {/* should only show if kaminoUSD is greater than 0 */}
-          {parseFloat(kaminoUSD) > 0 && (
-            <div className="flex flex-row justify-between mb-3">
-              <span className="font-poppins font-semibold text-[15px]">Lending APR</span>
-              <span className="font-display font-semibold text-[15px]">${kaminoUSD}</span>
-            </div>
-          )}
-          {activeReward &&
-              activeReward.length > 0 &&
-              <div>
-                <h2 className="text-[10px] text-primary-gradient">Boosted Rewards</h2>
+              {/* should only show if kaminoUSD is greater than 0 */}
+              {parseFloat(kaminoUSD) > 0 && (
+                <div className="flex flex-row justify-between mb-3">
+                  <span className="font-poppins font-semibold text-[15px]">Lending APR</span>
+                  <span className="font-display font-semibold text-[15px]">${kaminoUSD}</span>
+                </div>
+              )}
+              {activeReward &&
+                activeReward.length > 0 &&
+                <div>
+                  <h2 className="text-[10px] text-primary-gradient">Boosted Rewards</h2>
 
-                {activeReward.map((reward, index) => (
-                <div key={`${reward.token.symbol}-${index}`} className="flex flex-row items-center mb-3">
-                  <IconWithFallback
-                    src={loadIconImage(reward.token.logoURI, mode)}
-                    className="border-solid dark:border-black-2 border-white
+                  {activeReward.map((reward, index) => (
+                    <div key={`${reward.token.symbol}-${index}`} className="flex flex-row items-center mb-3">
+                      <IconWithFallback
+                        src={loadIconImage(reward.token.logoURI, mode)}
+                        className="border-solid dark:border-black-2 border-white
                           border-[2px] rounded-full h-5 w-5"
-                  />
-                  <span className="font-poppins font-semibold text-[15px]">{reward.token.symbol}</span>
-                  <span className="font-display font-semibold text-[15px] ml-auto">
-                    {numberFormatter(reward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())}%
-                  </span>
-                </div>))}
-              </div>
-          }
-          {parseFloat(kaminoUSD) > 0 || activeReward && (
-            <div
-              className="w-full h-[1px] border-t-1 border-border-lightmode-secondary 
+                      />
+                      <span className="font-poppins font-semibold text-[15px]">{reward.token.symbol}</span>
+                      <span className="font-display font-semibold text-[15px] ml-auto">
+                        {numberFormatter(reward.pricePerDayUsd.div(pool.tvl)
+                          .multipliedBy(100).multipliedBy(365).toNumber())}%
+                      </span>
+                    </div>))}
+                </div>
+              }
+              {parseFloat(kaminoUSD) > 0 || activeReward && (
+                <div
+                  className="w-full h-[1px] border-t-1 border-border-lightmode-secondary 
               dark:border-border-darkmode-secondary my-2"
-            />
-          )}
-          <div className="flex flex-row justify-between ">
-            <span className="font-poppins font-semibold text-[15px]">Total APR</span>
-            <span className="font-display font-semibold text-[15px]">{apr}%</span>
-          </div>
-        </div>
-      </TooltipContent>
-    </Tooltip>
-    </div>
+                />
+              )}
+              <div className="flex flex-row justify-between ">
+                <span className="font-poppins font-semibold text-[15px]">Total APR</span>
+                <span className="font-display font-semibold text-[15px]">{apr}%</span>
+              </div>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      </div>
 
       {/* actions */}
       {(isTablet || isDesktop) && (
@@ -326,6 +330,6 @@ const MyPositionItems: FC = () => {
     )
   }
 
-  return <MyPositions queryPositions={query.data.allPages}/>
+  return <MyPositions queryPositions={query.data.allPages} />
 }
 export default MyPositionItems

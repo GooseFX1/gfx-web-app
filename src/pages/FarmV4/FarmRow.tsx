@@ -47,8 +47,13 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
   const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
   const apr = activeReward
     ? numberFormatter(
-        new BigNumber(formattedAPR).plus(activeRewardsAmount.multipliedBy(100).div(365).toNumber()).toNumber()
-      )
+      new BigNumber(formattedAPR).plus(
+        activeRewardsAmount.div(pool.tvl)
+          .multipliedBy(100)
+          .multipliedBy(365)
+          .toNumber()
+      ).toNumber()
+    )
     : numberFormatter(formattedAPR)
 
   return (
@@ -177,7 +182,8 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
                     />
                     <span className="font-poppins font-semibold text-[15px]">{reward.token.symbol}</span>
                     <span className="font-display font-semibold text-[15px] ml-auto">
-                      {numberFormatter(reward.pricePerDayUsd.multipliedBy(100).div(365).toNumber())}%
+                      {numberFormatter(reward.pricePerDayUsd.div(pool.tvl)
+                        .multipliedBy(100).multipliedBy(365).toNumber())}%
                     </span>
                   </div>
                 ))}
@@ -277,8 +283,8 @@ export const getPoolValuesByRange = (pool, viewRange) => {
         formattedAPR: Math.max(
           0,
           pool.stats.daily.feesAprUsd +
-            pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd +
-            pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
+          pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd +
+          pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
         ),
         tradeAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUsd)),
         kaminoAPR: numberFormatter(
@@ -303,15 +309,15 @@ export const getPoolValuesByRange = (pool, viewRange) => {
         formattedAPR: Math.max(
           0,
           pool.stats.weekly.feesAprUsd +
-            pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
-            pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
+          pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
+          pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
         ),
         tradeAPR: numberFormatter(Math.max(0, pool.stats.weekly.feesAprUsd)),
         kaminoAPR: numberFormatter(
           Math.max(
             0,
             pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
-              pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
+            pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
           )
         ),
         kaminoUSD: numberFormatter(
@@ -330,15 +336,15 @@ export const getPoolValuesByRange = (pool, viewRange) => {
         formattedAPR: Math.max(
           0,
           pool.stats.monthly.feesAprUsd +
-            pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +
-            pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
+          pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +
+          pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
         ),
         tradeAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUsd)),
         kaminoAPR: numberFormatter(
           Math.max(
             0,
             pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +
-              pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
+            pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
           )
         ),
         kaminoUSD: numberFormatter(
