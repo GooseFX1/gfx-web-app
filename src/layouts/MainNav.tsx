@@ -140,8 +140,7 @@ const MobileNav: FC = () => {
   const [isOpen, setIsOpen] = useBoolean(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const history = useHistory()
-
-  const isMoreOpen = pathname.includes('bridge')
+  const isMoreOpen = pathname.includes('bridge') || pathname.includes('ssl')
 
   if (breakpoint.isLaptop || breakpoint.isDesktop) return null
   return (
@@ -167,7 +166,7 @@ const MobileNav: FC = () => {
                 className={cn(
                   `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
                          dark:text-text-darkmode-tertiary h-[43px]`,
-                  pathname.includes('ssl') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+                  pathname.includes('swap') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
                 )}
                 onClick={() => {
                   setIsOpen.off()
@@ -200,30 +199,13 @@ const MobileNav: FC = () => {
                 />
                 &nbsp;Pools
               </ListItem>
-              <ListItem
-                variant={pathname.includes('ssl') && 'primary'}
-                className={cn(
-                  `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
-                         dark:text-text-darkmode-tertiary h-[43px]`,
-                  pathname.includes('ssl') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-                )}
-                onClick={() => {
-                  setIsOpen.off()
-                  history.push('/ssl')
-                }}
-              >
-                <img
-                  className="h-[35px]"
-                  src={`/img/mainnav/farm-${mode}${pathname.includes('ssl') ? '-active' : ''}.svg`}
-                  alt="dark"
-                />
-                &nbsp;SSL
-              </ListItem>
 
               <Accordion type={'single'} collapsible variant={'unset'}>
-                <AccordionItem value={'bridge'} variant={'unset'}>
+                <AccordionItem value={'ssl'} variant={'unset'}>
                   <AccordionTrigger variant={'primary'} isSelected={isMoreOpen} className={'text-h3  px-1.25'}>
-                    <span className={'inline-flex items-center font-poppins font-inherit text-inherit'}>
+                    <span
+                      className={`inline-flex items-center font-poppins font-semibold font-inherit text-inherit`}
+                    >
                       <img
                         className="h-[35px]"
                         src={`/img/mainnav/more-${mode}${isMoreOpen ? '-active' : ''}.svg`}
@@ -233,6 +215,15 @@ const MobileNav: FC = () => {
                     </span>
                   </AccordionTrigger>
                   <AccordionContent variant={'unset'} className={'flex flex-col gap-1.5 pt-2.5'}>
+                    <MobileAccordionContent
+                      title={'SSL'}
+                      description={'LP using a single asset'}
+                      onClick={() => {
+                        setIsOpen.off()
+                        history.push('/ssl')
+                      }}
+                      isActive={pathname.includes('ssl')}
+                    />
                     <MobileAccordionContent
                       title={'Bridge'}
                       description={'Bridge your assets to and from other chains'}
@@ -292,6 +283,8 @@ const DesktopNav: FC = () => {
   const { mode } = useDarkMode()
   if (breakpoint.isMobile || breakpoint.isTablet) return null
 
+  const isMoreActive = pathname.includes('bridge') || pathname.includes('ssl')
+
   return (
     <div className={`flex items-center gap-6 mx-auto`}>
       <Button
@@ -324,21 +317,6 @@ const DesktopNav: FC = () => {
         />
         Pools
       </Button>
-      <Button
-        variant={'ghost'}
-        onClick={() => history.push('/ssl')}
-        className={cn(
-          `tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
-          pathname.includes('ssl') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-        )}
-      >
-        <img
-          className="w-[26px] h-[26px] mb-0.5"
-          src={`/img/mainnav/farm-${mode}${pathname.includes('ssl') ? '-active' : ''}.svg`}
-          alt="dark"
-        />
-        SSL
-      </Button>
 
       <DropdownMenu onOpenChange={setIsMoreOpen.toggle}>
         <DropdownMenuTrigger asChild={true}>
@@ -346,25 +324,35 @@ const DesktopNav: FC = () => {
             variant={'ghost'}
             className={cn(
               `tracking-wider p-0 flex-col text-center justify-center items-center text-h6 [&>span]:inline-flex gap-0`,
-              pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+              isMoreActive ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
             )}
           >
             <span className={`inline-flex justify-center items-center`}>
               <img
                 className="w-[26px] h-[26px] mb-0.5"
-                src={`/img/mainnav/more-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
+                src={`/img/mainnav/more-${mode}${isMoreActive ? '-active' : ''}.svg`}
                 alt="dark"
               />
               <CircularArrow
                 cssStyle={tw`w-[12px] h-[12px]`}
                 invert={isMoreOpen}
-                css={[pathname.includes('bridge') || isMoreOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
+                css={[
+                  isMoreActive || isMoreOpen
+                    ? tw`opacity-[1]`
+                    : tw`opacity-[0.6]`
+                ]}
               />
             </span>
             More
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent portal={false} className={'mt-3 w-[300px]'}>
+          <DropdownMenuItem onClick={() => history.push('/ssl')} isActive={pathname.includes('ssl')}>
+            <div>
+              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>SSL</h4>
+              <p className={'text-b3'}>LP using a single asset</p>
+            </div>
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => history.push('/bridge')} isActive={pathname.includes('bridge')}>
             <div>
               <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Bridge</h4>
