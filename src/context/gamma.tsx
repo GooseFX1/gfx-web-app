@@ -109,6 +109,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<any>({})
+  const prevCard = usePrevious(selectedCard)
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [sendingTransaction, setSendingTransaction] = useState<boolean>(false)
@@ -123,12 +124,20 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const userLiqQuery = useUserLiquidityQuery()
   const [deepLink] = usePoolDeepLink();
-  // TODO: remove and use for query
+
   const selectPoolByDeeplinkQuery = useSelectPoolBySymbols({
     symbolA: deepLink.symbolA,
     symbolB: deepLink.symbolB
   })
-  console.log('selectPoolByDeeplinkQuery', selectPoolByDeeplinkQuery.data)
+  useEffect(() => {
+    if (selectPoolByDeeplinkQuery.isSuccess) {
+      // only set if the prev card and current card is empty - first mount - prevent cyclic setting of state
+      if (!Object.keys(selectedCard).length && !Object.keys(prevCard.length)) {
+        setSelectedCard(selectPoolByDeeplinkQuery.data)
+      }
+    }
+  }, [prevCard,selectedCard,selectPoolByDeeplinkQuery])
+
   const setCurrentSort = (value: string) => {
     let sortValue = value
     if (!publicKey && isPortfolio && !GAMMA_PORTFOLIO_SORT_CONFIG_MAP.has(value)) {
