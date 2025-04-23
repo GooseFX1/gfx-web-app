@@ -6,13 +6,14 @@ import { POOL_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
 import { getGAMMARootUrl } from '@/api'
 import { GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
 import { clamp } from '@/utils'
+import { INTERVALS } from '@/utils/time'
 
 type Props = {
   symbolA?: string
   symbolB?: string
 }
 
-function useSelectPoolByMints({ symbolA, symbolB }: Props) {
+function useSelectPoolBySymbols({ symbolA, symbolB }: Props) {
   return useQuery({
     queryKey: [QUERY_KEY, 'useSelectPoolByMints', symbolA, symbolB],
     queryFn: async ({ signal }) => {
@@ -20,14 +21,16 @@ function useSelectPoolByMints({ symbolA, symbolB }: Props) {
       const results = await getAllPoolMintResults({
         symbolA: symbolA,
         symbolB: symbolB,
-        signal,
+        signal
       })
       if (!results || results.length == 0) return null
       let pool: GAMMAPool
       for (const result of results) {
         if (
-          (result.mintA.symbol == symbolA && result.mintB.symbol == symbolB) ||
-          (result.mintA.symbol == symbolB && result.mintB.symbol == symbolA)
+          (result.mintA.symbol.toLowerCase() == symbolA.toLowerCase() &&
+            result.mintB.symbol.toLowerCase() == symbolB.toLowerCase()) ||
+          (result.mintA.symbol.toLowerCase() == symbolB.toLowerCase() &&
+            result.mintB.symbol.toLowerCase() == symbolA.toLowerCase())
         ) {
           pool = result
           break
@@ -35,12 +38,12 @@ function useSelectPoolByMints({ symbolA, symbolB }: Props) {
       }
       return pool
     },
-    staleTime: Infinity,
+    staleTime: INTERVALS.MINUTE,
     enabled: !!symbolA && !!symbolB
   })
 }
 
-export default useSelectPoolByMints
+export default useSelectPoolBySymbols
 
 async function getAllPoolMintResults({ symbolA, symbolB, signal }) {
   const res = await fetchPoolsBySymbols({
@@ -49,6 +52,7 @@ async function getAllPoolMintResults({ symbolA, symbolB, signal }) {
     signal,
     pageParam: 1
   })
+
   if (res.totalPages > 1) {
     const reqs = []
     for (let i = 2; i <= res.totalPages; i++) {

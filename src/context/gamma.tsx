@@ -35,7 +35,7 @@ import usePoolsQuery, { UsePoolQueryResponse } from '@/queries/GAMMA/pools/usePo
 import { getSortKey } from '@/queries/GAMMA/gammaQueries.helpers'
 import useUserPortfolioPools from '@/queries/GAMMA/pools/useUserPortfolioPools'
 import usePoolDeepLink from '@/hooks/gamma/usePoolDeepLink'
-import useSelectPoolByMints from '@/queries/GAMMA/pools/useSelectPoolByMints'
+import useSelectPoolBySymbols from '@/queries/GAMMA/pools/useSelectPoolBySymbols'
 
 type ViewRange = 0 | 1 | 2
 
@@ -124,7 +124,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const userLiqQuery = useUserLiquidityQuery()
   const [deepLink] = usePoolDeepLink();
   // TODO: remove and use for query
-  const selectPoolByDeeplinkQuery = useSelectPoolByMints({
+  const selectPoolByDeeplinkQuery = useSelectPoolBySymbols({
     symbolA: deepLink.symbolA,
     symbolB: deepLink.symbolB
   })
