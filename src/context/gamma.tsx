@@ -36,6 +36,7 @@ import { getSortKey } from '@/queries/GAMMA/gammaQueries.helpers'
 import useUserPortfolioPools from '@/queries/GAMMA/pools/useUserPortfolioPools'
 import usePoolDeepLink from '@/hooks/gamma/usePoolDeepLink'
 import useSelectPoolBySymbols from '@/queries/GAMMA/pools/useSelectPoolBySymbols'
+import useSearchParams from '@/hooks/useSearchParams'
 
 type ViewRange = 0 | 1 | 2
 
@@ -85,6 +86,7 @@ interface GAMMADataModel {
   isCardMode: string
   setIsCardMode: Dispatch<SetStateAction<string>>
   poolsQuery: UsePoolQueryResponse
+  referralCode: string | null
 }
 
 export type TokenListToken = {
@@ -123,12 +125,23 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [calculatePoolType, setCalculatePoolType] = useState<Set<string>>(new Set())
 
   const userLiqQuery = useUserLiquidityQuery()
-  const [deepLink] = usePoolDeepLink();
+  const [deepLink] = usePoolDeepLink()
 
   const selectPoolByDeeplinkQuery = useSelectPoolBySymbols({
     symbolA: deepLink.symbolA,
     symbolB: deepLink.symbolB
   })
+  const {
+    operators: { getSingleItemByKeys }
+  } = useSearchParams<{
+    ref?: string
+    referralCode?: string
+    referral_code?: string
+    REFERRAL_CODE?: string
+    REF: string
+  }>()
+  const referralCode = getSingleItemByKeys(['ref', 'referralCode', 'referral_code', 'REFERRAL_CODE', 'REF'])
+
   useEffect(() => {
     if (selectPoolByDeeplinkQuery.isSuccess) {
       // only set if the prev card and current card is empty - first mount - prevent cyclic setting of state
@@ -136,7 +149,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSelectedCard(selectPoolByDeeplinkQuery.data)
       }
     }
-  }, [prevCard,selectedCard,selectPoolByDeeplinkQuery])
+  }, [prevCard, selectedCard, selectPoolByDeeplinkQuery])
 
   const setCurrentSort = (value: string) => {
     let sortValue = value
@@ -318,7 +331,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isCardMode,
         setIsCardMode,
         filteredPools: poolsQuery.data?.allPages ?? [],
-        poolsQuery
+        poolsQuery,
+        referralCode
       }}
     >
       {children}
@@ -327,4 +341,3 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 }
 
 export const useGamma = (): GAMMADataModel => useContext(GAMMAContext)
-
