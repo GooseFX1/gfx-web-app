@@ -37,6 +37,8 @@ import useUserPortfolioPools from '@/queries/GAMMA/pools/useUserPortfolioPools'
 import usePoolDeepLink from '@/hooks/gamma/usePoolDeepLink'
 import useSelectPoolBySymbols from '@/queries/GAMMA/pools/useSelectPoolBySymbols'
 import useSearchParams from '@/hooks/useSearchParams'
+import { useHistory } from 'react-router-dom'
+import { ROUTES } from '@/Router'
 
 type ViewRange = 0 | 1 | 2
 
@@ -108,6 +110,7 @@ const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { userCache, connection, updateUserCache } = useConnectionConfig()
   const { base58PublicKey, publicKey } = useWalletBalance()
+  const history = useHistory()
 
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<any>({})
@@ -149,7 +152,25 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSelectedCard(selectPoolByDeeplinkQuery.data)
       }
     }
-  }, [prevCard, selectedCard, selectPoolByDeeplinkQuery])
+    if (
+      selectedCard.mintA != undefined &&
+      selectedCard.mintB != undefined &&
+      selectedCard.mintA?.symbol?.trim() !== '' &&
+      selectedCard.mintB?.symbol?.trim() !== '' &&
+      ((selectedCard.mintA.symbol !== deepLink.symbolA ||
+      selectedCard.mintB.symbol !== deepLink.symbolB) ||
+      (selectedCard.mintA.symbol !== deepLink.symbolB ||
+      selectedCard.mintB.symbol !== deepLink.symbolA))
+    ) {
+      if (`${ROUTES.GAMMA}/${selectedCard.mintA.symbol}-${selectedCard.mintB.symbol}`!== history.location.pathname) {
+        history.replace({
+          pathname: `${ROUTES.GAMMA}/${selectedCard.mintA.symbol}-${selectedCard.mintB.symbol}`,
+          search: ''
+        })
+      }
+
+    }
+  }, [prevCard, selectedCard, selectPoolByDeeplinkQuery, deepLink])
 
   const setCurrentSort = (value: string) => {
     let sortValue = value

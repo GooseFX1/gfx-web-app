@@ -82,7 +82,9 @@ async function fetchPoolsBySymbols({ signal, symbolA, symbolB, pageParam = 1 }):
     getGAMMARootUrl() + GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS + pageQuery + sortQuery + symbolQuery + poolTypeQuery,
     { signal }
   ).then((res) => res.json())) as GAMMAPortfolioPoolResponse
-
+  if (!response || !response.data || !response.success) {
+    throw new Error('Failed to fetch pools')
+  }
   return {
     data: response.data.pools,
     currentPage: response.data.currentPage,
