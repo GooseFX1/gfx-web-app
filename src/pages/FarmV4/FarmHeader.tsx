@@ -24,7 +24,7 @@ import { CreatePool } from './CreatePool'
 import BigNumber from 'bignumber.js'
 import { TokenRewardsDrawer } from '@/components/token-rewards'
 import useStatsQuery from '@/queries/GAMMA/useStatsQuery'
-import JtoRewards from '@/components/marketingCollabs/jtoRewards'
+import RewardsPrograms from '@/components/marketingCollabs/RewardsPrograms'
 
 export const FarmHeader: FC = () => {
   const {
@@ -220,7 +220,7 @@ export const FarmHeader: FC = () => {
           </div>
         </div>
       )}
-      {!isPortfolio && <JtoRewards />}
+      {!isPortfolio && <RewardsPrograms />}
     </div>
   )
 }

@@ -76,7 +76,7 @@ function FarmSort({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: 
       return !prev
     })
   }
-  console.log({isPortfolio,showDeposited,showCreatedPools,currentSort})
+  
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
