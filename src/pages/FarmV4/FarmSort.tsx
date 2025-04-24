@@ -17,7 +17,7 @@ import {
   GAMMA_MAIN_SORT_CONFIG,
   GAMMA_MAIN_SORT_CONFIG_DEFAULT,
   GAMMA_PORTFOLIO_SORT_CONFIG,
-  GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT,
+  GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT
 } from '@/pages/FarmV4/constants'
 import { useConnectionConfig, useDarkMode, useGamma } from '@/context'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -76,7 +76,7 @@ function FarmSort({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: 
       return !prev
     })
   }
-  console.log({isPortfolio,showDeposited,showCreatedPools,currentSort})
+  
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
