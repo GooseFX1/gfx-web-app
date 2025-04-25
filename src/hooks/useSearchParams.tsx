@@ -6,6 +6,7 @@ type SearchParamOperations<T> = {
   getByKey: (key: keyof T) => string | number | boolean | null
   getByKeys: (keys: (keyof T)[]) => Partial<T>
   getSingleItemByKeys: (keys: (keyof T)[]) => any
+  getByPartialKey: (key: string) => any
 }
 
 function useSearchParams<T extends Record<string, string | number | boolean>>(): {
@@ -61,14 +62,24 @@ function useSearchParams<T extends Record<string, string | number | boolean>>():
       }
     }
   }
-
+  function getByPartialKey(key: string, cleanKey: boolean = true, normalizeKey: boolean = true) {
+    for (const refKey of Object.keys(searchParams)) {
+      const cleanedKey = cleanKey ? refKey.trim() : refKey;
+      const normKey = normalizeKey ? cleanedKey.toLowerCase() : cleanedKey;
+      if (normKey.includes(key) || normKey.startsWith(key) || normKey.endsWith(key)) {
+        return searchParams[refKey]
+      }
+    }
+    return null;
+  }
   return {
     searchParams,
     operators: {
       clear: clearSearchParams,
       getByKey,
       getByKeys,
-      getSingleItemByKeys
+      getSingleItemByKeys,
+      getByPartialKey
     }
   }
 }

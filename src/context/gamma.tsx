@@ -39,6 +39,8 @@ import useSelectPoolBySymbols from '@/queries/GAMMA/pools/useSelectPoolBySymbols
 import useSearchParams from '@/hooks/useSearchParams'
 import { useHistory } from 'react-router-dom'
 import { ROUTES } from '@/Router'
+import { useQuery } from '@tanstack/react-query'
+import { QUERY_KEY } from '@/queries/query.helper'
 
 type ViewRange = 0 | 1 | 2
 
@@ -109,7 +111,7 @@ export type TokenListToken = {
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { userCache, connection, updateUserCache } = useConnectionConfig()
-  const { base58PublicKey, publicKey } = useWalletBalance()
+  const { publicKey } = useWalletBalance()
   const history = useHistory()
 
   const [slippage, setSlippage] = useState<number>(0.1)
@@ -135,16 +137,36 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     symbolB: deepLink.symbolB
   })
   const {
-    operators: { getSingleItemByKeys }
+    searchParams,
+    operators: { getByPartialKey }
   } = useSearchParams<{
     ref?: string
     referralCode?: string
     referral_code?: string
     REFERRAL_CODE?: string
-    REF: string
+    REF?: string
   }>()
-  const referralCode = getSingleItemByKeys(['ref', 'referralCode', 'referral_code', 'REFERRAL_CODE', 'REF'])
 
+  const supportedReferralCodes = useQuery({
+    queryKey: [QUERY_KEY, 'gamma-ref-codes', searchParams],
+    queryFn: async() =>{
+      console.log("THIS PROCESSES AND GETS APPLICABLE REF CODES")
+
+      return []
+    },
+    staleTime: Infinity
+  })
+  const referralCode = useMemo(()=>{
+    const ref = getByPartialKey('ref')
+    console.log("REF",ref)
+    if (!ref) return null;
+    const code = ref.toString().trim().toLowerCase() // empty string
+    if (!code) return null;
+    if (supportedReferralCodes.isSuccess && supportedReferralCodes.data && supportedReferralCodes.data.includes(code)) {
+      return code
+    }
+    return null
+  },[searchParams, supportedReferralCodes])
   useEffect(() => {
     if (selectPoolByDeeplinkQuery.isSuccess) {
       // only set if the prev card and current card is empty - first mount - prevent cyclic setting of state
