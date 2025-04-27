@@ -17,7 +17,7 @@ import {
   GAMMA_MAIN_SORT_CONFIG,
   GAMMA_MAIN_SORT_CONFIG_DEFAULT,
   GAMMA_PORTFOLIO_SORT_CONFIG,
-  GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT,
+  GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT
 } from '@/pages/FarmV4/constants'
 import { useConnectionConfig, useDarkMode, useGamma } from '@/context'
 import { useWallet } from '@solana/wallet-adapter-react'

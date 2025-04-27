@@ -149,48 +149,57 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const supportedReferralCodes = useQuery({
     queryKey: [QUERY_KEY, 'gamma-ref-codes', searchParams],
-    queryFn: async() =>{
-      console.log("THIS PROCESSES AND GETS APPLICABLE REF CODES")
+    queryFn: async () => {
+      console.log('THIS PROCESSES AND GETS APPLICABLE REF CODES')
 
       return []
     },
     staleTime: Infinity
   })
-  const referralCode = useMemo(()=>{
+  const referralCode = useMemo(() => {
     const ref = getByPartialKey('ref')
-    console.log("REF",ref)
-    if (!ref) return null;
+    console.log('REF', ref)
+    if (!ref) return null
     const code = ref.toString().trim().toLowerCase() // empty string
-    if (!code) return null;
-    if (supportedReferralCodes.isSuccess && supportedReferralCodes.data && supportedReferralCodes.data.includes(code)) {
+    if (!code) return null
+    if (
+      supportedReferralCodes.isSuccess &&
+      supportedReferralCodes.data &&
+      supportedReferralCodes.data.includes(code)
+    ) {
       return code
     }
     return null
-  },[searchParams, supportedReferralCodes])
+  }, [searchParams, supportedReferralCodes])
   useEffect(() => {
-    if (selectPoolByDeeplinkQuery.isSuccess) {
+    if (selectPoolByDeeplinkQuery.isSuccess && selectPoolByDeeplinkQuery.data) {
       // only set if the prev card and current card is empty - first mount - prevent cyclic setting of state
-      if (!Object.keys(selectedCard).length && !Object.keys(prevCard.length)) {
+      if (
+        selectedCard == null ||
+          (selectedCard && !Object.keys(selectedCard).length && prevCard && !Object.keys(prevCard).length)
+        ) {
         setSelectedCard(selectPoolByDeeplinkQuery.data)
       }
     }
+
     if (
       selectedCard.mintA != undefined &&
       selectedCard.mintB != undefined &&
       selectedCard.mintA?.symbol?.trim() !== '' &&
       selectedCard.mintB?.symbol?.trim() !== '' &&
-      ((selectedCard.mintA.symbol !== deepLink.symbolA ||
-      selectedCard.mintB.symbol !== deepLink.symbolB) ||
-      (selectedCard.mintA.symbol !== deepLink.symbolB ||
-      selectedCard.mintB.symbol !== deepLink.symbolA))
+      (selectedCard.mintA.symbol !== deepLink.symbolA ||
+        selectedCard.mintB.symbol !== deepLink.symbolB ||
+        selectedCard.mintA.symbol !== deepLink.symbolB ||
+        selectedCard.mintB.symbol !== deepLink.symbolA)
     ) {
-      if (`${ROUTES.GAMMA}/${selectedCard.mintA.symbol}-${selectedCard.mintB.symbol}`!== history.location.pathname) {
+      if (
+        `${ROUTES.GAMMA}/${selectedCard.mintA.symbol}-${selectedCard.mintB.symbol}` !== history.location.pathname
+      ) {
         history.replace({
           pathname: `${ROUTES.GAMMA}/${selectedCard.mintA.symbol}-${selectedCard.mintB.symbol}`,
           search: ''
         })
       }
-
     }
   }, [prevCard, selectedCard, selectPoolByDeeplinkQuery, deepLink])
 

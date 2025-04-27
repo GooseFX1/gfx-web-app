@@ -3,7 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 import { useConnectionConfig, useDarkMode, useGamma } from '../../context'
 import {
   GAMMA_MAIN_SORT_CONFIG, GAMMA_MAIN_SORT_CONFIG_DEFAULT,
-  GAMMA_PORTFOLIO_SORT_CONFIG, GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT,
+  GAMMA_PORTFOLIO_SORT_CONFIG, GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT
 } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {

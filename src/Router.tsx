@@ -99,8 +99,7 @@ export const Router: FC = () => {
                           <Route exact path={['/ssl', '/ssl/temp-withdraw']}>
                             <Farm />
                           </Route>
-                          <Route exact path={[ROUTES.GAMMA, `${ROUTES.GAMMA}/:typeA([^-/]+)-:typeB([^-/]+)` ]}
-                          >
+                          <Route exact path={[ROUTES.GAMMA, `${ROUTES.GAMMA}/:typeA([^-/]+)-:typeB([^-/]+)`]}>
                             <GammaProvider>
                               <BoostedRewardsProvider>
                                 <FarmV4 />

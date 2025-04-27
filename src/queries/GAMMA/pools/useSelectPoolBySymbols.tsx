@@ -15,10 +15,10 @@ type Props = {
 
 function useSelectPoolBySymbols({ symbolA, symbolB }: Props) {
   return useQuery({
-    queryKey: [QUERY_KEY, 'useSelectPoolByMints', symbolA, symbolB],
+    queryKey: [QUERY_KEY, 'useSelectPoolBySymbols', symbolA, symbolB],
     queryFn: async ({ signal }) => {
       if (!symbolA || !symbolB) return null
-      const results = await getAllPoolMintResults({
+      const results = await getAllPoolsBySymbolResults({
         symbolA: symbolA,
         symbolB: symbolB,
         signal
@@ -45,7 +45,7 @@ function useSelectPoolBySymbols({ symbolA, symbolB }: Props) {
 
 export default useSelectPoolBySymbols
 
-async function getAllPoolMintResults({ symbolA, symbolB, signal }) {
+async function getAllPoolsBySymbolResults({ symbolA, symbolB, signal }) {
   const res = await fetchPoolsBySymbols({
     symbolA,
     symbolB,
@@ -74,12 +74,11 @@ async function getAllPoolMintResults({ symbolA, symbolB, signal }) {
 
 async function fetchPoolsBySymbols({ signal, symbolA, symbolB, pageParam = 1 }): Promise<PoolsAPIResponse> {
   const pageQuery = `?page=${pageParam}&pageSize=${POOL_LIST_PAGE_SIZE}`
-  const sortQuery = `&sortBy=volume24h&sortOrder=desc`
+  // const sortQuery = `&sortBy=volume24h&sortOrder=desc`
   const symbolQuery = `&symbol1=${symbolA.trim()}&symbol2=${symbolB.trim()}`
-  const poolTypeQuery = `&poolType=all`
 
   const response = (await fetch(
-    getGAMMARootUrl() + GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS + pageQuery + sortQuery + symbolQuery + poolTypeQuery,
+    getGAMMARootUrl() + GAMMA_ENDPOINTS_V1.POOL_BY_SYMBOLS + pageQuery + symbolQuery,
     { signal }
   ).then((res) => res.json())) as GAMMAPortfolioPoolResponse
   if (!response || !response.data || !response.success) {

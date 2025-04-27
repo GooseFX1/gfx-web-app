@@ -62,7 +62,7 @@ function useSearchParams<T extends Record<string, string | number | boolean>>():
       }
     }
   }
-  function getByPartialKey(key: string, cleanKey: boolean = true, normalizeKey: boolean = true) {
+  function getByPartialKey(key: string, cleanKey = true, normalizeKey = true) {
     for (const refKey of Object.keys(searchParams)) {
       const cleanedKey = cleanKey ? refKey.trim() : refKey;
       const normKey = normalizeKey ? cleanedKey.toLowerCase() : cleanedKey;
