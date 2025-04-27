@@ -20,18 +20,41 @@ function usePoolDeepLink(): [DeepLink, DeepLinkActions] {
   const { pathname } = useLocation()
   useEffect(() => {
     const split = pathname.split('/').filter((x) => x.trim() != '')
-    if (split.length == 0) return // no path
+    if (split.length == 0) {
+      setDeepLink({
+        symbolA: undefined,
+        symbolB: undefined
+      })
+      return
+    }
     // not gamma path
     if (split[0].toLowerCase() != ROUTES.GAMMA.split('/')[1]) return
     const symbol = split[1]
-    if (!symbol) return // no mints
+    if (!symbol) {
+      setDeepLink({
+        symbolA: undefined,
+        symbolB: undefined
+      })
+      return
+    } // // no symbols
     const splitSymbols = symbol.split('-')
-    if (splitSymbols.length == 0) return // no mints
+    if (splitSymbols.length == 0) {
+      // no symbols
+      setDeepLink({
+        symbolA: undefined,
+        symbolB: undefined
+      })
+      return
+    }
     const symbolA = splitSymbols[0]
     const symbolB = splitSymbols[1]
-    if (!symbolA || !symbolA.trim()) return // invalid symbolA
-    if (!symbolB || !symbolB.trim()) return // invalid symbolB
-    if (symbolA == symbolB) return // same symbols - wot?
+    if (!symbolA || !symbolA.trim() || !symbolB || !symbolB.trim() || symbolA == symbolB) {
+      setDeepLink({
+        symbolA: undefined,
+        symbolB: undefined
+      })
+      return
+    }
     setDeepLink((prev) => {
       if (prev.symbolA == symbolA && prev.symbolB == symbolB) return prev
       return {

@@ -28,7 +28,7 @@ type FarmRowProps = {
 }
 
 const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
-  const { setSelectedCard, setOpenDepositWithdrawSlider, viewRange } = useGamma()
+  const { updateGammaRoute, viewRange } = useGamma()
   const { isMobile, isTablet, isDesktop } = useBreakpoint()
   const { base58PublicKey } = useWalletBalance()
   const { mode } = useDarkMode()
@@ -67,8 +67,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
       )}
       {...props}
       onClick={() => {
-        setSelectedCard(pool)
-        setOpenDepositWithdrawSlider(true)
+        updateGammaRoute(pool)
       }}
     >
       {pool.poolCreator === base58PublicKey && !isMobile && (
@@ -209,8 +208,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
             className={cn(`cursor-pointer bg-blue-1 text-white h-[30px]`, pool.hasDeposit && 'w-[30px] h-[30px]')}
             variant={'secondary'}
             onClick={() => {
-              setSelectedCard(pool)
-              setOpenDepositWithdrawSlider(true)
+              updateGammaRoute(pool)
             }}
           >
             {!pool.hasDeposit ? 'Deposit' : '+'}

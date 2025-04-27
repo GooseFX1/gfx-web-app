@@ -193,7 +193,7 @@ async function fetchPools({
   }
 }
 
-function attachUserLiquidity(
+export function attachUserLiquidity(
   pools: GAMMAPool[],
   userLiquidity: GAMMAUserLPPositionWithPrice[],
   mintA?: string,
@@ -203,6 +203,7 @@ function attachUserLiquidity(
   return pools
     .map((pool) => {
       const userLpPosition = userLpPositions.get(pool.id)
+      console.log('lp pos', userLpPosition)
       return {
         ...pool,
         userLpPosition: userLpPosition ? structuredClone(userLpPosition) : undefined,

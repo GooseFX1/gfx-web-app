@@ -12,7 +12,7 @@ import {
   useState
 } from 'react'
 import { fetchTokenList, forceCronUpdate, forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
-import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
+import { GAMMAPool, GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   BASE_SLIPPAGE,
@@ -91,6 +91,7 @@ interface GAMMADataModel {
   setIsCardMode: Dispatch<SetStateAction<string>>
   poolsQuery: UsePoolQueryResponse
   referralCode: string | null
+  updateGammaRoute: (pool?: GAMMAPool) => void
 }
 
 export type TokenListToken = {
@@ -116,7 +117,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<any>({})
-  const prevCard = usePrevious(selectedCard)
+
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [sendingTransaction, setSendingTransaction] = useState<boolean>(false)
@@ -171,37 +172,22 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     return null
   }, [searchParams, supportedReferralCodes])
+  useLayoutEffect(
+    () => setOpenDepositWithdrawSlider(Object.keys(selectedCard).length > 0),
+    [selectedCard]
+  )
   useEffect(() => {
-    if (selectPoolByDeeplinkQuery.isSuccess && selectPoolByDeeplinkQuery.data) {
-      // only set if the prev card and current card is empty - first mount - prevent cyclic setting of state
-      if (
-        selectedCard == null ||
-          (selectedCard && !Object.keys(selectedCard).length && prevCard && !Object.keys(prevCard).length)
-        ) {
+    // if URL params
+    if (deepLink.symbolA && deepLink.symbolB) {
+      // if we have a result set pool
+      if (selectPoolByDeeplinkQuery.isSuccess && selectPoolByDeeplinkQuery.data) {
         setSelectedCard(selectPoolByDeeplinkQuery.data)
       }
+    } else if (selectedCard?.id != '' && selectedCard?.id != undefined) {
+      // if no URL params, but we have card unset
+      setSelectedCard({})
     }
-
-    if (
-      selectedCard.mintA != undefined &&
-      selectedCard.mintB != undefined &&
-      selectedCard.mintA?.symbol?.trim() !== '' &&
-      selectedCard.mintB?.symbol?.trim() !== '' &&
-      (selectedCard.mintA.symbol !== deepLink.symbolA ||
-        selectedCard.mintB.symbol !== deepLink.symbolB ||
-        selectedCard.mintA.symbol !== deepLink.symbolB ||
-        selectedCard.mintB.symbol !== deepLink.symbolA)
-    ) {
-      if (
-        `${ROUTES.GAMMA}/${selectedCard.mintA.symbol}-${selectedCard.mintB.symbol}` !== history.location.pathname
-      ) {
-        history.replace({
-          pathname: `${ROUTES.GAMMA}/${selectedCard.mintA.symbol}-${selectedCard.mintB.symbol}`,
-          search: ''
-        })
-      }
-    }
-  }, [prevCard, selectedCard, selectPoolByDeeplinkQuery, deepLink])
+  }, [selectPoolByDeeplinkQuery, deepLink])
 
   const setCurrentSort = (value: string) => {
     let sortValue = value
@@ -335,7 +321,17 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [isPortfolio, currentSort])
   const computedViewRange = viewRange == 0 ? '24H' : viewRange == 1 ? '7D' : '30D'
-
+  const updateGammaRoute = useCallback(
+    (pool?: GAMMAPool) => {
+      const route = !pool ? ROUTES.GAMMA : `${ROUTES.GAMMA}/${pool.mintA.symbol}-${pool.mintB.symbol}`
+      if (route != history.location.pathname) {
+        history.replace({
+          pathname: route
+        })
+      }
+    },
+    [history]
+  )
   return (
     <GAMMAContext.Provider
       value={{
@@ -384,7 +380,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setIsCardMode,
         filteredPools: poolsQuery.data?.allPages ?? [],
         poolsQuery,
-        referralCode
+        referralCode,
+        updateGammaRoute
       }}
     >
       {children}
