@@ -28,8 +28,8 @@ function usePoolDeepLink(): [DeepLink, DeepLinkActions] {
       return
     }
     // not gamma path
-    if (split[0].toLowerCase() != ROUTES.GAMMA.split('/')[1]) return
-    const symbol = split[1]
+    if (!ROUTES.GAMMA.includes(split[0])) return
+    const symbol = split.filter(x=>x.includes('-'))?.[0]
     if (!symbol) {
       setDeepLink({
         symbolA: undefined,

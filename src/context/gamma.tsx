@@ -26,7 +26,6 @@ import {
   ModeOfOperation
 } from '@/pages/FarmV4/constants'
 import { useConnectionConfig } from './settings'
-import useBoolean from '@/hooks/useBoolean'
 import { aborter } from '@/utils'
 import usePrevious from '@/hooks/usePrevious'
 import useMultiSelect from '@/hooks/useMultiSelect'
@@ -86,7 +85,7 @@ interface GAMMADataModel {
   hasSelectedToken: (token: JupToken) => boolean
   clearAllSelectedTokens: () => void
   isPortfolio: boolean
-  setIsPortfolio: { toggle: () => void; on: () => void; off: () => void; set: (value: boolean) => void }
+  setIsPortfolio: (val: boolean)=>void
   isCardMode: string
   setIsCardMode: Dispatch<SetStateAction<string>>
   poolsQuery: UsePoolQueryResponse
@@ -126,7 +125,17 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [currentSort, setCurrentSortState] = useState<string>(userCache.gamma.currentSort)
   const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
   const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
-  const [isPortfolio, setIsPortfolio] = useBoolean(false)
+
+  const isPortfolio = useMemo(
+    () => history.location.pathname.includes(ROUTES.GAMMA_PORTFOLIO),
+    [history.location.pathname.includes(ROUTES.GAMMA_PORTFOLIO)]
+  )
+  const setIsPortfolio = useCallback((v: boolean) => {
+    const route = v ? ROUTES.GAMMA_PORTFOLIO : ROUTES.GAMMA
+    history.replace({
+      pathname: route
+    })
+  }, [])
 
   const [calculatePoolType, setCalculatePoolType] = useState<Set<string>>(new Set())
 
@@ -172,22 +181,27 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     return null
   }, [searchParams, supportedReferralCodes])
-  useLayoutEffect(
-    () => setOpenDepositWithdrawSlider(Object.keys(selectedCard).length > 0),
-    [selectedCard]
-  )
+
+  useLayoutEffect(() => setOpenDepositWithdrawSlider(Object.keys(selectedCard).length > 0), [selectedCard])
   useEffect(() => {
     // if URL params
     if (deepLink.symbolA && deepLink.symbolB) {
       // if we have a result set pool
       if (selectPoolByDeeplinkQuery.isSuccess && selectPoolByDeeplinkQuery.data) {
-        setSelectedCard(selectPoolByDeeplinkQuery.data)
+        // if is portfolio & liq data
+        console.log({isPortfolio, data: selectPoolByDeeplinkQuery.data})
+        if (!isPortfolio || selectPoolByDeeplinkQuery.data.userLpPosition != undefined) {
+          setSelectedCard(selectPoolByDeeplinkQuery.data)
+        } else if (userLiqQuery.isSuccess) {
+          // no user liquidity data for this pool
+          updateGammaRoute()
+        }
       }
     } else if (selectedCard?.id != '' && selectedCard?.id != undefined) {
       // if no URL params, but we have card unset
       setSelectedCard({})
     }
-  }, [selectPoolByDeeplinkQuery, deepLink])
+  }, [selectPoolByDeeplinkQuery, deepLink, isPortfolio, userLiqQuery])
 
   const setCurrentSort = (value: string) => {
     let sortValue = value
@@ -323,14 +337,15 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const computedViewRange = viewRange == 0 ? '24H' : viewRange == 1 ? '7D' : '30D'
   const updateGammaRoute = useCallback(
     (pool?: GAMMAPool) => {
-      const route = !pool ? ROUTES.GAMMA : `${ROUTES.GAMMA}/${pool.mintA.symbol}-${pool.mintB.symbol}`
+      const baseRoute = isPortfolio ? ROUTES.GAMMA_PORTFOLIO : ROUTES.GAMMA
+      const route = !pool ? baseRoute : `${baseRoute}/${pool.mintA.symbol}-${pool.mintB.symbol}`
       if (route != history.location.pathname) {
         history.replace({
           pathname: route
         })
       }
     },
-    [history]
+    [history, isPortfolio]
   )
   return (
     <GAMMAContext.Provider

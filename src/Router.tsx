@@ -43,7 +43,8 @@ const WRAPPER_STYLES: CSSProperties = {
 const INNER_STYLES: CSSProperties = { width: '500px', height: '500px' }
 // route and used in query enabling
 export const ROUTES = {
-  GAMMA: '/gamma'
+  GAMMA: '/gamma',
+  GAMMA_PORTFOLIO: '/gamma/portfolio'
 } as const
 
 function PageLoader() {
@@ -99,7 +100,15 @@ export const Router: FC = () => {
                           <Route exact path={['/ssl', '/ssl/temp-withdraw']}>
                             <Farm />
                           </Route>
-                          <Route exact path={[ROUTES.GAMMA, `${ROUTES.GAMMA}/:typeA([^-/]+)-:typeB([^-/]+)`]}>
+                          <Route
+                            exact
+                            path={[
+                              ROUTES.GAMMA,
+                              `${ROUTES.GAMMA}/:typeA([^-/]+)-:typeB([^-/]+)`,
+                              ROUTES.GAMMA_PORTFOLIO,
+                              `${ROUTES.GAMMA_PORTFOLIO}/:typeA([^-/]+)-:typeB([^-/]+)`
+                            ]}
+                          >
                             <GammaProvider>
                               <BoostedRewardsProvider>
                                 <FarmV4 />

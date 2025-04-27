@@ -19,7 +19,7 @@ function useSelectPoolBySymbols({ symbolA, symbolB }: Props) {
   const { base58PublicKey } = useWalletBalance()
   const userLiqQuery = useUserLiquidityQuery()
   return useQuery({
-    queryKey: [QUERY_KEY, 'useSelectPoolBySymbols', symbolA, symbolB, base58PublicKey],
+    queryKey: [QUERY_KEY, 'useSelectPoolBySymbols', symbolA, symbolB, base58PublicKey, userLiqQuery.data?.length],
     queryFn: async ({ signal }) => {
       if (!symbolA || !symbolB) return null
       const results = await getAllPoolsBySymbolResults({
