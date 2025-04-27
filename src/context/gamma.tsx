@@ -48,7 +48,6 @@ interface GAMMADataModel {
   setSlippage: Dispatch<SetStateAction<number>>
   isCustomSlippage: boolean
   selectedCard: any
-  setSelectedCard: Dispatch<SetStateAction<any>>
   openDepositWithdrawSlider: boolean
   setOpenDepositWithdrawSlider: Dispatch<SetStateAction<boolean>>
   modeOfOperation: string
@@ -354,7 +353,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSlippage,
         isCustomSlippage,
         selectedCard,
-        setSelectedCard,
         openDepositWithdrawSlider,
         setOpenDepositWithdrawSlider,
         modeOfOperation,
