@@ -84,7 +84,7 @@ interface GAMMADataModel {
   hasSelectedToken: (token: JupToken) => boolean
   clearAllSelectedTokens: () => void
   isPortfolio: boolean
-  setIsPortfolio: (val: boolean)=>void
+  setIsPortfolio: (val: boolean) => void
   isCardMode: string
   setIsCardMode: Dispatch<SetStateAction<string>>
   poolsQuery: UsePoolQueryResponse
@@ -139,12 +139,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [calculatePoolType, setCalculatePoolType] = useState<Set<string>>(new Set())
 
   const userLiqQuery = useUserLiquidityQuery()
-  const [deepLink] = usePoolDeepLink()
 
-  const selectPoolByDeeplinkQuery = useSelectPoolBySymbols({
-    symbolA: deepLink.symbolA,
-    symbolB: deepLink.symbolB
-  })
   const {
     searchParams,
     operators: { getByPartialKey }
@@ -182,25 +177,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [searchParams, supportedReferralCodes])
 
   useLayoutEffect(() => setOpenDepositWithdrawSlider(Object.keys(selectedCard).length > 0), [selectedCard])
-  useEffect(() => {
-    // if URL params
-    if (deepLink.symbolA && deepLink.symbolB) {
-      // if we have a result set pool
-      if (selectPoolByDeeplinkQuery.isSuccess && selectPoolByDeeplinkQuery.data) {
-        // if is portfolio & liq data
-        console.log({isPortfolio, data: selectPoolByDeeplinkQuery.data})
-        if (!isPortfolio || selectPoolByDeeplinkQuery.data.userLpPosition != undefined) {
-          setSelectedCard(selectPoolByDeeplinkQuery.data)
-        } else if (userLiqQuery.isSuccess && selectedCard?.id != '' && selectedCard?.id != undefined) {
-          // no user liquidity data for this pool
-          updateGammaRoute()
-        }
-      }
-    } else if (selectedCard?.id != '' && selectedCard?.id != undefined) {
-      // if no URL params, but we have card unset
-      setSelectedCard({})
-    }
-  }, [selectPoolByDeeplinkQuery, deepLink, isPortfolio, userLiqQuery])
 
   const setCurrentSort = (value: string) => {
     let sortValue = value
@@ -291,6 +267,58 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [setCurrentSort, userCache]
   )
 
+  const [deepLink] = usePoolDeepLink()
+  // monitor incase we don't have the pool in local cache
+  const localPool: GAMMAPoolWithUserLiquidity = useMemo(() => {
+    const data = isPortfolio ? portfolioPoolsQuery : poolsQuery
+    for (const p of data.data?.allPages ?? []) {
+      if (!p) continue
+      if (p.mintA.symbol == deepLink.symbolA && p.mintB.symbol == deepLink.symbolB) {
+        return p
+      }
+    }
+    // guarding against unneeded requests
+    if (data.isLoading) return { id: 'LOADING' } as GAMMAPoolWithUserLiquidity
+    return { id: 'NOT_FOUND' } as GAMMAPoolWithUserLiquidity
+  }, [isPortfolio, poolsQuery, portfolioPoolsQuery, selectedCard])
+
+  const selectPoolByDeeplinkQuery = useSelectPoolBySymbols({
+    symbolA: deepLink.symbolA,
+    symbolB: deepLink.symbolB,
+    enabled: localPool?.id == 'NOT_FOUND'
+  })
+  useLayoutEffect(() => {
+    // if local pool exists
+    if (localPool.id != selectedCard?.id && localPool.id != 'NOT_FOUND' && localPool.id != 'LOADING') {
+      setSelectedCard(localPool)
+      return
+    }
+    // if URL params
+    if (deepLink.symbolA && deepLink.symbolB) {
+      // if we have a result set pool
+      if (selectPoolByDeeplinkQuery.isSuccess && selectPoolByDeeplinkQuery.data) {
+        // if is portfolio & liq data
+        if (!isPortfolio || selectPoolByDeeplinkQuery.data.userLpPosition != undefined) {
+          setSelectedCard(selectPoolByDeeplinkQuery.data)
+        } else if (userLiqQuery.isSuccess && selectedCard?.id != '' && selectedCard?.id != undefined) {
+          // no user liquidity data for this pool
+          updateGammaRoute()
+        }
+      }
+    } else if (selectedCard?.id != '' && selectedCard?.id != undefined) {
+      // if no URL params, but we have card unset
+      setSelectedCard({})
+    }
+  }, [
+    selectPoolByDeeplinkQuery,
+    deepLink,
+    isPortfolio,
+    userLiqQuery,
+    localPool,
+    portfolioPoolsQuery,
+    poolsQuery,
+    selectedCard
+  ])
   useEffect(() => {
     if (!isCardMode && prevIsCardMode !== isCardMode) {
       // reset based on mode
@@ -340,7 +368,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const route = !pool ? baseRoute : `${baseRoute}/${pool.mintA.symbol}-${pool.mintB.symbol}`
 
       if (route != history.location.pathname) {
-        console.trace('route update',route)
         history.replace({
           pathname: route
         })

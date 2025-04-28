@@ -1,25 +1,24 @@
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEY } from '@/queries/query.helper'
 import { attachUserLiquidity, PoolsAPIResponse } from '@/queries/GAMMA/pools/usePoolsQuery'
-import { GAMMAPool, GAMMAPortfolioPoolResponse } from '@/types/gamma'
+import { GAMMAPool, GAMMAPoolWithUserLiquidity, GAMMAPortfolioPoolResponse } from '@/types/gamma'
 import { POOL_LIST_PAGE_SIZE } from '@/pages/FarmV4/constants'
 import { getGAMMARootUrl } from '@/api'
 import { GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
 import { clamp } from '@/utils'
 import { INTERVALS } from '@/utils/time'
 import useUserLiquidityQuery from '@/queries/GAMMA/user/useUserLiquidityQuery'
-import { useWalletBalance } from '@/context/walletBalanceContext'
 
 type Props = {
   symbolA?: string
   symbolB?: string
+  enabled?: boolean
 }
 
-function useSelectPoolBySymbols({ symbolA, symbolB }: Props) {
-  const { base58PublicKey } = useWalletBalance()
+function useSelectPoolBySymbols({ symbolA, symbolB, enabled = true }: Props) {
   const userLiqQuery = useUserLiquidityQuery()
   return useQuery({
-    queryKey: [QUERY_KEY, 'useSelectPoolBySymbols', symbolA, symbolB, base58PublicKey, userLiqQuery.data?.length],
+    queryKey: [QUERY_KEY, 'useSelectPoolBySymbols', symbolA, symbolB],
     queryFn: async ({ signal }) => {
       if (!symbolA || !symbolB) return null
       const results = await getAllPoolsBySymbolResults({
@@ -40,10 +39,15 @@ function useSelectPoolBySymbols({ symbolA, symbolB }: Props) {
           break
         }
       }
+      return pool as GAMMAPoolWithUserLiquidity;
+    },
+    select: (pool)=>{
+      console.log('ppol',pool)
+      if (!pool)return pool;
       return attachUserLiquidity([pool], userLiqQuery.data, pool.mintA.address, pool.mintB.address)[0]
     },
     staleTime: INTERVALS.MINUTE,
-    enabled: !!symbolA && !!symbolB
+    enabled: !!symbolA && !!symbolB && enabled
   })
 }
 
