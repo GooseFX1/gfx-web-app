@@ -34,7 +34,7 @@ export const DefaultStep = ({
           {isMobile && (
             <div className="flex flex-row items-center gap-3">
               <Icon
-                src="img/assets/question-icn.svg"
+                src="/img/assets/question-icn.svg"
                 alt="primary"
                 height={30}
                 width={30}

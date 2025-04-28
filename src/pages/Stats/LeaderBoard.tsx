@@ -209,7 +209,7 @@ const LeaderBoard: FC = () => {
             tw="flex flex-row items-center h-full cursor-pointer border border-solid 
                   dark:border-grey-2 border-grey-1 rounded-tiny px-5"
           >
-            <img src={`img/crypto/BONK.svg`} alt="nft-banner" tw="mr-4" width={74} height={74} />
+            <img src={`/img/crypto/BONK.svg`} alt="nft-banner" tw="mr-4" width={74} height={74} />
             <GradientText text={'SOL-PERP'} fontSize={55} fontWeight={600} />
             <div tw="text-[30px] ml-auto dark:text-white text-black-4">Get +1.5x Boost by holding 1M+ BONK</div>
           </div>

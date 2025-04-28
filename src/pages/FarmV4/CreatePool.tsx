@@ -198,7 +198,7 @@ export const CreatePool: FC<{
         >
           <DialogHeader className={`relative`}>
             <img
-              src="img/assets/question-icn.svg"
+              src="/img/assets/question-icn.svg"
               alt="primary"
               height={24}
               width={24}
