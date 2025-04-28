@@ -12,7 +12,7 @@ import {
   useState
 } from 'react'
 import { fetchTokenList, forceCronUpdate, forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
-import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
+import { GAMMAPool, GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   BASE_SLIPPAGE,
@@ -26,7 +26,6 @@ import {
   ModeOfOperation
 } from '@/pages/FarmV4/constants'
 import { useConnectionConfig } from './settings'
-import useBoolean from '@/hooks/useBoolean'
 import { aborter } from '@/utils'
 import usePrevious from '@/hooks/usePrevious'
 import useMultiSelect from '@/hooks/useMultiSelect'
@@ -34,6 +33,13 @@ import useUserLiquidityQuery from '@/queries/GAMMA/user/useUserLiquidityQuery'
 import usePoolsQuery, { UsePoolQueryResponse } from '@/queries/GAMMA/pools/usePoolsQuery'
 import { getSortKey } from '@/queries/GAMMA/gammaQueries.helpers'
 import useUserPortfolioPools from '@/queries/GAMMA/pools/useUserPortfolioPools'
+import usePoolDeepLink from '@/hooks/gamma/usePoolDeepLink'
+import useSelectPoolBySymbols from '@/queries/GAMMA/pools/useSelectPoolBySymbols'
+import useSearchParams from '@/hooks/useSearchParams'
+import { useHistory } from 'react-router-dom'
+import { ROUTES } from '@/Router'
+import { useQuery } from '@tanstack/react-query'
+import { QUERY_KEY } from '@/queries/query.helper'
 
 type ViewRange = 0 | 1 | 2
 
@@ -42,7 +48,6 @@ interface GAMMADataModel {
   setSlippage: Dispatch<SetStateAction<number>>
   isCustomSlippage: boolean
   selectedCard: any
-  setSelectedCard: Dispatch<SetStateAction<any>>
   openDepositWithdrawSlider: boolean
   setOpenDepositWithdrawSlider: Dispatch<SetStateAction<boolean>>
   modeOfOperation: string
@@ -79,10 +84,12 @@ interface GAMMADataModel {
   hasSelectedToken: (token: JupToken) => boolean
   clearAllSelectedTokens: () => void
   isPortfolio: boolean
-  setIsPortfolio: { toggle: () => void; on: () => void; off: () => void; set: (value: boolean) => void }
+  setIsPortfolio: (val: boolean) => void
   isCardMode: string
   setIsCardMode: Dispatch<SetStateAction<string>>
   poolsQuery: UsePoolQueryResponse
+  referralCode: string | null
+  updateGammaRoute: (pool?: GAMMAPool) => void
 }
 
 export type TokenListToken = {
@@ -103,10 +110,12 @@ export type TokenListToken = {
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { userCache, connection, updateUserCache } = useConnectionConfig()
-  const { base58PublicKey, publicKey } = useWalletBalance()
+  const { publicKey } = useWalletBalance()
+  const history = useHistory()
 
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<any>({})
+
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [sendingTransaction, setSendingTransaction] = useState<boolean>(false)
@@ -115,11 +124,59 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [currentSort, setCurrentSortState] = useState<string>(userCache.gamma.currentSort)
   const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
   const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
-  const [isPortfolio, setIsPortfolio] = useBoolean(false)
+
+  const isPortfolio = useMemo(
+    () => history.location.pathname.includes(ROUTES.GAMMA_PORTFOLIO),
+    [history.location.pathname.includes(ROUTES.GAMMA_PORTFOLIO)]
+  )
+  const setIsPortfolio = useCallback((v: boolean) => {
+    const route = v ? ROUTES.GAMMA_PORTFOLIO : ROUTES.GAMMA
+    history.replace({
+      pathname: route
+    })
+  }, [])
 
   const [calculatePoolType, setCalculatePoolType] = useState<Set<string>>(new Set())
 
   const userLiqQuery = useUserLiquidityQuery()
+
+  const {
+    searchParams,
+    operators: { getByPartialKey }
+  } = useSearchParams<{
+    ref?: string
+    referralCode?: string
+    referral_code?: string
+    REFERRAL_CODE?: string
+    REF?: string
+  }>()
+
+  const supportedReferralCodes = useQuery({
+    queryKey: [QUERY_KEY, 'gamma-ref-codes', searchParams],
+    queryFn: async () => {
+      console.log('THIS PROCESSES AND GETS APPLICABLE REF CODES')
+
+      return []
+    },
+    staleTime: Infinity
+  })
+  const referralCode = useMemo(() => {
+    const ref = getByPartialKey('ref')
+    console.log('REF', ref)
+    if (!ref) return null
+    const code = ref.toString().trim().toLowerCase() // empty string
+    if (!code) return null
+    if (
+      supportedReferralCodes.isSuccess &&
+      supportedReferralCodes.data &&
+      supportedReferralCodes.data.includes(code)
+    ) {
+      return code
+    }
+    return null
+  }, [searchParams, supportedReferralCodes])
+
+  useLayoutEffect(() => setOpenDepositWithdrawSlider(Object.keys(selectedCard).length > 0), [selectedCard])
 
   const setCurrentSort = (value: string) => {
     let sortValue = value
@@ -210,6 +267,58 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [setCurrentSort, userCache]
   )
 
+  const [deepLink] = usePoolDeepLink()
+  // monitor incase we don't have the pool in local cache
+  const localPool: GAMMAPoolWithUserLiquidity = useMemo(() => {
+    const data = isPortfolio ? portfolioPoolsQuery : poolsQuery
+    for (const p of data.data?.allPages ?? []) {
+      if (!p) continue
+      if (p.mintA.symbol == deepLink.symbolA && p.mintB.symbol == deepLink.symbolB) {
+        return p
+      }
+    }
+    // guarding against unneeded requests
+    if (data.isLoading) return { id: 'LOADING' } as GAMMAPoolWithUserLiquidity
+    return { id: 'NOT_FOUND' } as GAMMAPoolWithUserLiquidity
+  }, [isPortfolio, poolsQuery, portfolioPoolsQuery, selectedCard])
+
+  const selectPoolByDeeplinkQuery = useSelectPoolBySymbols({
+    symbolA: deepLink.symbolA,
+    symbolB: deepLink.symbolB,
+    enabled: localPool?.id == 'NOT_FOUND'
+  })
+  useLayoutEffect(() => {
+    // if local pool exists
+    if (localPool.id != selectedCard?.id && localPool.id != 'NOT_FOUND' && localPool.id != 'LOADING') {
+      setSelectedCard(localPool)
+      return
+    }
+    // if URL params
+    if (deepLink.symbolA && deepLink.symbolB) {
+      // if we have a result set pool
+      if (selectPoolByDeeplinkQuery.isSuccess && selectPoolByDeeplinkQuery.data) {
+        // if is portfolio & liq data
+        if (!isPortfolio || selectPoolByDeeplinkQuery.data.userLpPosition != undefined) {
+          setSelectedCard(selectPoolByDeeplinkQuery.data)
+        } else if (userLiqQuery.isSuccess && selectedCard?.id != '' && selectedCard?.id != undefined) {
+          // no user liquidity data for this pool
+          updateGammaRoute()
+        }
+      }
+    } else if (selectedCard?.id != '' && selectedCard?.id != undefined) {
+      // if no URL params, but we have card unset
+      setSelectedCard({})
+    }
+  }, [
+    selectPoolByDeeplinkQuery,
+    deepLink,
+    isPortfolio,
+    userLiqQuery,
+    localPool,
+    portfolioPoolsQuery,
+    poolsQuery,
+    selectedCard
+  ])
   useEffect(() => {
     if (!isCardMode && prevIsCardMode !== isCardMode) {
       // reset based on mode
@@ -232,13 +341,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [])
 
-  useEffect(() => {
-    if (!base58PublicKey || poolsQuery.data?.allPages?.length == 0 || !selectedCard?.id) return
-    const pool = poolsQuery.data.allPages.filter((pool) => pool.id === selectedCard.id)
-    if (pool.length == 0) return
-    setSelectedCard(pool[0])
-  }, [base58PublicKey, poolsQuery.data])
-
   const isSearchActive = searchTokens.trim().length > 0
   const forceCronAndUpdateLocalData = async (txSig?: string) => {
     const result = txSig ? await forceCronUpdateWithConnectionAndTxSig(connection, txSig) : await forceCronUpdate()
@@ -260,7 +362,19 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [isPortfolio, currentSort])
   const computedViewRange = viewRange == 0 ? '24H' : viewRange == 1 ? '7D' : '30D'
+  const updateGammaRoute = useCallback(
+    (pool?: GAMMAPool) => {
+      const baseRoute = isPortfolio ? ROUTES.GAMMA_PORTFOLIO : ROUTES.GAMMA
+      const route = !pool ? baseRoute : `${baseRoute}/${pool.mintA.symbol}-${pool.mintB.symbol}`
 
+      if (route != history.location.pathname) {
+        history.replace({
+          pathname: route
+        })
+      }
+    },
+    [history, isPortfolio]
+  )
   return (
     <GAMMAContext.Provider
       value={{
@@ -268,7 +382,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSlippage,
         isCustomSlippage,
         selectedCard,
-        setSelectedCard,
         openDepositWithdrawSlider,
         setOpenDepositWithdrawSlider,
         modeOfOperation,
@@ -308,7 +421,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isCardMode,
         setIsCardMode,
         filteredPools: poolsQuery.data?.allPages ?? [],
-        poolsQuery
+        poolsQuery,
+        referralCode,
+        updateGammaRoute
       }}
     >
       {children}

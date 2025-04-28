@@ -17,7 +17,7 @@ const FarmCard: FC<{
   className?: string
   key?: string
 }> = ({ pool, className, ...props }): ReactElement => {
-  const { setOpenDepositWithdrawSlider, setSelectedCard } = useGamma()
+  const { updateGammaRoute } = useGamma()
   const { base58PublicKey } = useWalletBalance()
   const { mode } = useDarkMode()
   const { isDesktop } = useBreakPoint()
@@ -41,8 +41,7 @@ const FarmCard: FC<{
         className
       )}
       onClick={() => {
-        setSelectedCard(pool)
-        setOpenDepositWithdrawSlider(true)
+        updateGammaRoute(pool)
       }}
     >
       <div className="flex flex-row justify-between mb-2.5 items-center">
@@ -77,21 +76,12 @@ const FarmCard: FC<{
           {/* {canClaim && <span className={'absolute rounded-full bg-red-2 w-3 h-3 top-[-4px] left-[-4px]'} />} */}
         </div>
         <div>
-          {/* {canClaim && <Button
-            onClick={() => setSelectedCard(pool)}
-            variant={'outline'}
-            colorScheme={'secondaryGradient'}
-            className='h-[30px] mr-2.5'
-          >
-            Claim
-          </Button>} */}
           {isDesktop && (
             <Button
               className={cn(`cursor-pointer bg-blue-1 text-white h-[30px]`, pool.hasDeposit && 'w-[30px] h-[30px]')}
               variant={'secondary'}
               onClick={() => {
-                setSelectedCard(pool)
-                setOpenDepositWithdrawSlider(true)
+                updateGammaRoute(pool)
               }}
             >
               {!pool.hasDeposit ? 'Deposit' : '+'}

@@ -23,21 +23,20 @@ export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
 
   const [fees, setFees] = useState<string>('Loading')
 
-  const activeReward = getActiveRewardByPoolId(new PublicKey(pool.id))
+  const activeReward = getActiveRewardByPoolId(pool.id ? new PublicKey(pool.id) : PublicKey.default)
   const { formattedAPR } = useMemo(() => getPoolValuesByRange(pool, viewRange), [pool.stats, viewRange])
 
   const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
   const apr = activeReward
     ? numberFormatter(
-      new BigNumber(formattedAPR)
-        .plus(activeRewardsAmount.div(pool.tvl)
-          .multipliedBy(100).multipliedBy(365).toNumber())
-        .toNumber()
-    )
+        new BigNumber(formattedAPR)
+          .plus(activeRewardsAmount.div(pool.tvl).multipliedBy(100).multipliedBy(365).toNumber())
+          .toNumber()
+      )
     : numberFormatter(formattedAPR)
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       if (!pool.mintA || !pool.mintB) return
       setFees('Loading')
       const tokenListData = await fetchTokensByPublicKey(`${pool.mintA.address},${pool.mintB.address}`)

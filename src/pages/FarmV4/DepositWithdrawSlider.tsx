@@ -44,13 +44,12 @@ export const DepositWithdrawSlider: FC = () => {
   const { connection } = useConnectionConfig()
   const {
     selectedCard,
-    openDepositWithdrawSlider,
-    setOpenDepositWithdrawSlider,
     modeOfOperation,
     setModeOfOperation,
-    setSelectedCard,
+    updateGammaRoute,
     slippage,
-    forceCronAndUpdateLocalData
+    forceCronAndUpdateLocalData,
+    openDepositWithdrawSlider
   } = useGamma()
   const [userSourceTokenBal, setUserSourceTokenBal] = useState<number>()
   const [userTargetTokenBal, setUserTargetTokenBal] = useState<number>()
@@ -217,7 +216,6 @@ export const DepositWithdrawSlider: FC = () => {
     setUserSourceWithdrawAmount('')
     setUserTargetDepositAmount('')
     setUserTargetWithdrawAmount('')
-    setSelectedCard({})
     setModeOfOperation(ModeOfOperation?.DEPOSIT)
   }
 
@@ -491,7 +489,6 @@ export const DepositWithdrawSlider: FC = () => {
       //   setIsClaim.on()
       // }
       //console.log('performing', type)
-      setOpenDepositWithdrawSlider(true)
       setActionType(type)
     }
   }
@@ -518,7 +515,14 @@ export const DepositWithdrawSlider: FC = () => {
   }, [isDeposit, userSourceWithdrawAmount, userTargetWithdrawAmount])
 
   return (
-    <Dialog open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
+    <Dialog
+      open={openDepositWithdrawSlider}
+      onOpenChange={(v) => {
+        if (!v) {
+          updateGammaRoute()
+        }
+      }}
+    >
       <DialogPortal>
         <DialogOverlay />
 

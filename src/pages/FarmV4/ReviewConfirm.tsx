@@ -54,7 +54,7 @@ export const ReviewConfirm: FC<{
           <span className="!font-regular font-semibold dark:text-grey-8 text-black-4">
             {(
               new BigNumber(selectedCard?.latestDynamicFeeRate || 0.0).div(10 ** 4).toNumber() ||
-              new BigNumber(selectedCard?.config.tradeFeeRate || 0.0).div(10 ** 4).toNumber()
+              new BigNumber(selectedCard?.config?.tradeFeeRate || 0.0).div(10 ** 4).toNumber()
             ).toFixed(2)}
             %
           </span>

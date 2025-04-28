@@ -68,7 +68,7 @@ const CreatePoolChooseTokenStep: FC<{
   const [priceSwitch, setPriceSwitch] = useState(false)
   const [poolExistsText, setPoolExistsText] = useState<string>('')
   const [existingPool, setExistingPool] = useState<GAMMAPool>()
-  const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
+  const { updateGammaRoute } = useGamma()
   const { connected } = useWallet()
   const { balance } = useWalletBalance()
   const [aToBRatio, setAToBRatio] = useBoolean(true)
@@ -85,10 +85,9 @@ const CreatePoolChooseTokenStep: FC<{
 
   const navigateToPool = useCallback(async () => {
     if (!tokenA || !tokenB) return
-    setSelectedCard(existingPool)
+    updateGammaRoute(existingPool)
     setIsCreatePool(false)
-    setOpenDepositWithdrawSlider(true)
-  }, [tokenA, tokenB, existingPool, setSelectedCard])
+  }, [tokenA, tokenB, existingPool, updateGammaRoute])
   const { priceAToB, priceBToA, priceError } = useMemo(() => {
     if (!tokenA || !tokenB)
       return {

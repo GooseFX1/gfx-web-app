@@ -143,7 +143,7 @@ export const FarmHeader: FC = () => {
                       setShowDeposited(false)
                       setShowCreatedPools(false)
                     }
-                    setIsPortfolio.off()
+                    setIsPortfolio(false)
                   }
                 },
                 {
@@ -153,7 +153,7 @@ export const FarmHeader: FC = () => {
                     setShowDeposited(false)
                     setShowCreatedPools(false)
                     setRange(0)
-                    setIsPortfolio.on()
+                    setIsPortfolio(true)
                   }
                 }
               ]}

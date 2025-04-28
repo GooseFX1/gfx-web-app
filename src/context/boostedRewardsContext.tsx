@@ -123,7 +123,9 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
   }, [claimableRewardsQuery.data, tokensInRewardsQuery.data])
 
   const getActiveRewardByPoolId = (poolId: PublicKey) => {
-    if (!allActiveRewardsQuery.data || !tokensInRewardsQuery.data) return []
+    if (!allActiveRewardsQuery.data || !tokensInRewardsQuery.data || !poolId || PublicKey.default.equals(poolId)) {
+      return []
+    }
 
     const activeRewards = allActiveRewardsQuery.data.filter((reward) => reward.rewardInfo.pool.equals(poolId))
     if (activeRewards.length == 0) return []

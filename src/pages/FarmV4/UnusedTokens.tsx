@@ -35,7 +35,7 @@ const ExplorePools: FC<{ tokenMint: string }> = ({ tokenMint }) => {
     <div
       onClick={async () => {
         await chooseToken()
-        setIsPortfolio.off()
+        setIsPortfolio(false)
         setCurrentSort('1')
       }}
       className="text-regular font-bold text-blue-1 dark:text-grey-8 underline cursor-pointer"

@@ -88,8 +88,7 @@ const MyPositionItem: FC<{
   const { base58PublicKey } = useWalletBalance()
 
   const {
-    setSelectedCard,
-    setOpenDepositWithdrawSlider,
+    updateGammaRoute,
     setModeOfOperation,
     sortConfig,
     viewRange
@@ -123,8 +122,7 @@ const MyPositionItem: FC<{
       )}
       key={`${pool.id}_${sortConfig.id}`}
       onClick={() => {
-        setSelectedCard(pool)
-        setOpenDepositWithdrawSlider(true)
+        updateGammaRoute(pool)
         setModeOfOperation(ModeOfOperation.DEPOSIT)
       }}
     >
@@ -280,8 +278,7 @@ const MyPositionItem: FC<{
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
-              setSelectedCard(pool)
-              setOpenDepositWithdrawSlider(true)
+              updateGammaRoute(pool)
               setModeOfOperation(ModeOfOperation.DEPOSIT)
             }}
           >
@@ -293,8 +290,7 @@ const MyPositionItem: FC<{
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
-              setSelectedCard(pool)
-              setOpenDepositWithdrawSlider(true)
+              updateGammaRoute(pool)
               setModeOfOperation(ModeOfOperation.WITHDRAW)
             }}
           >

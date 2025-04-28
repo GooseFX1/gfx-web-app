@@ -14,4 +14,5 @@ export enum GAMMA_ENDPOINTS_V1 {
   PORTFOLIO_POOLS = '/v1/portfolio',
   PORTFOLIO_POOLS_SEARCH = '/v1/portfolio/search',
   POOL_BY_ID = '/v1/pool',
+  POOL_BY_SYMBOLS = '/v1/pool/info/symbols'
 }
