@@ -41,9 +41,8 @@ function useSelectPoolBySymbols({ symbolA, symbolB, enabled = true }: Props) {
       }
       return pool as GAMMAPoolWithUserLiquidity;
     },
-    select: (pool)=>{
-      console.log('ppol',pool)
-      if (!pool)return pool;
+    select: (pool) => {
+      if (!pool) return pool
       return attachUserLiquidity([pool], userLiqQuery.data, pool.mintA.address, pool.mintB.address)[0]
     },
     staleTime: INTERVALS.MINUTE,
