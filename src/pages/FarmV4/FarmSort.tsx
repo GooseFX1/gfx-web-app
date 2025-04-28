@@ -82,7 +82,7 @@ function FarmSort({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: 
       <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
         <Button className="p-0 !h-[35px] !w-[35px] mx-3 sm-lg:ml-2 sm-lg:mr-0 relative m-0" variant={'ghost'}>
           <Icon
-            src={`img/assets/farm_filter_${mode}.svg`}
+            src={`/img/assets/farm_filter_${mode}.svg`}
             size={'md'}
             className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
           />
