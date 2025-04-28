@@ -191,7 +191,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         console.log({isPortfolio, data: selectPoolByDeeplinkQuery.data})
         if (!isPortfolio || selectPoolByDeeplinkQuery.data.userLpPosition != undefined) {
           setSelectedCard(selectPoolByDeeplinkQuery.data)
-        } else if (userLiqQuery.isSuccess) {
+        } else if (userLiqQuery.isSuccess && selectedCard?.id != '' && selectedCard?.id != undefined) {
           // no user liquidity data for this pool
           updateGammaRoute()
         }
@@ -338,7 +338,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     (pool?: GAMMAPool) => {
       const baseRoute = isPortfolio ? ROUTES.GAMMA_PORTFOLIO : ROUTES.GAMMA
       const route = !pool ? baseRoute : `${baseRoute}/${pool.mintA.symbol}-${pool.mintB.symbol}`
+
       if (route != history.location.pathname) {
+        console.trace('route update',route)
         history.replace({
           pathname: route
         })

@@ -216,7 +216,6 @@ export const DepositWithdrawSlider: FC = () => {
     setUserSourceWithdrawAmount('')
     setUserTargetDepositAmount('')
     setUserTargetWithdrawAmount('')
-    updateGammaRoute()
     setModeOfOperation(ModeOfOperation?.DEPOSIT)
   }
 
