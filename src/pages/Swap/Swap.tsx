@@ -329,7 +329,7 @@ mt-8 flex items-center justify-center
                 variant={'outline'}
                 colorScheme={isDarkMode ? 'default' : 'blue'}
                 className={'bg-white'}
-                iconLeft={<IconWithFallback src={`img/assets/footer_filter_${mode}.svg`} size="sm" />}
+                iconLeft={<IconWithFallback src={`/img/assets/footer_filter_${mode}.svg`} size="sm" />}
               >
                 <span className="font-bold text-regular text-black-4 dark:text-white">
                   {isNaN(slippage) ? '0.00' : slippage.toFixed(2)}%

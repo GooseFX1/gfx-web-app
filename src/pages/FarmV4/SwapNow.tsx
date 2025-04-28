@@ -25,7 +25,7 @@ const SwapNow: FC = (): ReactElement => {
       <div className={`w-full p-[1px] bg-gradient-1 rounded-tiny`}>
         <div className={`bg-grey-5 dark:bg-black-1 h-full rounded-tiny p-2.5`}>
           <div className="flex flex-row items-center">
-            <IconWithFallback src="img/assets/jupiter.svg" size="sm" />
+            <IconWithFallback src="/img/assets/jupiter.svg" size="sm" />
             <span className="font-poppins text-average font-semibold dark:text-grey-8 text-black-4 ml-2">
               Swap Now!
             </span>

@@ -143,7 +143,7 @@ export const FarmContainer: FC = () => {
                   <div>
                     <Button className="p-0 !h-[35px] !w-[35px] mx-2 relative" variant={'ghost'}>
                       <IconWithFallback
-                        src={`img/assets/farm_filter_${mode}.svg`}
+                        src={`/img/assets/farm_filter_${mode}.svg`}
                         size={'md'}
                         className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
                         onClick={() => (isSortFilterOpen ? setIsSortFilterOpen.off() : setIsSortFilterOpen.on())}
