@@ -84,7 +84,7 @@ const StickyFooter: FC<StickyFooterProps> = ({
               variant={'outline'}
               colorScheme={isDarkMode ? 'default' : 'blue'}
               className={'bg-white'}
-              iconLeft={<Icon src={`img/assets/footer_filter_${mode}.svg`} size="sm" />}
+              iconLeft={<Icon src={`/img/assets/footer_filter_${mode}.svg`} size="sm" />}
             >
               <span className="font-bold text-regular text-black-4 dark:text-white">
                 {isNaN(slippage) ? '0.00' : slippage.toFixed(2)}%
