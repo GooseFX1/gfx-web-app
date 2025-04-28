@@ -22,8 +22,8 @@ export const TokenRow: FC<{
 
     const getWalletIcon = () =>
       (userPublicKey && balance > 0) ?
-        `img/assets/wallet-${mode}-enabled.svg` :
-        `img/assets/wallet-${mode}-disabled.svg`
+        `/img/assets/wallet-${mode}-enabled.svg` :
+        `/img/assets/wallet-${mode}-disabled.svg`
 
     if (token == undefined) return <></>
     return (
