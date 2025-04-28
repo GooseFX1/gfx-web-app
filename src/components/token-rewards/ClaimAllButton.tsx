@@ -65,7 +65,7 @@ export function ClaimAllRewards({ setOpenClaimAllRewardsDialog }: ClaimAllReward
 
   if (isMobile) {
     return (
-      <div className={'fixed bottom-[12px] left-0 right-0 mx-auto z-[1001] w-max'}>{content('py-[7.5px]')}</div>
+      <div className={'fixed bottom-[12px] left-0 right-0 mx-auto z-[10] w-max'}>{content('py-[7.5px]')}</div>
     )
   }
 
