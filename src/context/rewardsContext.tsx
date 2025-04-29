@@ -183,7 +183,9 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const txnForUserAccountRequirements = txBuilder
 
     if (txnForUserAccountRequirements._instructions.length > 0) {
-      res = Boolean(await sendTransaction(txnForUserAccountRequirements))
+      res = Boolean(await sendTransaction(txnForUserAccountRequirements, {
+        confirmationWaitType: 'confirmed'
+      }))
     }
 
     if (!res) {
@@ -199,7 +201,9 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     mutationFn: async (amount: number) => {
       const stakeAmount = new anchor.BN(amount * 1e9)
       const txn = await checkForUserAccount(async () => programQuery.data.stake(stakeAmount, publicKey))
-      await sendTransaction(txn)
+      await sendTransaction(txn, {
+        confirmationWaitType: 'confirmed'
+      })
     },
     onSuccess: async () => {
       await Promise.all([
@@ -225,7 +229,9 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const unstakeAmount = new anchor.BN(amount * 1e9)
       const txn = await checkForUserAccount(async () => programQuery.data.unstake(unstakeAmount, publicKey))
       txBuilder.add(txn._instructions)
-      await sendTransaction(txBuilder)
+      await sendTransaction(txBuilder, {
+        confirmationWaitType: 'confirmed'
+      })
     },
     onSuccess: async () => {
       await Promise.all([
@@ -238,7 +244,9 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const claimFeesMutation = useMutation({
     mutationFn: async () => {
       const txn = await checkForUserAccount(async () => programQuery.data.claimFees(publicKey))
-      const {success} = await sendTransaction(txn)
+      const {success} = await sendTransaction(txn, {
+        confirmationWaitType: 'confirmed'
+      })
       if (!success) {
         throw new Error('claim fee failed')
       }
@@ -255,7 +263,9 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           publicKey
         )
       )
-      await sendTransaction(txn)
+      await sendTransaction(txn, {
+        confirmationWaitType: 'confirmed'
+      })
     },
     onSuccess: async () => {
       await userDataQuery.refetch()
