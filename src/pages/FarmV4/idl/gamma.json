@@ -9,13 +9,33 @@
   "instructions": [
     {
       "name": "calculate_rewards",
-      "docs": ["Calculate rewards for the user", "", "* `ctx` - The context of accounts", ""],
-      "discriminator": [199, 115, 201, 124, 71, 81, 143, 252],
+      "docs": [
+        "Calculate rewards for the user",
+        "",
+        "* `ctx` - The context of accounts",
+        ""
+      ],
+      "discriminator": [
+        199,
+        115,
+        201,
+        124,
+        71,
+        81,
+        143,
+        252
+      ],
       "accounts": [
         {
-          "name": "user",
+          "name": "signer",
           "writable": true,
           "signer": true
+        },
+        {
+          "name": "user",
+          "docs": [
+            "User for which we are calculating rewards"
+          ]
         },
         {
           "name": "pool_state"
@@ -26,7 +46,24 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [114, 101, 119, 97, 114, 100, 95, 105, 110, 102, 111, 95, 115, 101, 101, 100]
+                "value": [
+                  114,
+                  101,
+                  119,
+                  97,
+                  114,
+                  100,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
               },
               {
                 "kind": "account",
@@ -53,7 +90,26 @@
               {
                 "kind": "const",
                 "value": [
-                  117, 115, 101, 114, 95, 114, 101, 119, 97, 114, 100, 95, 105, 110, 102, 111, 95, 115, 101, 101,
+                  117,
+                  115,
+                  101,
+                  114,
+                  95,
+                  114,
+                  101,
+                  119,
+                  97,
+                  114,
+                  100,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  95,
+                  115,
+                  101,
+                  101,
                   100
                 ]
               },
@@ -70,13 +126,33 @@
         },
         {
           "name": "user_pool_liquidity",
-          "docs": ["User pool liquidity account"],
+          "docs": [
+            "User pool liquidity account"
+          ],
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  117, 115, 101, 114, 45, 112, 111, 111, 108, 45, 108, 105, 113, 117, 105, 100, 105, 116, 121
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  112,
+                  111,
+                  111,
+                  108,
+                  45,
+                  108,
+                  105,
+                  113,
+                  117,
+                  105,
+                  100,
+                  105,
+                  116,
+                  121
                 ]
               },
               {
@@ -108,7 +184,16 @@
         "* `ctx` - The context of accounts",
         ""
       ],
-      "discriminator": [4, 144, 132, 71, 116, 23, 151, 80],
+      "discriminator": [
+        4,
+        144,
+        132,
+        71,
+        116,
+        23,
+        151,
+        80
+      ],
       "accounts": [
         {
           "name": "user",
@@ -122,8 +207,33 @@
               {
                 "kind": "const",
                 "value": [
-                  118, 97, 117, 108, 116, 95, 97, 110, 100, 95, 108, 112, 95, 109, 105, 110, 116, 95, 97, 117, 116,
-                  104, 95, 115, 101, 101, 100
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
                 ]
               }
             ]
@@ -138,7 +248,24 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [114, 101, 119, 97, 114, 100, 95, 105, 110, 102, 111, 95, 115, 101, 101, 100]
+                "value": [
+                  114,
+                  101,
+                  119,
+                  97,
+                  114,
+                  100,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
               },
               {
                 "kind": "account",
@@ -164,7 +291,25 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [114, 101, 119, 97, 114, 100, 95, 118, 97, 117, 108, 116, 95, 115, 101, 101, 100]
+                "value": [
+                  114,
+                  101,
+                  119,
+                  97,
+                  114,
+                  100,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
               },
               {
                 "kind": "account",
@@ -185,7 +330,26 @@
               {
                 "kind": "const",
                 "value": [
-                  117, 115, 101, 114, 95, 114, 101, 119, 97, 114, 100, 95, 105, 110, 102, 111, 95, 115, 101, 101,
+                  117,
+                  115,
+                  101,
+                  114,
+                  95,
+                  114,
+                  101,
+                  119,
+                  97,
+                  114,
+                  100,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  95,
+                  115,
+                  101,
+                  101,
                   100
                 ]
               },
@@ -206,12 +370,16 @@
         },
         {
           "name": "token_program",
-          "docs": ["token Program"],
+          "docs": [
+            "token Program"
+          ],
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
           "name": "token_program_2022",
-          "docs": ["Token program 2022"],
+          "docs": [
+            "Token program 2022"
+          ],
           "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         },
         {
@@ -233,11 +401,22 @@
         "* `amount_1_requested` - The maximum amount of token_1 to send, can be 0 to collect fees in only token_0",
         ""
       ],
-      "discriminator": [167, 138, 78, 149, 223, 194, 6, 126],
+      "discriminator": [
+        167,
+        138,
+        78,
+        149,
+        223,
+        194,
+        6,
+        126
+      ],
       "accounts": [
         {
           "name": "owner",
-          "docs": ["Only admin or fund_owner can collect fee now"],
+          "docs": [
+            "Only admin or fund_owner can collect fee now"
+          ],
           "signer": true
         },
         {
@@ -247,8 +426,33 @@
               {
                 "kind": "const",
                 "value": [
-                  118, 97, 117, 108, 116, 95, 97, 110, 100, 95, 108, 112, 95, 109, 105, 110, 116, 95, 97, 117, 116,
-                  104, 95, 115, 101, 101, 100
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
                 ]
               }
             ]
@@ -256,49 +460,69 @@
         },
         {
           "name": "pool_state",
-          "docs": ["Pool state stores accumulated protocol fee amount"],
+          "docs": [
+            "Pool state stores accumulated protocol fee amount"
+          ],
           "writable": true
         },
         {
           "name": "amm_config",
-          "docs": ["Amm config account stores fund_owner"]
+          "docs": [
+            "Amm config account stores fund_owner"
+          ]
         },
         {
           "name": "token_0_vault",
-          "docs": ["The address that holds pool tokens for token_0"],
+          "docs": [
+            "The address that holds pool tokens for token_0"
+          ],
           "writable": true
         },
         {
           "name": "token_1_vault",
-          "docs": ["The address that holds pool tokens for token_1"],
+          "docs": [
+            "The address that holds pool tokens for token_1"
+          ],
           "writable": true
         },
         {
           "name": "vault_0_mint",
-          "docs": ["The mint of token_0 vault"]
+          "docs": [
+            "The mint of token_0 vault"
+          ]
         },
         {
           "name": "vault_1_mint",
-          "docs": ["The mint of token_1 vault"]
+          "docs": [
+            "The mint of token_1 vault"
+          ]
         },
         {
           "name": "recipient_token_0_account",
-          "docs": ["The address that receives the collected token_0 fund fees"],
+          "docs": [
+            "The address that receives the collected token_0 fund fees"
+          ],
           "writable": true
         },
         {
           "name": "recipient_token_1_account",
-          "docs": ["The address that receives the collected token_1 fund fees"],
+          "docs": [
+            "The address that receives the collected token_1 fund fees"
+          ],
           "writable": true
         },
         {
           "name": "token_program",
-          "docs": ["The SPL program to perform token transfers"],
+          "docs": [
+            "The SPL program to perform token transfers"
+          ],
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
           "name": "token_program_2022",
-          "docs": ["The SPL program 2022 to perform token transfers"],
+          "docs": [
+            "The SPL program 2022 to perform token transfers"
+          ],
           "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         }
       ],
@@ -325,11 +549,22 @@
         "* `amount_1_requested` - The maximum amount of token_1 to send, can be 0 to collect fees in only token_0",
         ""
       ],
-      "discriminator": [136, 136, 252, 221, 194, 66, 126, 89],
+      "discriminator": [
+        136,
+        136,
+        252,
+        221,
+        194,
+        66,
+        126,
+        89
+      ],
       "accounts": [
         {
           "name": "owner",
-          "docs": ["Only admin or owner can collect fee now"],
+          "docs": [
+            "Only admin or owner can collect fee now"
+          ],
           "signer": true
         },
         {
@@ -339,8 +574,33 @@
               {
                 "kind": "const",
                 "value": [
-                  118, 97, 117, 108, 116, 95, 97, 110, 100, 95, 108, 112, 95, 109, 105, 110, 116, 95, 97, 117, 116,
-                  104, 95, 115, 101, 101, 100
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
                 ]
               }
             ]
@@ -348,49 +608,69 @@
         },
         {
           "name": "pool_state",
-          "docs": ["Pool state stores accumulated protocol fee amount"],
+          "docs": [
+            "Pool state stores accumulated protocol fee amount"
+          ],
           "writable": true
         },
         {
           "name": "amm_config",
-          "docs": ["Amm config account stores owner"]
+          "docs": [
+            "Amm config account stores owner"
+          ]
         },
         {
           "name": "token_0_vault",
-          "docs": ["The address that holds pool tokens for token_0"],
+          "docs": [
+            "The address that holds pool tokens for token_0"
+          ],
           "writable": true
         },
         {
           "name": "token_1_vault",
-          "docs": ["The address that holds pool tokens for token_1"],
+          "docs": [
+            "The address that holds pool tokens for token_1"
+          ],
           "writable": true
         },
         {
           "name": "vault_0_mint",
-          "docs": ["The mint of token_0 vault"]
+          "docs": [
+            "The mint of token_0 vault"
+          ]
         },
         {
           "name": "vault_1_mint",
-          "docs": ["The mint of token_1 vault"]
+          "docs": [
+            "The mint of token_1 vault"
+          ]
         },
         {
           "name": "recipient_token_0_account",
-          "docs": ["The address that receives the collected token_0 protocol fees"],
+          "docs": [
+            "The address that receives the collected token_0 protocol fees"
+          ],
           "writable": true
         },
         {
           "name": "recipient_token_1_account",
-          "docs": ["The address that receives the collected token_1 protocol fees"],
+          "docs": [
+            "The address that receives the collected token_1 protocol fees"
+          ],
           "writable": true
         },
         {
           "name": "token_program",
-          "docs": ["The SPL program to perform token transfers"],
+          "docs": [
+            "The SPL program to perform token transfers"
+          ],
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
           "name": "token_program_2022",
-          "docs": ["The SPL program 2022 to perform token transfers"],
+          "docs": [
+            "The SPL program 2022 to perform token transfers"
+          ],
           "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         }
       ],
@@ -418,24 +698,48 @@
         "* `fund_fee_rate` - The rate of fund fee within tarde fee.",
         ""
       ],
-      "discriminator": [137, 52, 237, 212, 215, 117, 108, 104],
+      "discriminator": [
+        137,
+        52,
+        237,
+        212,
+        215,
+        117,
+        108,
+        104
+      ],
       "accounts": [
         {
           "name": "owner",
-          "docs": ["Address to be set as protocol owner."],
+          "docs": [
+            "Address to be set as protocol owner."
+          ],
           "writable": true,
           "signer": true,
           "address": "9QcHinaHcJFdzSHeiF1yGchcuQk3qPFNV13q6dZJbAny"
         },
         {
           "name": "amm_config",
-          "docs": ["Initialize AmmConfig state account to store protocol owner address and fee rates"],
+          "docs": [
+            "Initialize AmmConfig state account to store protocol owner address and fee rates"
+          ],
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
-                "value": [97, 109, 109, 95, 99, 111, 110, 102, 105, 103]
+                "value": [
+                  97,
+                  109,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
               },
               {
                 "kind": "arg",
@@ -491,7 +795,16 @@
         "* `reward_amount` - The amount of the reward",
         ""
       ],
-      "discriminator": [124, 251, 145, 232, 5, 173, 159, 223],
+      "discriminator": [
+        124,
+        251,
+        145,
+        232,
+        5,
+        173,
+        159,
+        223
+      ],
       "accounts": [
         {
           "name": "reward_provider",
@@ -505,8 +818,33 @@
               {
                 "kind": "const",
                 "value": [
-                  118, 97, 117, 108, 116, 95, 97, 110, 100, 95, 108, 112, 95, 109, 105, 110, 116, 95, 97, 117, 116,
-                  104, 95, 115, 101, 101, 100
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
                 ]
               }
             ]
@@ -522,7 +860,24 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [114, 101, 119, 97, 114, 100, 95, 105, 110, 102, 111, 95, 115, 101, 101, 100]
+                "value": [
+                  114,
+                  101,
+                  119,
+                  97,
+                  114,
+                  100,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
               },
               {
                 "kind": "account",
@@ -545,13 +900,33 @@
         },
         {
           "name": "reward_vault",
-          "docs": ["For reward to deposit into."],
+          "docs": [
+            "For reward to deposit into."
+          ],
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
-                "value": [114, 101, 119, 97, 114, 100, 95, 118, 97, 117, 108, 116, 95, 115, 101, 101, 100]
+                "value": [
+                  114,
+                  101,
+                  119,
+                  97,
+                  114,
+                  100,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
               },
               {
                 "kind": "account",
@@ -566,12 +941,16 @@
         },
         {
           "name": "token_program",
-          "docs": ["token Program"],
+          "docs": [
+            "token Program"
+          ],
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
           "name": "token_program_2022",
-          "docs": ["Token program 2022"],
+          "docs": [
+            "Token program 2022"
+          ],
           "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         },
         {
@@ -604,11 +983,22 @@
         "* `name` - The project name, passed to the referral program. Must be less than 50 chars in length",
         "* `default_share_bps` - Percentage share of fees to referrers. Must be less than 10_000"
       ],
-      "discriminator": [67, 131, 93, 236, 56, 6, 40, 77],
+      "discriminator": [
+        67,
+        131,
+        93,
+        236,
+        56,
+        6,
+        40,
+        77
+      ],
       "accounts": [
         {
           "name": "admin",
-          "docs": ["Admin signer for this operation"],
+          "docs": [
+            "Admin signer for this operation"
+          ],
           "signer": true
         },
         {
@@ -622,7 +1012,9 @@
         },
         {
           "name": "amm_config",
-          "docs": ["The config acts as the base for its referral project"],
+          "docs": [
+            "The config acts as the base for its referral project"
+          ],
           "writable": true
         },
         {
@@ -662,11 +1054,22 @@
         "* `maximum_token_1_amount` - Maximum token 1 amount to deposit, prevents excessive slippage",
         ""
       ],
-      "discriminator": [242, 35, 198, 137, 82, 225, 242, 182],
+      "discriminator": [
+        242,
+        35,
+        198,
+        137,
+        82,
+        225,
+        242,
+        182
+      ],
       "accounts": [
         {
           "name": "owner",
-          "docs": ["Owner of the liquidity provided"],
+          "docs": [
+            "Owner of the liquidity provided"
+          ],
           "signer": true
         },
         {
@@ -676,8 +1079,33 @@
               {
                 "kind": "const",
                 "value": [
-                  118, 97, 117, 108, 116, 95, 97, 110, 100, 95, 108, 112, 95, 109, 105, 110, 116, 95, 97, 117, 116,
-                  104, 95, 115, 101, 101, 100
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
                 ]
               }
             ]
@@ -685,7 +1113,9 @@
         },
         {
           "name": "pool_state",
-          "docs": ["Pool state the owner is depositing into"],
+          "docs": [
+            "Pool state the owner is depositing into"
+          ],
           "writable": true
         },
         {
@@ -696,7 +1126,25 @@
               {
                 "kind": "const",
                 "value": [
-                  117, 115, 101, 114, 45, 112, 111, 111, 108, 45, 108, 105, 113, 117, 105, 100, 105, 116, 121
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  112,
+                  111,
+                  111,
+                  108,
+                  45,
+                  108,
+                  105,
+                  113,
+                  117,
+                  105,
+                  100,
+                  105,
+                  116,
+                  121
                 ]
               },
               {
@@ -712,41 +1160,59 @@
         },
         {
           "name": "token_0_account",
-          "docs": ["The payer's token account to deposit token_0"],
+          "docs": [
+            "The payer's token account to deposit token_0"
+          ],
           "writable": true
         },
         {
           "name": "token_1_account",
-          "docs": ["The payer's token account to deposit token_1"],
+          "docs": [
+            "The payer's token account to deposit token_1"
+          ],
           "writable": true
         },
         {
           "name": "token_0_vault",
-          "docs": ["Pool vault for token_0 to deposit into", "The address that holds pool tokens for token_0"],
+          "docs": [
+            "Pool vault for token_0 to deposit into",
+            "The address that holds pool tokens for token_0"
+          ],
           "writable": true
         },
         {
           "name": "token_1_vault",
-          "docs": ["Pool vault for token_1 to deposit into", "The address that holds pool tokens for token_1"],
+          "docs": [
+            "Pool vault for token_1 to deposit into",
+            "The address that holds pool tokens for token_1"
+          ],
           "writable": true
         },
         {
           "name": "token_program",
-          "docs": ["token Program"],
+          "docs": [
+            "token Program"
+          ],
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
           "name": "token_program_2022",
-          "docs": ["Token program 2022"],
+          "docs": [
+            "Token program 2022"
+          ],
           "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         },
         {
           "name": "vault_0_mint",
-          "docs": ["The mint of token_0 vault"]
+          "docs": [
+            "The mint of token_0 vault"
+          ]
         },
         {
           "name": "vault_1_mint",
-          "docs": ["The mint of token_1 vault"]
+          "docs": [
+            "The mint of token_1 vault"
+          ]
         }
       ],
       "args": [
@@ -766,7 +1232,16 @@
     },
     {
       "name": "init_user_pool_liquidity",
-      "discriminator": [227, 221, 200, 212, 36, 107, 149, 36],
+      "discriminator": [
+        227,
+        221,
+        200,
+        212,
+        36,
+        107,
+        149,
+        36
+      ],
       "accounts": [
         {
           "name": "user",
@@ -784,7 +1259,25 @@
               {
                 "kind": "const",
                 "value": [
-                  117, 115, 101, 114, 45, 112, 111, 111, 108, 45, 108, 105, 113, 117, 105, 100, 105, 116, 121
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  112,
+                  111,
+                  111,
+                  108,
+                  45,
+                  108,
+                  105,
+                  113,
+                  117,
+                  105,
+                  100,
+                  105,
+                  116,
+                  121
                 ]
               },
               {
@@ -800,7 +1293,9 @@
         },
         {
           "name": "system_program",
-          "docs": ["To create a new program account"],
+          "docs": [
+            "To create a new program account"
+          ],
           "address": "11111111111111111111111111111111"
         }
       ],
@@ -828,28 +1323,69 @@
         "* `volatility_factor` - The volatility factor of the pool to determine the trade fee",
         ""
       ],
-      "discriminator": [175, 175, 109, 31, 13, 152, 155, 237],
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
       "accounts": [
         {
           "name": "creator",
-          "docs": ["Address paying to create the pool. It can be anyone."],
+          "docs": [
+            "Address paying to create the pool. It can be anyone."
+          ],
           "writable": true,
           "signer": true
         },
         {
           "name": "amm_config",
-          "docs": ["Which amm config the pool belongs to"]
+          "docs": [
+            "Which amm config the pool belongs to"
+          ]
         },
         {
           "name": "authority",
-          "docs": ["sign transactions on behalf of the pool", "for vault and lp_mint"],
+          "docs": [
+            "sign transactions on behalf of the pool",
+            "for vault and lp_mint"
+          ],
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  118, 97, 117, 108, 116, 95, 97, 110, 100, 95, 108, 112, 95, 109, 105, 110, 116, 95, 97, 117, 116,
-                  104, 95, 115, 101, 101, 100
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
                 ]
               }
             ]
@@ -857,13 +1393,20 @@
         },
         {
           "name": "pool_state",
-          "docs": ["Initialize an account to store the pool state"],
+          "docs": [
+            "Initialize an account to store the pool state"
+          ],
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
-                "value": [112, 111, 111, 108]
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108
+                ]
               },
               {
                 "kind": "account",
@@ -888,7 +1431,25 @@
               {
                 "kind": "const",
                 "value": [
-                  117, 115, 101, 114, 45, 112, 111, 111, 108, 45, 108, 105, 113, 117, 105, 100, 105, 116, 121
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  112,
+                  111,
+                  111,
+                  108,
+                  45,
+                  108,
+                  105,
+                  113,
+                  117,
+                  105,
+                  100,
+                  105,
+                  116,
+                  121
                 ]
               },
               {
@@ -904,20 +1465,28 @@
         },
         {
           "name": "token_0_mint",
-          "docs": ["Token_0 mint, the key must smaller than token_1 mint."]
+          "docs": [
+            "Token_0 mint, the key must smaller than token_1 mint."
+          ]
         },
         {
           "name": "token_1_mint",
-          "docs": ["Token_1 mint, the key must greater than token_0 mint."]
+          "docs": [
+            "Token_1 mint, the key must greater than token_0 mint."
+          ]
         },
         {
           "name": "creator_token_0",
-          "docs": ["creator token 0 account"],
+          "docs": [
+            "creator token 0 account"
+          ],
           "writable": true
         },
         {
           "name": "creator_token_1",
-          "docs": ["creator token 1 account"],
+          "docs": [
+            "creator token 1 account"
+          ],
           "writable": true
         },
         {
@@ -927,7 +1496,18 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [112, 111, 111, 108, 95, 118, 97, 117, 108, 116]
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
               },
               {
                 "kind": "account",
@@ -947,7 +1527,18 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [112, 111, 111, 108, 95, 118, 97, 117, 108, 116]
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
               },
               {
                 "kind": "account",
@@ -962,19 +1553,35 @@
         },
         {
           "name": "create_pool_fee",
-          "docs": ["create pool fee account"],
+          "docs": [
+            "create pool fee account"
+          ],
           "writable": true,
           "address": "8PhehuioLjhJ35A5eavazJSwoXcA4J7WwzgoWDBDFSuY"
         },
         {
           "name": "observation_state",
-          "docs": ["an account to store oracle observations"],
+          "docs": [
+            "an account to store oracle observations"
+          ],
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
-                "value": [111, 98, 115, 101, 114, 118, 97, 116, 105, 111, 110]
+                "value": [
+                  111,
+                  98,
+                  115,
+                  101,
+                  114,
+                  118,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
               },
               {
                 "kind": "account",
@@ -985,30 +1592,42 @@
         },
         {
           "name": "token_program",
-          "docs": ["Program to create mint account and mint tokens"],
+          "docs": [
+            "Program to create mint account and mint tokens"
+          ],
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
           "name": "token_0_program",
-          "docs": ["Spl token program or token program 2022"]
+          "docs": [
+            "Spl token program or token program 2022"
+          ]
         },
         {
           "name": "token_1_program",
-          "docs": ["Spl token program or token program 2022"]
+          "docs": [
+            "Spl token program or token program 2022"
+          ]
         },
         {
           "name": "associated_token_program",
-          "docs": ["Program to create an ATA for receiving position NFT"],
+          "docs": [
+            "Program to create an ATA for receiving position NFT"
+          ],
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
           "name": "system_program",
-          "docs": ["To create a new program account"],
+          "docs": [
+            "To create a new program account"
+          ],
           "address": "11111111111111111111111111111111"
         },
         {
           "name": "rent",
-          "docs": ["Sysvar for program account"],
+          "docs": [
+            "Sysvar for program account"
+          ],
           "address": "SysvarRent111111111111111111111111111111111"
         }
       ],
@@ -1037,8 +1656,19 @@
     },
     {
       "name": "migrate_meteora_dlmm_to_gamma",
-      "docs": ["Migrate from Meteora Dlmm to Gamma"],
-      "discriminator": [166, 33, 209, 228, 15, 46, 252, 67],
+      "docs": [
+        "Migrate from Meteora Dlmm to Gamma"
+      ],
+      "discriminator": [
+        166,
+        33,
+        209,
+        228,
+        15,
+        46,
+        252,
+        67
+      ],
       "accounts": [
         {
           "name": "dlmm_position",
@@ -1084,7 +1714,9 @@
         },
         {
           "name": "gamma_owner",
-          "docs": ["The owner LP Position in Gamma pool"],
+          "docs": [
+            "The owner LP Position in Gamma pool"
+          ],
           "signer": true
         },
         {
@@ -1094,8 +1726,33 @@
               {
                 "kind": "const",
                 "value": [
-                  118, 97, 117, 108, 116, 95, 97, 110, 100, 95, 108, 112, 95, 109, 105, 110, 116, 95, 97, 117, 116,
-                  104, 95, 115, 101, 101, 100
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
                 ]
               }
             ]
@@ -1103,7 +1760,9 @@
         },
         {
           "name": "gamma_pool_state",
-          "docs": ["Gamma Pool state the owner is depositing into"],
+          "docs": [
+            "Gamma Pool state the owner is depositing into"
+          ],
           "writable": true
         },
         {
@@ -1114,7 +1773,25 @@
               {
                 "kind": "const",
                 "value": [
-                  117, 115, 101, 114, 45, 112, 111, 111, 108, 45, 108, 105, 113, 117, 105, 100, 105, 116, 121
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  112,
+                  111,
+                  111,
+                  108,
+                  45,
+                  108,
+                  105,
+                  113,
+                  117,
+                  105,
+                  100,
+                  105,
+                  116,
+                  121
                 ]
               },
               {
@@ -1130,41 +1807,59 @@
         },
         {
           "name": "gamma_token_0_account",
-          "docs": ["The payer's token account to deposit token_0"],
+          "docs": [
+            "The payer's token account to deposit token_0"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_1_account",
-          "docs": ["The payer's token account to deposit token_1"],
+          "docs": [
+            "The payer's token account to deposit token_1"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_0_vault",
-          "docs": ["Pool vault for token_0 to deposit into", "The address that holds pool tokens for token_0"],
+          "docs": [
+            "Pool vault for token_0 to deposit into",
+            "The address that holds pool tokens for token_0"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_1_vault",
-          "docs": ["Pool vault for token_1 to deposit into", "The address that holds pool tokens for token_1"],
+          "docs": [
+            "Pool vault for token_1 to deposit into",
+            "The address that holds pool tokens for token_1"
+          ],
           "writable": true
         },
         {
           "name": "token_program",
-          "docs": ["token Program"],
+          "docs": [
+            "token Program"
+          ],
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
           "name": "token_program_2022",
-          "docs": ["Token program 2022"],
+          "docs": [
+            "Token program 2022"
+          ],
           "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         },
         {
           "name": "gamma_vault_0_mint",
-          "docs": ["The mint of token_0 vault"]
+          "docs": [
+            "The mint of token_0 vault"
+          ]
         },
         {
           "name": "gamma_vault_1_mint",
-          "docs": ["The mint of token_1 vault"]
+          "docs": [
+            "The mint of token_1 vault"
+          ]
         }
       ],
       "args": [
@@ -1190,8 +1885,19 @@
     },
     {
       "name": "migrate_orca_whirlpool_to_gamma",
-      "docs": ["Migrate from Orca Whirlpool to Gamma for simple spl tokens"],
-      "discriminator": [197, 196, 129, 5, 64, 184, 129, 242],
+      "docs": [
+        "Migrate from Orca Whirlpool to Gamma for simple spl tokens"
+      ],
+      "discriminator": [
+        197,
+        196,
+        129,
+        5,
+        64,
+        184,
+        129,
+        242
+      ],
       "accounts": [
         {
           "name": "whirlpool_program",
@@ -1236,7 +1942,9 @@
         },
         {
           "name": "gamma_owner",
-          "docs": ["The owner LP Position in Gamma pool"],
+          "docs": [
+            "The owner LP Position in Gamma pool"
+          ],
           "signer": true
         },
         {
@@ -1246,8 +1954,33 @@
               {
                 "kind": "const",
                 "value": [
-                  118, 97, 117, 108, 116, 95, 97, 110, 100, 95, 108, 112, 95, 109, 105, 110, 116, 95, 97, 117, 116,
-                  104, 95, 115, 101, 101, 100
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
                 ]
               }
             ]
@@ -1255,7 +1988,9 @@
         },
         {
           "name": "gamma_pool_state",
-          "docs": ["Gamma Pool state the owner is depositing into"],
+          "docs": [
+            "Gamma Pool state the owner is depositing into"
+          ],
           "writable": true
         },
         {
@@ -1266,7 +2001,25 @@
               {
                 "kind": "const",
                 "value": [
-                  117, 115, 101, 114, 45, 112, 111, 111, 108, 45, 108, 105, 113, 117, 105, 100, 105, 116, 121
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  112,
+                  111,
+                  111,
+                  108,
+                  45,
+                  108,
+                  105,
+                  113,
+                  117,
+                  105,
+                  100,
+                  105,
+                  116,
+                  121
                 ]
               },
               {
@@ -1282,41 +2035,59 @@
         },
         {
           "name": "gamma_token_0_account",
-          "docs": ["The payer's token account to deposit token_0"],
+          "docs": [
+            "The payer's token account to deposit token_0"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_1_account",
-          "docs": ["The payer's token account to deposit token_1"],
+          "docs": [
+            "The payer's token account to deposit token_1"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_0_vault",
-          "docs": ["Pool vault for token_0 to deposit into", "The address that holds pool tokens for token_0"],
+          "docs": [
+            "Pool vault for token_0 to deposit into",
+            "The address that holds pool tokens for token_0"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_1_vault",
-          "docs": ["Pool vault for token_1 to deposit into", "The address that holds pool tokens for token_1"],
+          "docs": [
+            "Pool vault for token_1 to deposit into",
+            "The address that holds pool tokens for token_1"
+          ],
           "writable": true
         },
         {
           "name": "token_program",
-          "docs": ["token Program"],
+          "docs": [
+            "token Program"
+          ],
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
           "name": "token_program_2022",
-          "docs": ["Token program 2022"],
+          "docs": [
+            "Token program 2022"
+          ],
           "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         },
         {
           "name": "gamma_vault_0_mint",
-          "docs": ["The mint of token_0 vault"]
+          "docs": [
+            "The mint of token_0 vault"
+          ]
         },
         {
           "name": "gamma_vault_1_mint",
-          "docs": ["The mint of token_1 vault"]
+          "docs": [
+            "The mint of token_1 vault"
+          ]
         }
       ],
       "args": [
@@ -1344,8 +2115,19 @@
     },
     {
       "name": "migrate_orca_whirlpool_to_gamma_v2",
-      "docs": ["Migrate from Orca Whirlpool to Gamma for token 2022"],
-      "discriminator": [48, 74, 173, 201, 189, 38, 220, 244],
+      "docs": [
+        "Migrate from Orca Whirlpool to Gamma for token 2022"
+      ],
+      "discriminator": [
+        48,
+        74,
+        173,
+        201,
+        189,
+        38,
+        220,
+        244
+      ],
       "accounts": [
         {
           "name": "whirlpool_program",
@@ -1390,7 +2172,9 @@
         },
         {
           "name": "gamma_owner",
-          "docs": ["The owner LP Position in Gamma pool"],
+          "docs": [
+            "The owner LP Position in Gamma pool"
+          ],
           "signer": true
         },
         {
@@ -1400,8 +2184,33 @@
               {
                 "kind": "const",
                 "value": [
-                  118, 97, 117, 108, 116, 95, 97, 110, 100, 95, 108, 112, 95, 109, 105, 110, 116, 95, 97, 117, 116,
-                  104, 95, 115, 101, 101, 100
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
                 ]
               }
             ]
@@ -1409,7 +2218,9 @@
         },
         {
           "name": "gamma_pool_state",
-          "docs": ["Gamma Pool state the owner is depositing into"],
+          "docs": [
+            "Gamma Pool state the owner is depositing into"
+          ],
           "writable": true
         },
         {
@@ -1420,7 +2231,25 @@
               {
                 "kind": "const",
                 "value": [
-                  117, 115, 101, 114, 45, 112, 111, 111, 108, 45, 108, 105, 113, 117, 105, 100, 105, 116, 121
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  112,
+                  111,
+                  111,
+                  108,
+                  45,
+                  108,
+                  105,
+                  113,
+                  117,
+                  105,
+                  100,
+                  105,
+                  116,
+                  121
                 ]
               },
               {
@@ -1436,41 +2265,59 @@
         },
         {
           "name": "gamma_token_0_account",
-          "docs": ["The payer's token account to deposit token_0"],
+          "docs": [
+            "The payer's token account to deposit token_0"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_1_account",
-          "docs": ["The payer's token account to deposit token_1"],
+          "docs": [
+            "The payer's token account to deposit token_1"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_0_vault",
-          "docs": ["Pool vault for token_0 to deposit into", "The address that holds pool tokens for token_0"],
+          "docs": [
+            "Pool vault for token_0 to deposit into",
+            "The address that holds pool tokens for token_0"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_1_vault",
-          "docs": ["Pool vault for token_1 to deposit into", "The address that holds pool tokens for token_1"],
+          "docs": [
+            "Pool vault for token_1 to deposit into",
+            "The address that holds pool tokens for token_1"
+          ],
           "writable": true
         },
         {
           "name": "token_program",
-          "docs": ["token Program"],
+          "docs": [
+            "token Program"
+          ],
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
           "name": "token_program_2022",
-          "docs": ["Token program 2022"],
+          "docs": [
+            "Token program 2022"
+          ],
           "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         },
         {
           "name": "gamma_vault_0_mint",
-          "docs": ["The mint of token_0 vault"]
+          "docs": [
+            "The mint of token_0 vault"
+          ]
         },
         {
           "name": "gamma_vault_1_mint",
-          "docs": ["The mint of token_1 vault"]
+          "docs": [
+            "The mint of token_1 vault"
+          ]
         }
       ],
       "args": [
@@ -1508,8 +2355,19 @@
     },
     {
       "name": "migrate_raydium_clmm_to_gamma",
-      "docs": ["Migrate from Raydium Clmm to Gamma"],
-      "discriminator": [53, 162, 11, 109, 57, 57, 186, 248],
+      "docs": [
+        "Migrate from Raydium Clmm to Gamma"
+      ],
+      "discriminator": [
+        53,
+        162,
+        11,
+        109,
+        57,
+        57,
+        186,
+        248
+      ],
       "accounts": [
         {
           "name": "raydium_clmm_program",
@@ -1536,7 +2394,9 @@
         },
         {
           "name": "raydium_clmm_token_vault_0",
-          "docs": ["Token_0 vault"],
+          "docs": [
+            "Token_0 vault"
+          ],
           "writable": true
         },
         {
@@ -1553,7 +2413,9 @@
         },
         {
           "name": "gamma_owner",
-          "docs": ["Owner of the liquidity provided"],
+          "docs": [
+            "Owner of the liquidity provided"
+          ],
           "signer": true
         },
         {
@@ -1563,8 +2425,33 @@
               {
                 "kind": "const",
                 "value": [
-                  118, 97, 117, 108, 116, 95, 97, 110, 100, 95, 108, 112, 95, 109, 105, 110, 116, 95, 97, 117, 116,
-                  104, 95, 115, 101, 101, 100
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
                 ]
               }
             ]
@@ -1572,7 +2459,9 @@
         },
         {
           "name": "gamma_pool_state",
-          "docs": ["Pool state the owner is depositing into"],
+          "docs": [
+            "Pool state the owner is depositing into"
+          ],
           "writable": true
         },
         {
@@ -1583,7 +2472,25 @@
               {
                 "kind": "const",
                 "value": [
-                  117, 115, 101, 114, 45, 112, 111, 111, 108, 45, 108, 105, 113, 117, 105, 100, 105, 116, 121
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  112,
+                  111,
+                  111,
+                  108,
+                  45,
+                  108,
+                  105,
+                  113,
+                  117,
+                  105,
+                  100,
+                  105,
+                  116,
+                  121
                 ]
               },
               {
@@ -1599,40 +2506,58 @@
         },
         {
           "name": "gamma_token_0_account",
-          "docs": ["The payer's token account to deposit token_0"],
+          "docs": [
+            "The payer's token account to deposit token_0"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_1_account",
-          "docs": ["The payer's token account to deposit token_1"],
+          "docs": [
+            "The payer's token account to deposit token_1"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_0_vault",
-          "docs": ["Pool vault for token_0 to deposit into", "The address that holds pool tokens for token_0"],
+          "docs": [
+            "Pool vault for token_0 to deposit into",
+            "The address that holds pool tokens for token_0"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_1_vault",
-          "docs": ["Pool vault for token_1 to deposit into", "The address that holds pool tokens for token_1"],
+          "docs": [
+            "Pool vault for token_1 to deposit into",
+            "The address that holds pool tokens for token_1"
+          ],
           "writable": true
         },
         {
           "name": "gamma_vault_0_mint",
-          "docs": ["The mint of token_0 vault"]
+          "docs": [
+            "The mint of token_0 vault"
+          ]
         },
         {
           "name": "gamma_vault_1_mint",
-          "docs": ["The mint of token_1 vault"]
+          "docs": [
+            "The mint of token_1 vault"
+          ]
         },
         {
           "name": "token_program",
-          "docs": ["token Program"],
+          "docs": [
+            "token Program"
+          ],
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
           "name": "token_program_2022",
-          "docs": ["Token program 2022"],
+          "docs": [
+            "Token program 2022"
+          ],
           "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         }
       ],
@@ -1661,8 +2586,19 @@
     },
     {
       "name": "migrate_raydium_clmm_to_gamma_v2",
-      "docs": ["Migrate from Raydium Clmm to Gamma for token 2022"],
-      "discriminator": [138, 127, 173, 116, 184, 119, 160, 145],
+      "docs": [
+        "Migrate from Raydium Clmm to Gamma for token 2022"
+      ],
+      "discriminator": [
+        138,
+        127,
+        173,
+        116,
+        184,
+        119,
+        160,
+        145
+      ],
       "accounts": [
         {
           "name": "raydium_clmm_program",
@@ -1709,7 +2645,9 @@
         },
         {
           "name": "gamma_owner",
-          "docs": ["Owner of the liquidity provided"],
+          "docs": [
+            "Owner of the liquidity provided"
+          ],
           "signer": true
         },
         {
@@ -1719,8 +2657,33 @@
               {
                 "kind": "const",
                 "value": [
-                  118, 97, 117, 108, 116, 95, 97, 110, 100, 95, 108, 112, 95, 109, 105, 110, 116, 95, 97, 117, 116,
-                  104, 95, 115, 101, 101, 100
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
                 ]
               }
             ]
@@ -1728,7 +2691,9 @@
         },
         {
           "name": "gamma_pool_state",
-          "docs": ["Pool state the owner is depositing into"],
+          "docs": [
+            "Pool state the owner is depositing into"
+          ],
           "writable": true
         },
         {
@@ -1739,7 +2704,25 @@
               {
                 "kind": "const",
                 "value": [
-                  117, 115, 101, 114, 45, 112, 111, 111, 108, 45, 108, 105, 113, 117, 105, 100, 105, 116, 121
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  112,
+                  111,
+                  111,
+                  108,
+                  45,
+                  108,
+                  105,
+                  113,
+                  117,
+                  105,
+                  100,
+                  105,
+                  116,
+                  121
                 ]
               },
               {
@@ -1755,40 +2738,58 @@
         },
         {
           "name": "gamma_token_0_account",
-          "docs": ["The payer's token account to deposit token_0"],
+          "docs": [
+            "The payer's token account to deposit token_0"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_1_account",
-          "docs": ["The payer's token account to deposit token_1"],
+          "docs": [
+            "The payer's token account to deposit token_1"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_0_vault",
-          "docs": ["Pool vault for token_0 to deposit into", "The address that holds pool tokens for token_0"],
+          "docs": [
+            "Pool vault for token_0 to deposit into",
+            "The address that holds pool tokens for token_0"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_1_vault",
-          "docs": ["Pool vault for token_1 to deposit into", "The address that holds pool tokens for token_1"],
+          "docs": [
+            "Pool vault for token_1 to deposit into",
+            "The address that holds pool tokens for token_1"
+          ],
           "writable": true
         },
         {
           "name": "gamma_vault_0_mint",
-          "docs": ["The mint of token_0 vault"]
+          "docs": [
+            "The mint of token_0 vault"
+          ]
         },
         {
           "name": "gamma_vault_1_mint",
-          "docs": ["The mint of token_1 vault"]
+          "docs": [
+            "The mint of token_1 vault"
+          ]
         },
         {
           "name": "token_program",
-          "docs": ["token Program"],
+          "docs": [
+            "token Program"
+          ],
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
           "name": "token_program_2022",
-          "docs": ["Token program 2022"],
+          "docs": [
+            "Token program 2022"
+          ],
           "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         }
       ],
@@ -1817,15 +2818,28 @@
     },
     {
       "name": "migrate_raydium_cp_swap_to_gamma",
-      "docs": ["Migrate from Raydium Cpmm Swap to Gamma"],
-      "discriminator": [39, 52, 202, 253, 131, 163, 42, 16],
+      "docs": [
+        "Migrate from Raydium Cpmm Swap to Gamma"
+      ],
+      "discriminator": [
+        39,
+        52,
+        202,
+        253,
+        131,
+        163,
+        42,
+        16
+      ],
       "accounts": [
         {
           "name": "raydium_cp_swap_program"
         },
         {
           "name": "owner",
-          "docs": ["Owner of the liquidity provided"],
+          "docs": [
+            "Owner of the liquidity provided"
+          ],
           "writable": true,
           "signer": true
         },
@@ -1834,45 +2848,63 @@
         },
         {
           "name": "raydium_cp_swap_pool_state",
-          "docs": ["Pool state account"],
+          "docs": [
+            "Pool state account"
+          ],
           "writable": true
         },
         {
           "name": "raydium_cp_swap_owner_lp_token",
-          "docs": ["Owner lp token account"],
+          "docs": [
+            "Owner lp token account"
+          ],
           "writable": true
         },
         {
           "name": "raydium_cp_swap_token_0_vault",
-          "docs": ["The address that holds pool tokens for token_0"],
+          "docs": [
+            "The address that holds pool tokens for token_0"
+          ],
           "writable": true
         },
         {
           "name": "raydium_cp_swap_token_1_vault",
-          "docs": ["The address that holds pool tokens for token_1"],
+          "docs": [
+            "The address that holds pool tokens for token_1"
+          ],
           "writable": true
         },
         {
           "name": "raydium_cp_swap_vault_0_mint",
-          "docs": ["The mint of token_0 vault"]
+          "docs": [
+            "The mint of token_0 vault"
+          ]
         },
         {
           "name": "raydium_cp_swap_vault_1_mint",
-          "docs": ["The mint of token_1 vault"]
+          "docs": [
+            "The mint of token_1 vault"
+          ]
         },
         {
           "name": "raydium_cp_swap_lp_mint",
-          "docs": ["Pool lp token mint"],
+          "docs": [
+            "Pool lp token mint"
+          ],
           "writable": true
         },
         {
           "name": "memo_program",
-          "docs": ["memo program"],
+          "docs": [
+            "memo program"
+          ],
           "address": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"
         },
         {
           "name": "gamma_owner",
-          "docs": ["Owner of the liquidity provided"],
+          "docs": [
+            "Owner of the liquidity provided"
+          ],
           "signer": true
         },
         {
@@ -1882,8 +2914,33 @@
               {
                 "kind": "const",
                 "value": [
-                  118, 97, 117, 108, 116, 95, 97, 110, 100, 95, 108, 112, 95, 109, 105, 110, 116, 95, 97, 117, 116,
-                  104, 95, 115, 101, 101, 100
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
                 ]
               }
             ]
@@ -1891,7 +2948,9 @@
         },
         {
           "name": "gamma_pool_state",
-          "docs": ["Pool state the owner is depositing into"],
+          "docs": [
+            "Pool state the owner is depositing into"
+          ],
           "writable": true
         },
         {
@@ -1902,7 +2961,25 @@
               {
                 "kind": "const",
                 "value": [
-                  117, 115, 101, 114, 45, 112, 111, 111, 108, 45, 108, 105, 113, 117, 105, 100, 105, 116, 121
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  112,
+                  111,
+                  111,
+                  108,
+                  45,
+                  108,
+                  105,
+                  113,
+                  117,
+                  105,
+                  100,
+                  105,
+                  116,
+                  121
                 ]
               },
               {
@@ -1918,40 +2995,58 @@
         },
         {
           "name": "gamma_token_0_account",
-          "docs": ["The payer's token account to deposit token_0"],
+          "docs": [
+            "The payer's token account to deposit token_0"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_1_account",
-          "docs": ["The payer's token account to deposit token_1"],
+          "docs": [
+            "The payer's token account to deposit token_1"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_0_vault",
-          "docs": ["Pool vault for token_0 to deposit into", "The address that holds pool tokens for token_0"],
+          "docs": [
+            "Pool vault for token_0 to deposit into",
+            "The address that holds pool tokens for token_0"
+          ],
           "writable": true
         },
         {
           "name": "gamma_token_1_vault",
-          "docs": ["Pool vault for token_1 to deposit into", "The address that holds pool tokens for token_1"],
+          "docs": [
+            "Pool vault for token_1 to deposit into",
+            "The address that holds pool tokens for token_1"
+          ],
           "writable": true
         },
         {
           "name": "gamma_vault_0_mint",
-          "docs": ["The mint of token_0 vault"]
+          "docs": [
+            "The mint of token_0 vault"
+          ]
         },
         {
           "name": "gamma_vault_1_mint",
-          "docs": ["The mint of token_1 vault"]
+          "docs": [
+            "The mint of token_1 vault"
+          ]
         },
         {
           "name": "token_program",
-          "docs": ["token Program"],
+          "docs": [
+            "token Program"
+          ],
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
           "name": "token_program_2022",
-          "docs": ["Token program 2022"],
+          "docs": [
+            "Token program 2022"
+          ],
           "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         }
       ],
@@ -1979,8 +3074,202 @@
       ]
     },
     {
+      "name": "oracle_based_swap_base_input",
+      "docs": [
+        "Swap the tokens in the pool base input amount, using oracle price and Curve calculator combined.",
+        "",
+        "# Arguments",
+        "",
+        "* `ctx`- The context of accounts",
+        "* `amount_in` -  input amount to transfer, output to DESTINATION is based on the exchange rate",
+        "* `minimum_amount_out` -  Minimum amount of output token, prevents excessive slippage",
+        ""
+      ],
+      "discriminator": [
+        239,
+        82,
+        192,
+        187,
+        160,
+        26,
+        223,
+        223
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "docs": [
+            "The user performing the swap"
+          ],
+          "signer": true
+        },
+        {
+          "name": "authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "amm_config",
+          "docs": [
+            "The factory state to read protocol fees"
+          ]
+        },
+        {
+          "name": "pool_state",
+          "docs": [
+            "The program account of the pool in which the swap will be performed"
+          ],
+          "writable": true
+        },
+        {
+          "name": "input_token_account",
+          "docs": [
+            "The user token account for input token"
+          ],
+          "writable": true
+        },
+        {
+          "name": "output_token_account",
+          "docs": [
+            "The user token account for output token"
+          ],
+          "writable": true
+        },
+        {
+          "name": "input_vault",
+          "docs": [
+            "The vault token account for input token"
+          ],
+          "writable": true
+        },
+        {
+          "name": "output_vault",
+          "docs": [
+            "The vault token account for output token"
+          ],
+          "writable": true
+        },
+        {
+          "name": "input_token_program",
+          "docs": [
+            "SPL program for input token transfers"
+          ]
+        },
+        {
+          "name": "output_token_program",
+          "docs": [
+            "SPL program for output token transfers"
+          ]
+        },
+        {
+          "name": "input_token_mint",
+          "docs": [
+            "The mint of input token"
+          ]
+        },
+        {
+          "name": "output_token_mint",
+          "docs": [
+            "The mint of output token"
+          ]
+        },
+        {
+          "name": "observation_state",
+          "docs": [
+            "The program account for the most recent oracle observation"
+          ],
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "amount_in",
+          "type": "u64"
+        },
+        {
+          "name": "minimum_amount_out",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "oracle_price_update",
+      "discriminator": [
+        196,
+        212,
+        99,
+        63,
+        59,
+        117,
+        248,
+        223
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "pool_state",
+          "writable": true
+        },
+        {
+          "name": "amm_config"
+        }
+      ],
+      "args": [
+        {
+          "name": "oracle_price_token_0_by_token_1",
+          "type": "u128"
+        }
+      ]
+    },
+    {
       "name": "rebalance_kamino",
-      "discriminator": [153, 94, 34, 16, 92, 181, 147, 215],
+      "discriminator": [
+        153,
+        94,
+        34,
+        16,
+        92,
+        181,
+        147,
+        215
+      ],
       "accounts": [
         {
           "name": "signer",
@@ -1994,8 +3283,33 @@
               {
                 "kind": "const",
                 "value": [
-                  118, 97, 117, 108, 116, 95, 97, 110, 100, 95, 108, 112, 95, 109, 105, 110, 116, 95, 97, 117, 116,
-                  104, 95, 115, 101, 101, 100
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
                 ]
               }
             ]
@@ -2003,12 +3317,16 @@
         },
         {
           "name": "pool_state",
-          "docs": ["The program account of the pool in which the swap will be performed"],
+          "docs": [
+            "The program account of the pool in which the swap will be performed"
+          ],
           "writable": true
         },
         {
           "name": "token_vault",
-          "docs": ["The vault token account for token 0"],
+          "docs": [
+            "The vault token account for token 0"
+          ],
           "writable": true
         },
         {
@@ -2042,7 +3360,26 @@
               {
                 "kind": "const",
                 "value": [
-                  112, 111, 111, 108, 95, 107, 97, 109, 105, 110, 111, 95, 100, 101, 112, 111, 115, 105, 116, 115
+                  112,
+                  111,
+                  111,
+                  108,
+                  95,
+                  107,
+                  97,
+                  109,
+                  105,
+                  110,
+                  111,
+                  95,
+                  100,
+                  101,
+                  112,
+                  111,
+                  115,
+                  105,
+                  116,
+                  115
                 ]
               },
               {
@@ -2098,11 +3435,22 @@
         "* `minimum_amount_out` -  Minimum amount of output token, prevents excessive slippage",
         ""
       ],
-      "discriminator": [143, 190, 90, 218, 196, 30, 51, 222],
+      "discriminator": [
+        143,
+        190,
+        90,
+        218,
+        196,
+        30,
+        51,
+        222
+      ],
       "accounts": [
         {
           "name": "payer",
-          "docs": ["The user performing the swap"],
+          "docs": [
+            "The user performing the swap"
+          ],
           "signer": true
         },
         {
@@ -2112,8 +3460,33 @@
               {
                 "kind": "const",
                 "value": [
-                  118, 97, 117, 108, 116, 95, 97, 110, 100, 95, 108, 112, 95, 109, 105, 110, 116, 95, 97, 117, 116,
-                  104, 95, 115, 101, 101, 100
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
                 ]
               }
             ]
@@ -2121,52 +3494,74 @@
         },
         {
           "name": "amm_config",
-          "docs": ["The factory state to read protocol fees"]
+          "docs": [
+            "The factory state to read protocol fees"
+          ]
         },
         {
           "name": "pool_state",
-          "docs": ["The program account of the pool in which the swap will be performed"],
+          "docs": [
+            "The program account of the pool in which the swap will be performed"
+          ],
           "writable": true
         },
         {
           "name": "input_token_account",
-          "docs": ["The user token account for input token"],
+          "docs": [
+            "The user token account for input token"
+          ],
           "writable": true
         },
         {
           "name": "output_token_account",
-          "docs": ["The user token account for output token"],
+          "docs": [
+            "The user token account for output token"
+          ],
           "writable": true
         },
         {
           "name": "input_vault",
-          "docs": ["The vault token account for input token"],
+          "docs": [
+            "The vault token account for input token"
+          ],
           "writable": true
         },
         {
           "name": "output_vault",
-          "docs": ["The vault token account for output token"],
+          "docs": [
+            "The vault token account for output token"
+          ],
           "writable": true
         },
         {
           "name": "input_token_program",
-          "docs": ["SPL program for input token transfers"]
+          "docs": [
+            "SPL program for input token transfers"
+          ]
         },
         {
           "name": "output_token_program",
-          "docs": ["SPL program for output token transfers"]
+          "docs": [
+            "SPL program for output token transfers"
+          ]
         },
         {
           "name": "input_token_mint",
-          "docs": ["The mint of input token"]
+          "docs": [
+            "The mint of input token"
+          ]
         },
         {
           "name": "output_token_mint",
-          "docs": ["The mint of output token"]
+          "docs": [
+            "The mint of output token"
+          ]
         },
         {
           "name": "observation_state",
-          "docs": ["The program account for the most recent oracle observation"],
+          "docs": [
+            "The program account for the most recent oracle observation"
+          ],
           "writable": true
         }
       ],
@@ -2193,11 +3588,22 @@
         "* `amount_out` -  amount of output token",
         ""
       ],
-      "discriminator": [55, 217, 98, 86, 163, 74, 180, 173],
+      "discriminator": [
+        55,
+        217,
+        98,
+        86,
+        163,
+        74,
+        180,
+        173
+      ],
       "accounts": [
         {
           "name": "payer",
-          "docs": ["The user performing the swap"],
+          "docs": [
+            "The user performing the swap"
+          ],
           "signer": true
         },
         {
@@ -2207,8 +3613,33 @@
               {
                 "kind": "const",
                 "value": [
-                  118, 97, 117, 108, 116, 95, 97, 110, 100, 95, 108, 112, 95, 109, 105, 110, 116, 95, 97, 117, 116,
-                  104, 95, 115, 101, 101, 100
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
                 ]
               }
             ]
@@ -2216,52 +3647,74 @@
         },
         {
           "name": "amm_config",
-          "docs": ["The factory state to read protocol fees"]
+          "docs": [
+            "The factory state to read protocol fees"
+          ]
         },
         {
           "name": "pool_state",
-          "docs": ["The program account of the pool in which the swap will be performed"],
+          "docs": [
+            "The program account of the pool in which the swap will be performed"
+          ],
           "writable": true
         },
         {
           "name": "input_token_account",
-          "docs": ["The user token account for input token"],
+          "docs": [
+            "The user token account for input token"
+          ],
           "writable": true
         },
         {
           "name": "output_token_account",
-          "docs": ["The user token account for output token"],
+          "docs": [
+            "The user token account for output token"
+          ],
           "writable": true
         },
         {
           "name": "input_vault",
-          "docs": ["The vault token account for input token"],
+          "docs": [
+            "The vault token account for input token"
+          ],
           "writable": true
         },
         {
           "name": "output_vault",
-          "docs": ["The vault token account for output token"],
+          "docs": [
+            "The vault token account for output token"
+          ],
           "writable": true
         },
         {
           "name": "input_token_program",
-          "docs": ["SPL program for input token transfers"]
+          "docs": [
+            "SPL program for input token transfers"
+          ]
         },
         {
           "name": "output_token_program",
-          "docs": ["SPL program for output token transfers"]
+          "docs": [
+            "SPL program for output token transfers"
+          ]
         },
         {
           "name": "input_token_mint",
-          "docs": ["The mint of input token"]
+          "docs": [
+            "The mint of input token"
+          ]
         },
         {
           "name": "output_token_mint",
-          "docs": ["The mint of output token"]
+          "docs": [
+            "The mint of output token"
+          ]
         },
         {
           "name": "observation_state",
-          "docs": ["The program account for the most recent oracle observation"],
+          "docs": [
+            "The program account for the most recent oracle observation"
+          ],
           "writable": true
         }
       ],
@@ -2293,17 +3746,30 @@
         "* `param`- The vaule can be 0 | 1 | 2 | 3 | 4, otherwise will report a error",
         ""
       ],
-      "discriminator": [49, 60, 174, 136, 154, 28, 116, 200],
+      "discriminator": [
+        49,
+        60,
+        174,
+        136,
+        154,
+        28,
+        116,
+        200
+      ],
       "accounts": [
         {
           "name": "owner",
-          "docs": ["The amm config owner or admin"],
+          "docs": [
+            "The amm config owner or admin"
+          ],
           "signer": true,
           "address": "9QcHinaHcJFdzSHeiF1yGchcuQk3qPFNV13q6dZJbAny"
         },
         {
           "name": "amm_config",
-          "docs": ["The amm config account to update"],
+          "docs": [
+            "The amm config account to update"
+          ],
           "writable": true
         }
       ],
@@ -2330,7 +3796,16 @@
         "* `status` - The value",
         ""
       ],
-      "discriminator": [239, 214, 170, 78, 36, 35, 30, 34],
+      "discriminator": [
+        239,
+        214,
+        170,
+        78,
+        36,
+        35,
+        30,
+        34
+      ],
       "accounts": [
         {
           "name": "authority",
@@ -2368,11 +3843,22 @@
         "* `minimum_token_1_amount` -  Minimum amount of token 1 to receive, prevents excessive slippage",
         ""
       ],
-      "discriminator": [183, 18, 70, 156, 148, 109, 161, 34],
+      "discriminator": [
+        183,
+        18,
+        70,
+        156,
+        148,
+        109,
+        161,
+        34
+      ],
       "accounts": [
         {
           "name": "owner",
-          "docs": ["Owner of the liquidity provided"],
+          "docs": [
+            "Owner of the liquidity provided"
+          ],
           "signer": true
         },
         {
@@ -2382,8 +3868,33 @@
               {
                 "kind": "const",
                 "value": [
-                  118, 97, 117, 108, 116, 95, 97, 110, 100, 95, 108, 112, 95, 109, 105, 110, 116, 95, 97, 117, 116,
-                  104, 95, 115, 101, 101, 100
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
                 ]
               }
             ]
@@ -2391,19 +3902,41 @@
         },
         {
           "name": "pool_state",
-          "docs": ["Pool state account"],
+          "docs": [
+            "Pool state account"
+          ],
           "writable": true
         },
         {
           "name": "user_pool_liquidity",
-          "docs": ["User pool liquidity account"],
+          "docs": [
+            "User pool liquidity account"
+          ],
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  117, 115, 101, 114, 45, 112, 111, 111, 108, 45, 108, 105, 113, 117, 105, 100, 105, 116, 121
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  112,
+                  111,
+                  111,
+                  108,
+                  45,
+                  108,
+                  105,
+                  113,
+                  117,
+                  105,
+                  100,
+                  105,
+                  116,
+                  121
                 ]
               },
               {
@@ -2419,47 +3952,65 @@
         },
         {
           "name": "token_0_account",
-          "docs": ["The owner's token account for receive token_0"],
+          "docs": [
+            "The owner's token account for receive token_0"
+          ],
           "writable": true
         },
         {
           "name": "token_1_account",
-          "docs": ["The owner's token account for receive token_1"],
+          "docs": [
+            "The owner's token account for receive token_1"
+          ],
           "writable": true
         },
         {
           "name": "token_0_vault",
-          "docs": ["The address that holds pool tokens for token_0"],
+          "docs": [
+            "The address that holds pool tokens for token_0"
+          ],
           "writable": true
         },
         {
           "name": "token_1_vault",
-          "docs": ["The address that holds pool tokens for token_1"],
+          "docs": [
+            "The address that holds pool tokens for token_1"
+          ],
           "writable": true
         },
         {
           "name": "token_program",
-          "docs": ["token Program"],
+          "docs": [
+            "token Program"
+          ],
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
           "name": "token_program_2022",
-          "docs": ["Token program 2022"],
+          "docs": [
+            "Token program 2022"
+          ],
           "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         },
         {
           "name": "vault_0_mint",
-          "docs": ["The mint of token_0 vault"],
+          "docs": [
+            "The mint of token_0 vault"
+          ],
           "writable": true
         },
         {
           "name": "vault_1_mint",
-          "docs": ["The mint of token_1 vault"],
+          "docs": [
+            "The mint of token_1 vault"
+          ],
           "writable": true
         },
         {
           "name": "memo_program",
-          "docs": ["memo program"],
+          "docs": [
+            "memo program"
+          ],
           "address": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"
         },
         {
@@ -2490,27 +4041,81 @@
   "accounts": [
     {
       "name": "AmmConfig",
-      "discriminator": [218, 244, 33, 104, 203, 203, 43, 111]
+      "discriminator": [
+        218,
+        244,
+        33,
+        104,
+        203,
+        203,
+        43,
+        111
+      ]
     },
     {
       "name": "ObservationState",
-      "discriminator": [122, 174, 197, 53, 129, 9, 165, 132]
+      "discriminator": [
+        122,
+        174,
+        197,
+        53,
+        129,
+        9,
+        165,
+        132
+      ]
     },
     {
       "name": "PoolState",
-      "discriminator": [247, 237, 227, 245, 215, 195, 222, 70]
+      "discriminator": [
+        247,
+        237,
+        227,
+        245,
+        215,
+        195,
+        222,
+        70
+      ]
     },
     {
       "name": "RewardInfo",
-      "discriminator": [39, 7, 129, 22, 241, 96, 83, 133]
+      "discriminator": [
+        39,
+        7,
+        129,
+        22,
+        241,
+        96,
+        83,
+        133
+      ]
     },
     {
       "name": "UserPoolLiquidity",
-      "discriminator": [0, 141, 89, 29, 236, 6, 14, 15]
+      "discriminator": [
+        0,
+        141,
+        89,
+        29,
+        236,
+        6,
+        14,
+        15
+      ]
     },
     {
       "name": "UserRewardInfo",
-      "discriminator": [110, 57, 251, 139, 250, 236, 213, 178]
+      "discriminator": [
+        110,
+        57,
+        251,
+        139,
+        250,
+        236,
+        213,
+        178
+      ]
     }
   ],
   "types": [
@@ -2564,47 +4169,65 @@
           },
           {
             "name": "index",
-            "docs": ["Config index"],
+            "docs": [
+              "Config index"
+            ],
             "type": "u16"
           },
           {
             "name": "trade_fee_rate",
-            "docs": ["The trade fee, denominated in hundredths of bip (10^-6)"],
+            "docs": [
+              "The trade fee, denominated in hundredths of bip (10^-6)"
+            ],
             "type": "u64"
           },
           {
             "name": "protocol_fee_rate",
-            "docs": ["The protocol fee"],
+            "docs": [
+              "The protocol fee"
+            ],
             "type": "u64"
           },
           {
             "name": "fund_fee_rate",
-            "docs": ["The fund fee, denominated in hundredths of bip (10^-6)"],
+            "docs": [
+              "The fund fee, denominated in hundredths of bip (10^-6)"
+            ],
             "type": "u64"
           },
           {
             "name": "create_pool_fee",
-            "docs": ["Fee for creating a new pool"],
+            "docs": [
+              "Fee for creating a new pool"
+            ],
             "type": "u64"
           },
           {
             "name": "protocol_owner",
-            "docs": ["Address of the protocol fee owner"],
+            "docs": [
+              "Address of the protocol fee owner"
+            ],
             "type": "pubkey"
           },
           {
             "name": "fund_owner",
-            "docs": ["Address of the fund fee owner"],
+            "docs": [
+              "Address of the fund fee owner"
+            ],
             "type": "pubkey"
           },
           {
             "name": "referral_project",
-            "docs": ["Address of the referral project"],
+            "docs": [
+              "Address of the referral project"
+            ],
             "type": "pubkey"
           },
           {
             "name": "max_open_time",
-            "docs": ["Max open time for a pool in seconds"],
+            "docs": [
+              "Max open time for a pool in seconds"
+            ],
             "type": "u64"
           },
           {
@@ -2613,9 +4236,14 @@
           },
           {
             "name": "padding",
-            "docs": ["padding"],
+            "docs": [
+              "padding"
+            ],
             "type": {
-              "array": ["u64", 7]
+              "array": [
+                "u64",
+                7
+              ]
             }
           }
         ]
@@ -2639,7 +4267,9 @@
     },
     {
       "name": "LpChangeEvent",
-      "docs": ["Emitted when deposit or withdraw"],
+      "docs": [
+        "Emitted when deposit or withdraw"
+      ],
       "type": {
         "kind": "struct",
         "fields": [
@@ -2684,7 +4314,9 @@
     },
     {
       "name": "MigrationEvent",
-      "docs": ["Emitted when migration"],
+      "docs": [
+        "Emitted when migration"
+      ],
       "type": {
         "kind": "struct",
         "fields": [
@@ -2713,7 +4345,9 @@
     },
     {
       "name": "Observation",
-      "docs": ["The element of observations in ObservationState"],
+      "docs": [
+        "The element of observations in ObservationState"
+      ],
       "serialization": "bytemuckunsafe",
       "repr": {
         "kind": "rust",
@@ -2724,7 +4358,9 @@
         "fields": [
           {
             "name": "block_timestamp",
-            "docs": ["The block timestamp of the observation"],
+            "docs": [
+              "The block timestamp of the observation"
+            ],
             "type": "u64"
           },
           {
@@ -2756,12 +4392,16 @@
         "fields": [
           {
             "name": "initialized",
-            "docs": ["Whether the ObservationState is enabled"],
+            "docs": [
+              "Whether the ObservationState is enabled"
+            ],
             "type": "bool"
           },
           {
             "name": "observation_index",
-            "docs": ["The most recently updated index of the observations array"],
+            "docs": [
+              "The most recently updated index of the observations array"
+            ],
             "type": "u16"
           },
           {
@@ -2770,7 +4410,9 @@
           },
           {
             "name": "observations",
-            "docs": ["observation array"],
+            "docs": [
+              "observation array"
+            ],
             "type": {
               "array": [
                 {
@@ -2784,9 +4426,14 @@
           },
           {
             "name": "padding",
-            "docs": ["padding"],
+            "docs": [
+              "padding"
+            ],
             "type": {
-              "array": ["u64", 4]
+              "array": [
+                "u64",
+                4
+              ]
             }
           }
         ]
@@ -2847,57 +4494,85 @@
         "fields": [
           {
             "name": "amm_config",
-            "docs": ["To which AmmConfig the pool belongs to"],
+            "docs": [
+              "To which AmmConfig the pool belongs to"
+            ],
             "type": "pubkey"
           },
           {
             "name": "pool_creator",
-            "docs": ["Pool Creator"],
+            "docs": [
+              "Pool Creator"
+            ],
             "type": "pubkey"
           },
           {
             "name": "token_0_vault",
-            "docs": ["Vault to store Token A of the pool"],
+            "docs": [
+              "Vault to store Token A of the pool"
+            ],
             "type": "pubkey"
           },
           {
             "name": "token_1_vault",
-            "docs": ["Vault to store Token B of the pool"],
+            "docs": [
+              "Vault to store Token B of the pool"
+            ],
             "type": "pubkey"
           },
           {
-            "name": "_padding1",
+            "name": "oracle_price_token_0_by_token_1",
             "docs": [
-              "Pool tokens are issued when Token A or Token B are deposited",
-              "Pool tokens can be withdrawn back to the original Token A or Token B"
+              "Scaled to 9 decimal places.",
+              "This means `token0/token1`"
             ],
-            "type": {
-              "array": ["u8", 32]
-            }
+            "type": "u128"
+          },
+          {
+            "name": "oracle_price_updated_at",
+            "type": "u64"
+          },
+          {
+            "name": "acceptable_price_difference",
+            "type": "u32"
+          },
+          {
+            "name": "max_amount_swappable_at_oracle_price",
+            "type": "u32"
           },
           {
             "name": "token_0_mint",
-            "docs": ["Mint info of Token A"],
+            "docs": [
+              "Mint info of Token A"
+            ],
             "type": "pubkey"
           },
           {
             "name": "token_1_mint",
-            "docs": ["Mint info of Token B"],
+            "docs": [
+              "Mint info of Token B"
+            ],
             "type": "pubkey"
           },
           {
             "name": "token_0_program",
-            "docs": ["token_0 program"],
+            "docs": [
+              "token_0 program"
+            ],
             "type": "pubkey"
           },
           {
             "name": "token_1_program",
-            "docs": ["token_1_program"],
+            "docs": [
+              "token_1_program"
+            ],
             "type": "pubkey"
           },
           {
             "name": "observation_key",
-            "docs": ["Observation account to store the oracle data"],
+            "docs": [
+              "Observation account to store the oracle data"
+            ],
             "type": "pubkey"
           },
           {
@@ -2916,12 +4591,16 @@
           },
           {
             "name": "_padding2",
-            "docs": ["lp_mint decimals"],
+            "docs": [
+              "lp_mint decimals"
+            ],
             "type": "u8"
           },
           {
             "name": "mint_0_decimals",
-            "docs": ["mint0 and mint1 decimals"],
+            "docs": [
+              "mint0 and mint1 decimals"
+            ],
             "type": "u8"
           },
           {
@@ -2930,12 +4609,16 @@
           },
           {
             "name": "lp_supply",
-            "docs": ["True circulating supply of lp_mint tokens without burns and lock-ups"],
+            "docs": [
+              "True circulating supply of lp_mint tokens without burns and lock-ups"
+            ],
             "type": "u64"
           },
           {
             "name": "protocol_fees_token_0",
-            "docs": ["The amount of token_0 and token_1 owed to Liquidity Provider"],
+            "docs": [
+              "The amount of token_0 and token_1 owed to Liquidity Provider"
+            ],
             "type": "u64"
           },
           {
@@ -2952,37 +4635,51 @@
           },
           {
             "name": "open_time",
-            "docs": ["The timestamp allowed for swap in the pool"],
+            "docs": [
+              "The timestamp allowed for swap in the pool"
+            ],
             "type": "u64"
           },
           {
             "name": "recent_epoch",
-            "docs": ["recent epoch"],
+            "docs": [
+              "recent epoch"
+            ],
             "type": "u64"
           },
           {
             "name": "cumulative_trade_fees_token_0",
-            "docs": ["Trade fees of token_0 after every swap"],
+            "docs": [
+              "Trade fees of token_0 after every swap"
+            ],
             "type": "u128"
           },
           {
             "name": "cumulative_trade_fees_token_1",
-            "docs": ["Trade fees of token_1 after every swap"],
+            "docs": [
+              "Trade fees of token_1 after every swap"
+            ],
             "type": "u128"
           },
           {
             "name": "cumulative_volume_token_0",
-            "docs": ["Cummulative volume of token_0"],
+            "docs": [
+              "Cummulative volume of token_0"
+            ],
             "type": "u128"
           },
           {
             "name": "cumulative_volume_token_1",
-            "docs": ["Cummulative volume of token_1"],
+            "docs": [
+              "Cummulative volume of token_1"
+            ],
             "type": "u128"
           },
           {
             "name": "latest_dynamic_fee_rate",
-            "docs": ["latest dynamic fee rate"],
+            "docs": [
+              "latest dynamic fee rate"
+            ],
             "type": "u64"
           },
           {
@@ -3010,15 +4707,23 @@
             "type": "u64"
           },
           {
-            "name": "partners",
+            "name": "min_trade_rate_at_oracle_price",
+            "type": "u32"
+          },
+          {
+            "name": "price_premium_for_swap_at_oracle_price",
+            "type": "u32"
+          },
+          {
+            "name": "max_oracle_price_update_time_diff",
+            "type": "u32"
+          },
+          {
+            "name": "_padding3",
             "type": {
               "array": [
-                {
-                  "defined": {
-                    "name": "PartnerInfo"
-                  }
-                },
-                1
+                "u8",
+                20
               ]
             }
           },
@@ -3039,10 +4744,28 @@
             "type": "u64"
           },
           {
-            "name": "padding",
-            "docs": ["padding"],
+            "name": "partners",
             "type": {
-              "array": ["u64", 8]
+              "array": [
+                {
+                  "defined": {
+                    "name": "PartnerInfo"
+                  }
+                },
+                1
+              ]
+            }
+          },
+          {
+            "name": "padding",
+            "docs": [
+              "padding"
+            ],
+            "type": {
+              "array": [
+                "u64",
+                4
+              ]
             }
           }
         ]
@@ -3129,42 +4852,58 @@
           },
           {
             "name": "input_vault_before",
-            "docs": ["pool vault - trade_fees"],
+            "docs": [
+              "pool vault - trade_fees"
+            ],
             "type": "u64"
           },
           {
             "name": "output_vault_before",
-            "docs": ["pool_vault - trade_fees"],
+            "docs": [
+              "pool_vault - trade_fees"
+            ],
             "type": "u64"
           },
           {
             "name": "input_amount",
-            "docs": ["calculate result without transfer fees"],
+            "docs": [
+              "calculate result without transfer fees"
+            ],
             "type": "u64"
           },
           {
             "name": "output_amount",
-            "docs": ["calculate result without transfer fees"],
+            "docs": [
+              "calculate result without transfer fees"
+            ],
             "type": "u64"
           },
           {
             "name": "input_mint",
-            "docs": ["input mint for the swap"],
+            "docs": [
+              "input mint for the swap"
+            ],
             "type": "pubkey"
           },
           {
             "name": "output_mint",
-            "docs": ["output mint for the swap"],
+            "docs": [
+              "output mint for the swap"
+            ],
             "type": "pubkey"
           },
           {
             "name": "input_transfer_fee",
-            "docs": ["transfer fees on input token using token extensions"],
+            "docs": [
+              "transfer fees on input token using token extensions"
+            ],
             "type": "u64"
           },
           {
             "name": "output_transfer_fee",
-            "docs": ["transfer fees on output token using token extensions"],
+            "docs": [
+              "transfer fees on output token using token extensions"
+            ],
             "type": "u64"
           },
           {
@@ -3173,7 +4912,9 @@
           },
           {
             "name": "dynamic_fee",
-            "docs": ["dynamic_fees after this swap"],
+            "docs": [
+              "dynamic_fees after this swap"
+            ],
             "type": "u128"
           }
         ]
@@ -3223,9 +4964,16 @@
             }
           },
           {
+            "name": "first_investment_at",
+            "type": "u64"
+          },
+          {
             "name": "padding",
             "type": {
-              "array": ["u8", 23]
+              "array": [
+                "u8",
+                15
+              ]
             }
           }
         ]

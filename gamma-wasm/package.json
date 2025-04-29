@@ -1,0 +1,17 @@
+{
+  "name": "gamma-wasm",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "gamma-wasm_bg.wasm",
+    "gamma-wasm.js",
+    "gamma-wasm_bg.js",
+    "gamma-wasm.d.ts"
+  ],
+  "main": "gamma-wasm.js",
+  "types": "gamma-wasm.d.ts",
+  "sideEffects": [
+    "./gamma-wasm.js",
+    "./snippets/*"
+  ]
+}

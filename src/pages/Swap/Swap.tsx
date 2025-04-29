@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import {
   Button,
   cn,
@@ -25,14 +25,14 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 import { BASE_SLIPPAGE, JupToken } from '@/pages/FarmV4/constants'
 import { toast } from 'sonner'
 import { useWalletBalance } from '@/context/walletBalanceContext'
-import { bigNumberFormatter, loadIconImage, numberFormatter, sleep } from '@/utils'
+import { bigNumberFormatter, loadIconImage, numberFormatter } from '@/utils'
 import SearchBar from '@/components/common/SearchBar'
 import useBoolean from '@/hooks/useBoolean'
 import { InfiniteTokenListSwap } from '@/pages/Swap/InfiniteTokenListSwap'
 import { Connect } from '@/layouts'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import useTransaction from '@/hooks/useTransaction'
-import { getPriceQuotes, swapTokens } from '@/web3/Farm'
+import { getPriceQuotes, getPriceQuotesForOracleBasedSwaps, oracleBasedSwap, swapTokens } from '@/web3/Farm'
 import BigNumber from 'bignumber.js'
 import { forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
 import { ErrorToast } from '@/utils/perpsNotifications'
@@ -49,6 +49,7 @@ import { QUERY_KEY } from '@/queries/query.helper'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import useGetGammaSwapAccounts from '@/queries/GAMMA/pools/useGetGammaSwapAccounts'
 import { TokenAmount } from '@solana/web3.js'
+import { INTERVALS } from '@/utils/time'
 
 export const Swap: FC = () => {
   const { isDarkMode, mode } = useDarkMode()
@@ -71,6 +72,18 @@ export const Swap: FC = () => {
   const [invertPrice, setInvertPrice] = useBoolean(false)
   const localIsCustomSlippage = !BASE_SLIPPAGE.includes(value)
   const { sendTransaction, createTransactionBuilder } = useTransaction()
+  // TODO: We can add an option to switch between oracle based and base swap.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [swapType, _setSwapType] = useState<'oracleBasedSwap' | 'baseSwap'>('oracleBasedSwap')
+
+  const query = window.location.search
+  const urlParams = new URLSearchParams(query)
+  const isOldSwapVersion = urlParams.get('old-swap-version')
+
+  useEffect(() => {
+    if (isOldSwapVersion) _setSwapType('baseSwap')
+    else _setSwapType('oracleBasedSwap')
+  }, [isOldSwapVersion])
 
   const { GammaProgram } = usePriceFeedFarm()
 
@@ -80,19 +93,19 @@ export const Swap: FC = () => {
     mintA: selectedTokenA?.address,
     mintB: selectedTokenB?.address
   })
-  const ammConfigStateQuery = useGammaProgramAmmConfig()
+  const ammConfigStateQuery = useGammaProgramAmmConfig(ammQuery.data)
   const poolStateQuery = useGammaProgramPoolQuery({
     poolId: poolIdQuery.data
   })
   const observationStateQuery = useGammaProgramObservationState({
-    observerKey: poolStateQuery.data?.observationKey
+    observerKey: poolStateQuery.data?.account?.observationKey
   })
   const swapAccountsQuery = useGetGammaSwapAccounts({
     mintA: selectedTokenA?.address,
     mintB: selectedTokenB?.address,
     userSourceTokenType: balance[selectedTokenA?.address].tokenType,
     userTargetTokenType: balance[selectedTokenB?.address].tokenType,
-    poolState: poolStateQuery.data,
+    poolState: poolStateQuery.data?.account,
     ammConfigId: ammQuery.data,
     poolIdKey: poolIdQuery.data
   })
@@ -103,11 +116,13 @@ export const Swap: FC = () => {
       'swap-approx',
       selectedTokenA?.address,
       selectedTokenB?.address,
-      observationStateQuery.data?.observations
+      observationStateQuery.data?.account?.observations,
+      poolStateQuery.data?.account
     ],
     queryFn: async () => {
-      await sleep(150)
-      const aToB = getPriceQuotes(
+      const getPriceQuotesFunction =
+        swapType === 'oracleBasedSwap' ? getPriceQuotesForOracleBasedSwaps : getPriceQuotes
+      const aToB = getPriceQuotesFunction(
         '1',
         selectedTokenA,
         selectedTokenB,
@@ -115,7 +130,7 @@ export const Swap: FC = () => {
         poolStateQuery.data,
         observationStateQuery.data
       )
-      const bToA = getPriceQuotes(
+      const bToA = getPriceQuotesFunction(
         '1',
         selectedTokenB,
         selectedTokenA,
@@ -130,6 +145,7 @@ export const Swap: FC = () => {
       }
     },
     keepPreviousData: true,
+    staleTime: INTERVALS.SECOND * 10,
     enabled:
       !!selectedTokenA &&
       !!selectedTokenB &&
@@ -145,11 +161,13 @@ export const Swap: FC = () => {
       selectedTokenA?.address,
       selectedTokenB?.address,
       amountTokenA,
-      observationStateQuery.data?.observations
+      observationStateQuery.data?.account?.observations,
+      poolStateQuery.data?.account
     ],
     queryFn: async () => {
-      await sleep(150)
-      const quote = getPriceQuotes(
+      const getPriceQuotesFunction =
+        swapType === 'oracleBasedSwap' ? getPriceQuotesForOracleBasedSwaps : getPriceQuotes
+      const quote = getPriceQuotesFunction(
         amountTokenA,
         selectedTokenA,
         selectedTokenB,
@@ -167,6 +185,7 @@ export const Swap: FC = () => {
       })
     },
     keepPreviousData: true,
+    staleTime: INTERVALS.SECOND * 10,
     enabled:
       !!selectedTokenA?.address &&
       !!selectedTokenB?.address &&
@@ -180,7 +199,8 @@ export const Swap: FC = () => {
   const swapMutation = useMutation({
     mutationFn: async () => {
       const txBuilder = createTransactionBuilder()
-      const tx = await swapTokens(
+      const swapTokensFunction = swapType === 'oracleBasedSwap' ? oracleBasedSwap : swapTokens
+      const tx = await swapTokensFunction(
         amountTokenA,
         selectedTokenA,
         selectedTokenB,
@@ -412,7 +432,7 @@ mt-8 flex items-center justify-center
                   className={cn(
                     `ml-auto text-b2 cursor-pointer text-text-lightmode-primary dark:text-text-darkmode-primary`,
                     balance[selectedTokenA?.address].tokenAmount.uiAmount == 0 &&
-                      `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
+                    `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
                   )}
                   onClick={() => {
                     amountTokenACommands.set(balance[selectedTokenA?.address].tokenAmount.uiAmountString)
@@ -485,7 +505,7 @@ mt-8 flex items-center justify-center
                 className={cn(
                   `ml-auto text-b2 text-text-lightmode-primary dark:text-text-darkmode-primary`,
                   balance[selectedTokenB?.address].tokenAmount.uiAmount == 0 &&
-                    `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
+                  `cursor-not-allowed text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
                 )}
               >
                 Balance: {numberFormatter(balance[selectedTokenB?.address].tokenAmount.uiAmount)}{' '}
@@ -557,6 +577,8 @@ mt-8 flex items-center justify-center
                   hasInput={+amountTokenA > 0}
                 />
               </div>
+              {priceQuoteQuery.data?.priceImpact && <p>Price Impact: {priceQuoteQuery.data?.priceImpact}%</p>}
+
               {/* <div className={'flex font-semibold text-b2 items-center'}>
                 <p>Price Impact</p>
                 <p
@@ -618,11 +640,11 @@ mt-8 flex items-center justify-center
                 swapNotValid || loadingPriceQuote || isLoading || !swapAccountsQuery.data || !doesPoolExist
               }
             >
-              {
-                selectedTokenA?.address && selectedTokenB?.address ?
-                  +amountTokenA > balance[selectedTokenA?.address].tokenAmount.uiAmount ?
-                  `Insufficient ${selectedTokenA?.symbol}` : `Swap` : `Swap`
-              }
+              {selectedTokenA?.address && selectedTokenB?.address
+                ? +amountTokenA > balance[selectedTokenA?.address].tokenAmount.uiAmount
+                  ? `Insufficient ${selectedTokenA?.symbol}`
+                  : `Swap`
+                : `Swap`}
             </Button>
           )}
         </div>
@@ -744,8 +766,8 @@ function TokenSelectInput({
         className={cn(
           'h-[45px] text-right',
           disableInput &&
-            isLocked &&
-            'disabled:text-text-lightmode-secondary disabled:dark:text-text-darkmode-secondary'
+          isLocked &&
+          'disabled:text-text-lightmode-secondary disabled:dark:text-text-darkmode-secondary'
         )}
         disabled={disableInput}
       />

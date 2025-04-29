@@ -1,22 +1,29 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import { QUERY_KEY, UseGammaProgramPoolKey } from '@/queries/query.helper'
 import { INTERVALS } from '@/utils/time'
-import { usePriceFeedFarm } from '@/context'
+import { GammaAccountWithInfo, GammaPoolState, usePriceFeedFarm } from '@/context'
 import { PublicKey } from '@solana/web3.js'
 
 type UseGammaProgramPoolQueryProps = {
   poolId?: PublicKey
 }
 
-function useGammaProgramPoolQuery({ poolId }: UseGammaProgramPoolQueryProps) {
-  const {GammaProgram} = usePriceFeedFarm()
+function useGammaProgramPoolQuery({
+  poolId
+}: UseGammaProgramPoolQueryProps): UseQueryResult<GammaAccountWithInfo<GammaPoolState>> {
+  const { GammaProgram } = usePriceFeedFarm()
   return useQuery({
     queryKey: [QUERY_KEY, UseGammaProgramPoolKey, poolId?.toBase58()],
-    queryFn: async () =>
-      await GammaProgram.account.poolState.fetch(poolId)
-    ,
+    queryFn: async () => {
+      const poolStateAccountInfo = await GammaProgram.account.poolState.getAccountInfo(poolId)
+      const poolState: GammaPoolState = GammaProgram.account.poolState.coder.accounts.decode(
+        'poolState',
+        poolStateAccountInfo.data
+      )
+      return { account: poolState, accountInfo: poolStateAccountInfo }
+    },
     placeholderData: null,
-    staleTime: INTERVALS.MINUTE,
+    staleTime: INTERVALS.SECOND * 10,
     enabled: !!poolId
   })
 }
