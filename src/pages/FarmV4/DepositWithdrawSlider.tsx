@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { Dialog, DialogBody, DialogContent, DialogFooter, DialogOverlay } from 'gfx-component-lib'
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogOverlay, DialogPortal } from 'gfx-component-lib'
 import { useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
@@ -41,7 +41,7 @@ import { MUTATION_KEY } from '@/queries/query.helper'
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
   const { isMobile } = useBreakPoint()
-  const { connection } = useConnectionConfig()
+  const { connection, userCache } = useConnectionConfig()
   const {
     selectedCard,
     modeOfOperation,
@@ -523,6 +523,7 @@ export const DepositWithdrawSlider: FC = () => {
         }
       }}
     >
+      <DialogPortal>
         <DialogOverlay />
 
         {/*This one for not closing on click outside*/}
@@ -540,6 +541,9 @@ export const DepositWithdrawSlider: FC = () => {
           // onInteractOutside={(e) => e.preventDefault()}
           aria-describedby={null}
           onCloseAutoFocus={() => {
+            if (!userCache.gamma.hasGAMMAOnboarded) {
+              return
+            }
             handleClose()
           }}
         >
@@ -654,6 +658,7 @@ export const DepositWithdrawSlider: FC = () => {
             />
           </DialogFooter>
         </DialogContent>
+      </DialogPortal>
     </Dialog>
   )
 }
