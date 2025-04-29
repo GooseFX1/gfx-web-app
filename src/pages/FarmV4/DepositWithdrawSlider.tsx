@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { Dialog, DialogBody, DialogContent, DialogFooter, DialogOverlay, DialogPortal } from 'gfx-component-lib'
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogOverlay } from 'gfx-component-lib'
 import { useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
@@ -523,7 +523,6 @@ export const DepositWithdrawSlider: FC = () => {
         }
       }}
     >
-      <DialogPortal>
         <DialogOverlay />
 
         {/*This one for not closing on click outside*/}
@@ -658,7 +657,6 @@ export const DepositWithdrawSlider: FC = () => {
             />
           </DialogFooter>
         </DialogContent>
-      </DialogPortal>
     </Dialog>
   )
 }
