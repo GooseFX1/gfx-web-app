@@ -133,7 +133,7 @@ const MyPositionItem: FC<{
               src={`/img/assets/owner-${mode}.svg`}
               alt="pool-owner"
               size={'sm'}
-              className=" absolute top-0.5 left-0.5"
+              className=" absolute top-[-10px] left-[-6px]"
             />
           </TooltipTrigger>
           <TooltipContent>

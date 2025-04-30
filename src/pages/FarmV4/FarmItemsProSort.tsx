@@ -64,7 +64,7 @@ const FarmItemsProSort: FC = () => {
   return (
     <div
       className={cn(
-        `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr_0.5fr] border-b-1 border-solid
+        `grid grid-flow-col grid-cols-[1fr_0.8fr_0.8fr_0.8fr_1fr_1fr_0.5fr] border-b-1 border-solid
         border-border-lightmode-secondary dark:border-border-darkmode-secondary h-10 px-2 items-center
         sm-lg:grid-cols-[1.1fr_0.85fr_0.85fr] mb-3.75`,
         isMobile && `grid-cols-[1.1fr_0.85fr_0.85fr]`,
