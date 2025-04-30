@@ -63,19 +63,22 @@ export type RPC = {
 export const QN_RPC: RPC = {
   chainId: ENV.MainnetBeta,
   name: 'QuickNode',
-  endpoint: `https://rpc-proxy.goosefx.workers.dev`,
+  endpoint: 
+  `https://convincing-skilled-pool.solana-mainnet.discover.quiknode.pro/8a09882644cf43347f5c23fa91461bc870b6858a/`,
   network: WalletAdapterNetwork.Mainnet
 }
 export const HELIUS_RPC: RPC = {
   chainId: ENV.MainnetBeta,
   name: 'Helius',
-  endpoint: `https://yearling-adorne-fast-mainnet.helius-rpc.com/`,
+  endpoint: 
+  `https://convincing-skilled-pool.solana-mainnet.discover.quiknode.pro/8a09882644cf43347f5c23fa91461bc870b6858a/`,
   network: WalletAdapterNetwork.Mainnet
 }
 const CUSTOM_RPC: RPC = {
   chainId: ENV.MainnetBeta,
   name: 'Custom',
-  endpoint: 'https://yearling-adorne-fast-mainnet.helius-rpc.com/', // fallback for first set
+  endpoint: 
+  'https://convincing-skilled-pool.solana-mainnet.discover.quiknode.pro/8a09882644cf43347f5c23fa91461bc870b6858a/',
   network: WalletAdapterNetwork.Mainnet
 }
 export const RPCs = {
@@ -401,7 +404,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 export async function getLatestPriorityFees(txn: Transaction | VersionedTransaction) {
   try{
-  const response = await fetch(HELIUS_RPC.endpoint, {
+  const response = await fetch('https://yearling-adorne-fast-mainnet.helius-rpc.com/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
