@@ -516,6 +516,7 @@ export const DepositWithdrawSlider: FC = () => {
 
   return (
     <Dialog
+      modal={false}
       open={openDepositWithdrawSlider}
       onOpenChange={(v) => {
         if (!v) {
@@ -540,10 +541,12 @@ export const DepositWithdrawSlider: FC = () => {
           // onInteractOutside={(e) => e.preventDefault()}
           aria-describedby={null}
           onCloseAutoFocus={() => {
-            if (!userCache.gamma.hasGAMMAOnboarded) {
-              return
-            }
             handleClose()
+          }}
+          onInteractOutside={(e)=>{
+            if (!userCache.gamma.hasGAMMAOnboarded || !userCache) {
+              e.preventDefault()
+            }
           }}
         >
           <GammaActionModal
