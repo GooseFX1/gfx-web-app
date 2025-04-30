@@ -126,7 +126,7 @@ const MyPositionItem: FC<{
         setModeOfOperation(ModeOfOperation.DEPOSIT)
       }}
     >
-      {isOwner && !isMobile && (
+      {isOwner && (
         <Tooltip>
           <TooltipTrigger className="absolute">
             <Icon
