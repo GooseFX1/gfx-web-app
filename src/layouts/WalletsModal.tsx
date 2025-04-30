@@ -105,31 +105,32 @@ export const WalletsModal: FC = () => {
   ) : (
     <Dialog onOpenChange={setVisible} open={visible}>
       <DialogPortal>
-      <DialogOverlay />
-      <DialogContent
-        className={`flex flex-col gap-0 max-h-[500px] border-1 border-solid z-[1001] overflow-hidden
+        <DialogOverlay />
+        <DialogContent
+          className={`flex flex-col gap-0 max-h-[500px] border-1 border-solid z-[1001] overflow-hidden
         dark:border-border-darkmode-secondary border-border-lightmode-secondary max-sm:rounded-b-none`}
-        placement={isMobile ? 'bottom' : 'default'}
-      >
-        <DialogHeader
-          className={`p-2.5 text-center items-start justify-start flex border-b-1 border-solid
-        dark:border-border-darkmode-secondary border-border-lightmode-secondary`}
+          placement={isMobile ? 'bottom' : 'default'}
+          onOpenAutoFocus={e => e.preventDefault()}
         >
-          <DialogTitle>Choose a wallet</DialogTitle>
-          <DialogCloseDefault className={'top-0 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0'} />
-        </DialogHeader>
-        <DialogBody className={'flex-col flex-[1 0] p-2 overflow-auto pb-0'}>
-          <div className={'flex flex-col gap-3.75 flex-[1 0]'}>
-            {renderWallets.map((wallet, index) => (
-              <Button
-                key={index}
-                isLoading={connecting && wallet.adapter.name === selectedWallet}
-                onClick={() => handleWalletClick(wallet.adapter.name)}
-                variant={'outline'}
-                colorScheme={'secondaryGradient'}
-                size={'lg'}
-                className={cn(
-                  `w-full items-center !h-[46px] !px-0  flex 
+          <DialogHeader
+            className={`p-2.5 text-center items-start justify-start flex border-b-1 border-solid
+        dark:border-border-darkmode-secondary border-border-lightmode-secondary`}
+          >
+            <DialogTitle>Choose a wallet</DialogTitle>
+            <DialogCloseDefault className={'top-0 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0'} />
+          </DialogHeader>
+          <DialogBody className={'flex-col flex-[1 0] p-2 overflow-auto pb-0'}>
+            <div className={'flex flex-col gap-3.75 flex-[1 0]'}>
+              {renderWallets.map((wallet, index) => (
+                <Button
+                  key={index}
+                  isLoading={connecting && wallet.adapter.name === selectedWallet}
+                  onClick={() => handleWalletClick(wallet.adapter.name)}
+                  variant={'outline'}
+                  colorScheme={'secondaryGradient'}
+                  size={'lg'}
+                  className={cn(
+                    `w-full items-center !h-[46px] !px-0  flex 
                 before:to-border-lightmode-secondary before:from-border-lightmode-secondary 
                 dark:before:to-border-darkmode-secondary dark:before:from-border-darkmode-secondary 
                 hover:before:to-brand-secondaryGradient-secondary hover:before:from-brand-secondaryGradient-primary
@@ -137,38 +138,38 @@ export const WalletsModal: FC = () => {
                 dark:hover:before:from-brand-secondaryGradient-primary
                 rounded-[4px] before:rounded-[4px] last:mb-2
                 `,
-                  connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between',
-                  wallet.isRecommended && `
+                    connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between',
+                    wallet.isRecommended && `
                   before:to-brand-secondaryGradient-secondary before:from-brand-secondaryGradient-primary
                 dark:before:to-brand-secondaryGradient-secondary
                 dark:before:from-brand-secondaryGradient-primary
                   `
-                )}
-              >
-                <div className="flex items-center">
-                  <img
-                    src={wallet.adapter.icon}
-                    alt="wallet-icon"
-                    height={'25px'}
-                    width={'25px'}
-                    className="mr-2.5 ml-2 rounded-half !h-[25px] bg-black-1"
-                  />
-                  <p className={'text-regular dark:text-grey-6 text-black-4 font-nunito font-bold'}>
-                    {wallet.adapter.name.replace('(Extension)', '')}
-                  </p>
-                </div>
-                {
-                  wallet.detected && !wallet.isRecommended &&
-                  <span className="text-green-4 pr-5 font-poppins text-tiny">Detected</span>
-                }
-                {wallet.isRecommended && <Badge
-                  size={'lg'}
-                  className={`mr-5 font-poppins text-h5 h-[23px]`}>Recommended</Badge>}
-              </Button>
-            ))}
-          </div>
-        </DialogBody>
-      </DialogContent>
+                  )}
+                >
+                  <div className="flex items-center">
+                    <img
+                      src={wallet.adapter.icon}
+                      alt="wallet-icon"
+                      height={'25px'}
+                      width={'25px'}
+                      className="mr-2.5 ml-2 rounded-half !h-[25px] bg-black-1"
+                    />
+                    <p className={'text-regular dark:text-grey-6 text-black-4 font-nunito font-bold'}>
+                      {wallet.adapter.name.replace('(Extension)', '')}
+                    </p>
+                  </div>
+                  {
+                    wallet.detected && !wallet.isRecommended &&
+                    <span className="text-green-4 pr-5 font-poppins text-tiny">Detected</span>
+                  }
+                  {wallet.isRecommended && <Badge
+                    size={'lg'}
+                    className={`mr-5 font-poppins text-h5 h-[23px]`}>Recommended</Badge>}
+                </Button>
+              ))}
+            </div>
+          </DialogBody>
+        </DialogContent>
       </DialogPortal>
     </Dialog>
   )
