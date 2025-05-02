@@ -120,5 +120,6 @@ export default defineConfig(({ mode }) => ({
       { find: /^@\//, replacement: '/src/' },
       { find: 'goosefx-amm-sdk', replacement: '/gamma-sdk' }
     ]
-  }
+  },
+  assetsInclude: ['gamma-wasm/gamma_wasm_bg.wasm']
 }))

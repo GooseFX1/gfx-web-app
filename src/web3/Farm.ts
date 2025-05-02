@@ -52,6 +52,7 @@ import {
 } from './kamino'
 import { Wallet } from '@solana/wallet-adapter-react'
 import {
+  GammaAccountWithInfo,
   GammaAmmConfig,
   GammaObservationState,
   GammaPoolState,
@@ -59,6 +60,7 @@ import {
   UserRewardInfo
 } from '@/context/price_feed_farm'
 import { Gamma } from '@/pages/FarmV4/idl/gamma.type'
+import * as gammaWasm from '../../gamma-wasm'
 
 enum TokenType {
   Token0,
@@ -226,7 +228,7 @@ export const getAccountsForSwappingTokens = async (
 ) => {
   const mintAPublicKey = new PublicKey(mintA)
   const mintBPublickey = new PublicKey(mintB)
-  const [authorityKey,inputTokenAccount,outputTokenAccount] = await Promise.all([
+  const [authorityKey, inputTokenAccount, outputTokenAccount] = await Promise.all([
     getAuthorityKey(),
     getAssociatedTokenAddress(
       mintAPublicKey,
@@ -763,31 +765,47 @@ export const getPriceQuotes = (
   amountToken: string,
   mintA: GAMMAToken | JupToken,
   mintB: GAMMAToken | JupToken,
-  ammConfigState: GammaAmmConfig[],
-  poolState: GammaPoolState,
-  observationState: GammaObservationState
+  ammConfigState: GammaAccountWithInfo<GammaAmmConfig>,
+  poolState: GammaAccountWithInfo<GammaPoolState>,
+  observationState: GammaAccountWithInfo<GammaObservationState>
 ) => {
   const mintAPublicKey = new PublicKey(mintA?.address)
 
   const inputToken0Amount = convertToNativeValue(amountToken, mintA?.decimals)
 
-  const swapTokenAmount0 = new BN(poolState?.token0VaultAmount)
-  const swapTokenAmount1 = new BN(poolState?.token1VaultAmount)
+  const swapTokenAmount0 = new BN(poolState?.account.token0VaultAmount)
+  const swapTokenAmount1 = new BN(poolState?.account.token1VaultAmount)
+
+  const zeroForOne = mintAPublicKey.equals(poolState.account.token0Mint)
+  const spotPriceBeforeSwap = zeroForOne
+    ? new BigNumber(poolState.account.token1VaultAmount.toString()).div(
+        poolState.account.token0VaultAmount.toString()
+      )
+    : new BigNumber(poolState.account.token0VaultAmount.toString()).div(
+        poolState.account.token1VaultAmount.toString()
+      )
 
   const swapResult = CurveCalculator.swap(
     new BN(inputToken0Amount),
-    mintAPublicKey.equals(poolState.token0Mint) ? swapTokenAmount0 : swapTokenAmount1,
-    mintAPublicKey.equals(poolState.token0Mint) ? swapTokenAmount1 : swapTokenAmount0,
-    ammConfigState[0].account.tradeFeeRate,
-    observationState as any
+    mintAPublicKey.equals(poolState.account.token0Mint) ? swapTokenAmount0 : swapTokenAmount1,
+    mintAPublicKey.equals(poolState.account.token0Mint) ? swapTokenAmount1 : swapTokenAmount0,
+    ammConfigState.account.tradeFeeRate,
+    observationState.account
   )
+
+  const executionPrice = new BigNumber(swapResult.destinationAmountSwapped.toString()).div(
+    new BigNumber(inputToken0Amount)
+  )
+  const priceDifference = executionPrice.minus(spotPriceBeforeSwap).abs()
+  const priceImpact = priceDifference.div(spotPriceBeforeSwap).multipliedBy(100).toFixed(2)
 
   return {
     destinationAmountSwapped: new BigNumber(swapResult.destinationAmountSwapped.toNumber())
       .div(10 ** mintB?.decimals)
       .toString(),
     tradeFee:
-      new BigNumber(swapResult.tradeFee.toNumber()).div(10 ** mintA?.decimals).toString() + ` ${mintA?.symbol}`
+      new BigNumber(swapResult.tradeFee.toNumber()).div(10 ** mintA?.decimals).toString() + ` ${mintA?.symbol}`,
+    priceImpact
   }
 }
 
@@ -800,9 +818,9 @@ export const swapTokens = async (
   slippage: number,
   program: Program<Gamma>,
   connection: Connection,
-  ammConfigState: GammaAmmConfig[],
-  poolState: GammaPoolState,
-  observationState: GammaObservationState,
+  ammConfigState: GammaAccountWithInfo<GammaAmmConfig>,
+  poolState: GammaAccountWithInfo<GammaPoolState>,
+  observationState: GammaAccountWithInfo<GammaObservationState>,
   accounts: any
 ) => {
   const mintAPublicKey = new PublicKey(mintA?.address)
@@ -1099,4 +1117,115 @@ export const claimRewards = async (
   claimRewardsTxn.add(tokenRewardsIX)
 
   return claimRewardsTxn
+}
+
+export const getPriceQuotesForOracleBasedSwaps = (
+  amountToken: string,
+  mintA: GAMMAToken | JupToken,
+  mintB: GAMMAToken | JupToken,
+  ammConfigState: GammaAccountWithInfo<GammaAmmConfig>,
+  poolState: GammaAccountWithInfo<GammaPoolState>,
+  observationState: GammaAccountWithInfo<GammaObservationState>
+) => {
+  gammaWasm.solana_program_init()
+  const mintAPublicKey = new PublicKey(mintA?.address)
+
+  const inputToken0Amount = convertToNativeValue(amountToken, mintA?.decimals)
+  const zeroForOne = mintAPublicKey.equals(poolState.account.token0Mint)
+  const spotPriceBeforeSwap = zeroForOne
+    ? new BigNumber(poolState.account.token1VaultAmount.toString()).div(
+        poolState.account.token0VaultAmount.toString()
+      )
+    : new BigNumber(poolState.account.token0VaultAmount.toString()).div(
+        poolState.account.token1VaultAmount.toString()
+      )
+
+  console.log('Pool', poolState.account)
+  console.log('Pool', poolState.account.oraclePriceToken0ByToken1.toString())
+  const swapResult = gammaWasm.getOracleBasedSwapQuoteAmount({
+    sourceAmountToBeSwapped: parseInt(inputToken0Amount),
+    ammConfigData: ammConfigState.accountInfo.data,
+    poolStateData: poolState.accountInfo.data,
+    observationStateData: observationState.accountInfo.data,
+    zeroForOne,
+    isInvokedBySignedSegmenter: false
+  })
+  const executionPrice = new BigNumber(swapResult.destinationAmountSwapped).div(new BigNumber(inputToken0Amount))
+
+  const priceDifference = executionPrice.minus(spotPriceBeforeSwap).abs()
+  const priceImpact = priceDifference.div(spotPriceBeforeSwap).multipliedBy(100).toFixed(2)
+  return {
+    destinationAmountSwapped: new BigNumber(swapResult.destinationAmountSwapped)
+      .div(10 ** mintB?.decimals)
+      .toString(),
+    tradeFee: new BigNumber(swapResult.dynamicFee).div(10 ** mintA?.decimals).toString() + ` ${mintA?.symbol}`,
+    priceImpact
+  }
+}
+
+//Instruction - 4 swapping TokenA -> TokenB
+export const oracleBasedSwap = async (
+  amountToken: string,
+  mintA: GAMMAToken | JupToken,
+  mintB: GAMMAToken | JupToken,
+  userPublicKey: PublicKey,
+  slippage: number,
+  program: Program<Gamma>,
+  connection: Connection,
+  ammConfigState: GammaAccountWithInfo<GammaAmmConfig>,
+  poolState: GammaAccountWithInfo<GammaPoolState>,
+  observationState: GammaAccountWithInfo<GammaObservationState>,
+  accounts: any
+) => {
+  const mintAPublicKey = new PublicKey(mintA?.address)
+  const mintBPublickey = new PublicKey(mintB?.address)
+
+  const amount = convertToNativeValue(amountToken, mintA?.decimals)
+
+  const { destinationAmountSwapped: quote } = getPriceQuotesForOracleBasedSwaps(
+    amountToken,
+    mintA,
+    mintB,
+    ammConfigState,
+    poolState,
+    observationState
+  )
+
+  const slippageAmount = new anchor.BN(+quote * (1 + slippage / 100))
+
+  let swapTxn: Transaction = new Transaction()
+  if (mintA?.symbol === 'SOL') swapTxn = await wrapSolToken(userPublicKey, connection, amountToken)
+
+  if (mintB?.symbol === 'SOL') swapTxn = await wrapSolToken(userPublicKey, connection, '0')
+  else {
+    const accountExists = await connection.getAccountInfo(accounts.outputTokenAccount)
+    if (!accountExists) {
+      swapTxn.add(
+        createAssociatedTokenAccountInstruction(
+          userPublicKey,
+          accounts.outputTokenAccount,
+          userPublicKey,
+          accounts.outputTokenMint
+        )
+      )
+    }
+  }
+
+  const swapIX: TransactionInstruction = await program.methods
+    .oracleBasedSwapBaseInput(new anchor.BN(amount), slippageAmount)
+    .accountsStrict(accounts)
+    .instruction()
+  swapTxn.add(swapIX)
+
+  if (mintA?.symbol === 'SOL') {
+    const ataAddress = await getAssociatedTokenAddress(mintAPublicKey, userPublicKey)
+    const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
+    swapTxn.add(tr)
+  } else if (mintB?.symbol === 'SOL') {
+    const ataAddress = await getAssociatedTokenAddress(mintBPublickey, userPublicKey)
+    const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
+    swapTxn.add(tr)
+  }
+
+  return swapTxn
 }

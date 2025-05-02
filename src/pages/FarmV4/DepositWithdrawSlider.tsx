@@ -176,7 +176,7 @@ export const DepositWithdrawSlider: FC = () => {
       if (!!selectedCardLiquidityAcc && !!gammaOnChainPool) {
         const { tokenAmount0, tokenAmount1 } = lpTokensToTradingTokens(
           selectedCardLiquidityAcc?.lpTokensOwned,
-          gammaOnChainPool
+          gammaOnChainPool.account
         )
         //console.log("tokenAmount", tokenAmount0?.toNumber(), tokenAmount1?.toNumber())
         setWithdrawableBalanceA(tokenAmount0)
@@ -244,7 +244,7 @@ export const DepositWithdrawSlider: FC = () => {
         const { lpTokenAmount, otherTokenAmountInString } = calculateOtherTokenAndLPAmount(
           input,
           sourceToken ? 0 : 1,
-          gammaOnChainPool
+          gammaOnChainPool.account
         )
         setTransactionLPAmount(lpTokenAmount)
         funcToCallInDebounce(otherTokenAmountInString)
@@ -309,10 +309,12 @@ export const DepositWithdrawSlider: FC = () => {
     else if (
       !isDeposit &&
       (new BigNumber(userSourceWithdrawAmount)?.isGreaterThan(
-        new BigNumber(withdrawBigStringFarm(withdrawableBalanceA?.toString(), gammaOnChainPool?.mint0Decimals))
+        new BigNumber(withdrawBigStringFarm(withdrawableBalanceA?.toString(), 
+        gammaOnChainPool?.account?.mint0Decimals))
       ) ||
         new BigNumber(userTargetWithdrawAmount)?.isGreaterThan(
-          new BigNumber(withdrawBigStringFarm(withdrawableBalanceB?.toString(), gammaOnChainPool?.mint1Decimals))
+          new BigNumber(withdrawBigStringFarm(withdrawableBalanceB?.toString(), 
+          gammaOnChainPool?.account?.mint1Decimals))
         ))
     )
       return `Insufficient funds!`
@@ -356,10 +358,12 @@ export const DepositWithdrawSlider: FC = () => {
     else if (
       !isDeposit &&
       (new BigNumber(userSourceWithdrawAmount)?.isGreaterThan(
-        new BigNumber(withdrawBigStringFarm(withdrawableBalanceA?.toString(), gammaOnChainPool?.mint0Decimals))
+        new BigNumber(withdrawBigStringFarm(withdrawableBalanceA?.toString(),
+          gammaOnChainPool?.account?.mint0Decimals))
       ) ||
         new BigNumber(userTargetWithdrawAmount)?.isGreaterThan(
-          new BigNumber(withdrawBigStringFarm(withdrawableBalanceB?.toString(), gammaOnChainPool?.mint1Decimals))
+          new BigNumber(withdrawBigStringFarm(withdrawableBalanceB?.toString(),
+            gammaOnChainPool?.account?.mint1Decimals))
         ))
     )
       return true
@@ -388,7 +392,7 @@ export const DepositWithdrawSlider: FC = () => {
             const { lpTokenAmount, otherTokenAmountInString } = calculateOtherTokenAndLPAmount(
               (userSourceTokenBal / 2)?.toString(),
               0,
-              gammaOnChainPool
+              gammaOnChainPool.account
             )
             setTransactionLPAmount(lpTokenAmount)
             setUserTargetDepositAmount(otherTokenAmountInString)
@@ -399,7 +403,7 @@ export const DepositWithdrawSlider: FC = () => {
             const { lpTokenAmount, otherTokenAmountInString } = calculateOtherTokenAndLPAmount(
               (userTargetTokenBal / 2)?.toString(),
               1,
-              gammaOnChainPool
+              gammaOnChainPool.account
             )
             setTransactionLPAmount(lpTokenAmount)
             setUserSourceDepositAmount(otherTokenAmountInString)
@@ -408,10 +412,12 @@ export const DepositWithdrawSlider: FC = () => {
       } else {
         setTransactionLPAmount(selectedCardLiquidityAcc?.lpTokensOwned?.div(new BN(2)))
         setUserSourceWithdrawAmount(
-          withdrawBigStringFarm(withdrawableBalanceA?.div(new BN(2))?.toString(), gammaOnChainPool?.mint0Decimals)
+          withdrawBigStringFarm(withdrawableBalanceA?.div(new BN(2))?.toString(), 
+          gammaOnChainPool?.account?.mint0Decimals)
         )
         setUserTargetWithdrawAmount(
-          withdrawBigStringFarm(withdrawableBalanceB?.div(new BN(2))?.toString(), gammaOnChainPool?.mint1Decimals)
+          withdrawBigStringFarm(withdrawableBalanceB?.div(new BN(2))?.toString(), 
+          gammaOnChainPool?.account?.mint1Decimals)
         )
       }
       setIsUserTyping(false)
@@ -440,7 +446,7 @@ export const DepositWithdrawSlider: FC = () => {
                 ? await getMaxSolDepositAmount(userSourceTokenBal, connection)
                 : userSourceTokenBal?.toString(),
               0,
-              gammaOnChainPool
+              gammaOnChainPool.account
             )
             setTransactionLPAmount(lpTokenAmount)
             setUserTargetDepositAmount(otherTokenAmountInString)
@@ -454,7 +460,7 @@ export const DepositWithdrawSlider: FC = () => {
                 ? await getMaxSolDepositAmount(userTargetTokenBal, connection)
                 : userTargetTokenBal?.toString(),
               1,
-              gammaOnChainPool
+              gammaOnChainPool.account
             )
             setTransactionLPAmount(lpTokenAmount)
             setUserSourceDepositAmount(otherTokenAmountInString)
@@ -463,10 +469,10 @@ export const DepositWithdrawSlider: FC = () => {
       } else {
         setTransactionLPAmount(selectedCardLiquidityAcc?.lpTokensOwned)
         setUserSourceWithdrawAmount(
-          withdrawBigStringFarm(withdrawableBalanceA.toString(), gammaOnChainPool?.mint0Decimals)
+          withdrawBigStringFarm(withdrawableBalanceA.toString(), gammaOnChainPool?.account?.mint0Decimals)
         )
         setUserTargetWithdrawAmount(
-          withdrawBigStringFarm(withdrawableBalanceB.toString(), gammaOnChainPool?.mint1Decimals)
+          withdrawBigStringFarm(withdrawableBalanceB.toString(), gammaOnChainPool?.account?.mint1Decimals)
         )
       }
       setIsUserTyping(false)

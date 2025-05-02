@@ -22,7 +22,7 @@ interface ISwapConfig {
   setSelectedTokenA: (token: JupToken) => void
   setSelectedTokenB: (token: JupToken) => void
   setSlippage: (slippage: number) => void
-  loadNextPage: ()=>void
+  loadNextPage: () => void
 }
 
 const SwapContext = createContext<ISwapConfig | null>(null)
@@ -50,9 +50,9 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       keys += ',';
       keys += mintB;
     }
-    fetchTokensByPublicKey(keys).then((res)=>{
+    fetchTokensByPublicKey(keys).then((res) => {
       if (!res || !res.success) return;
-      res.data.tokens.forEach((token)=>{
+      res.data.tokens.forEach((token) => {
         if (token.address === mintA) {
           setSelectedTokenA(token);
         }
@@ -66,7 +66,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useLayoutEffect(() => {
     const mintA = selectedTokenA?.address;
     const mintB = selectedTokenB?.address;
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(window.location.search);
     if (mintA) {
       params.set('mintA', mintA);
     }
@@ -81,7 +81,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       });
     }
 
-  }, [selectedTokenA,selectedTokenB])
+  }, [selectedTokenA, selectedTokenB])
 
   useEffect(() => {
     updateUserCache({

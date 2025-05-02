@@ -10,12 +10,12 @@ import {
   useState
 } from 'react'
 import { getFarmTokenPrices } from '../api/SSL'
-import { Program, ProgramAccount, Provider } from '@project-serum/anchor'
+import { Program, Provider } from '@project-serum/anchor'
 import { Program as coralProgram, AnchorProvider, IdlAccounts } from '@coral-xyz/anchor'
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
 import { getStakingAccountKey, SSL_PROGRAM_ID } from '../web3'
 import { useConnectionConfig } from './settings'
-import { PublicKey } from '@solana/web3.js'
+import { AccountInfo, PublicKey } from '@solana/web3.js'
 import sslJson from '../pages/FarmV3/idl/sslv2.json'
 import GammaJson from '../pages/FarmV4/idl/gamma.json'
 import { Gamma } from '../pages/FarmV4/idl/gamma.type'
@@ -61,8 +61,13 @@ interface IPriceFeedConfig {
 export type UserRewardInfo = IdlAccounts<Gamma>['userRewardInfo']
 export type RewardInfo = IdlAccounts<Gamma>['rewardInfo']
 export type GammaPoolState = IdlAccounts<Gamma>['poolState']
-export type GammaAmmConfig = ProgramAccount<IdlAccounts<Gamma>['ammConfig']>
+export type GammaAmmConfig = IdlAccounts<Gamma>['ammConfig']
 export type GammaObservationState = IdlAccounts<Gamma>['observationState']
+
+export type GammaAccountWithInfo<T> = {
+  accountInfo: AccountInfo<Buffer>
+  account: T
+}
 
 const PriceFeedFarmContext = createContext<IPriceFeedConfig | null>(null)
 
