@@ -62,6 +62,8 @@ export const TermsOfService: FC<{
         dark:border-border-darkmode-secondary border-border-lightmode-secondary max-sm:rounded-b-none z-[1001]`}
           fullScreen={isMobile}
           placement={isMobile ? 'bottom' : 'default'}
+          onOpenAutoFocus={e=>e.preventDefault()}
+          autoFocus={false}
         >
           <DialogHeader
             className={`p-2.5 text-center items-start justify-start flex border-b-1 border-solid
