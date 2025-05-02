@@ -618,3 +618,5 @@ export const OBSERVATION_PREFIX = 'observation'
 export const REWARD_INFO_SEED = 'reward_info_seed'
 
 export const REWARD_VAULT_SEED = 'reward_vault_seed'
+
+export const PARTNER_INFOS_SEED = 'partner_infos'

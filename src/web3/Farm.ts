@@ -30,7 +30,8 @@ import {
   SYSTEM,
   TOKEN_2022_PROGRAM_ID,
   toPublicKey,
-  USER_POOL_LIQUIDITY_PREFIX
+  USER_POOL_LIQUIDITY_PREFIX,
+  PARTNER_INFOS_SEED
 } from './ids'
 import { convertToNativeValue, withdrawBigStringFarm } from '@/utils'
 import { JupToken } from '@/pages/FarmV4/constants'
@@ -112,7 +113,7 @@ export const getPoolIdKey = async (
   mintB: PublicKey
 ): Promise<undefined | PublicKey> => {
   try {
-    const compare = mintB?.toBuffer()?.compare(mintA?.toBuffer())
+    const compare = mintB?.toBuffer()?.compare(new Uint8Array(mintA?.toBuffer()))
 
     const getPoolIdKey: [PublicKey, number] = await PublicKey.findProgramAddress(
       [
@@ -141,6 +142,18 @@ const getObservationStateKey = async (poolId: PublicKey): Promise<undefined | Pu
   }
 }
 
+const getPartnerInfosKey = async (poolId: PublicKey): Promise<undefined | PublicKey> => {
+  try {
+    const partnerInfosKey: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [Buffer.from(PARTNER_INFOS_SEED), poolId?.toBuffer()],
+      new PublicKey(GAMMA_PROGRAM_ID)
+    )
+    return partnerInfosKey[0]
+  } catch (err) {
+    return undefined
+  }
+}
+
 export const getpoolId = async (selectedCard: any, ammConfigId: PublicKey): Promise<PublicKey> => {
   if (!selectedCard) return
   const mintA = new PublicKey(selectedCard?.mintA?.address)
@@ -153,12 +166,14 @@ const createLiquidityAccountIX = async (
   userPublicKey: PublicKey,
   poolIdKey: PublicKey,
   liquidityAccountKey: PublicKey,
+  poolPartners: PublicKey,
   program: Program<Gamma>
 ): Promise<TransactionInstruction> => {
   const createLiquidityInstructionAccount = {
     user: userPublicKey,
     poolState: poolIdKey,
     userPoolLiquidity: liquidityAccountKey,
+    poolPartners,
     systemProgram: SYSTEM
   }
   const createLiquidityIX: TransactionInstruction = await program.instruction.initUserPoolLiquidity(null, {
@@ -179,10 +194,11 @@ const getAccountsForDepositWithdraw = async (
 ) => {
   const mintA = new PublicKey(selectedCard?.mintA?.address)
   const mintB = new PublicKey(selectedCard?.mintB?.address)
-  const [poolVaultKeyA, poolVaultKeyB, authorityKey, tokenAccountAKey, tokenAccountBKey] = await Promise.all([
+  const [poolVaultKeyA, poolVaultKeyB, authorityKey, poolPartners, tokenAccountAKey, tokenAccountBKey] = await Promise.all([
     getPoolVaultKey(poolIdKey, selectedCard?.mintA?.address),
     getPoolVaultKey(poolIdKey, selectedCard?.mintB?.address),
     getAuthorityKey(),
+    getPartnerInfosKey(poolIdKey),
     getAssociatedTokenAddress(
       mintA,
       userPublicKey,
@@ -201,6 +217,7 @@ const getAccountsForDepositWithdraw = async (
     owner: userPublicKey,
     authority: authorityKey,
     poolState: poolIdKey,
+    poolPartners,
     userPoolLiquidity: liquidityAccountKey,
     token0Account: tokenAccountAKey,
     token1Account: tokenAccountBKey,
@@ -452,6 +469,7 @@ export const deposit = async (
       userPublicKey,
       depositAccounts?.poolState,
       depositAccounts?.userPoolLiquidity,
+      depositAccounts?.poolPartners,
       program
     )
   }
@@ -654,15 +672,13 @@ export const withdraw = async (
   )
   if (createTokenB) withdrawAmountTX.add(createTokenB)
 
-  const withdrawIX: TransactionInstruction = await program.instruction.withdraw(
+  const withdrawIX: TransactionInstruction = await program.methods.withdraw(
     lpAmount,
     new BN(token0Amount),
     new BN(token1Amount),
-    {
-      accounts: withdrawInstructionAccount,
-      remainingAccounts
-    }
-  )
+  ).accounts(withdrawInstructionAccount)
+  .remainingAccounts(remainingAccounts)
+  .instruction()
   withdrawAmountTX.add(withdrawIX)
 
   if (selectedCard?.mintA?.symbol === 'SOL') {
@@ -706,7 +722,7 @@ export const createPool = async (
   let token0Type = tokenAType
   let token1Type = tokenBType
 
-  const compare = new PublicKey(tokenA?.address)?.toBuffer()?.compare(new PublicKey(tokenB?.address)?.toBuffer())
+  const compare = new PublicKey(tokenA?.address)?.toBuffer()?.compare(new Uint8Array(new PublicKey(tokenB?.address)?.toBuffer()))
 
   if (compare > 0) {
     token0 = new PublicKey(tokenB?.address)
@@ -731,16 +747,15 @@ export const createPool = async (
   const createPoolAcc = { ...accsForCreatePool }
   const amountTokenABN = convertToNativeValue(amountToken0, decimalsToken0)
   const amountTokenBBN = convertToNativeValue(amountToken1, decimalsToken1)
-  const createPoolIX: TransactionInstruction = await program.instruction.initialize(
+  const createPoolIX: TransactionInstruction = await program.methods.initialize(
     new BN(amountTokenABN),
     new BN(amountTokenBBN),
     new BN(Math.floor(Date.now() / 1000)),
     poolType === 'Stable' ? new BN(10000) : poolType === 'Primary' ? new BN(25000) : new BN(100000),
     new BN(0),
-    {
-      accounts: createPoolAcc
-    }
   )
+  .accounts(createPoolAcc)
+  .instruction()
   let createPoolTxn: Transaction
   if (token0Symbol === 'SOL') createPoolTxn = await wrapSolToken(userPubKey, connection, amountToken0)
   else if (token1Symbol === 'SOL') createPoolTxn = await wrapSolToken(userPubKey, connection, amountToken1)
@@ -1102,11 +1117,6 @@ export const claimRewards = async (
       poolState: boostedRewardInfo.rewardInfo.pool,
       authority: await getAuthorityKey(),
       rewardMint: boostedRewardInfo.rewardInfo.mint,
-      rewardProvider: userPublicKey,
-      rewardProvidersTokenAccount: await getAssociatedTokenAddress(
-        boostedRewardInfo.rewardInfo.mint,
-        userPublicKey
-      ),
       rewardInfo: boostedRewardInfo.userRewardInfo.rewardInfo,
       rewardVault: await getRewardVaultKey(boostedRewardInfo.userRewardInfo.rewardInfo),
       systemProgram: SYSTEM,

@@ -8,6 +8,75 @@
   },
   "instructions": [
     {
+      "name": "add_partner",
+      "docs": [
+        "Admin-permissioned instruction to add a new partner to a pool",
+        "",
+        "* `ctx` - The context of accounts",
+        ""
+      ],
+      "discriminator": [
+        180,
+        111,
+        45,
+        157,
+        241,
+        187,
+        234,
+        88
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "amm_config"
+        },
+        {
+          "name": "pool_state",
+          "writable": true,
+          "relations": [
+            "partner"
+          ]
+        },
+        {
+          "name": "pool_partners",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  110,
+                  101,
+                  114,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool_state"
+              }
+            ]
+          }
+        },
+        {
+          "name": "partner"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "calculate_rewards",
       "docs": [
         "Calculate rewards for the user",
@@ -169,6 +238,157 @@
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "claim_partner_fees",
+      "docs": [
+        "Claim fees for a particular partner",
+        "",
+        "* `ctx` - The context of accounts",
+        ""
+      ],
+      "discriminator": [
+        114,
+        71,
+        103,
+        57,
+        160,
+        205,
+        242,
+        185
+      ],
+      "accounts": [
+        {
+          "name": "partner"
+        },
+        {
+          "name": "authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  110,
+                  100,
+                  95,
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "pool_state"
+        },
+        {
+          "name": "token_0_vault",
+          "docs": [
+            "The address that holds pool tokens for token_0"
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_1_vault",
+          "docs": [
+            "The address that holds pool tokens for token_1"
+          ],
+          "writable": true
+        },
+        {
+          "name": "vault_0_mint",
+          "docs": [
+            "The mint of token_0 vault"
+          ]
+        },
+        {
+          "name": "vault_1_mint",
+          "docs": [
+            "The mint of token_1 vault"
+          ]
+        },
+        {
+          "name": "pool_partners",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  110,
+                  101,
+                  114,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool_state"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_0_token_account",
+          "writable": true,
+          "relations": [
+            "partner"
+          ]
+        },
+        {
+          "name": "token_1_token_account",
+          "writable": true,
+          "relations": [
+            "partner"
+          ]
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "The SPL program to perform token transfers"
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "token_program_2022",
+          "docs": [
+            "The SPL program 2022 to perform token transfers"
+          ],
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         }
       ],
       "args": []
@@ -1213,6 +1433,36 @@
           "docs": [
             "The mint of token_1 vault"
           ]
+        },
+        {
+          "name": "pool_partners",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  110,
+                  101,
+                  114,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool_state"
+              }
+            ]
+          }
         }
       ],
       "args": [
@@ -1292,6 +1542,36 @@
           }
         },
         {
+          "name": "pool_partners",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  110,
+                  101,
+                  114,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool_state"
+              }
+            ]
+          }
+        },
+        {
           "name": "system_program",
           "docs": [
             "To create a new program account"
@@ -1303,7 +1583,7 @@
         {
           "name": "partner",
           "type": {
-            "option": "string"
+            "option": "pubkey"
           }
         }
       ]
@@ -1591,6 +1871,39 @@
           }
         },
         {
+          "name": "pool_partners",
+          "docs": [
+            "account storing partner infos"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  110,
+                  101,
+                  114,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool_state"
+              }
+            ]
+          }
+        },
+        {
           "name": "token_program",
           "docs": [
             "Program to create mint account and mint tokens"
@@ -1650,6 +1963,166 @@
         },
         {
           "name": "volatility_factor",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_partner",
+      "docs": [
+        "Creates a new `Partner` account associated with a certain pool",
+        "",
+        "* `ctx` - The context of accounts",
+        "* `name` - The name associated with the partner",
+        "* `token_0_token_account` - Token account for receiving token0 tokens",
+        "* `token_1_token_account` - Token account for receiving token1 tokens",
+        ""
+      ],
+      "discriminator": [
+        165,
+        62,
+        179,
+        112,
+        129,
+        50,
+        173,
+        144
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "pool_state"
+        },
+        {
+          "name": "pool_partners",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  110,
+                  101,
+                  114,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool_state"
+              }
+            ]
+          }
+        },
+        {
+          "name": "partner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "token_0_token_account",
+          "type": "pubkey"
+        },
+        {
+          "name": "token_1_token_account",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "initialize_pool_partners",
+      "docs": [
+        "Initializes a new `PoolPartnerInfos` account unique to a particular pool",
+        "",
+        "* `ctx` - The context of accounts",
+        "* `partner_share_rate` - A fraction representing the partner's share of protocol fees",
+        ""
+      ],
+      "discriminator": [
+        99,
+        11,
+        108,
+        186,
+        1,
+        126,
+        209,
+        251
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "pool_state",
+          "writable": true
+        },
+        {
+          "name": "pool_partners",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  110,
+                  101,
+                  114,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool_state"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "partner_share_rate",
           "type": "u64"
         }
       ]
@@ -1860,6 +2333,36 @@
           "docs": [
             "The mint of token_1 vault"
           ]
+        },
+        {
+          "name": "pool_partners",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  110,
+                  101,
+                  114,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "gamma_pool_state"
+              }
+            ]
+          }
         }
       ],
       "args": [
@@ -2088,6 +2591,36 @@
           "docs": [
             "The mint of token_1 vault"
           ]
+        },
+        {
+          "name": "pool_partners",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  110,
+                  101,
+                  114,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "gamma_pool_state"
+              }
+            ]
+          }
         }
       ],
       "args": [
@@ -2318,6 +2851,36 @@
           "docs": [
             "The mint of token_1 vault"
           ]
+        },
+        {
+          "name": "pool_partners",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  110,
+                  101,
+                  114,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "gamma_pool_state"
+              }
+            ]
+          }
         }
       ],
       "args": [
@@ -2559,6 +3122,36 @@
             "Token program 2022"
           ],
           "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "pool_partners",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  110,
+                  101,
+                  114,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "gamma_pool_state"
+              }
+            ]
+          }
         }
       ],
       "args": [
@@ -2791,6 +3384,36 @@
             "Token program 2022"
           ],
           "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "pool_partners",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  110,
+                  101,
+                  114,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "gamma_pool_state"
+              }
+            ]
+          }
         }
       ],
       "args": [
@@ -3034,6 +3657,36 @@
           "docs": [
             "The mint of token_1 vault"
           ]
+        },
+        {
+          "name": "pool_partners",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  110,
+                  101,
+                  114,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "gamma_pool_state"
+              }
+            ]
+          }
         },
         {
           "name": "token_program",
@@ -3785,6 +4438,110 @@
       ]
     },
     {
+      "name": "update_partner",
+      "docs": [
+        "Authority-permissioned instruction to update certain fields in a pool, e.g token-accounts",
+        "",
+        "* `ctx` - The context of accounts",
+        "* `token_account_0` - (optional) update for the token_0_token_account field",
+        "* `token_account_1` - (optional) update for the token_1_token_account field",
+        ""
+      ],
+      "discriminator": [
+        19,
+        112,
+        236,
+        81,
+        127,
+        55,
+        21,
+        196
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "partner"
+          ]
+        },
+        {
+          "name": "partner",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "token_account_0",
+          "type": {
+            "option": "pubkey"
+          }
+        },
+        {
+          "name": "token_account_1",
+          "type": {
+            "option": "pubkey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_partner_fees",
+      "docs": [
+        "Updates claimable fee amounts for all `PartnerInfo`s in a `PoolPartnerInfos` account",
+        "",
+        "* `ctx` - The context of accounts",
+        ""
+      ],
+      "discriminator": [
+        154,
+        142,
+        122,
+        49,
+        239,
+        161,
+        232,
+        29
+      ],
+      "accounts": [
+        {
+          "name": "pool_state",
+          "writable": true
+        },
+        {
+          "name": "pool_partners",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  110,
+                  101,
+                  114,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool_state"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "update_pool",
       "docs": [
         "Update pool status for given vaule",
@@ -4007,6 +4764,36 @@
           "writable": true
         },
         {
+          "name": "pool_partners",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  110,
+                  101,
+                  114,
+                  95,
+                  105,
+                  110,
+                  102,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool_state"
+              }
+            ]
+          }
+        },
+        {
           "name": "memo_program",
           "docs": [
             "memo program"
@@ -4063,6 +4850,32 @@
         9,
         165,
         132
+      ]
+    },
+    {
+      "name": "Partner",
+      "discriminator": [
+        122,
+        43,
+        246,
+        239,
+        141,
+        56,
+        243,
+        182
+      ]
+    },
+    {
+      "name": "PoolPartnerInfos",
+      "discriminator": [
+        130,
+        98,
+        226,
+        231,
+        158,
+        49,
+        44,
+        231
       ]
     },
     {
@@ -4440,6 +5253,52 @@
       }
     },
     {
+      "name": "Partner",
+      "docs": [
+        "Account storing information for a protocol participating in the Gamma partner program"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "docs": [
+              "Protocol name"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "authority",
+            "docs": [
+              "The authority for this account"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "pool_state",
+            "docs": [
+              "The pool which this partner account belongs to"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "token_0_token_account",
+            "docs": [
+              "The token-account that receives token0 tokens"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "token_1_token_account",
+            "docs": [
+              "The token-account that receives token1 tokens"
+            ],
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
       "name": "PartnerInfo",
       "serialization": "bytemuckunsafe",
       "repr": {
@@ -4450,34 +5309,92 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "partner_id",
-            "type": "u64"
+            "name": "partner",
+            "docs": [
+              "The address of the partner account."
+            ],
+            "type": "pubkey"
           },
           {
             "name": "lp_token_linked_with_partner",
+            "docs": [
+              "This stores the LP tokens that are linked with the partner, i.e owned by customers of the partner."
+            ],
             "type": "u64"
           },
           {
-            "name": "cumulative_fee_total_times_tvl_share_token_0",
+            "name": "total_claimed_fee_amount_token_0",
+            "docs": [
+              "The total fee-amount token0 claimed by the partner"
+            ],
             "type": "u64"
           },
           {
-            "name": "cumulative_fee_total_times_tvl_share_token_1",
+            "name": "total_claimed_fee_amount_token_1",
+            "docs": [
+              "The total fee-amount token1 claimed by the partner"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_earned_fee_amount_token_0",
+            "docs": [
+              "The total fee-amount token0 calculated for the partner"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_earned_fee_amount_token_1",
+            "docs": [
+              "The total fee-amount token1 calculated for the partner"
+            ],
             "type": "u64"
           }
         ]
       }
     },
     {
-      "name": "PartnerType",
+      "name": "PoolPartnerInfos",
+      "docs": [
+        "PDA storing all the information for valid pool partners"
+      ],
+      "serialization": "bytemuckunsafe",
       "repr": {
-        "kind": "rust"
+        "kind": "rust",
+        "packed": true
       },
       "type": {
-        "kind": "enum",
-        "variants": [
+        "kind": "struct",
+        "fields": [
           {
-            "name": "AssetDash"
+            "name": "last_observed_fee_amount_token_0",
+            "docs": [
+              "The observed fee-amount token0 as at the last infos update"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "last_observed_fee_amount_token_1",
+            "docs": [
+              "The observed fee-amount token1 as at the last infos update"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "infos",
+            "docs": [
+              "Partner infos"
+            ],
+            "type": {
+              "array": [
+                {
+                  "defined": {
+                    "name": "PartnerInfo"
+                  }
+                },
+                5
+              ]
+            }
           }
         ]
       }
@@ -4744,17 +5661,25 @@
             "type": "u64"
           },
           {
-            "name": "partners",
-            "type": {
-              "array": [
-                {
-                  "defined": {
-                    "name": "PartnerInfo"
-                  }
-                },
-                1
-              ]
-            }
+            "name": "partner_share_rate",
+            "docs": [
+              "Fraction of protocol tokens shared with partners. Denominator is 1_000_000"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "partner_protocol_fees_token_0",
+            "docs": [
+              "amount of protocol fees owed to referral partners(token0)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "partner_protocol_fees_token_1",
+            "docs": [
+              "amount of protocol fees owed to referral partners(token1)"
+            ],
+            "type": "u64"
           },
           {
             "name": "padding",
@@ -4764,7 +5689,7 @@
             "type": {
               "array": [
                 "u64",
-                4
+                5
               ]
             }
           }
@@ -4954,18 +5879,22 @@
             "type": "u128"
           },
           {
-            "name": "partner",
-            "type": {
-              "option": {
-                "defined": {
-                  "name": "PartnerType"
-                }
-              }
-            }
+            "name": "_p1",
+            "type": "u64"
+          },
+          {
+            "name": "_p2",
+            "type": "u8"
           },
           {
             "name": "first_investment_at",
             "type": "u64"
+          },
+          {
+            "name": "partner",
+            "type": {
+              "option": "pubkey"
+            }
           },
           {
             "name": "padding",
