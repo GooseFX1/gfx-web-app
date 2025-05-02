@@ -517,7 +517,6 @@ export const DepositWithdrawSlider: FC = () => {
 
   return (
     <Dialog
-      modal={false}
       open={openDepositWithdrawSlider}
       onOpenChange={(v) => {
         if (!v) {
