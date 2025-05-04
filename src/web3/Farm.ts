@@ -194,24 +194,25 @@ const getAccountsForDepositWithdraw = async (
 ) => {
   const mintA = new PublicKey(selectedCard?.mintA?.address)
   const mintB = new PublicKey(selectedCard?.mintB?.address)
-  const [poolVaultKeyA, poolVaultKeyB, authorityKey, poolPartners, tokenAccountAKey, tokenAccountBKey] = await Promise.all([
-    getPoolVaultKey(poolIdKey, selectedCard?.mintA?.address),
-    getPoolVaultKey(poolIdKey, selectedCard?.mintB?.address),
-    getAuthorityKey(),
-    getPartnerInfosKey(poolIdKey),
-    getAssociatedTokenAddress(
-      mintA,
-      userPublicKey,
-      null,
-      userSourceTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
-    ),
-    getAssociatedTokenAddress(
-      mintB,
-      userPublicKey,
-      null,
-      userTargetTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
-    )
-  ])
+  const [poolVaultKeyA, poolVaultKeyB, authorityKey, poolPartners, tokenAccountAKey, tokenAccountBKey] =
+    await Promise.all([
+      getPoolVaultKey(poolIdKey, selectedCard?.mintA?.address),
+      getPoolVaultKey(poolIdKey, selectedCard?.mintB?.address),
+      getAuthorityKey(),
+      getPartnerInfosKey(poolIdKey),
+      getAssociatedTokenAddress(
+        mintA,
+        userPublicKey,
+        null,
+        userSourceTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+      ),
+      getAssociatedTokenAddress(
+        mintB,
+        userPublicKey,
+        null,
+        userTargetTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
+      )
+    ])
 
   const accountObj = {
     owner: userPublicKey,
@@ -672,13 +673,11 @@ export const withdraw = async (
   )
   if (createTokenB) withdrawAmountTX.add(createTokenB)
 
-  const withdrawIX: TransactionInstruction = await program.methods.withdraw(
-    lpAmount,
-    new BN(token0Amount),
-    new BN(token1Amount),
-  ).accounts(withdrawInstructionAccount)
-  .remainingAccounts(remainingAccounts)
-  .instruction()
+  const withdrawIX: TransactionInstruction = await program.methods
+    .withdraw(lpAmount, new BN(token0Amount), new BN(token1Amount))
+    .accounts(withdrawInstructionAccount)
+    .remainingAccounts(remainingAccounts)
+    .instruction()
   withdrawAmountTX.add(withdrawIX)
 
   if (selectedCard?.mintA?.symbol === 'SOL') {
@@ -722,7 +721,9 @@ export const createPool = async (
   let token0Type = tokenAType
   let token1Type = tokenBType
 
-  const compare = new PublicKey(tokenA?.address)?.toBuffer()?.compare(new Uint8Array(new PublicKey(tokenB?.address)?.toBuffer()))
+  const compare = new PublicKey(tokenA?.address)
+    ?.toBuffer()
+    ?.compare(new Uint8Array(new PublicKey(tokenB?.address)?.toBuffer()))
 
   if (compare > 0) {
     token0 = new PublicKey(tokenB?.address)
@@ -747,15 +748,16 @@ export const createPool = async (
   const createPoolAcc = { ...accsForCreatePool }
   const amountTokenABN = convertToNativeValue(amountToken0, decimalsToken0)
   const amountTokenBBN = convertToNativeValue(amountToken1, decimalsToken1)
-  const createPoolIX: TransactionInstruction = await program.methods.initialize(
-    new BN(amountTokenABN),
-    new BN(amountTokenBBN),
-    new BN(Math.floor(Date.now() / 1000)),
-    poolType === 'Stable' ? new BN(10000) : poolType === 'Primary' ? new BN(25000) : new BN(100000),
-    new BN(0),
-  )
-  .accounts(createPoolAcc)
-  .instruction()
+  const createPoolIX: TransactionInstruction = await program.methods
+    .initialize(
+      new BN(amountTokenABN),
+      new BN(amountTokenBBN),
+      new BN(Math.floor(Date.now() / 1000)),
+      poolType === 'Stable' ? new BN(10000) : poolType === 'Primary' ? new BN(25000) : new BN(100000),
+      new BN(0)
+    )
+    .accounts(createPoolAcc)
+    .instruction()
   let createPoolTxn: Transaction
   if (token0Symbol === 'SOL') createPoolTxn = await wrapSolToken(userPubKey, connection, amountToken0)
   else if (token1Symbol === 'SOL') createPoolTxn = await wrapSolToken(userPubKey, connection, amountToken1)

@@ -10,3 +10,4 @@ src/pages/Crypto/TradingView/save-load-adapter.js
 src/pages/TradeV3/perps/dexterity
 # This is the output from wasm-pack, so we don't need to check this generated package.
 gamma-wasm/*
+src/pages/FarmV4/idl/*
