@@ -1,4 +1,4 @@
-import { useDarkMode, useGamma } from '@/context'
+import { useGamma } from '@/context'
 import { FC, ReactElement, useMemo } from 'react'
 import { Container, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import DepositWithdrawLabel from './DepositWithdrawLabel'
@@ -13,7 +13,6 @@ export const ReviewConfirm: FC<{
 }> = ({ tokenAActionValue, tokenBActionValue, isDeposit }): ReactElement => {
   const { selectedCard, referralDetails } = useGamma()
   const { balance } = useWalletBalance()
-  const { mode } = useDarkMode()
   const depositValue = useMemo(() => {
     const depositAValue = new BigNumber(balance[selectedCard?.mintA?.address]?.price).multipliedBy(
       tokenAActionValue

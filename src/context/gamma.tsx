@@ -175,7 +175,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const code = ref.toString().trim(); // empty string
     if (!code) return null
     if (Object.keys(selectedCard).length > 0) {
-      console.log('selectedCard', {partners: selectedCard.partners, code})
       for (const partner of selectedCard.partners) {
         if (partner.address === code) {
           referralToast(partner.name)
