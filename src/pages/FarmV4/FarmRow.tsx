@@ -59,10 +59,11 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
   return (
     <div
       className={cn(
-        `relative grid grid-flow-col grid-cols-[1fr_0.8fr_0.8fr_0.8fr_1fr_1fr_0.5fr] 
-        dark:bg-black-2 px-2.5 cursor-pointer w-[99%] left-2 top-2 sm-lg:grid-cols-[1.1fr_0.85fr_0.85fr]
-        h-15 border border-solid dark:border-black-4 border-grey-4 bg-white rounded-tiny py-3.75`,
-        isMobile && `grid-cols-[1.1fr_0.85fr_0.85fr] w-[99%]`,
+        `relative grid grid-flow-col grid-cols-[1fr_0.8fr_0.8fr_0.8fr_1fr_1fr_0.5fr] dark:bg-black-2 px-2.5 
+      h-15 border border-solid dark:border-black-4 left-2 top-2 
+      border-grey-4 bg-white rounded-tiny py-3.75 cursor-pointer w-[99%]
+      sm-lg:grid-cols-[1.1fr_0.85fr_0.85fr] overflow-visible mt-2.5`,
+        isMobile && `grid-cols-[1.1fr_0.85fr_0.85fr] w-[97%]`,
         isTablet && `grid-cols-[1.5fr_0.75fr_0.75fr_0.75fr_0.5fr]`
       )}
       {...props}

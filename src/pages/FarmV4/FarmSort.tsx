@@ -84,7 +84,7 @@ function FarmSort({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: 
           <Icon
             src={`/img/assets/farm_filter_${mode}.svg`}
             size={'md'}
-            className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
+            className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px] max-sm:ml-2.5'}
           />
           {(!isPortfolio && currentSort !== GAMMA_MAIN_SORT_CONFIG_DEFAULT) ||
           (isPortfolio && currentSort != GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT) ||
