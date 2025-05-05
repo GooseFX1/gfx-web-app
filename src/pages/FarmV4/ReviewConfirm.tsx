@@ -1,6 +1,6 @@
 import { useDarkMode, useGamma } from '@/context'
 import { FC, ReactElement, useMemo } from 'react'
-import { Container, Icon, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
+import { Container, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import DepositWithdrawLabel from './DepositWithdrawLabel'
 import { bigNumberFormatter, numberFormatter } from '@/utils'
 import { useWalletBalance } from '@/context/walletBalanceContext'
@@ -11,7 +11,7 @@ export const ReviewConfirm: FC<{
   tokenBActionValue: string
   isDeposit: boolean
 }> = ({ tokenAActionValue, tokenBActionValue, isDeposit }): ReactElement => {
-  const { selectedCard, referralCode } = useGamma()
+  const { selectedCard, referralDetails } = useGamma()
   const { balance } = useWalletBalance()
   const { mode } = useDarkMode()
   const depositValue = useMemo(() => {
@@ -29,7 +29,7 @@ export const ReviewConfirm: FC<{
     <>
       <DepositWithdrawLabel text="2. Review and Confirm" />
       <Container colorScheme={'default'} className={'mx-2.5 my-3 p-2.5 w-auto rounded-[4px]'}>
-        {referralCode ? (
+        {referralDetails ? (
           <div className="flex justify-between mb-2">
             <span
               className="!font-regular font-semibold
@@ -38,8 +38,7 @@ export const ReviewConfirm: FC<{
               Referral
             </span>
             <span className={'inline-flex gap-2 !font-regular font-semibold dark:text-grey-8 text-black-4'}>
-              <Icon size={'sm'} src={`/img/assets/refer_bolt_${mode}.svg`} />
-              {referralCode}
+              {referralDetails.name}
             </span>
           </div>
         ) : null}

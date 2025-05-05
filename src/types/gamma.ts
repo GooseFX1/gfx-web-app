@@ -257,5 +257,6 @@ export type {
   GAMMAStats,
   GAMMATokenWithPoolData,
   GAMMAPortfolioPool,
-  GAMMAPortfolioPoolResponse
+  GAMMAPortfolioPoolResponse,
+  GAMMAPoolPartner
 }

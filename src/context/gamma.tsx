@@ -12,7 +12,7 @@ import {
   useState
 } from 'react'
 import { fetchTokenList, forceCronUpdate, forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
-import { GAMMAPool, GAMMAPoolWithUserLiquidity } from '@/types/gamma'
+import { GAMMAPool, GAMMAPoolPartner, GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   BASE_SLIPPAGE,
@@ -89,7 +89,7 @@ interface GAMMADataModel {
   isCardMode: string
   setIsCardMode: Dispatch<SetStateAction<string>>
   poolsQuery: UsePoolQueryResponse
-  referralCode: string | null
+  referralDetails: GAMMAPoolPartner | null
   updateGammaRoute: (pool?: GAMMAPool) => void
 }
 
@@ -132,7 +132,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const history = useHistory()
   const { mode } = useDarkMode()
   const [slippage, setSlippage] = useState<number>(0.1)
-  const [selectedCard, setSelectedCard] = useState<any>({})
+  const [selectedCard, setSelectedCard] = useState<Partial<GAMMAPoolWithUserLiquidity>>({})
 
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
@@ -169,18 +169,18 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     REF?: string
   }>()
 
-  const referralCode = useMemo(() => {
+  const referralDetails: GAMMAPoolPartner | null = useMemo(() => {
     const ref = getByPartialKey('ref')
     if (!ref) return null
-    const code = ref.toString().trim().toLowerCase() // empty string
+    const code = ref.toString().trim(); // empty string
     if (!code) return null
     if (Object.keys(selectedCard).length > 0) {
-      const partners = new Set<string>(...selectedCard.partners.map((x) => x.name))
-      if (!partners.has(code) && partners.size > 0) {
-        return null
-      } else if (partners.has(code)) {
-        referralToast(code)
-        return code
+      console.log('selectedCard', {partners: selectedCard.partners, code})
+      for (const partner of selectedCard.partners) {
+        if (partner.address === code) {
+          referralToast(partner.name)
+          return partner
+        }
       }
     }
     return null
@@ -432,7 +432,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setIsCardMode,
         filteredPools: poolsQuery.data?.allPages ?? [],
         poolsQuery,
-        referralCode,
+        referralDetails,
         updateGammaRoute
       }}
     >
