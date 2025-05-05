@@ -13,7 +13,8 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogOverlay
+  DialogOverlay,
+  DialogPortal
 } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 
@@ -107,6 +108,7 @@ const GammaOnboard: FC = (): JSX.Element => {
         }
       }}
     >
+      <DialogPortal>
         <DialogOverlay />
         <DialogContent
           onCloseAutoFocus={() => {
@@ -173,6 +175,7 @@ const GammaOnboard: FC = (): JSX.Element => {
             />
           </DialogFooter>
         </DialogContent>
+      </DialogPortal>
     </Dialog>
   )
 }
