@@ -105,6 +105,8 @@ interface ISettingsConfig {
   setUserCache: (cache: USER_CONFIG_CACHE) => void
   updateUserCache: (cache: Partial<USER_CONFIG_CACHE>) => void
   gammaBoostedRewardsIsActive: boolean
+  setTermsOfServiceVisible: Dispatch<SetStateAction<boolean>>
+  termsOfServiceVisible: boolean
 }
 
 const SettingsContext = React.createContext<ISettingsConfig | null>(null)
@@ -230,6 +232,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false)
   const [gammaBoostedRewardsIsActive, setGammaBoostedRewardsIsActive] = useState<boolean>(true)
   const [userCache, setUserCache] = useState<USER_CONFIG_CACHE>(getOrCreateCache())
+  const [termsOfServiceVisible, setTermsOfServiceVisible] = useState<boolean>(false)
 
   const [endpointName, setEndpointName] = useState<EndPointName>(() =>
     userCache.endpointName ? userCache.endpointName : DEFAULT_ENDPOINT_NAME
@@ -391,7 +394,9 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         userCache,
         setUserCache: setCache,
         updateUserCache,
-        gammaBoostedRewardsIsActive
+        gammaBoostedRewardsIsActive,
+        setTermsOfServiceVisible,
+        termsOfServiceVisible,
       }}
     >
       {children}

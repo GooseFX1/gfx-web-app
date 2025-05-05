@@ -13,8 +13,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogOverlay,
-  DialogPortal
+  DialogOverlay, DialogPortal
 } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 
@@ -62,7 +61,9 @@ const PrevArrow: FC<{
   </Button>
 )
 
-const GammaOnboard: FC = (): JSX.Element => {
+const GammaOnboard: FC<{
+  container?: Element
+}> = ({container}): JSX.Element => {
   const [currentSlide, setCurrentSlide] = useState<number>(0)
   const sliderRef = useRef<any>()
   const { mode } = useDarkMode()
@@ -108,8 +109,8 @@ const GammaOnboard: FC = (): JSX.Element => {
         }
       }}
     >
-      <DialogPortal>
-        <DialogOverlay />
+      <DialogPortal container={container}>
+        <DialogOverlay className={'z-[52]'}/>
         <DialogContent
           onCloseAutoFocus={() => {
             handleUserOnboarding()
@@ -117,7 +118,7 @@ const GammaOnboard: FC = (): JSX.Element => {
           className={cn(
             `rounded-2 border border-solid gap-0
           dark:border-black-4 border-grey-4 p-2.5 h-full dark:bg-black-2 bg-white flex-col flex`,
-            isMobile ? 'h-[353px] w-[95%]' : 'h-[320px] w-[400px]'
+            isMobile ? 'h-[353px] w-[95%]' : 'h-[320px] w-[400px] z-[53]'
           )}
         >
           <DialogHeader className={'flex flex-row'}>

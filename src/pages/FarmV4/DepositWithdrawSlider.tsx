@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { Dialog, DialogBody, DialogContent, DialogFooter, DialogOverlay } from 'gfx-component-lib'
-import { useConnectionConfig, useGamma, usePriceFeedFarm, useWalletModal } from '@/context'
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogOverlay, DialogPortal } from 'gfx-component-lib'
+import { useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
 import DepositWithdrawAccordion from './DepositWithdrawAccordion'
@@ -38,11 +38,13 @@ import useGammaProgramUserLiquidityQuery from '@/queries/GAMMA/pools/useGammaPro
 import { useMutation } from '@tanstack/react-query'
 import { MUTATION_KEY } from '@/queries/query.helper'
 
-export const DepositWithdrawSlider: FC = () => {
-  const { wallet, connected } = useWallet()
+export const DepositWithdrawSlider: FC<{
+  preventAutoClose: boolean
+  container?: Element
+}> = ({ preventAutoClose, container }) => {
+  const { wallet } = useWallet()
   const { isMobile } = useBreakPoint()
-  const { visible: walletModalVisible } = useWalletModal()
-  const { connection, userCache } = useConnectionConfig()
+  const { connection } = useConnectionConfig()
   const {
     selectedCard,
     modeOfOperation,
@@ -310,12 +312,14 @@ export const DepositWithdrawSlider: FC = () => {
     else if (
       !isDeposit &&
       (new BigNumber(userSourceWithdrawAmount)?.isGreaterThan(
-        new BigNumber(withdrawBigStringFarm(withdrawableBalanceA?.toString(), 
-        gammaOnChainPool?.account?.mint0Decimals))
+        new BigNumber(
+          withdrawBigStringFarm(withdrawableBalanceA?.toString(), gammaOnChainPool?.account?.mint0Decimals)
+        )
       ) ||
         new BigNumber(userTargetWithdrawAmount)?.isGreaterThan(
-          new BigNumber(withdrawBigStringFarm(withdrawableBalanceB?.toString(), 
-          gammaOnChainPool?.account?.mint1Decimals))
+          new BigNumber(
+            withdrawBigStringFarm(withdrawableBalanceB?.toString(), gammaOnChainPool?.account?.mint1Decimals)
+          )
         ))
     )
       return `Insufficient funds!`
@@ -359,12 +363,14 @@ export const DepositWithdrawSlider: FC = () => {
     else if (
       !isDeposit &&
       (new BigNumber(userSourceWithdrawAmount)?.isGreaterThan(
-        new BigNumber(withdrawBigStringFarm(withdrawableBalanceA?.toString(),
-          gammaOnChainPool?.account?.mint0Decimals))
+        new BigNumber(
+          withdrawBigStringFarm(withdrawableBalanceA?.toString(), gammaOnChainPool?.account?.mint0Decimals)
+        )
       ) ||
         new BigNumber(userTargetWithdrawAmount)?.isGreaterThan(
-          new BigNumber(withdrawBigStringFarm(withdrawableBalanceB?.toString(),
-            gammaOnChainPool?.account?.mint1Decimals))
+          new BigNumber(
+            withdrawBigStringFarm(withdrawableBalanceB?.toString(), gammaOnChainPool?.account?.mint1Decimals)
+          )
         ))
     )
       return true
@@ -413,12 +419,16 @@ export const DepositWithdrawSlider: FC = () => {
       } else {
         setTransactionLPAmount(selectedCardLiquidityAcc?.lpTokensOwned?.div(new BN(2)))
         setUserSourceWithdrawAmount(
-          withdrawBigStringFarm(withdrawableBalanceA?.div(new BN(2))?.toString(), 
-          gammaOnChainPool?.account?.mint0Decimals)
+          withdrawBigStringFarm(
+            withdrawableBalanceA?.div(new BN(2))?.toString(),
+            gammaOnChainPool?.account?.mint0Decimals
+          )
         )
         setUserTargetWithdrawAmount(
-          withdrawBigStringFarm(withdrawableBalanceB?.div(new BN(2))?.toString(), 
-          gammaOnChainPool?.account?.mint1Decimals)
+          withdrawBigStringFarm(
+            withdrawableBalanceB?.div(new BN(2))?.toString(),
+            gammaOnChainPool?.account?.mint1Decimals
+          )
         )
       }
       setIsUserTyping(false)
@@ -529,147 +539,145 @@ export const DepositWithdrawSlider: FC = () => {
           updateGammaRoute()
         }
       }}
+      modal={!preventAutoClose}
     >
-      <DialogOverlay />
-      {/*This one for not closing on click outside*/}
-      {/*<div*/}
-      {/*  className={cn(`fixed top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50*/}
-      {/*dark:bg-opacity-50 backdrop-blur-sm*/}
-      {/*`)}*/}
-      {/*/>*/}
-      <DialogContent
-        className={`sm:w-[450px] sm:max-h-screen border-1 border-solid sm:border-r-0 dark:border-black-4
+      <DialogPortal container={container}>
+        <DialogOverlay/>
+        {/*This one for not closing on click outside*/}
+        {/*<div*/}
+        {/*  className={cn(`fixed top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50*/}
+        {/*dark:bg-opacity-50 backdrop-blur-sm*/}
+        {/*`)}*/}
+        {/*/>*/}
+        <DialogContent
+          className={`sm:w-[450px] sm:max-h-screen border-1 border-solid sm:border-r-0 dark:border-black-4
       sm:rounded-none border-b-0 rounded-b-[0px] max-h-[calc(100vh-56px)] gap-0
       `}
-        fullScreen={true}
-        placement={isMobile ? 'bottom' : 'right'}
-        // onInteractOutside={(e) => e.preventDefault()}
-        aria-describedby={null}
-        onCloseAutoFocus={() => {
-          handleClose()
-        }}
-        onInteractOutside={(e) => {
-          if (
-            !userCache.gamma.hasGAMMAOnboarded ||
-            !userCache ||
-            !userCache.hasSignedTC ||
-            (!connected && walletModalVisible)
-          ) {
-            e.preventDefault()
-          }
-        }}
-      >
-        <GammaActionModal
-          isOpen={actionType != '' && actionType != 'deposit'}
-          setIsOpen={(b) => {
-            if (!b) {
-              handleActionCancel()
+          fullScreen={true}
+          placement={isMobile ? 'bottom' : 'right'}
+          // onInteractOutside={(e) => e.preventDefault()}
+          aria-describedby={null}
+          onCloseAutoFocus={() => {
+            handleClose()
+          }}
+          onInteractOutside={(e) => {
+            if (preventAutoClose) {
+              e.preventDefault()
             }
           }}
-          title={actionModalTitle}
-          actionLabel={actionLabel}
-          onActionClick={!isDeposit ? withdrawMutation.mutate : depositMutation.mutate}
-          actionType={actionType}
-          loading={depositMutation.isLoading || withdrawMutation.isLoading}
         >
-          <GammaActionModalContentStack
-            options={[
-              {
-                textLeft: `${selectedCard?.mintA?.symbol} Amount`,
-                textRight: `≈ ${(+userSourceWithdrawAmount)?.toFixed(2)} ${selectedCard?.mintA?.symbol}`
-              },
-              {
-                textLeft: `${selectedCard?.mintB?.symbol} Amount`,
-                textRight: `≈ ${(+userTargetWithdrawAmount)?.toFixed(2)} ${selectedCard?.mintB?.symbol}`
-              },
-              // {
-              //   textLeft: 'Claim Reward',
-              //   textRight: '2500 GOFX'
-              // },
-              {
-                textLeft: 'Total Amount in USDC',
-                textRight: `≈ $${bigNumberFormatter(
-                  new BigNumber(balance[selectedCard?.mintA?.address]?.price)
-                    .multipliedBy(userSourceWithdrawAmount)
-                    .plus(
-                      new BigNumber(balance[selectedCard?.mintB?.address]?.price).multipliedBy(
-                        userTargetWithdrawAmount
-                      )
-                    ),
-                  4
-                )}`
+          <GammaActionModal
+            isOpen={actionType != '' && actionType != 'deposit'}
+            setIsOpen={(b) => {
+              if (!b) {
+                handleActionCancel()
               }
-            ]}
-          />
-        </GammaActionModal>
-        <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
-          <DepositWithdrawHeader />
-          <div className="flex flex-col overflow-y-scroll h-full pb-[110px]">
-            <DepositWithdrawToggle
-              setUserSourceDepositAmount={setUserSourceDepositAmount}
-              setUserSourceWithdrawAmount={setUserSourceWithdrawAmount}
-              setUserTargetDepositAmount={setUserTargetDepositAmount}
-              setUserTargetWithdrawAmount={setUserTargetWithdrawAmount}
+            }}
+            title={actionModalTitle}
+            actionLabel={actionLabel}
+            onActionClick={!isDeposit ? withdrawMutation.mutate : depositMutation.mutate}
+            actionType={actionType}
+            loading={depositMutation.isLoading || withdrawMutation.isLoading}
+          >
+            <GammaActionModalContentStack
+              options={[
+                {
+                  textLeft: `${selectedCard?.mintA?.symbol} Amount`,
+                  textRight: `≈ ${(+userSourceWithdrawAmount)?.toFixed(2)} ${selectedCard?.mintA?.symbol}`
+                },
+                {
+                  textLeft: `${selectedCard?.mintB?.symbol} Amount`,
+                  textRight: `≈ ${(+userTargetWithdrawAmount)?.toFixed(2)} ${selectedCard?.mintB?.symbol}`
+                },
+                // {
+                //   textLeft: 'Claim Reward',
+                //   textRight: '2500 GOFX'
+                // },
+                {
+                  textLeft: 'Total Amount in USDC',
+                  textRight: `≈ $${bigNumberFormatter(
+                    new BigNumber(balance[selectedCard?.mintA?.address]?.price)
+                      .multipliedBy(userSourceWithdrawAmount)
+                      .plus(
+                        new BigNumber(balance[selectedCard?.mintB?.address]?.price).multipliedBy(
+                          userTargetWithdrawAmount
+                        )
+                      ),
+                    4
+                  )}`
+                }
+              ]}
             />
-            <DepositWithdrawAccordion
-              withdrawableBalanceA={withdrawableBalanceA}
-              withdrawableBalanceB={withdrawableBalanceB}
-            />
-            <DepositWithdrawLabel text={'1. Enter Amounts'} />
-            <TokenRow
-              isMintA={true}
-              token={selectedCard?.mintA}
-              balance={userSourceTokenBal}
+          </GammaActionModal>
+          <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
+            <DepositWithdrawHeader />
+            <div className="flex flex-col overflow-y-scroll h-full pb-[110px]">
+              <DepositWithdrawToggle
+                setUserSourceDepositAmount={setUserSourceDepositAmount}
+                setUserSourceWithdrawAmount={setUserSourceWithdrawAmount}
+                setUserTargetDepositAmount={setUserTargetDepositAmount}
+                setUserTargetWithdrawAmount={setUserTargetWithdrawAmount}
+              />
+              <DepositWithdrawAccordion
+                withdrawableBalanceA={withdrawableBalanceA}
+                withdrawableBalanceB={withdrawableBalanceB}
+              />
+              <DepositWithdrawLabel text={'1. Enter Amounts'} />
+              <TokenRow
+                isMintA={true}
+                token={selectedCard?.mintA}
+                balance={userSourceTokenBal}
+                isDeposit={isDeposit}
+              />
+              <DepositWithdrawInput
+                isDeposit={isDeposit}
+                onChange={(e) => handleInputChange(e.target.value, true)}
+                depositAmount={userSourceDepositAmount}
+                withdrawAmount={userSourceWithdrawAmount}
+                handleHalf={() => handleHalf(true)}
+                handleMax={() => handleMax(true)}
+                disabled={
+                  publicKey == null || (isDeposit ? userSourceTokenBal <= 0 : withdrawableBalanceA?.lte(new BN(0)))
+                }
+              />
+              <TokenRow
+                isMintA={false}
+                token={selectedCard?.mintB}
+                balance={userTargetTokenBal}
+                isDeposit={isDeposit}
+              />
+              <DepositWithdrawInput
+                isDeposit={isDeposit}
+                onChange={(e) => handleInputChange(e.target.value, false)}
+                depositAmount={userTargetDepositAmount}
+                withdrawAmount={userTargetWithdrawAmount}
+                handleHalf={() => handleHalf(false)}
+                handleMax={() => handleMax(false)}
+                disabled={
+                  publicKey == null || (isDeposit ? userTargetTokenBal <= 0 : withdrawableBalanceB?.lte(new BN(0)))
+                }
+              />
+              <ReviewConfirm
+                tokenAActionValue={isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount}
+                tokenBActionValue={isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount}
+                isDeposit={isDeposit}
+              />
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <StickyFooter
+              disableActionButton={isActionButtonDisabled}
+              isLoading={depositMutation.isLoading || withdrawMutation.isLoading || isUserTyping}
+              onActionClick={isDeposit ? depositMutation.mutate : handleProcessStart('withdraw')}
               isDeposit={isDeposit}
+              // canClaim={true || isClaim}
+              // claimText={'Claim 0.5 SOL + 12.0 USDC'}
+              // onClaimClick={handleProcessStart('claim')}
+              actionButtonText={actionButtonText}
             />
-            <DepositWithdrawInput
-              isDeposit={isDeposit}
-              onChange={(e) => handleInputChange(e.target.value, true)}
-              depositAmount={userSourceDepositAmount}
-              withdrawAmount={userSourceWithdrawAmount}
-              handleHalf={() => handleHalf(true)}
-              handleMax={() => handleMax(true)}
-              disabled={
-                publicKey == null || (isDeposit ? userSourceTokenBal <= 0 : withdrawableBalanceA?.lte(new BN(0)))
-              }
-            />
-            <TokenRow
-              isMintA={false}
-              token={selectedCard?.mintB}
-              balance={userTargetTokenBal}
-              isDeposit={isDeposit}
-            />
-            <DepositWithdrawInput
-              isDeposit={isDeposit}
-              onChange={(e) => handleInputChange(e.target.value, false)}
-              depositAmount={userTargetDepositAmount}
-              withdrawAmount={userTargetWithdrawAmount}
-              handleHalf={() => handleHalf(false)}
-              handleMax={() => handleMax(false)}
-              disabled={
-                publicKey == null || (isDeposit ? userTargetTokenBal <= 0 : withdrawableBalanceB?.lte(new BN(0)))
-              }
-            />
-            <ReviewConfirm
-              tokenAActionValue={isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount}
-              tokenBActionValue={isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount}
-              isDeposit={isDeposit}
-            />
-          </div>
-        </DialogBody>
-        <DialogFooter>
-          <StickyFooter
-            disableActionButton={isActionButtonDisabled}
-            isLoading={depositMutation.isLoading || withdrawMutation.isLoading || isUserTyping}
-            onActionClick={isDeposit ? depositMutation.mutate : handleProcessStart('withdraw')}
-            isDeposit={isDeposit}
-            // canClaim={true || isClaim}
-            // claimText={'Claim 0.5 SOL + 12.0 USDC'}
-            // onClaimClick={handleProcessStart('claim')}
-            actionButtonText={actionButtonText}
-          />
-        </DialogFooter>
-      </DialogContent>
+          </DialogFooter>
+        </DialogContent>
+      </DialogPortal>
     </Dialog>
   )
 }
