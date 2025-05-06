@@ -557,6 +557,7 @@ export const DepositWithdrawSlider: FC<{
           placement={isMobile ? 'bottom' : 'right'}
           // onInteractOutside={(e) => e.preventDefault()}
           aria-describedby={null}
+          autoFocus={false}
           onCloseAutoFocus={() => {
             handleClose()
           }}
