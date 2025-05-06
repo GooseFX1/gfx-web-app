@@ -117,8 +117,8 @@ const GammaOnboard: FC<{
           }}
           className={cn(
             `rounded-2 border border-solid gap-0
-          dark:border-black-4 border-grey-4 p-2.5 h-full dark:bg-black-2 bg-white flex-col flex`,
-            isMobile ? 'h-[353px] w-[95%]' : 'h-[320px] w-[400px] z-[53]'
+          dark:border-black-4 border-grey-4 p-2.5 h-full dark:bg-black-2 bg-white flex-col flex z-[53]`,
+            isMobile ? 'h-[353px] w-[95%]' : 'h-[320px] w-[400px]'
           )}
         >
           <DialogHeader className={'flex flex-row'}>
