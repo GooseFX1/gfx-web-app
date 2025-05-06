@@ -113,7 +113,7 @@ interface GAMMAPool {
   price?: string
   poolCreator: string
   latestDynamicFeeRate: number
-  partners: GAMMAPoolPartner[]
+  partners: GAMMAPoolPartner[] | null
 }
 
 export type GAMMAPoolWithUserLiquidity = GAMMAPool & {
