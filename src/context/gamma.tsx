@@ -91,6 +91,8 @@ interface GAMMADataModel {
   poolsQuery: UsePoolQueryResponse
   referralDetails: GAMMAPoolPartner | null
   updateGammaRoute: (pool?: GAMMAPool) => void
+  createPoolState: CreationPoolFlowStateEnum
+  setCreatePoolState: Dispatch<SetStateAction<CreationPoolFlowStateEnum>>
 }
 
 export type TokenListToken = {
@@ -125,6 +127,13 @@ function referralToast(referralPartner: string) {
   )
 }
 
+export enum CreationPoolFlowStateEnum {
+  NONE = 0,
+  ON_CHAIN = 1,
+  GAMMA_API_UPDATING = 2,
+  QUERY_FETCHING = 3
+}
+
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { userCache, connection, updateUserCache } = useConnectionConfig()
@@ -141,6 +150,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [showCreatedPools, setShowCreatedPools] = useState<boolean>(userCache.gamma.showCreatedFilter)
   const [currentSort, setCurrentSortState] = useState<string>(userCache.gamma.currentSort)
   const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
+  const [createPoolState, setCreatePoolState] = useState<CreationPoolFlowStateEnum>(
+    CreationPoolFlowStateEnum.NONE
+  )
   const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
 
   const isPortfolio = useMemo(
@@ -185,7 +197,13 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return null
   }, [searchParams, selectedCard, mode])
 
-  useLayoutEffect(() => setOpenDepositWithdrawSlider(Object.keys(selectedCard).length > 0), [selectedCard])
+  useLayoutEffect(
+    () =>
+      setOpenDepositWithdrawSlider(
+        Object.keys(selectedCard).length > 0 || createPoolState != CreationPoolFlowStateEnum.NONE
+      ),
+    [selectedCard]
+  )
 
   const setCurrentSort = (value: string) => {
     let sortValue = value
@@ -294,11 +312,17 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const selectPoolByDeeplinkQuery = useSelectPoolBySymbols({
     symbolA: deepLink.symbolA,
     symbolB: deepLink.symbolB,
-    enabled: localPool?.id == 'NOT_FOUND'
+    enabled:
+      localPool?.id == 'NOT_FOUND' &&
+      (createPoolState == CreationPoolFlowStateEnum.NONE ||
+        createPoolState == CreationPoolFlowStateEnum.QUERY_FETCHING)
   })
   useLayoutEffect(() => {
     // if local pool exists
-    if (localPool.id != selectedCard?.id && localPool.id != 'NOT_FOUND' && localPool.id != 'LOADING') {
+    if (localPool?.id != selectedCard?.id && localPool?.id != 'NOT_FOUND' && localPool?.id != 'LOADING') {
+      if (createPoolState != CreationPoolFlowStateEnum.NONE && localPool?.id != undefined) {
+        setCreatePoolState(CreationPoolFlowStateEnum.NONE)
+      }
       setSelectedCard(localPool)
       return
     }
@@ -308,13 +332,22 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (selectPoolByDeeplinkQuery.isSuccess && selectPoolByDeeplinkQuery.data) {
         // if is portfolio & liq data
         if (!isPortfolio || selectPoolByDeeplinkQuery.data.userLpPosition != undefined) {
+          if (
+            createPoolState != CreationPoolFlowStateEnum.NONE &&
+            selectPoolByDeeplinkQuery.data?.id != undefined
+          ) {
+            setCreatePoolState(CreationPoolFlowStateEnum.NONE)
+          }
           setSelectedCard(selectPoolByDeeplinkQuery.data)
         } else if (userLiqQuery.isSuccess && selectedCard?.id != '' && selectedCard?.id != undefined) {
           // no user liquidity data for this pool
           updateGammaRoute()
         }
+      } else if (createPoolState != CreationPoolFlowStateEnum.NONE) {
+        updateGammaRoute()
       }
     } else if (selectedCard?.id != '' && selectedCard?.id != undefined) {
+      setCreatePoolState(CreationPoolFlowStateEnum.NONE)
       // if no URL params, but we have card unset
       setSelectedCard({})
     }
@@ -326,7 +359,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     localPool,
     portfolioPoolsQuery,
     poolsQuery,
-    selectedCard
+    selectedCard,
+    createPoolState
   ])
   useEffect(() => {
     if (!isCardMode && prevIsCardMode !== isCardMode) {
@@ -432,7 +466,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         filteredPools: poolsQuery.data?.allPages ?? [],
         poolsQuery,
         referralDetails,
-        updateGammaRoute
+        updateGammaRoute,
+        createPoolState,
+        setCreatePoolState
       }}
     >
       {children}

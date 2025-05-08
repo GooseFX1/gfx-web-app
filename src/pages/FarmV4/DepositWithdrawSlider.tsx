@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { Dialog, DialogBody, DialogContent, DialogFooter, DialogOverlay, DialogPortal } from 'gfx-component-lib'
-import { useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogOverlay, DialogPortal,  Loader, loaders, Skeleton } from 'gfx-component-lib'
+import { CreationPoolFlowStateEnum, useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
 import DepositWithdrawAccordion from './DepositWithdrawAccordion'
@@ -18,9 +18,9 @@ import useTransaction from '@/hooks/useTransaction'
 import {
   calculateOtherTokenAndLPAmount,
   deposit,
+  getMaxSolDepositAmount,
   lpTokensToTradingTokens,
-  withdraw,
-  getMaxSolDepositAmount
+  withdraw
 } from '@/web3/Farm'
 import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
@@ -52,7 +52,8 @@ export const DepositWithdrawSlider: FC<{
     updateGammaRoute,
     slippage,
     forceCronAndUpdateLocalData,
-    openDepositWithdrawSlider
+    openDepositWithdrawSlider,
+    createPoolState
   } = useGamma()
   const [userSourceTokenBal, setUserSourceTokenBal] = useState<number>()
   const [userTargetTokenBal, setUserTargetTokenBal] = useState<number>()
@@ -530,7 +531,20 @@ export const DepositWithdrawSlider: FC<{
 
     return { actionLabel, actionModalTitle }
   }, [isDeposit, userSourceWithdrawAmount, userTargetWithdrawAmount])
-
+  const loadingStateText = useMemo(()=>{
+    switch (createPoolState) {
+      case CreationPoolFlowStateEnum.ON_CHAIN:
+        return 'Pool is being created on chain...'
+      case CreationPoolFlowStateEnum.GAMMA_API_UPDATING:
+        return 'Pool is being synced...'
+      case CreationPoolFlowStateEnum.QUERY_FETCHING:
+        return 'Loading pool data...'
+      case CreationPoolFlowStateEnum.NONE:
+      default:
+        return ''
+    }
+  },[createPoolState])
+  console.log({createPoolState})
   return (
     <Dialog
       open={openDepositWithdrawSlider}
@@ -567,7 +581,7 @@ export const DepositWithdrawSlider: FC<{
             }
           }}
         >
-          <GammaActionModal
+          {createPoolState == CreationPoolFlowStateEnum.NONE ? <><GammaActionModal
             isOpen={actionType != '' && actionType != 'deposit'}
             setIsOpen={(b) => {
               if (!b) {
@@ -610,73 +624,82 @@ export const DepositWithdrawSlider: FC<{
               ]}
             />
           </GammaActionModal>
-          <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
-            <DepositWithdrawHeader />
-            <div className="flex flex-col overflow-y-scroll h-full pb-[110px]">
-              <DepositWithdrawToggle
-                setUserSourceDepositAmount={setUserSourceDepositAmount}
-                setUserSourceWithdrawAmount={setUserSourceWithdrawAmount}
-                setUserTargetDepositAmount={setUserTargetDepositAmount}
-                setUserTargetWithdrawAmount={setUserTargetWithdrawAmount}
-              />
-              <DepositWithdrawAccordion
-                withdrawableBalanceA={withdrawableBalanceA}
-                withdrawableBalanceB={withdrawableBalanceB}
-              />
-              <DepositWithdrawLabel text={'1. Enter Amounts'} />
-              <TokenRow
-                isMintA={true}
-                token={selectedCard?.mintA}
-                balance={userSourceTokenBal}
+            <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
+              <DepositWithdrawHeader />
+              <div className="flex flex-col overflow-y-scroll h-full pb-[110px]">
+                <DepositWithdrawToggle
+                  setUserSourceDepositAmount={setUserSourceDepositAmount}
+                  setUserSourceWithdrawAmount={setUserSourceWithdrawAmount}
+                  setUserTargetDepositAmount={setUserTargetDepositAmount}
+                  setUserTargetWithdrawAmount={setUserTargetWithdrawAmount}
+                />
+                <DepositWithdrawAccordion
+                  withdrawableBalanceA={withdrawableBalanceA}
+                  withdrawableBalanceB={withdrawableBalanceB}
+                />
+                <DepositWithdrawLabel text={'1. Enter Amounts'} />
+                <TokenRow
+                  isMintA={true}
+                  token={selectedCard?.mintA}
+                  balance={userSourceTokenBal}
+                  isDeposit={isDeposit}
+                />
+                <DepositWithdrawInput
+                  isDeposit={isDeposit}
+                  onChange={(e) => handleInputChange(e.target.value, true)}
+                  depositAmount={userSourceDepositAmount}
+                  withdrawAmount={userSourceWithdrawAmount}
+                  handleHalf={() => handleHalf(true)}
+                  handleMax={() => handleMax(true)}
+                  disabled={
+                    publicKey == null || (isDeposit ? userSourceTokenBal <= 0 : withdrawableBalanceA?.lte(new BN(0)))
+                  }
+                />
+                <TokenRow
+                  isMintA={false}
+                  token={selectedCard?.mintB}
+                  balance={userTargetTokenBal}
+                  isDeposit={isDeposit}
+                />
+                <DepositWithdrawInput
+                  isDeposit={isDeposit}
+                  onChange={(e) => handleInputChange(e.target.value, false)}
+                  depositAmount={userTargetDepositAmount}
+                  withdrawAmount={userTargetWithdrawAmount}
+                  handleHalf={() => handleHalf(false)}
+                  handleMax={() => handleMax(false)}
+                  disabled={
+                    publicKey == null || (isDeposit ? userTargetTokenBal <= 0 : withdrawableBalanceB?.lte(new BN(0)))
+                  }
+                />
+                <ReviewConfirm
+                  tokenAActionValue={isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount}
+                  tokenBActionValue={isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount}
+                  isDeposit={isDeposit}
+                />
+              </div>
+            </DialogBody>
+            <DialogFooter>
+              <StickyFooter
+                disableActionButton={isActionButtonDisabled}
+                isLoading={depositMutation.isLoading || withdrawMutation.isLoading || isUserTyping}
+                onActionClick={isDeposit ? depositMutation.mutate : handleProcessStart('withdraw')}
                 isDeposit={isDeposit}
+                // canClaim={true || isClaim}
+                // claimText={'Claim 0.5 SOL + 12.0 USDC'}
+                // onClaimClick={handleProcessStart('claim')}
+                actionButtonText={actionButtonText}
               />
-              <DepositWithdrawInput
-                isDeposit={isDeposit}
-                onChange={(e) => handleInputChange(e.target.value, true)}
-                depositAmount={userSourceDepositAmount}
-                withdrawAmount={userSourceWithdrawAmount}
-                handleHalf={() => handleHalf(true)}
-                handleMax={() => handleMax(true)}
-                disabled={
-                  publicKey == null || (isDeposit ? userSourceTokenBal <= 0 : withdrawableBalanceA?.lte(new BN(0)))
-                }
-              />
-              <TokenRow
-                isMintA={false}
-                token={selectedCard?.mintB}
-                balance={userTargetTokenBal}
-                isDeposit={isDeposit}
-              />
-              <DepositWithdrawInput
-                isDeposit={isDeposit}
-                onChange={(e) => handleInputChange(e.target.value, false)}
-                depositAmount={userTargetDepositAmount}
-                withdrawAmount={userTargetWithdrawAmount}
-                handleHalf={() => handleHalf(false)}
-                handleMax={() => handleMax(false)}
-                disabled={
-                  publicKey == null || (isDeposit ? userTargetTokenBal <= 0 : withdrawableBalanceB?.lte(new BN(0)))
-                }
-              />
-              <ReviewConfirm
-                tokenAActionValue={isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount}
-                tokenBActionValue={isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount}
-                isDeposit={isDeposit}
-              />
-            </div>
-          </DialogBody>
-          <DialogFooter>
-            <StickyFooter
-              disableActionButton={isActionButtonDisabled}
-              isLoading={depositMutation.isLoading || withdrawMutation.isLoading || isUserTyping}
-              onActionClick={isDeposit ? depositMutation.mutate : handleProcessStart('withdraw')}
-              isDeposit={isDeposit}
-              // canClaim={true || isClaim}
-              // claimText={'Claim 0.5 SOL + 12.0 USDC'}
-              // onClaimClick={handleProcessStart('claim')}
-              actionButtonText={actionButtonText}
-            />
-          </DialogFooter>
+            </DialogFooter>
+          </> : <DialogBody className={'p-0'}>
+            <Skeleton className={'w-full h-full flex flex-col items-center justify-center p-2.5'}>
+              <p className={`text-xl font-semibold text-text-lightmode-primary dark:text-text-darkmode-primary 
+            text-center`}>
+                {loadingStateText}
+              </p>
+              <Loader animationData={loaders.loader_button} className={'w-15 h-15'} />
+            </Skeleton>
+          </DialogBody>}
         </DialogContent>
       </DialogPortal>
     </Dialog>

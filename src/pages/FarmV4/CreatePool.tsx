@@ -20,7 +20,7 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import { createPool } from '@/web3/Farm'
-import { useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
+import { CreationPoolFlowStateEnum, useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
 import useTransaction from '@/hooks/useTransaction'
 import { notifyUsingPromiseForCreatePool } from '@/utils/perpsNotifications'
 import { useWalletBalance } from '@/context/walletBalanceContext'
@@ -53,7 +53,8 @@ export const CreatePool: FC<{
     setSendingTransaction,
     setIsConfettiVisible,
     forceCronAndUpdateLocalData,
-    calculatePoolType
+    calculatePoolType,
+    setCreatePoolState
   } = useGamma()
   const { balance, publicKey } = useWalletBalance()
 
@@ -97,6 +98,7 @@ export const CreatePool: FC<{
   }
   const createPoolMutation = useMutation({
     mutationFn: async () => {
+        setCreatePoolState(CreationPoolFlowStateEnum.ON_CHAIN);
         const txBuilder = createTransactionBuilder()
         const tx = await createPool(
           tokenA,
@@ -129,17 +131,15 @@ export const CreatePool: FC<{
           // setAmountTokenB('')
           // slider.current.slickGoTo(1)
           throw new Error('Transaction failed')
-        } else {
-          await forceCronAndUpdateLocalData(txSig)
-          setIsConfettiVisible(true)
-          setIsCreatePool(false)
         }
         return txSig;
     },
-    onSuccess: (txSig) => {
+    onSuccess: async (txSig) => {
+      setCreatePoolState(CreationPoolFlowStateEnum.GAMMA_API_UPDATING)
       setIsConfettiVisible(true)
       setIsCreatePool(false)
-      forceCronAndUpdateLocalData(txSig)
+      await forceCronAndUpdateLocalData(txSig)
+      setCreatePoolState(CreationPoolFlowStateEnum.QUERY_FETCHING)
     },
     onError: (e) => {
       console.error('Error while creating a new pool.', e)
@@ -149,6 +149,7 @@ export const CreatePool: FC<{
       setAmountTokenA('')
       setAmountTokenB('')
       slider.current.slickGoTo(0)
+      setCreatePoolState(CreationPoolFlowStateEnum.NONE)
     }
   })
   const next = async () => {
