@@ -81,6 +81,18 @@ function useTransaction(): useTransactionReturn {
         txnIn
       console.log('signing txn', txn)
       const id = SpawnLoaderToast({ duration: connectionData?.transactionDuration ?? 60000 })
+      // TODO: remove this
+      await notify(
+        connection.simulateTransaction(txn as Transaction),
+        null,
+        '',
+        connectionData?.successMessage,
+        connectionData?.errorMessage,
+        connectionData?.transactionDuration,
+        undefined,
+        id
+      )
+      return { success: true, txSig: '' }
       const txSig = await sendTransactionOriginal(txn, connection, options).catch((err) => {
         console.log('[ERROR] Transaction failed', err)
         return ''
