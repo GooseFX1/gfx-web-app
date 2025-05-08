@@ -111,6 +111,7 @@
         },
         {
           "name": "reward_info",
+          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -1871,39 +1872,6 @@
           }
         },
         {
-          "name": "pool_partners",
-          "docs": [
-            "account storing partner infos"
-          ],
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  112,
-                  97,
-                  114,
-                  116,
-                  110,
-                  101,
-                  114,
-                  95,
-                  105,
-                  110,
-                  102,
-                  111,
-                  115
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "pool_state"
-              }
-            ]
-          }
-        },
-        {
           "name": "token_program",
           "docs": [
             "Program to create mint account and mint tokens"
@@ -2082,8 +2050,7 @@
           "signer": true
         },
         {
-          "name": "pool_state",
-          "writable": true
+          "name": "pool_state"
         },
         {
           "name": "pool_partners",
@@ -2120,12 +2087,7 @@
           "address": "11111111111111111111111111111111"
         }
       ],
-      "args": [
-        {
-          "name": "partner_share_rate",
-          "type": "u64"
-        }
-      ]
+      "args": []
     },
     {
       "name": "migrate_meteora_dlmm_to_gamma",
@@ -3727,6 +3689,46 @@
       ]
     },
     {
+      "name": "migrate_reward_info",
+      "discriminator": [
+        35,
+        251,
+        250,
+        23,
+        41,
+        106,
+        7,
+        76
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "pool_state"
+        },
+        {
+          "name": "reward_info",
+          "writable": true
+        },
+        {
+          "name": "amm_config"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "oracle_based_swap_base_input",
       "docs": [
         "Swap the tokens in the pool base input amount, using oracle price and Curve calculator combined.",
@@ -3992,7 +3994,8 @@
         },
         {
           "name": "kamino_lending_market",
-          "writable": true
+          "writable": true,
+          "address": "7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF"
         },
         {
           "name": "lending_market_authority"
@@ -5762,6 +5765,10 @@
           {
             "name": "rewarded_by",
             "type": "pubkey"
+          },
+          {
+            "name": "amount_disbursed",
+            "type": "u64"
           }
         ]
       }

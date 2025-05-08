@@ -262,7 +262,7 @@ export const getAccountsForSwappingTokens = async (
     )
   ])
 
-  const compare = mintAPublicKey?.toBuffer()?.compare(poolState.token0Mint?.toBuffer())
+  const compare = mintAPublicKey?.toBuffer()?.compare(new Uint8Array(poolState.token0Mint?.toBuffer()))
 
   return {
     ammConfig: ammConfigId,
@@ -758,12 +758,20 @@ export const createPool = async (
     )
     .accounts(createPoolAcc)
     .instruction()
+  const createPartnersIX: TransactionInstruction = await program.methods
+    .initializePoolPartners()
+    .accounts({
+      payer: userPubKey,
+      poolState: accsForCreatePool.poolState,
+    })
+    .instruction()
   let createPoolTxn: Transaction
   if (token0Symbol === 'SOL') createPoolTxn = await wrapSolToken(userPubKey, connection, amountToken0)
   else if (token1Symbol === 'SOL') createPoolTxn = await wrapSolToken(userPubKey, connection, amountToken1)
   else createPoolTxn = new Transaction()
 
   createPoolTxn.add(createPoolIX)
+  createPoolTxn.add(createPartnersIX)
 
   if (token0Symbol === 'SOL') {
     const ataAddress = await getAssociatedTokenAddress(token0, userPubKey)
