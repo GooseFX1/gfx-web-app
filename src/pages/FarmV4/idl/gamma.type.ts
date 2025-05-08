@@ -117,6 +117,7 @@ export type Gamma = {
         },
         {
           "name": "rewardInfo",
+          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -1877,39 +1878,6 @@ export type Gamma = {
           }
         },
         {
-          "name": "poolPartners",
-          "docs": [
-            "account storing partner infos"
-          ],
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  112,
-                  97,
-                  114,
-                  116,
-                  110,
-                  101,
-                  114,
-                  95,
-                  105,
-                  110,
-                  102,
-                  111,
-                  115
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "poolState"
-              }
-            ]
-          }
-        },
-        {
           "name": "tokenProgram",
           "docs": [
             "Program to create mint account and mint tokens"
@@ -2088,8 +2056,7 @@ export type Gamma = {
           "signer": true
         },
         {
-          "name": "poolState",
-          "writable": true
+          "name": "poolState"
         },
         {
           "name": "poolPartners",
@@ -2126,12 +2093,7 @@ export type Gamma = {
           "address": "11111111111111111111111111111111"
         }
       ],
-      "args": [
-        {
-          "name": "partnerShareRate",
-          "type": "u64"
-        }
-      ]
+      "args": []
     },
     {
       "name": "migrateMeteoraDlmmToGamma",
@@ -3733,6 +3695,46 @@ export type Gamma = {
       ]
     },
     {
+      "name": "migrateRewardInfo",
+      "discriminator": [
+        35,
+        251,
+        250,
+        23,
+        41,
+        106,
+        7,
+        76
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "poolState"
+        },
+        {
+          "name": "rewardInfo",
+          "writable": true
+        },
+        {
+          "name": "ammConfig"
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "oracleBasedSwapBaseInput",
       "docs": [
         "Swap the tokens in the pool base input amount, using oracle price and Curve calculator combined.",
@@ -3998,7 +4000,8 @@ export type Gamma = {
         },
         {
           "name": "kaminoLendingMarket",
-          "writable": true
+          "writable": true,
+          "address": "7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF"
         },
         {
           "name": "lendingMarketAuthority"
@@ -5768,6 +5771,10 @@ export type Gamma = {
           {
             "name": "rewardedBy",
             "type": "pubkey"
+          },
+          {
+            "name": "amountDisbursed",
+            "type": "u64"
           }
         ]
       }
