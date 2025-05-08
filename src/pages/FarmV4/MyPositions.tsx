@@ -17,6 +17,7 @@ import { getSortKey } from '@/queries/GAMMA/gammaQueries.helpers'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEY } from '@/queries/query.helper'
+import { useKamino } from '@/context/kaminoContext'
 
 const renderTokenBalance = (p: GAMMAPortfolioPool) => {
   const ratioA = numberFormatter(+p.tokenARatio, 2)
@@ -97,6 +98,7 @@ const MyPositionItem: FC<{
   const { isTablet, isDesktop, isMobile } = useBreakPoint()
   const { mode } = useDarkMode()
 
+  const { apyForPool } = useKamino()
   const activeReward = activeRewards?.[pool.id];
   const isOwner = base58PublicKey === pool.poolCreator;
   const { formattedAPR, kaminoUSD, tradeAPR } = getPoolValuesByRange(pool, viewRange)
@@ -110,6 +112,8 @@ const MyPositionItem: FC<{
         .toNumber()
     )
     : numberFormatter(formattedAPR)
+
+    const lendingApy = apyForPool(pool)
 
   return (
     <div
@@ -210,21 +214,34 @@ const MyPositionItem: FC<{
           <TooltipContent className="w-[266px] max-w-[266px] p-2">
             <div className="">
               {/* should only show if kaminoUSD is greater than 0 or activeReward */}
-              {parseFloat(kaminoUSD) > 0 ||
-                (activeReward && (
-                  <div className="flex flex-row justify-between mb-3">
-                    <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
-                    <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
-                  </div>
-                ))}
-
-              {/* should only show if kaminoUSD is greater than 0 */}
-              {parseFloat(kaminoUSD) > 0 && (
+              {lendingApy.length > 0 ||
+                activeReward && (
                 <div className="flex flex-row justify-between mb-3">
-                  <span className="font-poppins font-semibold text-[15px]">Lending APR</span>
-                  <span className="font-display font-semibold text-[15px]">${kaminoUSD}</span>
+                  <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
+                  <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
                 </div>
               )}
+
+{lendingApy.length > 0 && !isMobile && (
+              <div>
+                <h2 className="text-[10px] text-primary-gradient">Kamino APY</h2>
+
+                {lendingApy.map(({apy, token}, index) => apy > 0 && (
+                  <div key={`${token.symbol}-${index}`} className="flex flex-row items-center mb-3">
+                    <IconWithFallback
+                      src={loadIconImage(token.logoURI, mode)}
+                      className="border-solid dark:border-black-2 border-white
+                            border-[2px] rounded-full h-5 w-5"
+                    />
+                    <span className="font-poppins font-semibold text-[15px]">{token.symbol}</span>
+                    <span className="font-display font-semibold text-[15px] ml-auto">
+                      {numberFormatter(apy)}%
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
               {activeReward &&
                 activeReward.length > 0 &&
                 <div>
@@ -245,7 +262,7 @@ const MyPositionItem: FC<{
                     </div>))}
                 </div>
               }
-              {parseFloat(kaminoUSD) > 0 || activeReward && (
+              {lendingApy.length > 0 || activeReward && (
                 <div
                   className="w-full h-[1px] border-t-1 border-border-lightmode-secondary 
               dark:border-border-darkmode-secondary my-2"
