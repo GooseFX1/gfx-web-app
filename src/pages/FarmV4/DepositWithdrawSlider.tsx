@@ -8,13 +8,7 @@ import {
   DialogPortal,
   Skeleton
 } from 'gfx-component-lib'
-import {
-  CreationPoolFlowStateEnum,
-  useConnectionConfig,
-  useDarkMode,
-  useGamma,
-  usePriceFeedFarm
-} from '@/context'
+import { CreationPoolFlowStateEnum, useConnectionConfig, useDarkMode, useGamma, usePriceFeedFarm } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
 import DepositWithdrawAccordion from './DepositWithdrawAccordion'
@@ -49,8 +43,8 @@ import useGammaProgramPoolQuery from '@/queries/GAMMA/pools/useGammaProgramPoolQ
 import useGammaProgramUserLiquidityQuery from '@/queries/GAMMA/pools/useGammaProgramUserLiquidityQuery'
 import { useMutation } from '@tanstack/react-query'
 import { MUTATION_KEY } from '@/queries/query.helper'
-import txnInProgressDark from "@/animations/txn_in_progress_dark.json"
-import txnInProgressLite from "@/animations/txn_in_progress_lite.json"
+import txnInProgressDark from '@/animations/txn_in_progress_dark.json'
+import txnInProgressLite from '@/animations/txn_in_progress_lite.json'
 
 import Lottie from 'lottie-react'
 
@@ -211,13 +205,6 @@ export const DepositWithdrawSlider: FC<{
       console.log('Error while setting token amounts for withdrawing', e)
     }
   }, [selectedCardLiquidityAcc, gammaOnChainPool])
-
-  useEffect(() => {
-    console.log('close slider')
-    return () => {
-      handleClose()
-    }
-  }, [])
 
   useEffect(() => {
     if (selectedCard && publicKey) {
@@ -582,12 +569,13 @@ export const DepositWithdrawSlider: FC<{
       onOpenChange={(v) => {
         if (!v) {
           updateGammaRoute()
+          handleClose()
         }
       }}
       modal={!preventAutoClose}
     >
       <DialogPortal container={container}>
-        <DialogOverlay/>
+        <DialogOverlay />
         {/*This one for not closing on click outside*/}
         {/*<div*/}
         {/*  className={cn(`fixed top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50*/}
@@ -729,11 +717,13 @@ export const DepositWithdrawSlider: FC<{
             </>
           ) : (
             <DialogBody className={'p-0'}>
-              <Skeleton className={`w-full h-full flex flex-col items-center justify-center p-2.5 gap-3
+              <Skeleton
+                className={`w-full h-full flex flex-col items-center justify-center p-2.5 gap-3
             from-[#F2E6FE] to-[#F2E6FE]
             dark:from-background-darkmode-secondary dark:to-background-darkmode-secondary
             dark:via-[#232323] via-white
-            `}>
+            `}
+              >
                 <Lottie
                   animationData={isDarkMode ? txnInProgressDark : txnInProgressLite}
                   loop={true}

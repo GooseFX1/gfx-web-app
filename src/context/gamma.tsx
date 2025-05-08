@@ -26,7 +26,7 @@ import {
   ModeOfOperation
 } from '@/pages/FarmV4/constants'
 import { useConnectionConfig } from './settings'
-import { aborter } from '@/utils'
+import { aborter, sleep } from '@/utils'
 import usePrevious from '@/hooks/usePrevious'
 import useMultiSelect from '@/hooks/useMultiSelect'
 import useUserLiquidityQuery from '@/queries/GAMMA/user/useUserLiquidityQuery'
@@ -203,37 +203,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       ),
     [selectedCard, createPoolState]
   )
-  useLayoutEffect(() => {
-    if (
-      createPoolState == CreationPoolFlowStateEnum.NONE && previousCreatePoolState != createPoolState
-    ) {
-      let message;
-      switch (previousCreatePoolState) {
-        case CreationPoolFlowStateEnum.ON_CHAIN:
-          message = 'Failed to create pool. Please try again.'
-          break
-        case CreationPoolFlowStateEnum.GAMMA_API_UPDATING:
-        case CreationPoolFlowStateEnum.QUERY_FETCHING:
-          message = 'Please reload the page to see the new pool, something went wrong.'
-          break
-        default:
-          message = 'Please try again.'
-          break;
-      }
-      // selectedCard is empty
-      if (!selectedCard?.id) {
-        toast.error(<IntemediaryToast className={cn(`w-[290px]`)}>
-          <IntemediaryToastHeading stage={'error'}>Something went wrong!</IntemediaryToastHeading>
-          <p>
-            {message} If the issue persists, please contact us on Discord.
-          </p>
-          <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
-            Contact Us
-          </OpenToastLink>
-        </IntemediaryToast>, {id:'error-gamma-create-toast'})
-      }
-    }
-  }, [previousCreatePoolState, createPoolState, selectedCard])
 
   const setCurrentSort = (value: string) => {
     let sortValue = value
@@ -348,46 +317,86 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         createPoolState == CreationPoolFlowStateEnum.QUERY_FETCHING)
   })
   useLayoutEffect(() => {
-    const createPoolStateIsNone = createPoolState == CreationPoolFlowStateEnum.NONE
+    // in NONE state - and there is no data, or an error occured
+    if (
+      createPoolState == CreationPoolFlowStateEnum.NONE &&
+      previousCreatePoolState != createPoolState &&
+      (selectPoolByDeeplinkQuery.isError || !selectPoolByDeeplinkQuery.data || !localPool)
+    ) {
+      let message
+      switch (previousCreatePoolState) {
+        case CreationPoolFlowStateEnum.ON_CHAIN:
+          message = 'Failed to create pool. Please try again.'
+          break
+        case CreationPoolFlowStateEnum.GAMMA_API_UPDATING:
+        case CreationPoolFlowStateEnum.QUERY_FETCHING:
+          message = 'Please reload the page to see the new pool, something went wrong.'
+          break
+        default:
+          message = 'Please try again.'
+          break
+      }
+      // selectedCard is empty
+      if (!selectedCard?.id || !localPool) {
+        toast.error(
+          <IntemediaryToast className={cn(`w-[290px]`)}>
+            <IntemediaryToastHeading stage={'error'}>Something went wrong!</IntemediaryToastHeading>
+            <p>{message} If the issue persists, please contact us on Discord.</p>
+            <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
+              Contact Us
+            </OpenToastLink>
+          </IntemediaryToast>,
+          { id: 'error-gamma-create-toast' }
+        )
+      }
+
+      if (!!selectedCard?.id && (previousCreatePoolState == CreationPoolFlowStateEnum.QUERY_FETCHING || localPool)) {
+        setIsConfettiVisible(true)
+      }
+    }
+  }, [previousCreatePoolState, createPoolState, selectedCard, localPool])
+  useLayoutEffect(() => {
+    const setCardWithQueryAfterCreatePool = async () => {
+      if (createPoolState != CreationPoolFlowStateEnum.NONE) {
+        await sleep(1500)
+      }
+
+      setSelectedCard(selectPoolByDeeplinkQuery.data)
+    }
+    const hasDeepLink = deepLink.symbolA && deepLink.symbolB
     const selectedCardHasData = selectedCard && !!selectedCard.id
+    const queryIsError = selectPoolByDeeplinkQuery.isError
+    const queryHasData = selectPoolByDeeplinkQuery.data && !!selectPoolByDeeplinkQuery.data?.id
+    const queryHasUserLiqData = queryHasData && !!selectPoolByDeeplinkQuery.data.userLpPosition
+
+    const localPoolFound = localPool?.id != 'NOT_FOUND' && localPool?.id != 'LOADING'
+    const createPoolStateIsActive = createPoolState != CreationPoolFlowStateEnum.NONE
+    if (createPoolStateIsActive && (localPoolFound || queryHasData || queryIsError)) {
+      setCreatePoolState(CreationPoolFlowStateEnum.NONE)
+    }
+
+    // confetti flow
+    if (createPoolStateIsActive && (queryHasData || localPoolFound)) {
+      setIsConfettiVisible(true)
+    }
 
     // if local pool exists
-    if (localPool?.id != selectedCard?.id && localPool?.id != 'NOT_FOUND' && localPool?.id != 'LOADING') {
-      if (!createPoolStateIsNone) {
-        setCreatePoolState(CreationPoolFlowStateEnum.NONE)
-      }
+    if (localPool?.id != selectedCard?.id && localPoolFound) {
       setSelectedCard(localPool)
       return
     }
-    // if URL params
-    if (deepLink.symbolA && deepLink.symbolB) {
-      const queryDoneLoadingOrError = !selectPoolByDeeplinkQuery.isLoading || selectPoolByDeeplinkQuery.isError
-      const queryHasData = selectPoolByDeeplinkQuery.data && !!selectPoolByDeeplinkQuery.data?.id
-      const queryHasUserLiqData = queryHasData && !!selectPoolByDeeplinkQuery.data.userLpPosition
-      const queryDataIsDifferentFromSelectedCard =
-        queryHasData && selectPoolByDeeplinkQuery.data.id != selectedCard.id
-
-      // if we have a result set pool
-      if (selectPoolByDeeplinkQuery.isSuccess) {
-        if (!queryHasData || isPortfolio) {
-          setCreatePoolState(CreationPoolFlowStateEnum.NONE)
-        }
-        // if is portfolio & liq data
-        if ((!isPortfolio || queryHasUserLiqData) && queryDataIsDifferentFromSelectedCard) {
-          if (!createPoolStateIsNone) {
-            setCreatePoolState(CreationPoolFlowStateEnum.NONE)
-          }
-          setSelectedCard(selectPoolByDeeplinkQuery.data)
-        } else if (userLiqQuery.isSuccess && !queryHasUserLiqData) {
-          // no user liquidity data for this pool
-          updateGammaRoute()
-        }
-      } else if (queryDoneLoadingOrError && selectedCardHasData) {
-        setCreatePoolState(CreationPoolFlowStateEnum.NONE)
+    // if URL params && if we have a result set pool
+    if (hasDeepLink && selectPoolByDeeplinkQuery.isSuccess) {
+      // if not on portfolio or we have liq data update
+      if (!isPortfolio || queryHasUserLiqData) {
+        setCardWithQueryAfterCreatePool()
+      } else if (userLiqQuery.isSuccess && queryHasData) {
+        // no user liquidity data for this pool
         updateGammaRoute()
       }
+    } else if (queryIsError) {
+      updateGammaRoute()
     } else if (selectedCardHasData) {
-      setCreatePoolState(CreationPoolFlowStateEnum.NONE)
       // if no URL params, but we have card unset
       setSelectedCard({})
     }

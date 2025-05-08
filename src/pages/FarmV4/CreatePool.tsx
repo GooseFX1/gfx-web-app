@@ -52,7 +52,6 @@ export const CreatePool: FC<{
   const {
     sendingTransaction,
     setSendingTransaction,
-    setIsConfettiVisible,
     forceCronAndUpdateLocalData,
     calculatePoolType,
     setCreatePoolState,
@@ -148,7 +147,6 @@ export const CreatePool: FC<{
     },
     onSuccess: async (txSig) => {
       setCreatePoolState(CreationPoolFlowStateEnum.GAMMA_API_UPDATING)
-      setIsConfettiVisible(true)
       // TODO: remove this
       await sleep(2000)
       console.log('sleep over')
