@@ -38,6 +38,8 @@ import useSelectPoolBySymbols from '@/queries/GAMMA/pools/useSelectPoolBySymbols
 import useSearchParams from '@/hooks/useSearchParams'
 import { useHistory } from 'react-router-dom'
 import { ROUTES } from '@/Router'
+import { useQuery } from '@tanstack/react-query'
+import { QUERY_KEY } from '@/queries/query.helper'
 import { toast } from 'sonner'
 import { ToastTitle } from 'gfx-component-lib'
 import { useDarkMode } from '@/context/dark_mode'
@@ -202,7 +204,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setOpenDepositWithdrawSlider(
         Object.keys(selectedCard).length > 0 || createPoolState != CreationPoolFlowStateEnum.NONE
       ),
-    [selectedCard]
+    [selectedCard,createPoolState]
   )
 
   const setCurrentSort = (value: string) => {
@@ -329,7 +331,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     // if URL params
     if (deepLink.symbolA && deepLink.symbolB) {
       // if we have a result set pool
-      if (selectPoolByDeeplinkQuery.isSuccess && selectPoolByDeeplinkQuery.data) {
+      if (selectPoolByDeeplinkQuery.isSuccess) {
+        if (!selectPoolByDeeplinkQuery.data || selectPoolByDeeplinkQuery.data.id == undefined) {
+          setCreatePoolState(CreationPoolFlowStateEnum.NONE)
+        }
         // if is portfolio & liq data
         if (!isPortfolio || selectPoolByDeeplinkQuery.data.userLpPosition != undefined) {
           if (
@@ -340,10 +345,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           }
           setSelectedCard(selectPoolByDeeplinkQuery.data)
         } else if (userLiqQuery.isSuccess && selectedCard?.id != '' && selectedCard?.id != undefined) {
+          setCreatePoolState(CreationPoolFlowStateEnum.NONE)
           // no user liquidity data for this pool
           updateGammaRoute()
         }
-      } else if (createPoolState != CreationPoolFlowStateEnum.NONE) {
+      } else if (!selectPoolByDeeplinkQuery.isLoading) {
+        setCreatePoolState(CreationPoolFlowStateEnum.NONE)
         updateGammaRoute()
       }
     } else if (selectedCard?.id != '' && selectedCard?.id != undefined) {

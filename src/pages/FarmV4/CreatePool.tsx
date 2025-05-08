@@ -28,6 +28,7 @@ import { INTERVALS } from '@/utils/time'
 import { GAMMA_STABLE_TOKENS, POOL_TYPE } from '@/pages/FarmV4/constants'
 import useGetGammaConfigIdQuery from '@/queries/GAMMA/pools/useGetGammaConfigIdQuery'
 import { useMutation } from '@tanstack/react-query'
+import { sleep } from '@/utils'
 
 export const CreatePool: FC<{
   isCreatePool: boolean
@@ -54,7 +55,8 @@ export const CreatePool: FC<{
     setIsConfettiVisible,
     forceCronAndUpdateLocalData,
     calculatePoolType,
-    setCreatePoolState
+    setCreatePoolState,
+    updateGammaRoute
   } = useGamma()
   const { balance, publicKey } = useWalletBalance()
 
@@ -98,46 +100,58 @@ export const CreatePool: FC<{
   }
   const createPoolMutation = useMutation({
     mutationFn: async () => {
-        setCreatePoolState(CreationPoolFlowStateEnum.ON_CHAIN);
-        const txBuilder = createTransactionBuilder()
-        const tx = await createPool(
-          tokenA,
-          tokenB,
-          amountTokenA,
-          amountTokenB,
-          publicKey,
-          GammaProgram,
-          connection,
-          tokenAType,
-          tokenBType,
-          poolType,
-          ammConfigQuery.data
-        )
-        txBuilder.add(tx)
-        setSendingTransaction(true)
-        const { success, txSig } = await sendTransaction(
-          txBuilder,
-          { transactionDuration: INTERVALS.MINUTE * 5 },
-          notifyUsingPromiseForCreatePool,
-          true
-        )
-        setSendingTransaction(false)
-
-        if (!success) {
-          // allow re-attempt
-          // setTokenA(null)
-          // setTokenB(null)
-          // setAmountTokenA('')
-          // setAmountTokenB('')
-          // slider.current.slickGoTo(1)
-          throw new Error('Transaction failed')
+      setCreatePoolState(CreationPoolFlowStateEnum.ON_CHAIN)
+      const txBuilder = createTransactionBuilder()
+      const tx = await createPool(
+        tokenA,
+        tokenB,
+        amountTokenA,
+        amountTokenB,
+        publicKey,
+        GammaProgram,
+        connection,
+        tokenAType,
+        tokenBType,
+        poolType,
+        ammConfigQuery.data
+      )
+      txBuilder.add(tx)
+      setSendingTransaction(true)
+      setIsCreatePool(false)
+      // TODO: replace with actual token
+      updateGammaRoute({
+        mintA: {
+          symbol: 'usdc'
+        },
+        mintB: {
+          symbol: 'pyusd'
         }
-        return txSig;
+      } as any)
+      const { success, txSig } = await sendTransaction(
+        txBuilder,
+        { transactionDuration: INTERVALS.MINUTE * 5 },
+        notifyUsingPromiseForCreatePool,
+        true
+      )
+      setSendingTransaction(false)
+
+      if (!success) {
+        // allow re-attempt
+        // setTokenA(null)
+        // setTokenB(null)
+        // setAmountTokenA('')
+        // setAmountTokenB('')
+        // slider.current.slickGoTo(1)
+        throw new Error('Transaction failed')
+      }
+      return txSig
     },
     onSuccess: async (txSig) => {
       setCreatePoolState(CreationPoolFlowStateEnum.GAMMA_API_UPDATING)
       setIsConfettiVisible(true)
-      setIsCreatePool(false)
+      // TODO: remove this
+      await sleep(2000)
+      console.log('sleep over')
       await forceCronAndUpdateLocalData(txSig)
       setCreatePoolState(CreationPoolFlowStateEnum.QUERY_FETCHING)
     },
@@ -150,6 +164,7 @@ export const CreatePool: FC<{
       setAmountTokenB('')
       slider.current.slickGoTo(0)
       setCreatePoolState(CreationPoolFlowStateEnum.NONE)
+      updateGammaRoute()
     }
   })
   const next = async () => {
