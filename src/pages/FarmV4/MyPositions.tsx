@@ -101,7 +101,7 @@ const MyPositionItem: FC<{
   const { apyForPool } = useKamino()
   const activeReward = activeRewards?.[pool.id];
   const isOwner = base58PublicKey === pool.poolCreator;
-  const { formattedAPR, kaminoUSD, tradeAPR } = getPoolValuesByRange(pool, viewRange)
+  const { formattedAPR, tradeAPR } = getPoolValuesByRange(pool, viewRange)
 
   const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
   const apr = activeReward
