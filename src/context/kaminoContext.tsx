@@ -29,7 +29,6 @@ interface IKaminoConfig {
 const KaminoContext = createContext<IKaminoConfig | null>(null)
 
 export const KaminoProvider: FC<{ children: ReactNode }> = ({ children }) => {
-
     const { data: kaminoReserves } = useQuery({
         queryKey: ['kamino-reserves', KAMINO_API_MARKET_ID],
         queryFn: async () => {
@@ -58,7 +57,8 @@ export const KaminoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     
           if (!res || !res.success || res.data.tokens?.length === 0) return []
           return res.data.tokens
-        }
+        },
+        staleTime: INTERVALS.MINUTE * 5
     })
 
     const apyForPool = useCallback((pool: GAMMAPoolWithUserLiquidity) => {
@@ -85,7 +85,7 @@ export const KaminoProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
 
         return apyList
-    }, [kaminoReserves])
+    }, [kaminoReserves, tokensInKaminoQuery.data])
 
     return (
         <KaminoContext.Provider
