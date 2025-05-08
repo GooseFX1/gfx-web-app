@@ -39,7 +39,7 @@ function useSelectPoolBySymbols({ symbolA, symbolB, enabled = true }: Props) {
           break
         }
       }
-      return pool as GAMMAPoolWithUserLiquidity;
+      return pool as GAMMAPoolWithUserLiquidity
     },
     select: (pool) => {
       if (!pool) return pool

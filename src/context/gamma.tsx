@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   Dispatch,
   FC,
@@ -38,10 +38,8 @@ import useSelectPoolBySymbols from '@/queries/GAMMA/pools/useSelectPoolBySymbols
 import useSearchParams from '@/hooks/useSearchParams'
 import { useHistory } from 'react-router-dom'
 import { ROUTES } from '@/Router'
-import { useQuery } from '@tanstack/react-query'
-import { QUERY_KEY } from '@/queries/query.helper'
 import { toast } from 'sonner'
-import { ToastTitle } from 'gfx-component-lib'
+import { cn, ToastTitle, IntemediaryToast, IntemediaryToastHeading, OpenToastLink } from 'gfx-component-lib'
 import { useDarkMode } from '@/context/dark_mode'
 
 type ViewRange = 0 | 1 | 2
@@ -152,9 +150,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [showCreatedPools, setShowCreatedPools] = useState<boolean>(userCache.gamma.showCreatedFilter)
   const [currentSort, setCurrentSortState] = useState<string>(userCache.gamma.currentSort)
   const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
-  const [createPoolState, setCreatePoolState] = useState<CreationPoolFlowStateEnum>(
-    CreationPoolFlowStateEnum.NONE
-  )
+  const [createPoolState, setCreatePoolState] = useState<CreationPoolFlowStateEnum>(CreationPoolFlowStateEnum.NONE)
+  const previousCreatePoolState = usePrevious(createPoolState)
   const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
 
   const isPortfolio = useMemo(
@@ -204,8 +201,39 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setOpenDepositWithdrawSlider(
         Object.keys(selectedCard).length > 0 || createPoolState != CreationPoolFlowStateEnum.NONE
       ),
-    [selectedCard,createPoolState]
+    [selectedCard, createPoolState]
   )
+  useLayoutEffect(() => {
+    if (
+      createPoolState == CreationPoolFlowStateEnum.NONE && previousCreatePoolState != createPoolState
+    ) {
+      let message;
+      switch (previousCreatePoolState) {
+        case CreationPoolFlowStateEnum.ON_CHAIN:
+          message = 'Failed to create pool. Please try again.'
+          break
+        case CreationPoolFlowStateEnum.GAMMA_API_UPDATING:
+        case CreationPoolFlowStateEnum.QUERY_FETCHING:
+          message = 'Please reload the page to see the new pool, something went wrong.'
+          break
+        default:
+          message = 'Please try again.'
+          break;
+      }
+      // selectedCard is empty
+      if (!selectedCard?.id) {
+        toast.error(<IntemediaryToast className={cn(`w-[290px]`)}>
+          <IntemediaryToastHeading stage={'error'}>Something went wrong!</IntemediaryToastHeading>
+          <p>
+            {message} If the issue persists, please contact us on Discord.
+          </p>
+          <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
+            Contact Us
+          </OpenToastLink>
+        </IntemediaryToast>, {id:'error-gamma-create-toast'})
+      }
+    }
+  }, [previousCreatePoolState, createPoolState, selectedCard])
 
   const setCurrentSort = (value: string) => {
     let sortValue = value
@@ -320,9 +348,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         createPoolState == CreationPoolFlowStateEnum.QUERY_FETCHING)
   })
   useLayoutEffect(() => {
+    const createPoolStateIsNone = createPoolState == CreationPoolFlowStateEnum.NONE
+    const selectedCardHasData = selectedCard && !!selectedCard.id
+
     // if local pool exists
     if (localPool?.id != selectedCard?.id && localPool?.id != 'NOT_FOUND' && localPool?.id != 'LOADING') {
-      if (createPoolState != CreationPoolFlowStateEnum.NONE && localPool?.id != undefined) {
+      if (!createPoolStateIsNone) {
         setCreatePoolState(CreationPoolFlowStateEnum.NONE)
       }
       setSelectedCard(localPool)
@@ -330,30 +361,32 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     // if URL params
     if (deepLink.symbolA && deepLink.symbolB) {
+      const queryDoneLoadingOrError = !selectPoolByDeeplinkQuery.isLoading || selectPoolByDeeplinkQuery.isError
+      const queryHasData = selectPoolByDeeplinkQuery.data && !!selectPoolByDeeplinkQuery.data?.id
+      const queryHasUserLiqData = queryHasData && !!selectPoolByDeeplinkQuery.data.userLpPosition
+      const queryDataIsDifferentFromSelectedCard =
+        queryHasData && selectPoolByDeeplinkQuery.data.id != selectedCard.id
+
       // if we have a result set pool
       if (selectPoolByDeeplinkQuery.isSuccess) {
-        if (!selectPoolByDeeplinkQuery.data || selectPoolByDeeplinkQuery.data.id == undefined) {
+        if (!queryHasData || isPortfolio) {
           setCreatePoolState(CreationPoolFlowStateEnum.NONE)
         }
         // if is portfolio & liq data
-        if (!isPortfolio || selectPoolByDeeplinkQuery.data.userLpPosition != undefined) {
-          if (
-            createPoolState != CreationPoolFlowStateEnum.NONE &&
-            selectPoolByDeeplinkQuery.data?.id != undefined
-          ) {
+        if ((!isPortfolio || queryHasUserLiqData) && queryDataIsDifferentFromSelectedCard) {
+          if (!createPoolStateIsNone) {
             setCreatePoolState(CreationPoolFlowStateEnum.NONE)
           }
           setSelectedCard(selectPoolByDeeplinkQuery.data)
-        } else if (userLiqQuery.isSuccess && selectedCard?.id != '' && selectedCard?.id != undefined) {
-          setCreatePoolState(CreationPoolFlowStateEnum.NONE)
+        } else if (userLiqQuery.isSuccess && !queryHasUserLiqData) {
           // no user liquidity data for this pool
           updateGammaRoute()
         }
-      } else if (!selectPoolByDeeplinkQuery.isLoading) {
+      } else if (queryDoneLoadingOrError && selectedCardHasData) {
         setCreatePoolState(CreationPoolFlowStateEnum.NONE)
         updateGammaRoute()
       }
-    } else if (selectedCard?.id != '' && selectedCard?.id != undefined) {
+    } else if (selectedCardHasData) {
       setCreatePoolState(CreationPoolFlowStateEnum.NONE)
       // if no URL params, but we have card unset
       setSelectedCard({})

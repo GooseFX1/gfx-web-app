@@ -53,7 +53,8 @@ export const DepositWithdrawSlider: FC<{
     slippage,
     forceCronAndUpdateLocalData,
     openDepositWithdrawSlider,
-    createPoolState
+    createPoolState,
+    setCreatePoolState
   } = useGamma()
   const [userSourceTokenBal, setUserSourceTokenBal] = useState<number>()
   const [userTargetTokenBal, setUserTargetTokenBal] = useState<number>()
@@ -221,6 +222,7 @@ export const DepositWithdrawSlider: FC<{
     setUserTargetDepositAmount('')
     setUserTargetWithdrawAmount('')
     setModeOfOperation(ModeOfOperation?.DEPOSIT)
+    setCreatePoolState(CreationPoolFlowStateEnum.NONE)
   }
 
   const handleInputChange = async (input: string, sourceToken: boolean) => {
