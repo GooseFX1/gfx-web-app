@@ -126,7 +126,7 @@ const GammaOnboard: FC<{
             <div className="text-regular font-semibold text-grey-9 mr-auto">
               <span className="text-purple-3 !font-semibold">Step {currentSlide + 1}</span> of 3
             </div>
-            <DialogCloseDefault />
+            <DialogCloseDefault className={'z-[50]'}/>
           </DialogHeader>
           <DialogBody>
             <Slider className={'h-full w-full'} {...settings} ref={sliderRef}>
