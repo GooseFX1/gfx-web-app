@@ -20,7 +20,7 @@ import { RewardsProvider } from '@/context/rewardsContext'
 import { Swap } from '@/pages/Swap'
 import { SwapProvider } from '@/context/newSwap'
 import { BoostedRewardsProvider } from './context/boostedRewardsContext'
-
+import { KaminoProvider } from './context/kaminoContext'
 const Bridge = lazy(() => import('./pages/Bridge'))
 const GenericNotFound = lazy(() => import('./pages/InvalidUrl'))
 const AnalyticsWrapper = lazy(() => import('./pages/Analytics/AnalyticsWrapper'))
@@ -110,9 +110,11 @@ export const Router: FC = () => {
                             ]}
                           >
                             <GammaProvider>
-                              <BoostedRewardsProvider>
-                                <FarmV4 />
-                              </BoostedRewardsProvider>
+                              <KaminoProvider>
+                                <BoostedRewardsProvider>
+                                  <FarmV4 />
+                                </BoostedRewardsProvider>
+                              </KaminoProvider>
                             </GammaProvider>
                           </Route>
                           <Route exact path={['/swap']}>

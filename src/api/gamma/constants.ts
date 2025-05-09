@@ -16,3 +16,9 @@ export enum GAMMA_ENDPOINTS_V1 {
   POOL_BY_ID = '/v1/pool',
   POOL_BY_SYMBOLS = '/v1/pool/info/symbols'
 }
+
+export const KAMINO_API_BASE = 'https://api.kamino.finance/kamino-market'
+export const KAMINO_API_MARKET_ID = '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF'
+export const KAMINO_API_ENDPOINTS = {
+  RESERVES_METRICS: (marketId: string) => `${KAMINO_API_BASE}/${marketId}/reserves/metrics`
+}

@@ -78,6 +78,7 @@ export const BoostedRewardsProvider: FC<{ children: ReactNode }> = ({ children }
       return res.data.tokens
     }
   })
+  
   const claimableRewardsWithTokens = useMemo(() => {
     if (!claimableRewardsQuery.data || !tokensInRewardsQuery.data)
       return {
