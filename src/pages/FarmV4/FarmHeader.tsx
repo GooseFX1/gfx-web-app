@@ -17,7 +17,6 @@ import {
   Icon
 } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
-import { DepositWithdrawSlider } from '../FarmV4/DepositWithdrawSlider'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import DocsBanner from './DocsBanner'
 import { CreatePool } from './CreatePool'
@@ -112,7 +111,6 @@ export const FarmHeader: FC = () => {
     <div className="mt-[15px]">
       <TokenRewardsDrawer isOpen={openRewardsDrawer} setOpen={setOpenRewardsDrawer} />
       <CreatePool isCreatePool={isCreatePool} setIsCreatePool={setIsCreatePool} />
-      <DepositWithdrawSlider />
 
       <div className={'max-sm:px-2.5 px-5'}>
         <DocsBanner />

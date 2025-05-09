@@ -12,7 +12,7 @@ import {
   useState
 } from 'react'
 import { fetchTokenList, forceCronUpdate, forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
-import { GAMMAPool, GAMMAPoolWithUserLiquidity } from '@/types/gamma'
+import { GAMMAPool, GAMMAPoolPartner, GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   BASE_SLIPPAGE,
@@ -38,8 +38,9 @@ import useSelectPoolBySymbols from '@/queries/GAMMA/pools/useSelectPoolBySymbols
 import useSearchParams from '@/hooks/useSearchParams'
 import { useHistory } from 'react-router-dom'
 import { ROUTES } from '@/Router'
-import { useQuery } from '@tanstack/react-query'
-import { QUERY_KEY } from '@/queries/query.helper'
+import { toast } from 'sonner'
+import { ToastTitle } from 'gfx-component-lib'
+import { useDarkMode } from '@/context/dark_mode'
 
 type ViewRange = 0 | 1 | 2
 
@@ -88,7 +89,7 @@ interface GAMMADataModel {
   isCardMode: string
   setIsCardMode: Dispatch<SetStateAction<string>>
   poolsQuery: UsePoolQueryResponse
-  referralCode: string | null
+  referralDetails: GAMMAPoolPartner | null
   updateGammaRoute: (pool?: GAMMAPool) => void
 }
 
@@ -107,14 +108,31 @@ export type TokenListToken = {
   isPrimary: boolean
 }
 
+function referralToast(referralPartner: string) {
+  toast(
+    <div className={'flex flex-col gap-[5px]'}>
+      <ToastTitle className={'items-center'}>
+        <h4 className={'text-h4 text-text-green'}>Referral Partner</h4>
+      </ToastTitle>
+      <p className={'text-text-lightmode-secondary dark:text-text-darkmode-secondary text-b3'}>
+        You were referred by&nbsp;
+        <span className={'text-text-blue dark:text-text-darkmode-primary'}>{referralPartner.toUpperCase()}</span>
+      </p>
+    </div>,
+    {
+      id: 'referralToast-gamma'
+    }
+  )
+}
+
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { userCache, connection, updateUserCache } = useConnectionConfig()
   const { publicKey } = useWalletBalance()
   const history = useHistory()
-
+  const { mode } = useDarkMode()
   const [slippage, setSlippage] = useState<number>(0.1)
-  const [selectedCard, setSelectedCard] = useState<any>({})
+  const [selectedCard, setSelectedCard] = useState<Partial<GAMMAPoolWithUserLiquidity>>({})
 
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
@@ -151,30 +169,21 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     REF?: string
   }>()
 
-  const supportedReferralCodes = useQuery({
-    queryKey: [QUERY_KEY, 'gamma-ref-codes', searchParams],
-    queryFn: async () => {
-      console.log('THIS PROCESSES AND GETS APPLICABLE REF CODES')
-
-      return []
-    },
-    staleTime: Infinity
-  })
-  const referralCode = useMemo(() => {
+  const referralDetails: GAMMAPoolPartner | null = useMemo(() => {
     const ref = getByPartialKey('ref')
-    console.log('REF', ref)
     if (!ref) return null
-    const code = ref.toString().trim().toLowerCase() // empty string
+    const code = ref.toString().trim(); // empty string
     if (!code) return null
-    if (
-      supportedReferralCodes.isSuccess &&
-      supportedReferralCodes.data &&
-      supportedReferralCodes.data.includes(code)
-    ) {
-      return code
+    if (Object.keys(selectedCard).length > 0 && selectedCard.partners) {
+      for (const partner of selectedCard.partners) {
+        if (partner.address === code) {
+          referralToast(partner.name)
+          return partner
+        }
+      }
     }
     return null
-  }, [searchParams, supportedReferralCodes])
+  }, [searchParams, selectedCard, mode])
 
   useLayoutEffect(() => setOpenDepositWithdrawSlider(Object.keys(selectedCard).length > 0), [selectedCard])
 
@@ -422,7 +431,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setIsCardMode,
         filteredPools: poolsQuery.data?.allPages ?? [],
         poolsQuery,
-        referralCode,
+        referralDetails,
         updateGammaRoute
       }}
     >

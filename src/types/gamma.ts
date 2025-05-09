@@ -79,6 +79,13 @@ type GAMMATokenWithPoolData = GAMMAToken & {
   protocolFees: string
   fundFees: string
 }
+type GAMMAPoolPartner = {
+  address: string,
+  name: string,
+  authority: string,
+  token0TokenAccount: string,
+  token1TokenAccount: string
+}
 
 interface GAMMAPool {
   programId: string
@@ -106,6 +113,7 @@ interface GAMMAPool {
   price?: string
   poolCreator: string
   latestDynamicFeeRate: number
+  partners: GAMMAPoolPartner[] | null
 }
 
 export type GAMMAPoolWithUserLiquidity = GAMMAPool & {
@@ -249,5 +257,6 @@ export type {
   GAMMAStats,
   GAMMATokenWithPoolData,
   GAMMAPortfolioPool,
-  GAMMAPortfolioPoolResponse
+  GAMMAPortfolioPoolResponse,
+  GAMMAPoolPartner
 }

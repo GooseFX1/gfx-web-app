@@ -39,8 +39,12 @@ function useSearchParams<T extends Record<string, string | number | boolean>>():
   }, [search])
 
   const clearSearchParams = () => {
+    const currentSearch = new URLSearchParams(search)
+    for (const key of Object.keys(searchParams)) { // cleanup only the keys that are in the current search
+      currentSearch.delete(key)
+    }
     setSearchParams({})
-    history.replace({ search: '' })
+    history.replace({ search: currentSearch.toString() })
   }
 
   function getByKey(key: keyof T) {
@@ -62,16 +66,18 @@ function useSearchParams<T extends Record<string, string | number | boolean>>():
       }
     }
   }
+
   function getByPartialKey(key: string, cleanKey = true, normalizeKey = true) {
     for (const refKey of Object.keys(searchParams)) {
-      const cleanedKey = cleanKey ? refKey.trim() : refKey;
-      const normKey = normalizeKey ? cleanedKey.toLowerCase() : cleanedKey;
+      const cleanedKey = cleanKey ? refKey.trim() : refKey
+      const normKey = normalizeKey ? cleanedKey.toLowerCase() : cleanedKey
       if (normKey.includes(key) || normKey.startsWith(key) || normKey.endsWith(key)) {
         return searchParams[refKey]
       }
     }
-    return null;
+    return null
   }
+
   return {
     searchParams,
     operators: {

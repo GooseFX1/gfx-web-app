@@ -26,9 +26,8 @@ export const WalletsModal: FC = () => {
   const { wallets, select, connecting, publicKey } = useWallet()
 
   const { setVisible, visible } = useWalletModal()
-  const { userCache } = useConnectionConfig()
+  const { userCache, setTermsOfServiceVisible, termsOfServiceVisible } = useConnectionConfig()
 
-  const [termsOfServiceVisible, setTermsOfServiceVisible] = useState<boolean>(false)
   const [selectedWallet, setSelectedWallet] = useState<string>('')
   const base58PublicKey = useMemo(() => publicKey?.toBase58(), [publicKey])
   const breakpoint = useBreakPoint()
