@@ -337,7 +337,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           break
       }
       // selectedCard is empty
-      if (!selectedCard?.id || !localPool) {
+      if ((!selectedCard?.id || !localPool) && !selectPoolByDeeplinkQuery.isLoading) {
         toast.error(
           <IntemediaryToast className={cn(`w-[290px]`)}>
             <IntemediaryToastHeading stage={'error'}>Something went wrong!</IntemediaryToastHeading>
@@ -350,21 +350,28 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         )
       }
 
-      if (!!selectedCard?.id && (previousCreatePoolState == CreationPoolFlowStateEnum.QUERY_FETCHING || localPool)) {
+      if (
+        !!selectedCard?.id &&
+        (previousCreatePoolState == CreationPoolFlowStateEnum.QUERY_FETCHING || localPool)
+      ) {
         setIsConfettiVisible(true)
       }
     }
-  }, [previousCreatePoolState, createPoolState, selectedCard, localPool])
+  }, [previousCreatePoolState, createPoolState, selectedCard, localPool, selectPoolByDeeplinkQuery.isSuccess])
   useLayoutEffect(() => {
     const setCardWithQueryAfterCreatePool = async () => {
       if (createPoolState != CreationPoolFlowStateEnum.NONE) {
+        // allow animation to finish
         await sleep(1500)
       }
-
-      setSelectedCard(selectPoolByDeeplinkQuery.data)
+      if (selectPoolByDeeplinkQuery.data) {
+        setSelectedCard(selectPoolByDeeplinkQuery.data)
+      } else if (selectedCardHasData) {
+        setSelectedCard({})
+      }
     }
     const hasDeepLink = deepLink.symbolA && deepLink.symbolB
-    const selectedCardHasData = selectedCard && !!selectedCard.id
+    const selectedCardHasData = selectedCard && Object.keys(selectedCard).length > 0
     const queryIsError = selectPoolByDeeplinkQuery.isError
     const queryHasData = selectPoolByDeeplinkQuery.data && !!selectPoolByDeeplinkQuery.data?.id
     const queryHasUserLiqData = queryHasData && !!selectPoolByDeeplinkQuery.data.userLpPosition
@@ -386,7 +393,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return
     }
     // if URL params && if we have a result set pool
-    if (hasDeepLink && selectPoolByDeeplinkQuery.isSuccess) {
+    if (hasDeepLink && selectPoolByDeeplinkQuery.isSuccess && queryHasData) {
       // if not on portfolio or we have liq data update
       if (!isPortfolio || queryHasUserLiqData) {
         setCardWithQueryAfterCreatePool()
@@ -396,7 +403,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
     } else if (queryIsError) {
       updateGammaRoute()
-    } else if (selectedCardHasData) {
+    } else if (selectedCardHasData && !hasDeepLink) {
       // if no URL params, but we have card unset
       setSelectedCard({})
     }

@@ -28,7 +28,6 @@ import { INTERVALS } from '@/utils/time'
 import { GAMMA_STABLE_TOKENS, POOL_TYPE } from '@/pages/FarmV4/constants'
 import useGetGammaConfigIdQuery from '@/queries/GAMMA/pools/useGetGammaConfigIdQuery'
 import { useMutation } from '@tanstack/react-query'
-import { sleep } from '@/utils'
 
 export const CreatePool: FC<{
   isCreatePool: boolean
@@ -98,7 +97,7 @@ export const CreatePool: FC<{
     }
   }
   const createPoolMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async () =>{
       setCreatePoolState(CreationPoolFlowStateEnum.ON_CHAIN)
       const txBuilder = createTransactionBuilder()
       const tx = await createPool(
@@ -117,15 +116,12 @@ export const CreatePool: FC<{
       txBuilder.add(tx)
       setSendingTransaction(true)
       setIsCreatePool(false)
-      // TODO: replace with actual token
+
       updateGammaRoute({
-        mintA: {
-          symbol: 'usdc'
-        },
-        mintB: {
-          symbol: 'pyusd'
-        }
+        mintA: tokenA,
+        mintB: tokenB
       } as any)
+
       const { success, txSig } = await sendTransaction(
         txBuilder,
         { transactionDuration: INTERVALS.MINUTE * 5 },
@@ -133,35 +129,26 @@ export const CreatePool: FC<{
         true
       )
       setSendingTransaction(false)
-
       if (!success) {
-        // allow re-attempt
-        // setTokenA(null)
-        // setTokenB(null)
-        // setAmountTokenA('')
-        // setAmountTokenB('')
-        // slider.current.slickGoTo(1)
         throw new Error('Transaction failed')
       }
       return txSig
     },
     onSuccess: async (txSig) => {
       setCreatePoolState(CreationPoolFlowStateEnum.GAMMA_API_UPDATING)
-      // TODO: remove this
-      await sleep(2000)
-      console.log('sleep over')
       await forceCronAndUpdateLocalData(txSig)
       setCreatePoolState(CreationPoolFlowStateEnum.QUERY_FETCHING)
     },
     onError: (e) => {
       console.error('Error while creating a new pool.', e)
+      setCreatePoolState(CreationPoolFlowStateEnum.NONE)
       setSendingTransaction(false)
       setTokenA(null)
       setTokenB(null)
       setAmountTokenA('')
       setAmountTokenB('')
       slider.current.slickGoTo(0)
-      setCreatePoolState(CreationPoolFlowStateEnum.NONE)
+
       updateGammaRoute()
     }
   })
