@@ -48,13 +48,10 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
   const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
   const apr = activeReward
     ? numberFormatter(
-      new BigNumber(formattedAPR).plus(
-        activeRewardsAmount.div(pool.tvl)
-          .multipliedBy(100)
-          .multipliedBy(365)
+        new BigNumber(formattedAPR)
+          .plus(activeRewardsAmount.div(pool.tvl).multipliedBy(100).multipliedBy(365).toNumber())
           .toNumber()
-      ).toNumber()
-    )
+      )
     : numberFormatter(formattedAPR)
 
   const lendingApy = apyForPool(pool)
@@ -156,31 +153,33 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
         <TooltipContent className="w-[266px] max-w-[266px] p-2">
           <div className="">
             {/* should only show if kaminoUSD is greater than 0 or activeReward */}
-            {lendingApy.length > 0 ||
-              activeReward && (
-                <div className="flex flex-row justify-between mb-3">
-                  <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
-                  <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
-                </div>
-              )}
+            {lendingApy.length > 0 || activeReward ? (
+              <div className="flex flex-row justify-between mb-3">
+                <span className="font-poppins font-semibold text-[13px]">Trade APR</span>
+                <span className="font-display font-semibold text-[13px]">{tradeAPR}%</span>
+              </div>
+            ) : null}
 
             {lendingApy.length > 0 && !isMobile && (
               <div>
                 <h2 className="text-[10px] text-primary-gradient">Kamino APY</h2>
 
-                {lendingApy.map(({apy, token}, index) => apy > 0 && (
-                  <div key={`${token.symbol}-${index}`} className="flex flex-row items-center mb-3">
-                    <IconWithFallback
-                      src={loadIconImage(token.logoURI, mode)}
-                      className="border-solid dark:border-black-2 border-white
+                {lendingApy.map(
+                  ({ apy, token }, index) =>
+                    apy > 0 && (
+                      <div key={`${token.symbol}-${index}`} className="flex flex-row items-center mb-3">
+                        <IconWithFallback
+                          src={loadIconImage(token.logoURI, mode)}
+                          className="border-solid dark:border-black-2 border-white
                             border-[2px] rounded-full h-5 w-5"
-                    />
-                    <span className="font-poppins font-semibold text-[15px]">{token.symbol}</span>
-                    <span className="font-display font-semibold text-[15px] ml-auto">
-                      {numberFormatter(apy)}%
-                    </span>
-                  </div>
-                ))}
+                        />
+                        <span className="font-poppins font-semibold text-[15px]">{token.symbol}</span>
+                        <span className="font-display font-semibold text-[15px] ml-auto">
+                          {numberFormatter(apy)}%
+                        </span>
+                      </div>
+                    )
+                )}
               </div>
             )}
 
@@ -197,23 +196,24 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
                     />
                     <span className="font-poppins font-semibold text-[15px]">{reward.token.symbol}</span>
                     <span className="font-display font-semibold text-[15px] ml-auto">
-                      {numberFormatter(reward.pricePerDayUsd.div(pool.tvl)
-                        .multipliedBy(100).multipliedBy(365).toNumber())}%
+                      {numberFormatter(
+                        reward.pricePerDayUsd.div(pool.tvl).multipliedBy(100).multipliedBy(365).toNumber()
+                      )}
+                      %
                     </span>
                   </div>
                 ))}
               </div>
             )}
-            {lendingApy.length > 0 ||
-              (activeReward && (
-                <div
-                  className="w-full h-[1px] border-t-1 border-border-lightmode-secondary 
+            {lendingApy.length > 0 || activeReward ? (
+              <div
+                className="w-full h-[1px] border-t-1 border-border-lightmode-secondary 
                 dark:border-border-darkmode-secondary my-2"
-                />
-              ))}
+              />
+            ) : null}
             <div className="flex flex-row justify-between ">
-              <span className="font-poppins font-semibold text-[15px]">Total APR</span>
-              <span className="font-display font-semibold text-[15px]">{apr}%</span>
+              <span className="font-poppins font-semibold text-[13px]">Total APR</span>
+              <span className="font-display font-semibold text-[13px]">{apr}%</span>
             </div>
           </div>
         </TooltipContent>
@@ -297,8 +297,8 @@ export const getPoolValuesByRange = (pool, viewRange) => {
         formattedAPR: Math.max(
           0,
           pool.stats.daily.feesAprUsd +
-          pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd +
-          pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
+            pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd +
+            pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
         ),
         tradeAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUsd)),
         kaminoAPR: numberFormatter(
@@ -323,15 +323,15 @@ export const getPoolValuesByRange = (pool, viewRange) => {
         formattedAPR: Math.max(
           0,
           pool.stats.weekly.feesAprUsd +
-          pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
-          pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
+            pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
+            pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
         ),
         tradeAPR: numberFormatter(Math.max(0, pool.stats.weekly.feesAprUsd)),
         kaminoAPR: numberFormatter(
           Math.max(
             0,
             pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
-            pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
+              pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
           )
         ),
         kaminoUSD: numberFormatter(
@@ -350,15 +350,15 @@ export const getPoolValuesByRange = (pool, viewRange) => {
         formattedAPR: Math.max(
           0,
           pool.stats.monthly.feesAprUsd +
-          pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +
-          pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
+            pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +
+            pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
         ),
         tradeAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUsd)),
         kaminoAPR: numberFormatter(
           Math.max(
             0,
             pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +
-            pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
+              pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
           )
         ),
         kaminoUSD: numberFormatter(
