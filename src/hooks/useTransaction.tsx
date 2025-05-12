@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { ReactNode, useCallback, useMemo } from 'react'
 import TransactionBuilder, { TXN } from '@/web3/Builders/transaction.builder'
 import { getLatestPriorityFees, getPriorityFeeFromLevel, useConnectionConfig } from '@/context'
 import {
@@ -9,7 +9,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { SendTransactionOptions } from '@solana/wallet-adapter-base'
 import { notifyUsingPromise, promiseBuilder, SpawnLoaderToast } from '@/utils/perpsNotifications'
 import { useWalletBalance } from '@/context/walletBalanceContext'
-import { toast } from 'sonner'
+import { toast, ToastT } from 'sonner'
 
 type SendTxnOptions = {
   connection?: Connection
@@ -24,7 +24,16 @@ type useTransactionReturn = {
   sendTransaction: (
     txn: Transaction | TransactionBuilder,
     connectionData?: SendTxnOptions,
-    notify?: (promise: Promise<unknown>) => Promise<boolean>,
+    notify?: (
+      promise: Promise<unknown>,
+      onDismiss?: (toast: ToastT) => void,
+      tentativeTxId?: string,
+      successMessage?: ReactNode,
+      errorMessage?: ReactNode,
+      transactionLoadingDuration?: number,
+      transactionDuration?: number,
+      id?: string | number | undefined
+    ) => Promise<boolean>,
     isCreatePoolInx?: boolean,
     skipComputeUnitsLimit?: boolean
   ) => Promise<{ success: boolean; txSig: string }>

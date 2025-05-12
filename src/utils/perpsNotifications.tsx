@@ -308,14 +308,23 @@ export const notifyUsingPromiseForCloseTx = async (promise: Promise<unknown>): P
   }
 
 }
-export const notifyUsingPromiseForCreatePool = async (promise: Promise<unknown>): Promise<boolean> => {
+export const notifyUsingPromiseForCreatePool = async (
+  promise: Promise<unknown>,
+  onDismiss?: (toast: ToastT) => void,
+  tentativeTxId?: string,
+  successMessage?: ReactNode,
+  errorMessage?: ReactNode,
+  transactionLoadingDuration = 20000,
+  transactionDuration = 20000,
+  id: string | number | undefined = undefined
+  ): Promise<boolean> => {
   const config = {
     dismissible: true,
     onDismiss: (t: ToastT) => {
       toast.dismiss(t.id)
     },
     duration: 45000,
-    id: 'create-pool-toast'
+    id: id ?? 'create-pool-toast'
   } as ExternalToast
   config.id = toast(<IntemediaryToast className={cn(`w-[290px]`)}>
     <IntemediaryToastHeading stage={'loading'}>Creating pool...</IntemediaryToastHeading>
