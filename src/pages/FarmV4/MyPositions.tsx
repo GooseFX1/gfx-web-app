@@ -207,20 +207,20 @@ const MyPositionItem: FC<{
             <div className="">
               {/* should only show if kaminoUSD is greater than 0 or activeReward */}
               {lendingApy.length > 0 || activeReward ? (
-                <div className="flex flex-row justify-between mb-3">
-                  <span className="font-poppins font-semibold text-[13px]">Trade APR</span>
-                  <span className="font-display font-semibold text-[13px]">{tradeAPR}%</span>
+                <div className="flex flex-row justify-between mb-2">
+                  <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
+                  <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
                 </div>
               ) : null}
 
               {lendingApy.length > 0 && !isMobile && (
                 <div>
-                  <h2 className="text-[10px] text-primary-gradient">Kamino APY</h2>
+                  <h2 className="text-[13px] text-primary-gradient mb-2">Kamino Yield</h2>
 
                   {lendingApy.map(
                     ({ apy, token }, index) =>
                       apy > 0 && (
-                        <div key={`${token.symbol}-${index}`} className="flex flex-row items-center mb-3">
+                        <div key={`${token.symbol}-${index}`} className="flex flex-row items-center mb-2">
                           <IconWithFallback
                             src={loadIconImage(token.logoURI, mode)}
                             className="border-solid dark:border-black-2 border-white
@@ -238,10 +238,10 @@ const MyPositionItem: FC<{
 
               {activeReward && activeReward.length > 0 && (
                 <div>
-                  <h2 className="text-[10px] text-primary-gradient">Boosted Rewards</h2>
+                  <h2 className="text-[13px] text-primary-gradient mb-2">Boosted Rewards</h2>
 
                   {activeReward.map((reward, index) => (
-                    <div key={`${reward.token.symbol}-${index}`} className="flex flex-row items-center mb-3">
+                    <div key={`${reward.token.symbol}-${index}`} className="flex flex-row items-center mb-2">
                       <IconWithFallback
                         src={loadIconImage(reward.token.logoURI, mode)}
                         className="border-solid dark:border-black-2 border-white
@@ -265,11 +265,9 @@ const MyPositionItem: FC<{
                 />
               ) : null}
 
-              <div
-                className="flex flex-row justify-between"
-              >
-                <span className="font-poppins font-semibold text-[13px]">Total APR</span>
-                <span className="font-display font-semibold text-[13px]">{apr}%</span>
+              <div className="flex flex-row justify-between">
+                <span className="font-poppins font-semibold text-[15px]">Total APR</span>
+                <span className="font-display font-semibold text-[15px]">{apr}%</span>
               </div>
             </div>
           </TooltipContent>
