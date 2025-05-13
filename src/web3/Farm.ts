@@ -765,7 +765,7 @@ export const createPool = async (
     .initializePoolPartners()
     .accounts({
       payer: userPubKey,
-      poolState: accsForCreatePool.poolState,
+      poolState: accsForCreatePool.poolState
     })
     .instruction()
   let createPoolTxn: Transaction

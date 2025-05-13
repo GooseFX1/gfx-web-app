@@ -41,7 +41,7 @@ import SocialLinks from '@/components/common/SocialLinks'
 import { NAV_LINKS, navigateTo, navigateToCurried } from '@/utils/requests'
 import { FooterDivider } from '@/layouts/Footer'
 import PriorityFee from '@/components/footer/PriorityFee'
-import { ConnectReown } from './ConnectRewon'
+import { ConnectReown } from './ConnectReown'
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
