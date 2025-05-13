@@ -6,7 +6,7 @@ import { ThemeToggle } from '../components/ThemeToggle'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import useBreakPoint from '../hooks/useBreakPoint'
-import { Connect } from './Connect'
+//import { Connect } from './Connect'
 // import { More } from './More'
 import { ModalSlide } from '../components/ModalSlide'
 import { APP_DEFAULT_ROUTE, MODAL_TYPES, SOCIAL_MEDIAS } from '../constants'
@@ -41,6 +41,7 @@ import SocialLinks from '@/components/common/SocialLinks'
 import { NAV_LINKS, navigateTo, navigateToCurried } from '@/utils/requests'
 import { FooterDivider } from '@/layouts/Footer'
 import PriorityFee from '@/components/footer/PriorityFee'
+import { ConnectReown } from './ConnectRewon'
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
@@ -99,7 +100,8 @@ export const MainNav: FC = () => {
         <div className={`flex items-center gap-3.75 absolute right-0 mr-2.5 min-md:mr-0 min-md:pr-[15px]`}>
           <RewardsButton />
           {/* {pathname.includes('gamma') && <LiteProToggle />} */}
-          <Connect />
+          {/* <Connect /> */}
+          <ConnectReown />
           {/* <NotificationButton /> */}
           {/*<More />*/}
           <MobileNav />

@@ -34,6 +34,8 @@
     "@project-serum/borsh": "^0.2.5",
     "@pythnetwork/client": "^2.2.0",
     "@raydium-io/raydium-sdk-v2": "^0.1.68-alpha",
+    "@reown/appkit": "^1.7.4",
+    "@reown/appkit-adapter-solana": "^1.7.4",
     "@rive-app/react-canvas": "^4.2.1",
     "@solana-mobile/wallet-adapter-mobile": "^2.0.1",
     "@solana/buffer-layout": "^4.0.0",
