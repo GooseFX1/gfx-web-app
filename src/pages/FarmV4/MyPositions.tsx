@@ -53,22 +53,21 @@ const MyPositions: FC<{
       break
   }
 
-  const poolIds = queryPositions.map(pool => pool.id);
+  const poolIds = queryPositions.map((pool) => pool.id)
 
   const { data: activeRewards } = useQuery({
     queryKey: [QUERY_KEY, 'activeRewards', poolIds],
     queryFn: async () => {
-      const results = {};
+      const results = {}
       for (const poolId of poolIds) {
         if (poolId) {
-          results[poolId] = getActiveRewardByPoolId(new PublicKey(poolId));
+          results[poolId] = getActiveRewardByPoolId(new PublicKey(poolId))
         }
       }
-      return results;
+      return results
     },
     enabled: poolIds.length > 0
-  });
-
+  })
 
   return (
     <div className={`flex flex-col gap-[15px] mt-[15px]`}>
@@ -81,39 +80,32 @@ const MyPositions: FC<{
   )
 }
 
-
 const MyPositionItem: FC<{
   pool: GAMMAPortfolioPool
   activeRewards: any
 }> = ({ pool, activeRewards }) => {
   const { base58PublicKey } = useWalletBalance()
 
-  const {
-    updateGammaRoute,
-    setModeOfOperation,
-    sortConfig,
-    viewRange
-  } = useGamma()
+  const { updateGammaRoute, setModeOfOperation, sortConfig, viewRange } = useGamma()
 
   const { isTablet, isDesktop, isMobile } = useBreakPoint()
   const { mode } = useDarkMode()
 
   const { apyForPool } = useKamino()
-  const activeReward = activeRewards?.[pool.id];
-  const isOwner = base58PublicKey === pool.poolCreator;
+  const activeReward = activeRewards?.[pool.id]
+  const isOwner = base58PublicKey === pool.poolCreator
   const { formattedAPR, tradeAPR } = getPoolValuesByRange(pool, viewRange)
 
   const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
   const apr = activeReward
     ? numberFormatter(
-      new BigNumber(formattedAPR)
-        .plus(activeRewardsAmount.div(pool.tvl)
-          .multipliedBy(100).multipliedBy(365).toNumber())
-        .toNumber()
-    )
+        new BigNumber(formattedAPR)
+          .plus(activeRewardsAmount.div(pool.tvl).multipliedBy(100).multipliedBy(365).toNumber())
+          .toNumber()
+      )
     : numberFormatter(formattedAPR)
 
-    const lendingApy = apyForPool(pool)
+  const lendingApy = apyForPool(pool)
 
   return (
     <div
@@ -214,41 +206,42 @@ const MyPositionItem: FC<{
           <TooltipContent className="w-[266px] max-w-[266px] p-2">
             <div className="">
               {/* should only show if kaminoUSD is greater than 0 or activeReward */}
-              {lendingApy.length > 0 ||
-                activeReward && (
-                <div className="flex flex-row justify-between mb-3">
+              {lendingApy.length > 0 || activeReward ? (
+                <div className="flex flex-row justify-between mb-2">
                   <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
                   <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
                 </div>
+              ) : null}
+
+              {lendingApy.length > 0 && !isMobile && (
+                <div>
+                  <h2 className="text-[13px] text-primary-gradient mb-2">Kamino Yield</h2>
+
+                  {lendingApy.map(
+                    ({ apy, token }, index) =>
+                      apy > 0 && (
+                        <div key={`${token.symbol}-${index}`} className="flex flex-row items-center mb-2">
+                          <IconWithFallback
+                            src={loadIconImage(token.logoURI, mode)}
+                            className="border-solid dark:border-black-2 border-white
+                            border-[2px] rounded-full h-5 w-5"
+                          />
+                          <span className="font-poppins font-semibold text-[15px]">{token.symbol}</span>
+                          <span className="font-display font-semibold text-[15px] ml-auto">
+                            {numberFormatter(apy)}%
+                          </span>
+                        </div>
+                      )
+                  )}
+                </div>
               )}
 
-{lendingApy.length > 0 && !isMobile && (
-              <div>
-                <h2 className="text-[10px] text-primary-gradient">Kamino APY</h2>
-
-                {lendingApy.map(({apy, token}, index) => apy > 0 && (
-                  <div key={`${token.symbol}-${index}`} className="flex flex-row items-center mb-3">
-                    <IconWithFallback
-                      src={loadIconImage(token.logoURI, mode)}
-                      className="border-solid dark:border-black-2 border-white
-                            border-[2px] rounded-full h-5 w-5"
-                    />
-                    <span className="font-poppins font-semibold text-[15px]">{token.symbol}</span>
-                    <span className="font-display font-semibold text-[15px] ml-auto">
-                      {numberFormatter(apy)}%
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-              {activeReward &&
-                activeReward.length > 0 &&
+              {activeReward && activeReward.length > 0 && (
                 <div>
-                  <h2 className="text-[10px] text-primary-gradient">Boosted Rewards</h2>
+                  <h2 className="text-[13px] text-primary-gradient mb-2">Boosted Rewards</h2>
 
                   {activeReward.map((reward, index) => (
-                    <div key={`${reward.token.symbol}-${index}`} className="flex flex-row items-center mb-3">
+                    <div key={`${reward.token.symbol}-${index}`} className="flex flex-row items-center mb-2">
                       <IconWithFallback
                         src={loadIconImage(reward.token.logoURI, mode)}
                         className="border-solid dark:border-black-2 border-white
@@ -256,19 +249,23 @@ const MyPositionItem: FC<{
                       />
                       <span className="font-poppins font-semibold text-[15px]">{reward.token.symbol}</span>
                       <span className="font-display font-semibold text-[15px] ml-auto">
-                        {numberFormatter(reward.pricePerDayUsd.div(pool.tvl)
-                          .multipliedBy(100).multipliedBy(365).toNumber())}%
+                        {numberFormatter(
+                          reward.pricePerDayUsd.div(pool.tvl).multipliedBy(100).multipliedBy(365).toNumber()
+                        )}
+                        %
                       </span>
-                    </div>))}
+                    </div>
+                  ))}
                 </div>
-              }
-              {lendingApy.length > 0 || activeReward && (
+              )}
+              {lendingApy.length > 0 || activeReward ? (
                 <div
                   className="w-full h-[1px] border-t-1 border-border-lightmode-secondary 
               dark:border-border-darkmode-secondary my-2"
                 />
-              )}
-              <div className="flex flex-row justify-between ">
+              ) : null}
+
+              <div className="flex flex-row justify-between">
                 <span className="font-poppins font-semibold text-[15px]">Total APR</span>
                 <span className="font-display font-semibold text-[15px]">{apr}%</span>
               </div>
@@ -319,10 +316,8 @@ const MyPositionItem: FC<{
   )
 }
 
-
 const MyPositionItems: FC = () => {
-  const { selectedTokens, sortConfig, showCreatedPools, isPortfolio, viewRange } =
-    useGamma()
+  const { selectedTokens, sortConfig, showCreatedPools, isPortfolio, viewRange } = useGamma()
   const query = useUserPortfolioPools({
     mintA: selectedTokens[0]?.address,
     mintB: selectedTokens[1]?.address,
