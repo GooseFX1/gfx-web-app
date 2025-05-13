@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   Dispatch,
   FC,
@@ -26,7 +26,7 @@ import {
   ModeOfOperation
 } from '@/pages/FarmV4/constants'
 import { useConnectionConfig } from './settings'
-import { aborter } from '@/utils'
+import { aborter, sleep } from '@/utils'
 import usePrevious from '@/hooks/usePrevious'
 import useMultiSelect from '@/hooks/useMultiSelect'
 import useUserLiquidityQuery from '@/queries/GAMMA/user/useUserLiquidityQuery'
@@ -39,7 +39,7 @@ import useSearchParams from '@/hooks/useSearchParams'
 import { useHistory } from 'react-router-dom'
 import { ROUTES } from '@/Router'
 import { toast } from 'sonner'
-import { ToastTitle } from 'gfx-component-lib'
+import { cn, ToastTitle, IntemediaryToast, IntemediaryToastHeading, OpenToastLink } from 'gfx-component-lib'
 import { useDarkMode } from '@/context/dark_mode'
 
 type ViewRange = 0 | 1 | 2
@@ -91,6 +91,8 @@ interface GAMMADataModel {
   poolsQuery: UsePoolQueryResponse
   referralDetails: GAMMAPoolPartner | null
   updateGammaRoute: (pool?: GAMMAPool) => void
+  createPoolState: CreationPoolFlowStateEnum
+  setCreatePoolState: Dispatch<SetStateAction<CreationPoolFlowStateEnum>>
 }
 
 export type TokenListToken = {
@@ -125,6 +127,13 @@ function referralToast(referralPartner: string) {
   )
 }
 
+export enum CreationPoolFlowStateEnum {
+  NONE = 0,
+  ON_CHAIN = 1,
+  GAMMA_API_UPDATING = 2,
+  QUERY_FETCHING = 3
+}
+
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { userCache, connection, updateUserCache } = useConnectionConfig()
@@ -141,6 +150,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [showCreatedPools, setShowCreatedPools] = useState<boolean>(userCache.gamma.showCreatedFilter)
   const [currentSort, setCurrentSortState] = useState<string>(userCache.gamma.currentSort)
   const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
+  const [createPoolState, setCreatePoolState] = useState<CreationPoolFlowStateEnum>(CreationPoolFlowStateEnum.NONE)
+  const previousCreatePoolState = usePrevious(createPoolState)
   const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
 
   const isPortfolio = useMemo(
@@ -185,7 +196,13 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return null
   }, [searchParams, selectedCard, mode])
 
-  useLayoutEffect(() => setOpenDepositWithdrawSlider(Object.keys(selectedCard).length > 0), [selectedCard])
+  useLayoutEffect(
+    () =>
+      setOpenDepositWithdrawSlider(
+        Object.keys(selectedCard).length > 0 || createPoolState != CreationPoolFlowStateEnum.NONE
+      ),
+    [selectedCard, createPoolState]
+  )
 
   const setCurrentSort = (value: string) => {
     let sortValue = value
@@ -294,27 +311,99 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const selectPoolByDeeplinkQuery = useSelectPoolBySymbols({
     symbolA: deepLink.symbolA,
     symbolB: deepLink.symbolB,
-    enabled: localPool?.id == 'NOT_FOUND'
+    enabled:
+      localPool?.id == 'NOT_FOUND' &&
+      (createPoolState == CreationPoolFlowStateEnum.NONE ||
+        createPoolState == CreationPoolFlowStateEnum.QUERY_FETCHING)
   })
   useLayoutEffect(() => {
+    // in NONE state - and there is no data, or an error occured
+    if (
+      createPoolState == CreationPoolFlowStateEnum.NONE &&
+      previousCreatePoolState != createPoolState &&
+      (selectPoolByDeeplinkQuery.isError || !selectPoolByDeeplinkQuery.data || !localPool)
+    ) {
+      let message
+      switch (previousCreatePoolState) {
+        case CreationPoolFlowStateEnum.ON_CHAIN:
+          message = 'Failed to create pool. Please try again.'
+          break
+        case CreationPoolFlowStateEnum.GAMMA_API_UPDATING:
+        case CreationPoolFlowStateEnum.QUERY_FETCHING:
+          message = 'Please reload the page to see the new pool, something went wrong.'
+          break
+        default:
+          message = 'Please try again.'
+          break
+      }
+      // selectedCard is empty
+      if ((!selectedCard?.id || !localPool) && !selectPoolByDeeplinkQuery.isLoading) {
+        toast.error(
+          <IntemediaryToast className={cn(`w-[290px]`)}>
+            <IntemediaryToastHeading stage={'error'}>Something went wrong!</IntemediaryToastHeading>
+            <p>{message} If the issue persists, please contact us on Discord.</p>
+            <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
+              Contact Us
+            </OpenToastLink>
+          </IntemediaryToast>,
+          { id: 'error-gamma-create-toast' }
+        )
+      }
+
+      if (
+        !!selectedCard?.id &&
+        (previousCreatePoolState == CreationPoolFlowStateEnum.QUERY_FETCHING || localPool)
+      ) {
+        setIsConfettiVisible(true)
+      }
+    }
+  }, [previousCreatePoolState, createPoolState, selectedCard, localPool, selectPoolByDeeplinkQuery.isSuccess])
+  useLayoutEffect(() => {
+    const setCardWithQueryAfterCreatePool = async () => {
+      if (createPoolState != CreationPoolFlowStateEnum.NONE) {
+        // allow animation to finish
+        await sleep(1500)
+      }
+      if (selectPoolByDeeplinkQuery.data) {
+        setSelectedCard(selectPoolByDeeplinkQuery.data)
+      } else if (selectedCardHasData) {
+        setSelectedCard({})
+      }
+    }
+    const hasDeepLink = deepLink.symbolA && deepLink.symbolB
+    const selectedCardHasData = selectedCard && Object.keys(selectedCard).length > 0
+    const queryIsError = selectPoolByDeeplinkQuery.isError
+    const queryHasData = selectPoolByDeeplinkQuery.data && !!selectPoolByDeeplinkQuery.data?.id
+    const queryHasUserLiqData = queryHasData && !!selectPoolByDeeplinkQuery.data.userLpPosition
+
+    const localPoolFound = localPool?.id != 'NOT_FOUND' && localPool?.id != 'LOADING'
+    const createPoolStateIsActive = createPoolState != CreationPoolFlowStateEnum.NONE
+    if (createPoolStateIsActive && (localPoolFound || queryHasData || queryIsError)) {
+      setCreatePoolState(CreationPoolFlowStateEnum.NONE)
+    }
+
+    // confetti flow
+    if (createPoolStateIsActive && (queryHasData || localPoolFound)) {
+      setIsConfettiVisible(true)
+    }
+
     // if local pool exists
-    if (localPool.id != selectedCard?.id && localPool.id != 'NOT_FOUND' && localPool.id != 'LOADING') {
+    if (localPool?.id != selectedCard?.id && localPoolFound) {
       setSelectedCard(localPool)
       return
     }
-    // if URL params
-    if (deepLink.symbolA && deepLink.symbolB) {
-      // if we have a result set pool
-      if (selectPoolByDeeplinkQuery.isSuccess && selectPoolByDeeplinkQuery.data) {
-        // if is portfolio & liq data
-        if (!isPortfolio || selectPoolByDeeplinkQuery.data.userLpPosition != undefined) {
-          setSelectedCard(selectPoolByDeeplinkQuery.data)
-        } else if (userLiqQuery.isSuccess && selectedCard?.id != '' && selectedCard?.id != undefined) {
-          // no user liquidity data for this pool
-          updateGammaRoute()
-        }
+    // if URL params && if we have a result set pool
+    if (hasDeepLink && selectPoolByDeeplinkQuery.isSuccess && queryHasData) {
+      // if not on portfolio or we have liq data update
+      if (!isPortfolio || queryHasUserLiqData) {
+        setCardWithQueryAfterCreatePool()
+      } else if (userLiqQuery.isSuccess && queryHasData) {
+        // no user liquidity data for this pool
+        updateGammaRoute()
       }
-    } else if (selectedCard?.id != '' && selectedCard?.id != undefined) {
+    } else if (queryIsError) {
+      updateGammaRoute()
+    } else if (selectedCardHasData && !hasDeepLink) {
       // if no URL params, but we have card unset
       setSelectedCard({})
     }
@@ -326,7 +415,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     localPool,
     portfolioPoolsQuery,
     poolsQuery,
-    selectedCard
+    selectedCard,
+    createPoolState
   ])
   useEffect(() => {
     if (!isCardMode && prevIsCardMode !== isCardMode) {
@@ -432,7 +522,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         filteredPools: poolsQuery.data?.allPages ?? [],
         poolsQuery,
         referralDetails,
-        updateGammaRoute
+        updateGammaRoute,
+        createPoolState,
+        setCreatePoolState
       }}
     >
       {children}
