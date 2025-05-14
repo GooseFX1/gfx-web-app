@@ -38,7 +38,7 @@ import { JupToken } from '@/pages/FarmV4/constants'
 import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import Decimal from 'decimal.js-light'
 import * as anchor from '@coral-xyz/anchor'
-import { GAMMAToken } from '@/types/gamma'
+import { GAMMAPoolPartner, GAMMAToken } from '@/types/gamma'
 import { CurveCalculator, SYSTEM_PROGRAM_ID } from 'goosefx-amm-sdk'
 import BigNumber from 'bignumber.js'
 import dayjs from 'dayjs'
@@ -167,7 +167,8 @@ const createLiquidityAccountIX = async (
   poolIdKey: PublicKey,
   liquidityAccountKey: PublicKey,
   poolPartners: PublicKey,
-  program: Program<Gamma>
+  program: Program<Gamma>,
+  referralCode: string | null = null
 ): Promise<TransactionInstruction> => {
   const createLiquidityInstructionAccount = {
     user: userPublicKey,
@@ -176,7 +177,7 @@ const createLiquidityAccountIX = async (
     poolPartners,
     systemProgram: SYSTEM
   }
-  const createLiquidityIX: TransactionInstruction = await program.instruction.initUserPoolLiquidity(null, {
+  const createLiquidityIX: TransactionInstruction = await program.instruction.initUserPoolLiquidity(referralCode, {
     accounts: createLiquidityInstructionAccount
   })
   //console.log('createLiquidityIX', createLiquidityIX, userPublicKey?.toBase58())
@@ -451,7 +452,8 @@ export const deposit = async (
   userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   poolIdKey: PublicKey,
   liqKey: PublicKey,
-  isSolMaxDeposit?: boolean
+  isSolMaxDeposit?: boolean,
+  referralDetails?: GAMMAPoolPartner | null
 ): Promise<Transaction> => {
   const depositAccounts = await getAccountsForDepositWithdraw(
     selectedCard,
@@ -471,7 +473,8 @@ export const deposit = async (
       depositAccounts?.poolState,
       depositAccounts?.userPoolLiquidity,
       depositAccounts?.poolPartners,
-      program
+      program,
+      referralDetails?.address ?? null
     )
   }
   const userSourceAmount =

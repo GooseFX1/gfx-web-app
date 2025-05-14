@@ -64,7 +64,8 @@ export const DepositWithdrawSlider: FC<{
     forceCronAndUpdateLocalData,
     openDepositWithdrawSlider,
     createPoolState,
-    setCreatePoolState
+    setCreatePoolState,
+    referralDetails
   } = useGamma()
   const { isDarkMode } = useDarkMode()
   const [userSourceTokenBal, setUserSourceTokenBal] = useState<number>()
@@ -126,7 +127,8 @@ export const DepositWithdrawSlider: FC<{
         userTargetTokenType,
         poolIdQuery.data,
         liqKeyQuery.data,
-        isSolMaxDeposit
+        isSolMaxDeposit,
+        referralDetails
       )
       txBuilder.add(tx)
       const poolMessage = `(${selectedCard?.mintA?.symbol}-${selectedCard?.mintB?.symbol}) pool.`
