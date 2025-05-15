@@ -16,6 +16,7 @@ import { FooterItem, FooterItemContent } from '@/components/footer/FooterItem'
 import { Circle } from '@/components/common/Circle'
 import useNetworkStatus from '@/hooks/useNetworkStatus'
 import useBreakPoint from '@/hooks/useBreakPoint'
+import { useConnectionConfig } from '@/context'
 
 const STATUS = {
   CONGESTED: `The Solana network is very busy right now, your transactions might  take longer and sometimes they
@@ -26,6 +27,7 @@ const STATUS = {
 }
 const NetworkStatus: FC = () => {
   const { status } = useNetworkStatus()
+  const {latency} = useConnectionConfig()
   const { isMobile } = useBreakPoint()
   const { networkStatus, textColor, bgColor, description } = useMemo(() => {
     switch (status) {
@@ -62,8 +64,8 @@ const NetworkStatus: FC = () => {
   const component = useMemo(() => {
     const footerItemContent = (
       <FooterItemContent>
-        <p className={cn('text-b3 font-bold', textColor)}>{networkStatus}</p>
-        <Circle className={bgColor} />
+        <p className={cn('text-b3 font-bold', textColor)}>{latency} MS</p>
+        <Circle className={cn('w-2 h-2', bgColor)} />
       </FooterItemContent>
     )
     if (isMobile) {
