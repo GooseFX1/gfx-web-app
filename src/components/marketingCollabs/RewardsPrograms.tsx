@@ -55,7 +55,7 @@ const RewardsPrograms: FC = () => {
         </AccordionTrigger>
         <AccordionContent className="pb-5">
           <Slider {...settings} ref={sliderRef}>
-            <div className={`px-1 slide`}>
+            {/* <div className={`px-1 slide`}>
               <div
                 className={`relative flex ${
                   isMobile ? '' : 'gap-7 items-center'
@@ -88,7 +88,8 @@ const RewardsPrograms: FC = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
+
             <div className={`px-1 slide`}>
               <div
                 className={`relative flex ${

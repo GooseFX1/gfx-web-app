@@ -203,7 +203,7 @@ export function attachUserLiquidity(
   return pools
     .map((pool) => {
       const userLpPosition = userLpPositions.get(pool.id)
-      console.log('lp pos', userLpPosition)
+
       return {
         ...pool,
         userLpPosition: userLpPosition ? structuredClone(userLpPosition) : undefined,
