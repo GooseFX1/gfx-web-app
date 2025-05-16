@@ -168,7 +168,7 @@ const createLiquidityAccountIX = async (
   liquidityAccountKey: PublicKey,
   poolPartners: PublicKey,
   program: Program<Gamma>,
-  referralCode: string | null = null
+  referralCode: PublicKey | null = null
 ): Promise<TransactionInstruction> => {
   const createLiquidityInstructionAccount = {
     user: userPublicKey,
@@ -474,7 +474,7 @@ export const deposit = async (
       depositAccounts?.userPoolLiquidity,
       depositAccounts?.poolPartners,
       program,
-      referralDetails?.address ?? null
+      referralDetails?.address ? new PublicKey(referralDetails.address) : null
     )
   }
   const userSourceAmount =
