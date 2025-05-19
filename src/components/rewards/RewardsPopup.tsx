@@ -72,7 +72,7 @@ export const RewardsPopup: FC = () => {
             />
           </Button>
           <DialogBody
-            className={`bg-white dark:bg-black-2 relative min-md:min-h-[441px]
+            className={`bg-white dark:bg-black-2 relative min-md:min-h-[372px]
          w-full flex flex-row max-md:flex-col rounded-t-[10px]`}
           >
             {panelIndex == REWARD_PANEL_INDEX && <Rewards />}

@@ -94,7 +94,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
         <div
           className={`inline-flex justify-between w-full border-b-1 border-solid min-md:border-none 
         border-b-border-lightmode-secondary dark:border-b-border-darkmode-secondary
-         px-2 py-2.5 min-md:px-0 min-md:pt-7 min-md:pb-0`}
+         px-2 py-2.5 md:px-[11%] md:pt-7 md:pb-0`}
         >
           <RewardsLeftPanelHeading />
           <div className={'inline-flex gap-2'}>
@@ -103,7 +103,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
           </div>
         </div>
 
-        <div className={'inline-flex gap-4 w-full !min-w-[360px] px-2 min-md:px-[11%]'}>
+        <div className={'inline-flex gap-4 w-full px-2 min-md:px-[11%] max-w-vw'}>
           <div
             className={`flex-col gap-4 hidden xl:flex p-4 border-1 border-solid rounded-[8px]
         border-border-lightmode-primary dark:border-border-darkmode-primary`}
@@ -165,7 +165,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
 
           <div
             className={`flex-col gap-3 flex p-4 border-1 border-solid rounded-[8px]
-        border-border-lightmode-primary dark:border-border-darkmode-primary w-full min-w-[360px] `}
+        border-border-lightmode-primary dark:border-border-darkmode-primary w-full`}
           >
             <div className={'inline-flex w-full justify-between'}>
               <RadioGroup defaultValue={'stake'} className={'flex-shrink gap-1.25'}>
