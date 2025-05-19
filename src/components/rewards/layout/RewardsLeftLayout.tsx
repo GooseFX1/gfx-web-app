@@ -9,8 +9,8 @@ function RewardsLeftLayout({ children, className }: RewardsLeftLayoutProps): JSX
   return (
     <div
       className={cn(
-        `flex flex-col items-center p-2.5 min-md:p-3.75
-      leading-normal overflow-y-auto grow shrink basis-[350px] min-md:basis-3/5 min-md:max-h-full
+        `flex flex-col items-center px-2 py-2.5 min-md:p-7
+      leading-normal overflow-y-auto grow shrink basis-[453px] min-md:basis-[1040px] min-md:max-h-full
       gap-2 min-md:gap-3.75
     `,
         className

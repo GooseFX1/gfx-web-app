@@ -6,14 +6,12 @@ export default function RewardsLeftPanelHeading(): JSX.Element {
 
   return (
     <div className={`flex gap-5 mr-auto`}>
-      <img className={`hidden min-md:block`} src={`/img/mainnav/rewards-${mode}.svg`} height="69px" width="64px" />
+      <img className={`w-[35px] h-[35px] min-md:block`}
+           src={`/img/mainnav/rewards-${mode}.svg`} height="35px" width="35px" />
       <div className={`flex flex-col gap-[4px] justify-center`}>
-        <h2 className={`dark:text-grey-5 text-black-4 text-h3 min-sm:text-h2 font-semibold !mb-0 `}>
-          Earn USDC daily by staking your GOFX
+        <h2 className={`dark:text-grey-5 text-black-4 text-h4 min-sm:text-h2 font-semibold !mb-0 `}>
+          Earn $USDC Daily by Staking $GOFX*
         </h2>
-        <h3 className={`dark:text-grey-2 text-grey-1 text-h4 min-sm:text-h3 font-semibold !mb-0 `}>
-          How much would you like to stake?
-        </h3>
       </div>
     </div>
   )
