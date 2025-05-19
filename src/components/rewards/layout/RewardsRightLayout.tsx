@@ -9,9 +9,9 @@ function RewardsRightLayout({ children, className }: RewardsRightLayoutProps): J
   return (
     <div
       className={cn(
-        `p-2 min-md:p-7 flex flex-col gap-2 leading-normal
-        font-semibold grow shrink-0 items-center basis-[262px] min-md:basis-[400px]
-        min-md:rounded-tr-[10px]`,
+        `p-2 min-lg:p-7 flex flex-col gap-2 leading-normal
+        font-semibold grow shrink-0 items-center basis-[262px] min-lg:basis-[400px]
+        min-lg:rounded-tr-[10px]`,
         className
       )}
     >
