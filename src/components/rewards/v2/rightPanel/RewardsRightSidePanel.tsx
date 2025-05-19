@@ -32,7 +32,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
         Earnings
       </h2>
 
-      <div className={`flex flex-col gap-2 items-center fonte-semibold mt-[9px] md:mt-0`}>
+      <div className={`flex flex-col gap-2 items-center font-semibold mt-[9px] md:mt-0`}>
         <h1
           className={cn(
             `mb-0 text-[40px] md:text-[48px] text-white opacity-60 leading-[1] font-sans`,
