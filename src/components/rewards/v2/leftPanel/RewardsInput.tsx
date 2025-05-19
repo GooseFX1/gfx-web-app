@@ -1,5 +1,5 @@
 import { TokenAmount } from '@solana/web3.js'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import useRewards from '@/context/rewardsContext'
 import { getAccurateNumber } from '@/utils'
 import TokenInput from '@/components/common/TokenInput'
@@ -8,15 +8,18 @@ interface RewardsInputProps {
   userGoFxBalance: TokenAmount
   isStakeSelected: boolean
   onInputChange?: (value: string) => void
+  setInputValue: (value: string) => void
+  inputValue: string
 }
 
 export default function RewardsInput({
   userGoFxBalance,
   isStakeSelected,
-  onInputChange
+  onInputChange,
+  setInputValue,
+  inputValue
 }: RewardsInputProps): JSX.Element {
   const { totalStaked } = useRewards()
-  const [inputValue, setInputValue] = useState<string>()
   const handleHalf = useCallback(async () => {
     let half: number
     if (isStakeSelected) {
