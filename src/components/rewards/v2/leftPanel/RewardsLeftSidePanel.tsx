@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import useBoolean from '../../../../hooks/useBoolean'
 import RewardsLeftPanelHeading from './RewardsHeading'
@@ -14,8 +14,9 @@ import RewardsLeftLayout from '../../layout/RewardsLeftLayout'
 import { Button, cn, DialogCloseDefault, Icon, RadioGroup, RadioGroupItem } from 'gfx-component-lib'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import HowItWorksButton from '@/components/rewards/v2/HowItWorksButton'
+import LottieConfetti from '@/pages/FarmV4/LottieConfetti'
 
-export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Element {
+export default function RewardsLeftSidePanel(): JSX.Element {
   const { balance } = useWalletBalance()
   const userHasGoFx = balance['GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'].logoURI != ''
   const {mode} = useDarkMode()
@@ -23,29 +24,14 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
   const [isStakeSelected, setIsStakeSelected] = useBoolean(true)
   const { connected, publicKey } = useWallet()
   const { connection } = useConnectionConfig()
-  const [approxRewardAmount, setApproxRewardAmount] = useState<number>(0)
-  const [calculating, setCalculating] = useBoolean(false)
-  console.log(approxRewardAmount,calculating)
+  const [isConfettiVisible, setIsConfettiVisible] = useState(false)
+
   const [inputValue, setInputValue] = useState<string>()
-  const { totalStakedInUSD, gofxValue, totalStaked, stakeMutation, unstakeableTickets, unstakeMutation } =
+  const { totalStaked, stakeMutation, unstakeableTickets, unstakeMutation } =
     useRewards()
   const [isUnstakeConfirmationModalOpen, setIsUnstakeConfirmationModalOpen] = useBoolean(false)
   const [proposedStakeAmount, setProposedStakeAmount] = useState<string>('')
 
-  const adjustedStakeAmountInUSD = useMemo(() => {
-    const value = parseFloat(proposedStakeAmount)
-    if (isNaN(value)) {
-      return 0.0
-    }
-    return value * gofxValue
-  }, [proposedStakeAmount, gofxValue])
-  useEffect(() => {
-    setCalculating.on()
-    const val = ((Number(totalStakedInUSD) + adjustedStakeAmountInUSD) / 365) * (apy / 100)
-    setApproxRewardAmount(val)
-    const t = setTimeout(setCalculating.off, 1000)
-    return () => clearTimeout(t)
-  }, [totalStakedInUSD, apy, adjustedStakeAmountInUSD])
 
   const handleStakeUnstake = useCallback(async () => {
     if (!publicKey || !connection || !connected) {
@@ -63,6 +49,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
         await stakeMutation.mutate(+proposedStakeAmount)
         console.log(`Successful Stake: ${publicKey.toBase58()}
          - ${proposedStakeAmount}`)
+        setIsConfettiVisible(true)
       } catch (error) {
         console.error(error)
       } finally {
@@ -85,6 +72,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
   const isStakeOrUnstaking = stakeMutation.isLoading || unstakeMutation.isLoading;
   return (
     <RewardsLeftLayout>
+      {isConfettiVisible && <LottieConfetti onClick={()=>setIsConfettiVisible(false)}/>}
       <UnstakeConfirmationModal
         amount={+proposedStakeAmount}
         isOpen={isUnstakeConfirmationModalOpen}
@@ -219,18 +207,17 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
                   disabled={disabledStakeButton || isStakeOrUnstaking}
                   isLoading={isStakeOrUnstaking}
                 >
-                  {isStakeSelected
-                      ? `Stake`
-                      : `Unstake`
-                  }
+                  {isStakeSelected ? `Stake` : `Unstake`}
                 </Button>
               )}
               {connected && <RewardsUnstakeBottomBar />}
             </div>
           </div>
         </div>
-        <p className={`text-b3 font-semibold text-text-lightmode-tertiary dark:text-text-darkmode-tertiary 
-        px-2 min-md:px-[11%]`}>
+        <p
+          className={`text-b3 font-semibold text-text-lightmode-tertiary dark:text-text-darkmode-tertiary 
+        px-2 min-md:px-[11%]`}
+        >
           *Our revenue-sharing program pays you from fees earned with GAMMA and SSL. While staked, your assets stay
           locked and can’t be sold or transferred. To claim your assets, just wait for the cooldown period to be
           completed.
