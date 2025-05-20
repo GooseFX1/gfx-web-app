@@ -12,7 +12,7 @@ function RewardsUnstakeBottomBar(): JSX.Element {
       <AllUnstakingTicketsModal isOpen={isModalOpen} onClose={setIsModalOpen.off} />
       <Button
         className={cn(
-          `text-grey-2 dark:text-grey-1 underline items-baseline p-0 font-bold
+          `text-grey-2 dark:text-grey-1 underline items-baseline p-0 font-bold items-center
   `,
           activeUnstakingTickets.length > 0 && `text-blue-1 dark:text-white`
         )}

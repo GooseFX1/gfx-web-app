@@ -58,7 +58,11 @@ const TokenInput = ({
           </Button>
         </InputElementLeft>
       }
-      rightItem={<InputElementRight>{tokenSymbol}</InputElementRight>}
+      rightItem={<InputElementRight
+        className={cn(`text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`,
+          !!value && `text-text-lightmode-primary dark:text-text-darkmode-primary`)}>
+        {tokenSymbol}
+    </InputElementRight>}
     >
       <Input
         ref={inputRef}

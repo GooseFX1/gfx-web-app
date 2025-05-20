@@ -91,38 +91,36 @@ export default function RewardsLeftSidePanel(): JSX.Element {
           </div>
         </div>
 
-        <div className={'inline-flex gap-4 w-full px-2 min-md:px-[11%] max-w-vw'}>
+        <div className={'flex flex-col lg:flex-row gap-4 w-full px-2 min-md:px-[11%] max-w-vw'}>
           <div
-            className={`flex-col gap-4 hidden xl:flex p-4 border-1 border-solid rounded-[8px]
+            className={`flex-col gap-4 flex p-2 border-1 border-solid rounded-[8px]
         border-border-lightmode-primary dark:border-border-darkmode-primary`}
           >
-            <div className={'flex flex-col gap-2 w-[250px]'}>
-              <h3 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>
-                {userHasGoFx ? 'Want to earn more?' : 'Start earning'}
-              </h3>
-              {userHasGoFx ? (
-                <p
-                  className={
-                    'text-b2 font-semibold text-text-lightmode-secondary dark:text-text-darkmode-secondary'
-                  }
-                >
-                  You have{' '}
-                  <span className={'font-bold text-text-purple dark:text-text-darkmode-primary'}>
+            <h3 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>
+              {userHasGoFx ? 'Want to earn more?' : 'Start earning'}
+            </h3>
+            {userHasGoFx ? (
+              <p
+                className={
+                  'text-b2 font-semibold text-text-lightmode-secondary dark:text-text-darkmode-secondary'
+                }
+              >
+                You have{' '}
+                <span className={'font-bold text-text-purple dark:text-text-darkmode-primary'}>
                     {numberFormatter(userGoFxBalance.uiAmount)} GOFX
                   </span>{' '}
-                  available to stake.
-                </p>
-              ) : (
-                <p
-                  className={
-                    'text-b2 font-semibold text-text-lightmode-secondary dark:text-text-darkmode-secondary'
-                  }
-                >
-                  Buy $GOFX to begin staking
-                </p>
-              )}
-            </div>
-            <div className={'inline-flex justify-between w-full'}>
+                available to stake.
+              </p>
+            ) : (
+              <p
+                className={
+                  'text-b2 font-semibold text-text-lightmode-secondary dark:text-text-darkmode-secondary'
+                }
+              >
+                Buy $GOFX, stake it and start earning daily.
+              </p>
+            )}
+            <div className={cn(`inline-flex w-full mt-auto gap-2.5`, connected && 'justify-between')}>
               {userHasGoFx && (
                 <Button
                   className={'w-[96px]'}
@@ -142,17 +140,16 @@ export default function RewardsLeftSidePanel(): JSX.Element {
                 onClick={() =>
                   window.open('https://jup.ag/swap/USDC-GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD', '_blank')
                 }
-                className={`ml-auto font-bold
-         text-white min-w-[122px] min-md:py-2.5 py-1.875 px-2.5 min-md:px-1.5 box-border !pl-0`}
+                className={`font-bold text-text-lightmode-primary dark:text-white min-w-[122px] box-border`}
               >
-                <img src="/img/crypto/GOFX.svg" alt="gofx-tooken" className="h-[26px]" />
+                <img src="/img/crypto/GOFX.svg" alt="gofx-tooken" className="h-[20px] w-[20px]" />
                 Buy GOFX
               </Button>
             </div>
           </div>
 
           <div
-            className={`flex-col gap-3 flex p-4 border-1 border-solid rounded-[8px]
+            className={`flex-col gap-3 flex p-2 border-1 border-solid rounded-[8px]
         border-border-lightmode-primary dark:border-border-darkmode-primary w-full`}
           >
             <div className={'inline-flex w-full justify-between'}>
@@ -175,9 +172,9 @@ export default function RewardsLeftSidePanel(): JSX.Element {
                 <Icon src={`/img/assets/wallet-${mode}-${userHasGoFx ? 'enabled' : 'disabled'}.svg`} />
                 <span
                   className={cn(
-                    `font-semibold text-b2 text-text-lightmode-secondary
-               dark:text-text-darkmode-secondary`,
-                    userGoFxBalance && 'text-text-lightmode-primary dark:text-text-darkmode-primary'
+                    `font-semibold text-b2 text-text-lightmode-tertiary
+               dark:text-text-lightmode-tertiary`,
+                    userHasGoFx && 'text-text-lightmode-primary dark:text-text-darkmode-primary'
                   )}
                 >
                   {numberFormatter(userGoFxBalance.uiAmount)} GOFX
@@ -196,8 +193,8 @@ export default function RewardsLeftSidePanel(): JSX.Element {
             <div className={'inline-flex w-full justify-between items-center gap-4'}>
               {!connected ? (
                 <Connect
-                  containerStyle={`w-full min-md:w-full h-[40px] rounded-[100px]`}
-                  customButtonStyle={`w-full min-md:w-full max-w-full h-[40px] min-md:h-[40px]`}
+                  containerStyle={`w-[153px] h-[35px] rounded-[100px]`}
+                  customButtonStyle={`w-[153px] max-w-full h-[35px] min-md:h-[35px]`}
                 />
               ) : (
                 <Button
