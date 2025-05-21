@@ -14,7 +14,8 @@ export enum GAMMA_ENDPOINTS_V1 {
   PORTFOLIO_POOLS = '/v1/portfolio',
   PORTFOLIO_POOLS_SEARCH = '/v1/portfolio/search',
   POOL_BY_ID = '/v1/pool',
-  POOL_BY_SYMBOLS = '/v1/pool/info/symbols'
+  POOL_BY_SYMBOLS = '/v1/pool/info/symbols',
+  ADD_OR_CHECK_TOKEN = '/v1/add-new-token',
 }
 
 export const KAMINO_API_BASE = 'https://api.kamino.finance/kamino-market'
