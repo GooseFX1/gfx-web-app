@@ -173,7 +173,7 @@ export default function RewardsLeftSidePanel(): JSX.Element {
                 <span
                   className={cn(
                     `font-semibold text-b2 text-text-lightmode-tertiary
-               dark:text-text-lightmode-tertiary`,
+               dark:text-text-darkmode-tertiary`,
                     userHasGoFx && 'text-text-lightmode-primary dark:text-text-darkmode-primary'
                   )}
                 >
