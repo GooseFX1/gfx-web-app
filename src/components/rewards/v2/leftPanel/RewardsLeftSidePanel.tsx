@@ -174,7 +174,8 @@ export default function RewardsLeftSidePanel(): JSX.Element {
                   className={cn(
                     `font-semibold text-b2 text-text-lightmode-tertiary
                dark:text-text-darkmode-tertiary`,
-                    userHasGoFx && 'text-text-lightmode-primary dark:text-text-darkmode-primary'
+                   (userHasGoFx && userGoFxBalance.uiAmount > 0) &&
+                    'text-text-lightmode-primary dark:text-text-darkmode-primary'
                   )}
                 >
                   {numberFormatter(userGoFxBalance.uiAmount)} GOFX
