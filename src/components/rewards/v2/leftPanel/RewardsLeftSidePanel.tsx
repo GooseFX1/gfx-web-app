@@ -169,7 +169,8 @@ export default function RewardsLeftSidePanel(): JSX.Element {
                 </RadioGroupItem>
               </RadioGroup>
               <div className={'inline-flex items-center gap-1.25'}>
-                <Icon src={`/img/assets/wallet-${mode}-${userHasGoFx ? 'enabled' : 'disabled'}.svg`} />
+                <Icon src={`/img/assets/wallet-${mode}-${(userHasGoFx && userGoFxBalance.uiAmount > 0)
+                  ? 'enabled' : 'disabled'}.svg`} />
                 <span
                   className={cn(
                     `font-semibold text-b2 text-text-lightmode-tertiary
