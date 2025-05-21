@@ -24,7 +24,7 @@ export default function RewardsLeftSidePanel(): JSX.Element {
   const [isStakeSelected, setIsStakeSelected] = useBoolean(true)
   const { connected, publicKey } = useWallet()
   const { connection } = useConnectionConfig()
-  const [isConfettiVisible, setIsConfettiVisible] = useState(false)
+  const {isConfettiVisible, setIsConfettiVisible} = useRewards()
 
   const [inputValue, setInputValue] = useState<string>()
   const { totalStaked, stakeMutation, unstakeableTickets, unstakeMutation } =
@@ -49,7 +49,6 @@ export default function RewardsLeftSidePanel(): JSX.Element {
         await stakeMutation.mutate(+proposedStakeAmount)
         console.log(`Successful Stake: ${publicKey.toBase58()}
          - ${proposedStakeAmount}`)
-        setIsConfettiVisible(true)
       } catch (error) {
         console.error(error)
       } finally {

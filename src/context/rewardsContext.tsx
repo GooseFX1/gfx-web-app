@@ -1,4 +1,4 @@
-import { createContext, FC, ReactNode, useCallback, useContext, useMemo } from 'react'
+import { createContext, FC, ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 import {
   ADDRESSES,
   GfxStakeRewards,
@@ -45,6 +45,8 @@ interface IRewardsContext {
   gofxValue: number
   userStakeRatio: number
   totalStakedGlobally: number
+  isConfettiVisible: boolean
+  setIsConfettiVisible: (value: boolean) => void
 }
 
 const RewardsContext = createContext<IRewardsContext | null>(null)
@@ -54,6 +56,8 @@ const getNetwork = (network) => (network == 'mainnet-beta' || network == 'testne
 export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { network, connection, endpoint } = useConnectionConfig()
   const { base58PublicKey, publicKey } = useWalletBalance()
+  const [isConfettiVisible, setIsConfettiVisible] = useState(false)
+
   const gofxValueQuery = useQuery({
     queryKey: [QUERY_KEY, 'gofx-value'],
     queryFn: async () => {
@@ -206,6 +210,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
     },
     onSuccess: async () => {
+      setIsConfettiVisible(true)
       await Promise.all([
         userDataQuery.refetch(),
         poolStateQuery.refetch()
@@ -306,7 +311,9 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         totalStakedInUSD,
         gofxValue: gofxValueQuery.data ?? 0,
         userStakeRatio,
-        totalStakedGlobally: poolStateQuery.data?.totalStakedGlobally ?? 0
+        totalStakedGlobally: poolStateQuery.data?.totalStakedGlobally ?? 0,
+        isConfettiVisible,
+        setIsConfettiVisible
       }}
     >
       {children}
