@@ -24,7 +24,14 @@ type GAMMAEnrichedTokenResponse = Record<string, unknown>
 
 async function addOrCheckToken({ address, signal }) {
   const response = (
-    await fetch(getGAMMARootUrl() + GAMMA_ENDPOINTS_V1.ADD_OR_CHECK_TOKEN + `?address=${address}`, {
+    await fetch(getGAMMARootUrl() + GAMMA_ENDPOINTS_V1.ADD_OR_CHECK_TOKEN, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        address
+      }),
       signal
     }).then((res) => res.json())
   ).data as GAMMAEnrichedTokenResponse
