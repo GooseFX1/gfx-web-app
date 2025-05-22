@@ -4,7 +4,7 @@ import useBoolean from '../../../../hooks/useBoolean'
 import RewardsLeftPanelHeading from './RewardsHeading'
 import RewardsInput from './RewardsInput'
 import { Connect } from '../../../../layouts'
-import { useConnectionConfig, useDarkMode } from '../../../../context'
+import { useConnectionConfig, useDarkMode, useRewardToggle } from '../../../../context'
 import useRewards from '../../../../context/rewardsContext'
 import RewardsUnstakeBottomBar from './UnstakeBottomBar'
 import { numberFormatter } from '../../../../utils'
@@ -14,24 +14,24 @@ import RewardsLeftLayout from '../../layout/RewardsLeftLayout'
 import { Button, cn, DialogCloseDefault, Icon, RadioGroup, RadioGroupItem } from 'gfx-component-lib'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import HowItWorksButton from '@/components/rewards/v2/HowItWorksButton'
-import LottieConfetti from '@/pages/FarmV4/LottieConfetti'
+import { NATIVE_MINT } from '@solana/spl-token-v2'
+import { useHistory } from 'react-router-dom'
 
+const gofxMint = 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'
 export default function RewardsLeftSidePanel(): JSX.Element {
+  const { rewardToggle } = useRewardToggle()
   const { balance } = useWalletBalance()
-  const userHasGoFx = balance['GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'].logoURI != ''
-  const {mode} = useDarkMode()
-  const userGoFxBalance = balance['GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'].tokenAmount
+  const userHasGoFx = balance[gofxMint].logoURI != ''
+  const { mode } = useDarkMode()
+  const userGoFxBalance = balance[gofxMint].tokenAmount
   const [isStakeSelected, setIsStakeSelected] = useBoolean(true)
   const { connected, publicKey } = useWallet()
   const { connection } = useConnectionConfig()
-  const {isConfettiVisible, setIsConfettiVisible} = useRewards()
-
-  const [inputValue, setInputValue] = useState<string>()
-  const { totalStaked, stakeMutation, unstakeableTickets, unstakeMutation } =
-    useRewards()
+  const { inputValue, setInputValue } = useRewards()
+  const history = useHistory()
+  const { totalStaked, stakeMutation, unstakeableTickets, unstakeMutation } = useRewards()
   const [isUnstakeConfirmationModalOpen, setIsUnstakeConfirmationModalOpen] = useBoolean(false)
   const [proposedStakeAmount, setProposedStakeAmount] = useState<string>('')
-
 
   const handleStakeUnstake = useCallback(async () => {
     if (!publicKey || !connection || !connected) {
@@ -58,7 +58,7 @@ export default function RewardsLeftSidePanel(): JSX.Element {
       setIsUnstakeConfirmationModalOpen.on()
     }
   }, [stakeMutation, proposedStakeAmount, publicKey, isStakeSelected])
-  const handleMiniStake = () =>{
+  const handleMiniStake = () => {
     setIsStakeSelected.on()
     setProposedStakeAmount(userGoFxBalance.uiAmountString)
     setInputValue(userGoFxBalance.uiAmountString)
@@ -68,10 +68,9 @@ export default function RewardsLeftSidePanel(): JSX.Element {
     isNaN(+proposedStakeAmount) ||
     (isStakeSelected && +proposedStakeAmount > userGoFxBalance.uiAmount) ||
     (!isStakeSelected && +proposedStakeAmount > totalStaked)
-  const isStakeOrUnstaking = stakeMutation.isLoading || unstakeMutation.isLoading;
+  const isStakeOrUnstaking = stakeMutation.isLoading || unstakeMutation.isLoading
   return (
     <RewardsLeftLayout>
-      {isConfettiVisible && <LottieConfetti onClick={()=>setIsConfettiVisible(false)}/>}
       <UnstakeConfirmationModal
         amount={+proposedStakeAmount}
         isOpen={isUnstakeConfirmationModalOpen}
@@ -100,21 +99,17 @@ export default function RewardsLeftSidePanel(): JSX.Element {
             </h3>
             {userHasGoFx ? (
               <p
-                className={
-                  'text-b2 font-semibold text-text-lightmode-secondary dark:text-text-darkmode-secondary'
-                }
+                className={'text-b2 font-semibold text-text-lightmode-secondary dark:text-text-darkmode-secondary'}
               >
                 You have{' '}
                 <span className={'font-bold text-text-purple dark:text-text-darkmode-primary'}>
-                    {numberFormatter(userGoFxBalance.uiAmount)} GOFX
-                  </span>{' '}
+                  {numberFormatter(userGoFxBalance.uiAmount)} GOFX
+                </span>{' '}
                 available to stake.
               </p>
             ) : (
               <p
-                className={
-                  'text-b2 font-semibold text-text-lightmode-secondary dark:text-text-darkmode-secondary'
-                }
+                className={'text-b2 font-semibold text-text-lightmode-secondary dark:text-text-darkmode-secondary'}
               >
                 Buy $GOFX, stake it and start earning daily.
               </p>
@@ -122,7 +117,7 @@ export default function RewardsLeftSidePanel(): JSX.Element {
             <div className={cn(`inline-flex w-full mt-auto gap-2.5`, connected && 'justify-between')}>
               {userHasGoFx && (
                 <Button
-                  className={'w-[96px]'}
+                  className={'!w-[96px] !max-w-[96px] !min-w-[96px]'}
                   colorScheme={'blue'}
                   size={'default'}
                   onClick={handleMiniStake}
@@ -136,9 +131,13 @@ export default function RewardsLeftSidePanel(): JSX.Element {
                 colorScheme={'primaryGradient'}
                 variant={'outline'}
                 size={'default'}
-                onClick={() =>
-                  window.open('https://jup.ag/swap/USDC-GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD', '_blank')
-                }
+                onClick={() => {
+                  history.replace({
+                    pathname: '/swap',
+                    search: `?mintA=${NATIVE_MINT.toBase58()}&mintB=${gofxMint}`
+                  })
+                  rewardToggle(false)
+                }}
                 className={`font-bold text-text-lightmode-primary dark:text-white min-w-[122px] box-border`}
               >
                 <img src="/img/crypto/GOFX.svg" alt="gofx-tooken" className="h-[20px] w-[20px]" />
@@ -168,14 +167,18 @@ export default function RewardsLeftSidePanel(): JSX.Element {
                 </RadioGroupItem>
               </RadioGroup>
               <div className={'inline-flex items-center gap-1.25'}>
-                <Icon src={`/img/assets/wallet-${mode}-${(userHasGoFx && userGoFxBalance.uiAmount > 0)
-                  ? 'enabled' : 'disabled'}.svg`} />
+                <Icon
+                  src={`/img/assets/wallet-${mode}-${
+                    userHasGoFx && userGoFxBalance.uiAmount > 0 ? 'enabled' : 'disabled'
+                  }.svg`}
+                />
                 <span
                   className={cn(
                     `font-semibold text-b2 text-text-lightmode-tertiary
                dark:text-text-darkmode-tertiary`,
-                   (userHasGoFx && userGoFxBalance.uiAmount > 0) &&
-                    'text-text-lightmode-primary dark:text-text-darkmode-primary'
+                    userHasGoFx &&
+                      userGoFxBalance.uiAmount > 0 &&
+                      'text-text-lightmode-primary dark:text-text-darkmode-primary'
                   )}
                 >
                   {numberFormatter(userGoFxBalance.uiAmount)} GOFX
