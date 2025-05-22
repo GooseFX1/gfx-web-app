@@ -146,5 +146,5 @@ export const axiosFetchWithRetries = async (
 export default apiClient
 
 export function getGAMMARootUrl() {
-  return `http://localhost:4000`
+  return `https://${GAMMA_API_BASE}.goosefx.io`
 }
