@@ -1,4 +1,4 @@
-import { createContext, FC, ReactNode, useCallback, useContext, useMemo } from 'react'
+import { createContext, FC, ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 import {
   ADDRESSES,
   GfxStakeRewards,
@@ -45,6 +45,10 @@ interface IRewardsContext {
   gofxValue: number
   userStakeRatio: number
   totalStakedGlobally: number
+  isConfettiVisible: boolean
+  setIsConfettiVisible: (value: boolean) => void
+  inputValue: string
+  setInputValue: (value: string) => void
 }
 
 const RewardsContext = createContext<IRewardsContext | null>(null)
@@ -54,6 +58,9 @@ const getNetwork = (network) => (network == 'mainnet-beta' || network == 'testne
 export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { network, connection, endpoint } = useConnectionConfig()
   const { base58PublicKey, publicKey } = useWalletBalance()
+  const [isConfettiVisible, setIsConfettiVisible] = useState(false)
+  const [inputValue, setInputValue] = useState<string>()
+
   const gofxValueQuery = useQuery({
     queryKey: [QUERY_KEY, 'gofx-value'],
     queryFn: async () => {
@@ -201,11 +208,14 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     mutationFn: async (amount: number) => {
       const stakeAmount = new anchor.BN(amount * 1e9)
       const txn = await checkForUserAccount(async () => programQuery.data.stake(stakeAmount, publicKey))
-      await sendTransaction(txn, {
+      const res = await sendTransaction(txn, {
         confirmationWaitType: 'confirmed'
       })
+      if (!res.success) throw new Error('stake failed')
     },
     onSuccess: async () => {
+      setIsConfettiVisible(true)
+      setInputValue('')
       await Promise.all([
         userDataQuery.refetch(),
         poolStateQuery.refetch()
@@ -306,7 +316,11 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         totalStakedInUSD,
         gofxValue: gofxValueQuery.data ?? 0,
         userStakeRatio,
-        totalStakedGlobally: poolStateQuery.data?.totalStakedGlobally ?? 0
+        totalStakedGlobally: poolStateQuery.data?.totalStakedGlobally ?? 0,
+        isConfettiVisible,
+        setIsConfettiVisible,
+        inputValue,
+        setInputValue
       }}
     >
       {children}

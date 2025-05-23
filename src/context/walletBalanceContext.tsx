@@ -167,6 +167,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       topBalances: []
     },
     staleTime: INTERVALS.MINUTE,
+    keepPreviousData: true,
     enabled: onChainTokenQuery.isSuccess && !onChainTokenQuery.isFetching && !!base58PublicKey
   })
 

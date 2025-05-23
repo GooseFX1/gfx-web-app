@@ -1,26 +1,24 @@
-import React, { useCallback, useState, useEffect } from 'react'
+import React from 'react'
 import RewardsLeftSidePanel from './leftPanel/RewardsLeftSidePanel'
 import RewardsRightSidePanel from './rightPanel/RewardsRightSidePanel'
+import { useQuery } from '@tanstack/react-query'
 
 function Rewards(): JSX.Element {
-  const [apy, setApy] = useState<number>(0)
-  const fetchApy = useCallback(
-    () =>
-      fetch('https://api-services.goosefx.io/gofx-stake/getApy')
-        .then((res) => res.json())
-        .then((res) => setApy(Number(res.data)))
-        .catch((err) => console.error('failed to fetch apy', err)),
-    []
-  )
-  useEffect(() => {
-    fetchApy()
-    const id = setInterval(fetchApy, 60000)
-    return () => clearInterval(id)
-  }, [fetchApy])
+  const apyQuery = useQuery({
+    queryKey: ['stake-apy'],
+    queryFn: async () => {
+      const response = await fetch('https://api-services.goosefx.io/gofx-stake/getApy')
+      const data = await response.json()
+      return Number(data.data)
+    },
+    staleTime: 60000,
+    placeholderData: 0.00
+  })
+
   return (
     <>
-      <RewardsLeftSidePanel apy={apy} />
-      <RewardsRightSidePanel apy={apy} />
+      <RewardsLeftSidePanel />
+      <RewardsRightSidePanel apy={apyQuery.data} />
     </>
   )
 }

@@ -2,9 +2,11 @@ import React, { createContext, FC, ReactNode, useContext, useEffect, useLayoutEf
 import { JupToken } from '@/pages/FarmV4/constants'
 import { fetchTokensByPublicKey } from '@/api/gamma'
 import { useConnectionConfig } from '@/context/settings'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import useTokenInput, { useTokenInputCommands } from '@/hooks/useTokenInput'
 import useTokensQuery from '@/queries/useTokensQuery'
+import { useQuery } from '@tanstack/react-query'
+import { INTERVALS } from '@/utils/time'
 
 interface ISwapConfig {
   tokens: JupToken[]
@@ -29,6 +31,7 @@ const SwapContext = createContext<ISwapConfig | null>(null)
 
 export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const history = useHistory()
+  const {search} = useLocation()
   const { userCache, updateUserCache } = useConnectionConfig()
   const [searchValue, setSearchValue] = useState<string>('')
   const [selectedTokenA, setSelectedTokenA] = useState<JupToken | null>(null)
@@ -36,32 +39,43 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [amountTokenA, amountTokenACommands] = useTokenInput()
   const [amountTokenB, amountTokenBCommands] = useTokenInput()
   const [slippage, setSlippage] = useState<number>(userCache?.swap?.slippage ?? 1.0)
-  // external hooks
-  useLayoutEffect(() => {
+
+  const tokenDeepLinkQuery = useQuery({
+    queryKey: ['tokenDeepLink', search],
+    queryFn: async () => {
+      const query = new URLSearchParams(location.search);
+      const mintA = query.get('mintA');
+      const mintB = query.get('mintB');
+
+      let keys = '';
+      if (mintA) {
+        keys += mintA;
+      }
+      if (mintB) {
+        keys += ',';
+        keys += mintB;
+      }
+      if (!keys) return [];
+      return await fetchTokensByPublicKey(keys).then((res) => {
+        if (!res || !res.success) return [];
+        return res.data.tokens;
+      })
+    },
+    staleTime: INTERVALS.MINUTE,
+    placeholderData: []
+  })
+
+  useEffect(() => {
+    if (tokenDeepLinkQuery.isError || tokenDeepLinkQuery.data?.length === 0) return;
+    console.log('REMOUNT')
     const query = new URLSearchParams(location.search);
     const mintA = query.get('mintA');
     const mintB = query.get('mintB');
-
-    let keys = '';
-    if (mintA) {
-      keys += mintA;
-    }
-    if (mintB) {
-      keys += ',';
-      keys += mintB;
-    }
-    fetchTokensByPublicKey(keys).then((res) => {
-      if (!res || !res.success) return;
-      res.data.tokens.forEach((token) => {
-        if (token.address === mintA) {
-          setSelectedTokenA(token);
-        }
-        if (token.address === mintB) {
-          setSelectedTokenB(token);
-        }
-      })
-    })
-  }, [])
+    const tokenA = tokenDeepLinkQuery.data.find((token) => token.address === mintA);
+    const tokenB = tokenDeepLinkQuery.data.find((token) => token.address === mintB);
+    setSelectedTokenA(tokenA);
+    setSelectedTokenB(tokenB);
+  }, [tokenDeepLinkQuery.data])
 
   useLayoutEffect(() => {
     const mintA = selectedTokenA?.address;
@@ -80,7 +94,6 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         search: params.toString()
       });
     }
-
   }, [selectedTokenA, selectedTokenB])
 
   useEffect(() => {
