@@ -12,11 +12,22 @@ import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { getThemeVariables } from 'antd/dist/theme'
 import svgr from 'vite-plugin-svgr'
+import nodeResolve from '@esbuild-plugins/node-resolve';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
     nodePolyfills(),
+    nodeResolve({
+      extensions: ['.js', '.ts'],
+      onResolved: (resolved) => {
+        // Fix for process/ import
+        if (resolved.includes('process/')) {
+          return resolved.replace('process/', 'process');
+        }
+        return resolved;
+      }
+    }),
     tsconfigPaths(),
     wasm(),
     topLevelAwait(),
@@ -97,7 +108,22 @@ export default defineConfig(({ mode }) => ({
   },
   esbuild: {
     drop: mode == 'development' ? [] : ['console', 'debugger'],
-    pure: mode === 'production' ? ['console.log'] : []
+    pure: mode === 'production' ? ['console.log'] : [],
+    alias: {
+      'process/': 'process'
+    },
+    plugins: [
+      nodeResolve({
+        extensions: ['.js', '.ts'],
+        onResolved: (resolved) => {
+          // Fix for process/ import
+          if (resolved.includes('process/')) {
+            return resolved.replace('process/', 'process');
+          }
+          return resolved;
+        }
+      })
+    ]
   },
   build: {
     outDir: 'build',
@@ -118,8 +144,14 @@ export default defineConfig(({ mode }) => ({
     alias: [
       { find: /^~/, replacement: '' },
       { find: /^@\//, replacement: '/src/' },
-      { find: 'goosefx-amm-sdk', replacement: '/gamma-sdk' }
+      { find: 'goosefx-amm-sdk', replacement: '/gamma-sdk' },
+      { find: 'process/', replacement: 'process' },
     ]
   },
-  assetsInclude: ['gamma-wasm/gamma_wasm_bg.wasm']
+  assetsInclude: ['gamma-wasm/gamma_wasm_bg.wasm'],
+  define: {
+    // Replace any instances of 'process/' with 'process'
+    'require("process/")': 'require("process")',
+    "require('process/')": "require('process')"
+  }
 }))

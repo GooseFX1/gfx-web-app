@@ -5,11 +5,11 @@ import {
   BlockheightBasedTransactionConfirmationStrategy,
   Commitment, Connection, Transaction
 } from '@solana/web3.js'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { SendTransactionOptions } from '@solana/wallet-adapter-base'
 import { notifyUsingPromise, promiseBuilder, SpawnLoaderToast } from '@/utils/perpsNotifications'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { toast, ToastT } from 'sonner'
+import useWallet from '@/hooks/useWallet'
 
 type SendTxnOptions = {
   connection?: Connection
@@ -45,19 +45,21 @@ type useTransactionReturn = {
     skipComputeUnitsLimit?: boolean
   ) => Promise<{ success: boolean; txSig: string }>
 }
-const baseSet = new Set()
+//const baseSet = new Set()
 
 function useTransaction(): useTransactionReturn {
   const { priorityFeeValue, priorityFee } = useConnectionConfig()
-  const { sendTransaction: sendTransactionOriginal, wallet, signAllTransactions } = useWallet()
+  const { walletProvider } = useWallet()
   const { connection: originalConnection } = useConnectionConfig()
   const { publicKey } = useWalletBalance()
   const createTransactionBuilder = useCallback(
     (txn?: TXN) => new TransactionBuilder(txn).setPriorityFee(priorityFeeValue),
     [priorityFeeValue]
   )
-  const supportedTransactionTypes = useMemo(() =>
-    wallet?.adapter?.supportedTransactionVersions ?? baseSet, [wallet])
+  //TODO: supportedTransactionVersions is not present & hence changed to false
+  // const supportedTransactionTypes = useMemo(() =>
+  //   wallet?.adapter?.supportedTransactionVersions ?? baseSet, [wallet])
+
   const sendTransaction =
     async (txnIn: Transaction | TransactionBuilder,
       connectionData?: SendTxnOptions,
@@ -74,7 +76,7 @@ function useTransaction(): useTransactionReturn {
       const blockHash = await connection.getLatestBlockhash('confirmed')
       const result = await getLatestPriorityFees(
         (txnIn instanceof TransactionBuilder ? await txnIn
-          ._getTransactionWithoutPriorityFee(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0)) : txnIn)
+          ._getTransactionWithoutPriorityFee(publicKey, blockHash.blockhash, false) : txnIn)
       )
       const priorityFromLevel = typeof result === 'number' ? result : getPriorityFeeFromLevel(priorityFee, result)
       console.log({ result, priorityFromLevel })
@@ -84,14 +86,13 @@ function useTransaction(): useTransactionReturn {
           ._getTransaction(
             publicKey,
             blockHash.blockhash,
-            supportedTransactionTypes.has(0),
+            false,
             isCreatePoolInx,
             skipComputeUnitsLimit) :
         txnIn
       console.log('signing txn', txn)
       const id = SpawnLoaderToast({ duration: connectionData?.transactionDuration ?? 60000 })
-
-      const txSig = await sendTransactionOriginal(txn, connection, options).catch((err) => {
+      const txSig = await walletProvider.sendTransactionOriginal(txn, connection, options).catch((err) => {
         console.log('[ERROR] Transaction failed', err)
         return ''
       })
@@ -162,7 +163,7 @@ function useTransaction(): useTransactionReturn {
       const result = await getLatestPriorityFees(
         (txnIns[0] instanceof TransactionBuilder ? await txnIns[0]
           ._getTransactionWithoutPriorityFee(publicKey, blockHash.blockhash,
-            supportedTransactionTypes.has(0)) : txnIns[0])
+            false) : txnIns[0])
       )
       const priorityFromLevel = typeof result === 'number'
         ? result : getPriorityFeeFromLevel(priorityFee, result)
@@ -176,13 +177,13 @@ function useTransaction(): useTransactionReturn {
           ._getTransaction(
             publicKey,
             blockHash.blockhash,
-            supportedTransactionTypes.has(0),
+            false,
             isCreatePoolInx,
             skipComputeUnitsLimit) :
         txnIn)
       )
 
-      const signedTransactions = await signAllTransactions(txns)
+      const signedTransactions = await walletProvider.signAllTransactions(txns)
 
       console.log("user has signed " + signedTransactions.length + " transactions");
 

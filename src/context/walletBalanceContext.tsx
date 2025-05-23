@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect } from 'react'
 import { ParsedAccountData, PublicKey, TokenAmount, Transaction, TransactionInstruction } from '@solana/web3.js'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from '@/context/settings'
 // It exists :/
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -14,10 +13,9 @@ import Decimal from 'decimal.js-light'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEY } from '@/queries/query.helper'
 import { INTERVALS } from '@/utils/time'
-
+import useWallet from '@/hooks/useWallet'
 const NATIVE_MINT = new PublicKey('So11111111111111111111111111111111111111112')
 type TokenType = 'spl-token' | 'native' | 'spl-token-2022'
-
 export interface UserTokenAccounts {
   symbol: string
   name: string
@@ -30,10 +28,8 @@ export interface UserTokenAccounts {
   price: number
   tokenType: TokenType
 }
-
 export type Balance = Record<string, UserTokenAccounts>
 type CreateTokenAccountParams = { pda: PublicKey; mint: PublicKey }
-
 export interface IWalletBalanceContext {
   balance: Balance
   topBalances: UserTokenAccounts[]
@@ -45,16 +41,11 @@ export interface IWalletBalanceContext {
   createTokenAccounts: (data: CreateTokenAccountParams[]) => Promise<void>
   walletValue: string
 }
-
 const WalletBalanceContext = createContext<IWalletBalanceContext>(null)
-
 function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JSX.Element {
-  const { wallet, sendTransaction } = useWallet()
-
-  const publicKey: PublicKey | null = wallet?.adapter?.publicKey ?? null
+  const { publicKey, walletProvider } = useWallet()
   const base58PublicKey = publicKey?.toBase58() ?? ''
   const { connection } = useConnectionConfig()
-
   const onChainTokenQuery = useQuery({
     queryKey: [QUERY_KEY, 'wallet-tokens-onchain', base58PublicKey],
     queryFn: async () => {
@@ -67,7 +58,6 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         }),
         connection.getBalance(publicKey)
       ])
-
       const accounts = [...standardTokens.value, ...token2022.value]
       return { accounts, solBalance }
     },
@@ -93,11 +83,8 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
           tokenInfo[data.parsed.info.mint].pda = account.pubkey
           tokenInfo[data.parsed.info.mint].tokenType = data.program
         })
-
         addresses = addresses.slice(0, -1)
-
         const solUIAmount = onChainTokenQuery.data.solBalance / 10 ** 9
-
         const sol = {
           isNative: true,
           symbol: 'SOL',
@@ -120,9 +107,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         }
         tokenAccounts[NATIVE_MINT.toBase58()] = sol
         tokenAccounts[publicKey.toBase58()] = sol
-
         const tokenListResponse = await fetchTokensByPublicKey(addresses)
-
         let currentWalletValue = new Decimal(0.0)
         if (tokenListResponse.success && tokenListResponse.data.tokens.length > 0) {
           for (const data of tokenListResponse.data.tokens) {
@@ -130,7 +115,6 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
             if (!(data.address in tokenAccounts) && data.address in tokenInfo) {
               tokenAccounts[data.address] = { ...tokenInfo[data.address] }
             }
-
             tokenAccounts[data.address].mint = address
             tokenAccounts[data.address] = Object.assign(tokenAccounts[data.address], rest)
             tokenAccounts[data.address].price = data.price
@@ -169,7 +153,6 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     staleTime: INTERVALS.MINUTE,
     enabled: onChainTokenQuery.isSuccess && !onChainTokenQuery.isFetching && !!base58PublicKey
   })
-
   useEffect(() => {
     if (!base58PublicKey) return
     const id = connection.onAccountChange(publicKey, () => onChainTokenQuery.refetch(), {
@@ -179,7 +162,6 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       connection.removeAccountChangeListener(id)
     }
   }, [connection, base58PublicKey, publicKey])
-
   function createTokenAccountInstruction(data: CreateTokenAccountParams) {
     return createAssociatedTokenAccountInstruction(publicKey, data.pda, publicKey, data.mint)
   }
@@ -191,7 +173,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   async function createTokenAccount(data: CreateTokenAccountParams) {
     const txnInstruction = createTokenAccountInstruction(data)
     const txn = new Transaction().add(txnInstruction)
-    const txnSig = await sendTransaction(txn, connection).catch(() => {
+    const txnSig = await walletProvider.sendTransaction(txn, connection).catch(() => {
       console.error('Error creating token account')
       return ''
     })
@@ -199,11 +181,10 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       .then(() => toast.success('Token account created!'))
       .catch(() => toast.error('Error creating token account!'))
   }
-
   async function createTokenAccounts(data: CreateTokenAccountParams[]) {
     const txnInstruction = createTokenAccountInstructions(data)
     const txn = new Transaction().add(...txnInstruction)
-    const txnSig = await sendTransaction(txn, connection).catch(() => {
+    const txnSig = await walletProvider.sendTransaction(txn, connection).catch(() => {
       console.error('Error creating token account')
       return ''
     })
@@ -259,8 +240,6 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     </WalletBalanceContext.Provider>
   )
 }
-
 export default WalletBalanceProvider
 const useWalletBalance = (): IWalletBalanceContext => useContext(WalletBalanceContext)
-
 export { useWalletBalance }

@@ -6,7 +6,7 @@ import GammaOnboard from './GammaOnboard'
 import { useConnectionConfig, useGamma, useWalletModal } from '@/context'
 import LottieConfetti from '@/pages/FarmV4/LottieConfetti'
 import { DepositWithdrawSlider } from '@/pages/FarmV4/DepositWithdrawSlider'
-import { useWallet } from '@solana/wallet-adapter-react'
+import useWallet from '@/hooks/useWallet'
 
 const FarmV4: FC = () => {
   const { isConfettiVisible, setIsConfettiVisible } = useGamma()

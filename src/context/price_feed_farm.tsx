@@ -100,7 +100,6 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
       setAccountKey(undefined)
     }
 
-    return null
   }, [publicKey, connection])
 
   const SSLProgram: Program = useMemo(

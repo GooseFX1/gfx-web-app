@@ -26,7 +26,7 @@ const solanaWeb3JsAdapter = new SolanaAdapter({
     new SolflareWalletAdapter()]
 });
 
-const projectId = "804efe2fd86670567f9b09f936a8220a";
+const projectId = "804efe2fd86670567f9b09f936a8220a"; //Project created on Reown's website
 
 const metadata = {
   name: "Goosefx AppKit Integration",
