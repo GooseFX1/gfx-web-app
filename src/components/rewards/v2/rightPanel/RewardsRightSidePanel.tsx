@@ -32,7 +32,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
   return (
     <RewardsRightLayout
       className={`bg-gradient-to-br from-green-gradient-3 to-green-gradient-4 h-full justify-center
-       gap-4 md:gap-6 md:p-6 p-2
+       gap-4 md:gap-6 md:p-6 p-2 w-full
       `}
     >
       <h2 className={`text-h2 font-semibold !mb-0 text-white mx-auto hidden md:block`}>Earnings</h2>
