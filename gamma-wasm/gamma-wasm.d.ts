@@ -261,7 +261,7 @@ export class Transaction {
   /**
    * Create a new `Transaction`
    */
-  constructor(instructions: Instructions, payer?: Pubkey);
+  constructor(instructions: Instructions, payer?: Pubkey | null);
   /**
    * Return a message containing all data that should be signed.
    */
