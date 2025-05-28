@@ -26,6 +26,7 @@
     "@jup-ag/react-hook": "^6.0.0-beta.2",
     "@ladderlabs/buddy-sdk": "0.2.17",
     "@mercurial-finance/dynamic-amm-sdk": "^1.1.2",
+    "@metaplex-foundation/js": "^0.20.1",
     "@meteora-ag/dlmm": "^1.2.2",
     "@moongate/moongate-adapter": "^0.0.99",
     "@orca-so/common-sdk": "^0.6.3",

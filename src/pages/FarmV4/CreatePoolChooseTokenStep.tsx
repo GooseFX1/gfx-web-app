@@ -349,13 +349,18 @@ function TokenSelectionInput({
   setToken: Dispatch<SetStateAction<JupToken>>
 }) {
   const [searchValue, setSearchValue] = useState('')
-  const query = useTokensQuery({searchValue})
+  const query = useTokensQuery({ searchValue })
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
   // const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
   const [popularTokens, setPopularTokens] = useState<JupToken[]>([])
   const [loadingPopularTokens, setLoadingPopularTokens] = useBoolean(false)
-  const { publicKey } = useWalletBalance()
+  const { publicKey, onChainTokenWithMetadataQuery } = useWalletBalance()
+  const [tokenList, setTokenList] = useState<TokenListToken[]>([])
+
+  useEffect(() => {
+    setTokenList(query.data.allPages ?? [])
+  }, [query.data.allPages])
 
   useEffect(() => {
     setLoadingPopularTokens.on()
@@ -367,7 +372,14 @@ function TokenSelectionInput({
       })
       .finally(() => setLoadingPopularTokens.off())
   }, [])
-  const tokenList = query.data.allPages ?? [];
+
+  useEffect(() => {
+    if (searchValue && tokenList.length == 0 && !query.isFetching) {
+      const tokens = onChainTokenWithMetadataQuery?.data?.tokens.filter((t) => t.address === searchValue)
+      setTokenList(tokens ?? [])
+    }
+  }, [searchValue, query.isFetching])
+
   return (
     <InputGroup
       leftItem={

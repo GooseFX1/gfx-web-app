@@ -1,5 +1,12 @@
-import { createContext, useContext, useEffect } from 'react'
-import { ParsedAccountData, PublicKey, TokenAmount, Transaction, TransactionInstruction } from '@solana/web3.js'
+import { createContext, useCallback, useContext, useEffect } from 'react'
+import {
+  AccountInfo,
+  ParsedAccountData,
+  PublicKey,
+  TokenAmount,
+  Transaction,
+  TransactionInstruction
+} from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from '@/context/settings'
 // It exists :/
@@ -14,6 +21,9 @@ import Decimal from 'decimal.js-light'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEY } from '@/queries/query.helper'
 import { INTERVALS } from '@/utils/time'
+
+import { Metadata, PROGRAM_ID as METAPLEX_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata'
+import { TokenListToken } from './gamma'
 
 const NATIVE_MINT = new PublicKey('So11111111111111111111111111111111111111112')
 type TokenType = 'spl-token' | 'native' | 'spl-token-2022'
@@ -44,6 +54,9 @@ export interface IWalletBalanceContext {
   createTokenAccount: (data: CreateTokenAccountParams) => Promise<void>
   createTokenAccounts: (data: CreateTokenAccountParams[]) => Promise<void>
   walletValue: string
+  fetchTokenMetadata: (mint: string) => Promise<Metadata>
+  onChainTokenQuery: any
+  onChainTokenWithMetadataQuery: any
 }
 
 const WalletBalanceContext = createContext<IWalletBalanceContext>(null)
@@ -74,6 +87,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     staleTime: Infinity,
     enabled: !!base58PublicKey
   })
+
   const gammaTokenQuery = useQuery({
     queryKey: [
       QUERY_KEY,
@@ -171,6 +185,132 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     enabled: onChainTokenQuery.isSuccess && !onChainTokenQuery.isFetching && !!base58PublicKey
   })
 
+  const onChainTokenWithMetadataQuery = useQuery({
+    queryKey: [
+      QUERY_KEY,
+      'on-chain-tokens-with-metadata',
+      onChainTokenQuery.data?.accounts,
+      gammaTokenQuery.data?.tokenAccounts
+    ],
+    queryFn: async () => {
+      if (!onChainTokenQuery.data?.accounts || !gammaTokenQuery.data?.tokenAccounts)
+        return { balance: {}, tokens: [] }
+      const balance: Balance = gammaTokenQuery.data?.balance ?? {}
+
+      const tokenAccounts = gammaTokenQuery.data?.tokenAccounts
+      const onChainAccounts = onChainTokenQuery.data?.accounts
+      const tokenWithoutMetadata = onChainAccounts.filter(
+        (account) => !tokenAccounts.find((token) => token.mint === account.account.data.parsed.info.mint)
+      )
+      const promises = tokenWithoutMetadata.map((tokenAccount) =>
+        fetchOnChainTokenWithMetadata(tokenAccount.account)
+      )
+      const tokens = await Promise.all(promises)
+
+      for (const token of tokens) {
+        const onChainAccount = onChainAccounts.find(
+          (account) => account.account.data.parsed.info.mint === token.address
+        )
+        if (!onChainAccount) continue
+
+        const parsedData = onChainAccount.account.data
+
+        balance[parsedData.parsed.info.mint] = parsedData.parsed.info
+        balance[parsedData.parsed.info.mint].pda = onChainAccount.pubkey
+        balance[parsedData.parsed.info.mint].tokenType = parsedData.program as TokenType
+        balance[parsedData.parsed.info.mint].mint = parsedData.parsed.info.mint
+
+        balance[parsedData.parsed.info.mint] = Object.assign(balance[parsedData.parsed.info.mint], token)
+        balance[parsedData.parsed.info.mint].price = token.price
+        const value = new Decimal(balance[parsedData.parsed.info.mint].tokenAmount.uiAmount).mul(token.price)
+        balance[parsedData.parsed.info.mint].value = value
+      }
+
+      return { balance, tokens }
+    },
+    placeholderData: {
+      balance: {},
+      tokens: []
+    },
+    staleTime: INTERVALS.MINUTE * 5,
+    enabled:
+      onChainTokenQuery.isSuccess &&
+      !onChainTokenQuery.isFetching &&
+      !!base58PublicKey &&
+      gammaTokenQuery.isSuccess &&
+      !gammaTokenQuery.isFetching
+  })
+
+  const getMetadataPDA = async (mint: PublicKey): Promise<PublicKey> =>
+    (
+      await PublicKey.findProgramAddress(
+        [Buffer.from('metadata'), METAPLEX_PROGRAM_ID.toBuffer(), mint.toBuffer()],
+        METAPLEX_PROGRAM_ID
+      )
+    )[0]
+
+  const fetchTokenMetadata = async (mintAddress: string) => {
+    const mintPublicKey = new PublicKey(mintAddress)
+    const metadataPDA = await getMetadataPDA(mintPublicKey)
+
+    const metadataAccount = await connection.getAccountInfo(metadataPDA)
+    if (metadataAccount) {
+      const metadata = Metadata.deserialize(metadataAccount.data)
+      return metadata[0]
+    } else {
+      console.log('Metadata not found on chain.')
+    }
+  }
+
+  const fetchOnChainTokenWithMetadata = useCallback(async (tokenAccount: AccountInfo<ParsedAccountData>) => {
+    const metadata = await fetchTokenMetadata(tokenAccount.data.parsed.info.mint)
+
+    if (!metadata) {
+      return {
+        address: tokenAccount?.data?.parsed?.info?.mint,
+        name: '',
+        symbol: '',
+        decimals: 0,
+        logoURI: '',
+        price: 0.0,
+        tags: [],
+        daily_volume: 0,
+        freeze_authority: null,
+        mint_authority: tokenAccount?.data?.parsed?.info?.owner,
+        isLST: false,
+        isPrimary: false
+      }
+    }
+
+    let image = ''
+
+    if (metadata.data.uri) {
+      try {
+        const response = await fetch(metadata.data.uri)
+        const data = await response.json()
+        image = data.image
+      } catch (e) {
+        console.log('Error fetching image', e)
+      }
+    }
+
+    const token: TokenListToken = {
+      address: tokenAccount?.data?.parsed?.info?.mint,
+      name: metadata.data.name,
+      symbol: metadata.data.symbol,
+      decimals: tokenAccount?.data?.parsed?.info?.tokenAccount?.decimals,
+      logoURI: image,
+      price: 0.0,
+      tags: [],
+      daily_volume: 0,
+      freeze_authority: null,
+      mint_authority: tokenAccount?.data?.parsed?.info?.owner,
+      isLST: false,
+      isPrimary: false
+    }
+    return token
+  }, [])
+
   useEffect(() => {
     if (!base58PublicKey) return
     const id = connection.onAccountChange(publicKey, () => onChainTokenQuery.refetch(), {
@@ -240,7 +380,13 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       }
     }
   }
-  const balanceProxy = new Proxy(gammaTokenQuery.data?.balance ?? {}, balanceProxyHandler)
+  const balanceProxy = new Proxy(
+    {
+      ...(gammaTokenQuery.data?.balance ?? {}),
+      ...(onChainTokenWithMetadataQuery.data?.balance ?? {})
+    },
+    balanceProxyHandler
+  )
 
   return (
     <WalletBalanceContext.Provider
@@ -253,7 +399,10 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         createTokenAccountInstructions,
         createTokenAccount,
         createTokenAccounts,
-        walletValue: gammaTokenQuery.data?.walletValue ?? '0.0'
+        walletValue: gammaTokenQuery.data?.walletValue ?? '0.0',
+        fetchTokenMetadata,
+        onChainTokenQuery,
+        onChainTokenWithMetadataQuery
       }}
     >
       {children}

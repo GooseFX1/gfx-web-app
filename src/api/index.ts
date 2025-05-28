@@ -21,13 +21,13 @@ const createAxiosInstance = (config: unknown) => {
       return response
     },
     (error) => {
-      if (error.code === "ERR_CANCELED") {
+      if (error.code === 'ERR_CANCELED') {
         // aborted in useEffect cleanup
-        return Promise.resolve({status: CANCELED_STATUS_CODE})
+        return Promise.resolve({ status: CANCELED_STATUS_CODE })
       }
       return Promise.reject((error.response && error.response.data) || 'Error')
     }
-  );
+  )
 
   return axiosInstance
 }
