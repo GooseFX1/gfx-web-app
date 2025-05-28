@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { RewardsButton } from '../components/rewards/RewardsPopup'
-import { useDarkMode, useRewardToggle } from '../context'
+import { useConnectionConfig, useDarkMode, useRewardToggle } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -41,6 +41,7 @@ import SocialLinks from '@/components/common/SocialLinks'
 import { NAV_LINKS, navigateTo, navigateToCurried } from '@/utils/requests'
 import { FooterDivider } from '@/layouts/Footer'
 import PriorityFee from '@/components/footer/PriorityFee'
+import { ROUTES } from '@/Router'
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
@@ -135,6 +136,7 @@ const MobileAccordionContent: FC<MobileAccordionContentProps> = ({
 )
 const MobileNav: FC = () => {
   const breakpoint = useBreakPoint()
+  const { featureFlags } = useConnectionConfig()
   const { mode } = useDarkMode()
   const { pathname } = useLocation()
   const [isOpen, setIsOpen] = useBoolean(false)
@@ -179,6 +181,30 @@ const MobileNav: FC = () => {
                 />
                 &nbsp;Swap
               </ListItem>
+              {featureFlags.tokenFeed &&
+                <ListItem
+                  variant={pathname.includes(ROUTES.TOKEN_FEED) && 'primary'}
+                  className={cn(
+                    `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
+                         dark:text-text-darkmode-tertiary h-[43px]`,
+                    pathname.includes(ROUTES.TOKEN_FEED) ?
+                      'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+                  )}
+                  onClick={() => {
+                    setIsOpen.off()
+                    history.push('/gamma')
+                  }}
+                >
+                  <img
+                    className="!h-[35px] !w-[35px]"
+                    src={`/img/mainnav/token_feed_${mode}${
+                      pathname.includes(ROUTES.TOKEN_FEED) ? '_active' : '_inactive'
+                    }.svg`}
+                    alt="dark"
+                  />
+                  &nbsp;Trade
+                </ListItem>
+              }
               <ListItem
                 variant={pathname.includes('gamma') && 'primary'}
                 className={cn(
@@ -206,8 +232,8 @@ const MobileNav: FC = () => {
                       className={`inline-flex items-center font-poppins font-semibold font-inherit text-inherit`}
                     >
                       <img
-                        className="h-[35px]"
-                        src={`/img/mainnav/more-${mode}${isMoreOpen ? '-active' : ''}.svg`}
+                        className="!h-[35px]"
+                        src={`/img/mainnav/more-${mode}${isMoreOpen ? '-active' : '-inactive'}.svg`}
                         alt="dark"
                       />
                       &nbsp;More
@@ -274,6 +300,7 @@ const MobileNav: FC = () => {
 
 const DesktopNav: FC = () => {
   const breakpoint = useBreakPoint()
+  const { featureFlags } = useConnectionConfig()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -301,6 +328,23 @@ const DesktopNav: FC = () => {
         />
         Swap
       </Button>
+      {featureFlags.tokenFeed && (
+        <Button
+          variant={'ghost'}
+          onClick={() => history.push(ROUTES.TOKEN_FEED)}
+          className={cn(
+            `tracking-wider flex-col gap-1.5 p-0 text-center text-h6 font-semibold font-poppins`,
+            pathname.includes(ROUTES.TOKEN_FEED) ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+          )}
+        >
+          <img
+            className="!w-[26px] !h-[26px] mb-0.5"
+            src={`/img/mainnav/token_feed_${mode}${pathname.includes(ROUTES.TOKEN_FEED) ? '_active' : '_inactive'}.svg`}
+            alt="dark"
+          />
+          Trade
+        </Button>
+      )}
       <Button
         variant={'ghost'}
         onClick={() => navigate('/gamma')}
@@ -329,17 +373,13 @@ const DesktopNav: FC = () => {
             <span className={`inline-flex justify-center items-center`}>
               <img
                 className="w-[26px] h-[26px] mb-0.5"
-                src={`/img/mainnav/more-${mode}${isMoreActive ? '-active' : ''}.svg`}
+                src={`/img/mainnav/more-${mode}${isMoreActive ? '-active' : '-inactive'}.svg`}
                 alt="dark"
               />
               <CircularArrow
                 cssStyle={tw`w-[12px] h-[12px]`}
                 invert={isMoreOpen}
-                css={[
-                  isMoreActive || isMoreOpen
-                    ? tw`opacity-[1]`
-                    : tw`opacity-[0.6]`
-                ]}
+                css={[isMoreActive || isMoreOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
               />
             </span>
             More

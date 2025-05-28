@@ -20,7 +20,8 @@ type TokenFeedContainerProps = {
 }
 
 export const TokenFeedContainerHeader: FC<{ children: ReactNode | ReactNode[] }> = ({ children }) => (
-  <div className={`flex flex-col border-b-1 border-solid dark:border-b-border-darkmode-secondary gap-2 pb-2`}>
+  <div className={`flex flex-col border-b-1 border-solid border-b-border-lightmode-secondary 
+  dark:border-b-border-darkmode-secondary gap-2 pb-2`}>
     {children}
   </div>
 )
@@ -33,9 +34,11 @@ export const TokenFeedContainerHeaderWithTitle: FC<Partial<TokenFeedContainerPro
   <TokenFeedContainerHeader>
     <div className={`inline-flex gap-4`}>
       <Tooltip>
-        <TooltipTrigger className={`mr-auto underline-offset-8 dark:decoration-text-darkmode-tertiary`}
+        <TooltipTrigger
+          className={`mr-auto underline-offset-8 decoration-text-lightmode-primary
+           dark:decoration-text-darkmode-primary`}
                         variant={'dotted'}>
-          <h3 className={`dark:text-text-darkmode-tertiary`}>{title}</h3>
+          <h3 className={`dark:text-text-darkmode-primary text-text-lightmode-primary`}>{title}</h3>
         </TooltipTrigger>
         <TooltipContent className={``}>{tooltip}</TooltipContent>
       </Tooltip>
@@ -62,7 +65,7 @@ function TokenFeedContainer({ children }: { children: ReactNode | ReactNode[] })
   return (
     <div
       className={`flex flex-col p-4 max-w-[450px] border-1 border-solid dark:border-border-darkmode-secondary
-    rounded-[16px]
+    rounded-[16px] border-border-lightmode-secondary
     `}
     >
       {children}
