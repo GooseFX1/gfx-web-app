@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react'
-import { Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
+import { cn, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import TokenFeedCard from '@/pages/TokenFeed/TokenFeedCard'
 
 export type TokenFeedToken = {
@@ -22,8 +22,10 @@ type TokenFeedContainerProps = {
 }
 
 export const TokenFeedContainerHeader: FC<{ children: ReactNode | ReactNode[] }> = ({ children }) => (
-  <div className={`flex flex-col border-b-1 border-solid border-b-border-lightmode-secondary 
-  dark:border-b-border-darkmode-secondary gap-2 pb-2`}>
+  <div
+    className={`flex flex-col border-b-1 border-solid border-b-border-lightmode-secondary 
+  dark:border-b-border-darkmode-secondary gap-2 pb-2`}
+  >
     {children}
   </div>
 )
@@ -37,9 +39,11 @@ export const TokenFeedContainerHeaderWithTitle: FC<Partial<TokenFeedContainerPro
     <div className={`inline-flex gap-4`}>
       <Tooltip>
         <TooltipTrigger
+          disabled={!tooltip}
           className={`mr-auto underline-offset-8 decoration-text-lightmode-primary
            dark:decoration-text-darkmode-primary`}
-                        variant={'dotted'}>
+          variant={'dotted'}
+        >
           <h3 className={`dark:text-text-darkmode-primary text-text-lightmode-primary`}>{title}</h3>
         </TooltipTrigger>
         <TooltipContent className={``}>{tooltip}</TooltipContent>
@@ -49,9 +53,10 @@ export const TokenFeedContainerHeaderWithTitle: FC<Partial<TokenFeedContainerPro
     <p className={`text-b3 font-semibold dark:text-text-darkmode-secondary`}>{description}</p>
   </TokenFeedContainerHeader>
 )
-export const TokenFeedContentContainer: FC<{ children: ReactNode | ReactNode[] }> = ({ children }) => (
-  <div className={`flex flex-col gap-4 py-4`}>{children}</div>
-)
+export const TokenFeedContentContainer: FC<{ children: ReactNode | ReactNode[]; className?: string }> = ({
+  children,
+  className
+}) => <div className={cn(`flex flex-col gap-4 py-4 overflow-scroll`, className)}>{children}</div>
 
 export const TokenFeedTokensContainer: FC<{ tokens: TokenFeedToken[] }> = ({ tokens }) => (
   <TokenFeedContentContainer>
@@ -63,12 +68,12 @@ export const TokenFeedTokensContainer: FC<{ tokens: TokenFeedToken[] }> = ({ tok
   </TokenFeedContentContainer>
 )
 
-function TokenFeedContainer({ children }: { children: ReactNode | ReactNode[] }) {
+function TokenFeedContainer({ children, className }: { children: ReactNode | ReactNode[]; className?: string }) {
   return (
     <div
-      className={`flex flex-col p-4 max-w-[450px] border-1 border-solid dark:border-border-darkmode-secondary
-    rounded-[16px] border-border-lightmode-secondary
-    `}
+      className={cn(`flex flex-col p-4 w-[450px] border-1 border-solid dark:border-border-darkmode-secondary
+    rounded-[16px] border-border-lightmode-secondary h-full overflow-hidden
+    `, className)}
     >
       {children}
     </div>

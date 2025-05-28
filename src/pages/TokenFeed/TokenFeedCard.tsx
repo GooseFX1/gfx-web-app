@@ -18,7 +18,7 @@ const IconWithInfo: FC<{
   <div className={`inline-flex p-1 gap-1 items-center group`}>
     <Icon
       className={`rounded-full !w-[18px] !h-[18px] !max-w-[18px] !max-h-[18px] !min-w-[18px] !min-h-[18px]
-      group-hover:invert`}
+      group-hover:hue-rotate-[-45deg]`}
       src={src}
     />
     <p className={`font-semibold text-b3 text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`}>{data}</p>
@@ -26,11 +26,11 @@ const IconWithInfo: FC<{
 )
 const SocialIcon: FC<{
   socialLink: string
-  src: string
+  src: string,
 }> = ({ src, socialLink }) => <Icon
   src={src}
   size={'sm'}
-  className={`cursor-pointer hover:invert`}
+  className={`cursor-pointer hover:invert hover:hue-rotate-[553deg]`}
   onClick={() => openLinkInNewTab(socialLink)}
   />
 const TokenFeedStats: FC<{
