@@ -161,8 +161,6 @@
   },
   "resolutions": {
     "@solana/web3.js": "^1.95.8",
-    "@types/react": "^17.0.50",
-    "@types/react-dom": "^17.0.17",
     "goosefx-ssl-sdk/@solana/spl-token": "0.2.0",
     "react-error-overlay": "6.0.9",
     "@coral-xyz/anchor": "0.30.1",
