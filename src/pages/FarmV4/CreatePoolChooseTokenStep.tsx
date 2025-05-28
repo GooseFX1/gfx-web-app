@@ -355,8 +355,9 @@ function TokenSelectionInput({
   // const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
   const [popularTokens, setPopularTokens] = useState<JupToken[]>([])
   const [loadingPopularTokens, setLoadingPopularTokens] = useBoolean(false)
-  const { publicKey, onChainTokenWithMetadataQuery } = useWalletBalance()
+  const { publicKey, fetchTokenWithMetadata } = useWalletBalance()
   const [tokenList, setTokenList] = useState<TokenListToken[]>([])
+  const [loadingOnChainSearch, setLoadingOnChainSearch] = useState(false)
 
   useEffect(() => {
     setTokenList(query.data.allPages ?? [])
@@ -375,8 +376,14 @@ function TokenSelectionInput({
 
   useEffect(() => {
     if (searchValue && tokenList.length == 0 && !query.isFetching) {
-      const tokens = onChainTokenWithMetadataQuery?.data?.tokens.filter((t) => t.address === searchValue)
-      setTokenList(tokens ?? [])
+      ;(async () => {
+        setLoadingOnChainSearch(true)
+        const token = await fetchTokenWithMetadata(searchValue)
+        if (token) {
+          setTokenList([token])
+        }
+        setLoadingOnChainSearch(false)
+      })()
     }
   }, [searchValue, query.isFetching])
 
@@ -486,7 +493,7 @@ function TokenSelectionInput({
                   )}
                 </div>
               </div>
-              {searchValue && tokenList.length == 0 && !query.isFetching ? (
+              {searchValue && tokenList.length == 0 && !query.isFetching && !loadingOnChainSearch ? (
                 <div className={'mb-auto p-2'}>No Tokens Found..</div>
               ) : null}
               {tokenList.length > 0 ? (
