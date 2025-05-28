@@ -274,6 +274,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
 
   const fetchTokenWithMetadata = useCallback(
     async (mintAddress: string, tokenAccount?: AccountInfo<ParsedAccountData>) => {
+      
       const metadata = await getTokenMetadata(mintAddress)
       const mintInfo = tokenAccount
         ? {
