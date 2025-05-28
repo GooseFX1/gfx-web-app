@@ -13,7 +13,7 @@ import { useConnectionConfig } from '@/context/settings'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
+import { createAssociatedTokenAccountInstruction, getMint } from '@solana/spl-token-v2'
 import { confirmTransaction } from '@/web3'
 import { toast } from 'sonner'
 import { fetchTokensByPublicKey } from '@/api/gamma'
@@ -54,7 +54,7 @@ export interface IWalletBalanceContext {
   createTokenAccount: (data: CreateTokenAccountParams) => Promise<void>
   createTokenAccounts: (data: CreateTokenAccountParams[]) => Promise<void>
   walletValue: string
-  fetchTokenMetadata: (mint: string) => Promise<Metadata>
+  fetchTokenWithMetadata: (mint: string) => Promise<TokenListToken>
   onChainTokenQuery: any
   onChainTokenWithMetadataQuery: any
 }
@@ -203,7 +203,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         (account) => !tokenAccounts.find((token) => token.mint === account.account.data.parsed.info.mint)
       )
       const promises = tokenWithoutMetadata.map((tokenAccount) =>
-        fetchOnChainTokenWithMetadata(tokenAccount.account)
+        fetchTokenWithMetadata(tokenAccount.account?.data?.parsed?.info?.mint, tokenAccount.account)
       )
       const tokens = await Promise.all(promises)
 
@@ -249,7 +249,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       )
     )[0]
 
-  const fetchTokenMetadata = async (mintAddress: string) => {
+  const getTokenMetadata = async (mintAddress: string) => {
     const mintPublicKey = new PublicKey(mintAddress)
     const metadataPDA = await getMetadataPDA(mintPublicKey)
 
@@ -262,54 +262,74 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     }
   }
 
-  const fetchOnChainTokenWithMetadata = useCallback(async (tokenAccount: AccountInfo<ParsedAccountData>) => {
-    const metadata = await fetchTokenMetadata(tokenAccount.data.parsed.info.mint)
+  const getMintInfo = async (mintAddress: string) => {
+    try {
+      const mintAccountInfo = await getMint(connection, new PublicKey(mintAddress))
+      return mintAccountInfo
+    } catch (error) {
+      console.log(error)
+      return null
+    }
+  }
 
-    if (!metadata) {
-      return {
-        address: tokenAccount?.data?.parsed?.info?.mint,
-        name: '',
-        symbol: '',
-        decimals: 0,
-        logoURI: '',
+  const fetchTokenWithMetadata = useCallback(
+    async (mintAddress: string, tokenAccount?: AccountInfo<ParsedAccountData>) => {
+      
+      const metadata = await getTokenMetadata(mintAddress)
+      const mintInfo = tokenAccount
+        ? {
+            decimals: tokenAccount?.data?.parsed?.info?.tokenAccount?.decimals,
+            mintAuthority: tokenAccount?.data?.parsed?.info?.owner
+          }
+        : await getMintInfo(mintAddress)
+
+      if (!metadata || !mintInfo) {
+        return {
+          address: mintAddress,
+          name: '',
+          symbol: '',
+          decimals: 0,
+          logoURI: '',
+          price: 0.0,
+          tags: [],
+          daily_volume: 0,
+          freeze_authority: null,
+          mint_authority: null,
+          isLST: false,
+          isPrimary: false
+        }
+      }
+
+      let image = ''
+
+      if (metadata.data.uri) {
+        try {
+          const response = await fetch(metadata.data.uri)
+          const data = await response.json()
+          image = data.image
+        } catch (e) {
+          console.log('Error fetching image', e)
+        }
+      }
+
+      const token: TokenListToken = {
+        address: mintAddress,
+        name: metadata.data.name,
+        symbol: metadata.data.symbol,
+        decimals: mintInfo.decimals,
+        logoURI: image,
         price: 0.0,
         tags: [],
         daily_volume: 0,
         freeze_authority: null,
-        mint_authority: tokenAccount?.data?.parsed?.info?.owner,
+        mint_authority: mintInfo.mintAuthority ? mintInfo.mintAuthority.toString() : null,
         isLST: false,
         isPrimary: false
       }
-    }
-
-    let image = ''
-
-    if (metadata.data.uri) {
-      try {
-        const response = await fetch(metadata.data.uri)
-        const data = await response.json()
-        image = data.image
-      } catch (e) {
-        console.log('Error fetching image', e)
-      }
-    }
-
-    const token: TokenListToken = {
-      address: tokenAccount?.data?.parsed?.info?.mint,
-      name: metadata.data.name,
-      symbol: metadata.data.symbol,
-      decimals: tokenAccount?.data?.parsed?.info?.tokenAccount?.decimals,
-      logoURI: image,
-      price: 0.0,
-      tags: [],
-      daily_volume: 0,
-      freeze_authority: null,
-      mint_authority: tokenAccount?.data?.parsed?.info?.owner,
-      isLST: false,
-      isPrimary: false
-    }
-    return token
-  }, [])
+      return token
+    },
+    []
+  )
 
   useEffect(() => {
     if (!base58PublicKey) return
@@ -400,7 +420,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         createTokenAccount,
         createTokenAccounts,
         walletValue: gammaTokenQuery.data?.walletValue ?? '0.0',
-        fetchTokenMetadata,
+        fetchTokenWithMetadata,
         onChainTokenQuery,
         onChainTokenWithMetadataQuery
       }}
