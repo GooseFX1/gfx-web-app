@@ -93,6 +93,8 @@ interface GAMMADataModel {
   updateGammaRoute: (pool?: GAMMAPool) => void
   createPoolState: CreationPoolFlowStateEnum
   setCreatePoolState: Dispatch<SetStateAction<CreationPoolFlowStateEnum>>
+  isCreatePool: boolean
+  setIsCreatePool: Dispatch<SetStateAction<boolean>>
 }
 
 export type TokenListToken = {
@@ -154,6 +156,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [createPoolState, setCreatePoolState] = useState<CreationPoolFlowStateEnum>(CreationPoolFlowStateEnum.NONE)
   const previousCreatePoolState = usePrevious(createPoolState)
   const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
+  const [isCreatePool, setIsCreatePool] = useState<boolean>(false)
 
   const isPortfolio = useMemo(
     () => location.pathname.includes(ROUTES.GAMMA_PORTFOLIO),
@@ -521,7 +524,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         referralDetails,
         updateGammaRoute,
         createPoolState,
-        setCreatePoolState
+        setCreatePoolState,
+        isCreatePool,
+        setIsCreatePool
       }}
     >
       {children}

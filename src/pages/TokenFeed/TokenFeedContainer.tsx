@@ -9,6 +9,8 @@ export type TokenFeedToken = {
   age: string
   topHolders: string
   holders: number
+  migrated: boolean
+  src?: string
 }
 
 type TokenFeedContainerProps = {

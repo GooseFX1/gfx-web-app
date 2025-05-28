@@ -33,12 +33,11 @@ export const FarmHeader: FC = () => {
     setIsPortfolio,
     isPortfolio,
     setShowDeposited,
-    setShowCreatedPools
+    setShowCreatedPools,
   } = useGamma()
   const statsQuery = useStatsQuery()
   const { publicKey } = useWallet()
   const { isMobile } = useBreakPoint()
-  const [isCreatePool, setIsCreatePool] = useState<boolean>(false)
   const [openRewardsDrawer, setOpenRewardsDrawer] = useState<boolean>(false)
   const { gammaBoostedRewardsIsActive } = useConnectionConfig()
 
@@ -109,7 +108,7 @@ export const FarmHeader: FC = () => {
   return (
     <div className="mt-[15px]">
       <TokenRewardsDrawer isOpen={openRewardsDrawer} setOpen={setOpenRewardsDrawer} />
-      <CreatePool isCreatePool={isCreatePool} setIsCreatePool={setIsCreatePool} />
+      <CreatePool/>
 
       <div className={'max-sm:px-2.5 px-5'}>
         <DocsBanner />
@@ -166,7 +165,6 @@ export const FarmHeader: FC = () => {
         <CreateDropdownMenu
           gammaBoostedRewardsIsActive={gammaBoostedRewardsIsActive}
           setOpenRewardsDrawer={setOpenRewardsDrawer}
-          setIsCreatePool={setIsCreatePool}
         />
       </div>
 
@@ -220,15 +218,14 @@ export const FarmHeader: FC = () => {
 
 const CreateDropdownMenu = ({
   gammaBoostedRewardsIsActive,
-  setOpenRewardsDrawer,
-  setIsCreatePool
+  setOpenRewardsDrawer
 }: {
   gammaBoostedRewardsIsActive: boolean
   setOpenRewardsDrawer: (open: boolean) => void
-  setIsCreatePool: (open: boolean) => void
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const { mode } = useDarkMode()
+  const {setIsCreatePool} = useGamma()
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
