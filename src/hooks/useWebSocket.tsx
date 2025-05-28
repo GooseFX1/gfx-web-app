@@ -7,10 +7,10 @@ function useWebSocket<T>({ url, callback }) {
     ws.onopen = () => {
       console.log(`Connected to ${url}`)
     }
-    ws.onmessage = (event: MessageEvent<T>) => {
+    ws.onmessage = (event) => {
       console.log(`Message from ${url}:`, event.data)
       if (callback) {
-        callback(event.data)
+        callback(JSON.parse(event.data) as T)
       }
     }
     return () => {

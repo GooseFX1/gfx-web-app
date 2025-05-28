@@ -6,6 +6,7 @@ type TokenStreamEvent = {
 }
 function useTokenFeedStream(url: string) {
   const [tokens, setTokens] = useState<TokenFeedToken[]>([])
+
   const handleTokenDataEvent = (event: TokenStreamEvent) => {
     if (!event.tokens || event.tokens.length === 0) {
       console.warn('No tokens received in the event')
