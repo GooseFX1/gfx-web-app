@@ -71,7 +71,7 @@ export const TokenFeedTokensContainer: FC<{ tokens: TokenFeedToken[] }> = ({ tok
 function TokenFeedContainer({ children, className }: { children: ReactNode | ReactNode[]; className?: string }) {
   return (
     <div
-      className={cn(`flex flex-col p-4 w-[450px] border-1 border-solid dark:border-border-darkmode-secondary
+      className={cn(`flex flex-col p-4 w-full max-w-[450px] border-1 border-solid dark:border-border-darkmode-secondary
     rounded-[16px] border-border-lightmode-secondary h-full overflow-hidden
     `, className)}
     >
