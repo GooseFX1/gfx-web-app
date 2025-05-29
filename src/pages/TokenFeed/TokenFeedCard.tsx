@@ -114,7 +114,7 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
   return (
     <div
       className={`flex flex-col p-2 gap-2 rounded-[8px] bg-background-lightmode-secondary
-     dark:bg-background-darkmode-secondary w-[417px]`}
+     dark:bg-background-darkmode-secondary min-w-[280px] max-w-[417px]`}
     >
       <div className={'inline-flex gap-2 justify-between'}>
         <h3 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>{token.tickerSymbol}</h3>
@@ -134,7 +134,7 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
           <SocialIcon socialLink={'https://twitter.com/'} src={`/img/assets/website_${mode}.svg`} />
         </div>
       </div>
-      <div className={`inline-flex gap-4 justify-between`}>
+      <div className={`inline-flex gap-4 justify-between flex-wrap`}>
         <div className={'w-[50px] h-[50px] p-1.25 relative'}>
           <CircularProgress progress={progressSim} />
           <Icon
@@ -144,7 +144,7 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
             )}
           />
         </div>
-        <div className={`flex flex-col gap-2 w-full`}>
+        <div className={`flex flex-col gap-2 w-max`}>
           <TokenFeedStats marketCap={numberFormatter(2000)} volume={numberFormatter(2000)} />
           <div className={`inline-flex gap-2`}>
             <IconWithInfo src={'/img/assets/clock_dark.svg'} data={token.age} />
@@ -152,7 +152,7 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
             <IconWithInfo src={'/img/assets/top_holders_dark.svg'} data={token.topHolders} />
           </div>
         </div>
-        <div className={`flex gap-2 items-center`}>
+        <div className={`flex gap-2 items-center ml-auto`}>
           <Button
             variant={'secondary'}
             colorScheme={'secondaryGradient'}
