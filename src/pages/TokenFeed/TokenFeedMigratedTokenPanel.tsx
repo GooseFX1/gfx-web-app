@@ -3,8 +3,12 @@ import TokenFeedContainer, {
   TokenFeedContainerHeaderWithTitle,
   TokenFeedTokensContainer
 } from '@/pages/TokenFeed/TokenFeedContainer'
+import { useTokenFeed } from '@/context/tokenFeedContext'
 
 function TokenFeedMigratedTokenPanel() {
+  const { enabledColumns } = useTokenFeed()
+
+  if (!enabledColumns.migrated) return null
   return (
     <TokenFeedContainer>
       <TokenFeedContainerHeaderWithTitle title={'Migrated'} tooltip={''} settings={null} />

@@ -13,6 +13,7 @@ interface ITokenFeed {
   enabledColumns: TokenFeedColumns
   enableColumn: (column: keyof TokenFeedColumns, enabled: boolean) => void
   isUserSettingsCustom: boolean
+  totalColumnsEnabled: number
 }
 
 const TokenFeedContext = createContext<ITokenFeed | null>(null)
@@ -26,8 +27,15 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
       migrated: true
     }
   )
-  const isUserSettingsCustom = useMemo(
-    () => !Object.values(userCache.tokenFeed?.enabledColumns ?? {}).every((v) => v),
+  const { isUserSettingsCustom, totalColumnsEnabled } = useMemo(
+    () => {
+      const keys = Object.values(userCache.tokenFeed?.enabledColumns ?? {});
+
+      return {
+        isUserSettingsCustom: keys.some((value) => value !== true),
+        totalColumnsEnabled: keys.filter((value) => value).length
+      }
+    },
     [userCache.tokenFeed]
   )
   const enableColumn = (column: keyof TokenFeedColumns, enabled: boolean) => {
@@ -61,7 +69,8 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
       value={{
         enabledColumns,
         enableColumn,
-        isUserSettingsCustom
+        isUserSettingsCustom,
+        totalColumnsEnabled
       }}
     >
       {children}

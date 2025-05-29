@@ -3,8 +3,11 @@ import TokenFeedContainer, {
   TokenFeedContainerHeaderWithTitle,
   TokenFeedTokensContainer
 } from '@/pages/TokenFeed/TokenFeedContainer'
+import { useTokenFeed } from '@/context/tokenFeedContext'
 
 function TokenFeedNewTokenPanel() {
+  const { enabledColumns } = useTokenFeed()
+  if (!enabledColumns.new) return null
   return (
     <TokenFeedContainer>
       <TokenFeedContainerHeaderWithTitle title={'New Pairs'} tooltip={''} settings={null} />

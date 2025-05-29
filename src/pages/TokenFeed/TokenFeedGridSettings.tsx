@@ -17,7 +17,7 @@ import { H4, P } from '@/components/text/TextComponents'
 function TokenFeedGridSettings() {
   const { mode } = useDarkMode()
   const [isOpen, setIsOpen] = useBoolean(false)
-  const { enabledColumns, enableColumn, isUserSettingsCustom } = useTokenFeed()
+  const { enabledColumns, enableColumn, isUserSettingsCustom, totalColumnsEnabled } = useTokenFeed()
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
       <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
@@ -46,8 +46,8 @@ function TokenFeedGridSettings() {
         </P>
         <P className={`text-b2 text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`}>
           <span className={`text-text-lightmode-secondary dark:text-text-darkmode-secondary`}>
-            {Object.values(enabledColumns).filter((v) => v).length}
-          </span>{' '}
+            {totalColumnsEnabled}
+          </span>&nbsp;
           of 3 selected
         </P>
         <div className={`flex flex-col gap-2`}>
