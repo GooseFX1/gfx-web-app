@@ -1,6 +1,7 @@
 import React, { FC, ReactNode } from 'react'
 import { cn, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import TokenFeedCard from '@/pages/TokenFeed/TokenFeedCard'
+import { H3 } from '@/components/text/TextComponents'
 
 export type TokenFeedToken = {
   address: string
@@ -44,7 +45,7 @@ export const TokenFeedContainerHeaderWithTitle: FC<Partial<TokenFeedContainerPro
            dark:decoration-text-darkmode-primary`}
           variant={'dotted'}
         >
-          <h3 className={`dark:text-text-darkmode-primary text-text-lightmode-primary`}>{title}</h3>
+          <H3>{title}</H3>
         </TooltipTrigger>
         <TooltipContent className={``}>{tooltip}</TooltipContent>
       </Tooltip>
@@ -63,7 +64,7 @@ export const TokenFeedTokensContainer: FC<{ tokens: TokenFeedToken[] }> = ({ tok
     {tokens.length > 0 ? (
       tokens.map((token) => <TokenFeedCard key={token.address} token={token} />)
     ) : (
-      <h3 className={`text-center`}>No Tokens Found</h3>
+      <H3 className={`text-center`}>No Tokens Found</H3>
     )}
   </TokenFeedContentContainer>
 )

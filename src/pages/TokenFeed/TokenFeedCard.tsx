@@ -10,6 +10,7 @@ import SuccessIcon from '@/assets/Success-icon.svg?react'
 import { useDarkMode, useGamma } from '@/context'
 import CircularProgress from '@/components/CircularProgress'
 import { useHistory } from 'react-router-dom'
+import { H4,H3, P } from '@/components/text/TextComponents'
 
 const IconWithInfo: FC<{
   data: ReactNode
@@ -21,7 +22,7 @@ const IconWithInfo: FC<{
       group-hover:hue-rotate-[-45deg]`}
       src={src}
     />
-    <p className={`font-semibold text-b3 text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`}>{data}</p>
+    <P className={`text-b3 text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`}>{data}</P>
   </div>
 )
 const SocialIcon: FC<{
@@ -38,12 +39,12 @@ const TokenFeedStats: FC<{
   volume: string
 }> = ({ marketCap, volume }) => (
   <div className={`inline-flex gap-5`}>
-    <p className={`font-semibold text-b2 text-text-lightmode-primary dark:text-text-darkmode-primary`}>
+    <P className={`text-b2 text-text-lightmode-primary dark:text-text-darkmode-primary`}>
       MC ${marketCap}
-    </p>
-    <p className={`font-semibold text-b2 text-text-lightmode-primary dark:text-text-darkmode-primary`}>
+    </P>
+    <P className={`text-b2 text-text-lightmode-primary dark:text-text-darkmode-primary`}>
       V ${volume}
-    </p>
+    </P>
   </div>
 )
 
@@ -72,11 +73,11 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
           className={'items-center'}
           iconLeft={<SuccessIcon className={'stroke-background-green h-4 w-4'} />}
         >
-          <h4 className={'text-h4 text-text-green'}>Success</h4>
+          <H4 className={'text-text-green'}>Success</H4>
         </ToastTitle>
-        <p className={'text-text-lightmode-secondary dark:text-text-darkmode-secondary text-b3 mt-2'}>
+        <P className={'text-b3 mt-2'}>
           Token address copied successfully!
-        </p>
+        </P>
       </div>,
       {
         id: 'copyTokenFeedAddress'
@@ -114,13 +115,13 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
   return (
     <div
       className={`flex flex-col p-2 gap-2 rounded-[8px] bg-background-lightmode-secondary
-     dark:bg-background-darkmode-secondary min-w-[280px] max-w-[417px]`}
+     dark:bg-background-darkmode-secondary min-w-[280px] w-full max-w-[417px]`}
     >
       <div className={'inline-flex gap-2 justify-between'}>
-        <h3 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>{token.tickerSymbol}</h3>
-        <p className={`font-semibold text-b2 text-text-lightmode-secondary dark:text-text-darkmode-secondary`}>
+        <H3>{token.tickerSymbol}</H3>
+        <P className={`text-b2`}>
           {token.name}
-        </p>
+        </P>
         <Icon
           src={'/img/assets/clipboard_dark.svg'}
           className={`!w-[15px] !h-[15px] !max-w-[15px] !max-h-[15px] !min-w-[15px] !min-h-[15px]
@@ -134,7 +135,7 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
           <SocialIcon socialLink={'https://twitter.com/'} src={`/img/assets/website_${mode}.svg`} />
         </div>
       </div>
-      <div className={`inline-flex gap-4 justify-between flex-wrap`}>
+      <div className={`inline-flex gap-4 justify-between`}>
         <div className={'w-[50px] h-[50px] p-1.25 relative'}>
           <CircularProgress progress={progressSim} />
           <Icon
