@@ -133,6 +133,13 @@ function newCache(): USER_CONFIG_CACHE {
       viewMode: 'row',
       jtoRewardsBanner: true
     },
+    tokenFeed: {
+      enabledColumns: {
+        social: true,
+        new: true,
+        migrated: true
+      }
+    },
     hasSignedTC: false,
     endpointName: DEFAULT_ENDPOINT_NAME,
     endpoint: null,
