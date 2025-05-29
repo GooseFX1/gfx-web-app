@@ -175,7 +175,7 @@ const MobileNav: FC = () => {
                 }}
               >
                 <img
-                  className="h-[35px]"
+                  className="!h-[35px] aspect-square"
                   src={`/img/mainnav/swap-${mode}${pathname.includes('swap') ? '-active' : '-inactive'}.svg`}
                   alt="dark"
                 />
@@ -197,7 +197,7 @@ const MobileNav: FC = () => {
                   }}
                 >
                   <img
-                    className="!h-[35px] !w-[35px]"
+                    className="!h-[35px] !w-[35px] p-1.5 aspect-square"
                     src={`/img/mainnav/token_feed_${mode}${
                       pathname.includes(ROUTES.TOKEN_FEED) ? '_active' : '_inactive'
                     }.svg`}
@@ -219,7 +219,7 @@ const MobileNav: FC = () => {
                 }}
               >
                 <img
-                  className="h-[35px] w-[35px]"
+                  className="!h-[35px] !w-[35px] py-[5px] px-[2.5px] aspect-square"
                   src={`/img/mainnav/pool-${mode}${pathname.includes('gamma') ? '-active' : '-inactive'}.svg`}
                   alt="dark"
                 />
@@ -233,7 +233,7 @@ const MobileNav: FC = () => {
                       className={`inline-flex items-center font-poppins font-semibold font-inherit text-inherit`}
                     >
                       <img
-                        className="!h-[35px]"
+                        className="!h-[35px] aspect-square"
                         src={`/img/mainnav/more-${mode}${isMoreOpen ? '-active' : '-inactive'}.svg`}
                         alt="dark"
                       />
