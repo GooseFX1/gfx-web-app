@@ -2,7 +2,7 @@ import { FC, useCallback, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { truncateAddress } from '../../utils'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import {
   ColumnHeadersMobile,
   ColumnHeadersWeb,
@@ -17,7 +17,7 @@ import { User, useStats } from '../../context/stats'
 import { useDarkMode } from '../../context'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { GradientText } from '../../components'
 import useBreakPoint from '../../hooks/useBreakPoint'
 
@@ -123,11 +123,11 @@ const LeaderBoard: FC = () => {
   const breakpoint = useBreakPoint()
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const redirectToTrade = useCallback(() => {
-    history.push('/trade')
-  }, [])
+    navigate('/trade')
+  }, [navigate])
 
   return (
     <WRAPPER $isCollapsed={true} $index={screenType}>

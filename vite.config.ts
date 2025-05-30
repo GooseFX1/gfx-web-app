@@ -108,22 +108,7 @@ export default defineConfig(({ mode }) => ({
   },
   esbuild: {
     drop: mode == 'development' ? [] : ['console', 'debugger'],
-    pure: mode === 'production' ? ['console.log'] : [],
-    alias: {
-      'process/': 'process'
-    },
-    plugins: [
-      nodeResolve({
-        extensions: ['.js', '.ts'],
-        onResolved: (resolved) => {
-          // Fix for process/ import
-          if (resolved.includes('process/')) {
-            return resolved.replace('process/', 'process');
-          }
-          return resolved;
-        }
-      })
-    ]
+    pure: mode === 'production' ? ['console.log'] : []
   },
   build: {
     outDir: 'build',
@@ -149,9 +134,18 @@ export default defineConfig(({ mode }) => ({
     ]
   },
   assetsInclude: ['gamma-wasm/gamma_wasm_bg.wasm'],
+  optimizeDeps: {
+    exclude: ['process', 'process/'],
+    esbuildOptions: {
+      define: {
+        global: 'globalThis'
+      }
+    }
+  },
   define: {
-    // Replace any instances of 'process/' with 'process'
-    'require("process/")': 'require("process")',
-    "require('process/')": "require('process')"
+    // Replace process module references with a browser-compatible version
+    'require("process/")': '{}',
+    "require('process/')": '{}',
+    'process.env': '{}'
   }
 }))

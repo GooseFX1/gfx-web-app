@@ -1,4 +1,4 @@
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import React, { useEffect, useState } from 'react'
 import 'styled-components/macro'
 import { getMyRecentWinnings } from '../../../api/rewards'

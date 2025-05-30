@@ -11,7 +11,7 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 import { createTokenRewards } from '@/web3/Farm'
 import useTransaction from '@/hooks/useTransaction'
 import { forceCronUpdateWithConnectionAndTxSig } from '@/api/gamma'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
 
 interface SummaryProps {

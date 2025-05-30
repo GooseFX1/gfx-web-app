@@ -1,5 +1,5 @@
 import { CSSProperties, FC, lazy, Suspense } from 'react'
-import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AppLayout } from './layouts'
 import {
   AccountsProvider,
@@ -73,9 +73,6 @@ export const Router: FC = () => {
 
   return (
     <BrowserRouter>
-      {window.location.pathname === '/' && (
-        <Redirect from="/" to={{ search: window.location.search, pathname: APP_DEFAULT_ROUTE }} />
-      )}
       <TokenRegistryProvider>
         <AccountsProvider>
           <RewardToggleProvider>
@@ -88,53 +85,89 @@ export const Router: FC = () => {
                       <Maintenance />
                     ) : (
                       <Suspense fallback={<PageLoader />}>
-                        <Switch>
-                          <Route exact path="/bridge">
-                            <Bridge />
-                          </Route>
-                          <Route exact path="/leaderboard">
-                            <StatsProvider>
-                              <LeaderBoard />
-                            </StatsProvider>
-                          </Route>
-                          <Route exact path={['/ssl', '/ssl/temp-withdraw']}>
-                            <Farm />
-                          </Route>
+                        <Routes>
+                          {window.location.pathname === '/' && (
+                            <Route
+                              path="/"
+                              element={
+                                <Navigate
+                                  to={{ search: window.location.search, pathname: APP_DEFAULT_ROUTE }}
+                                  replace
+                                />
+                              }
+                            />
+                          )}
+                          <Route path="/bridge" element={<Bridge />} />
+                          <Route path="/leaderboard"
+                            element={
+                              <StatsProvider>
+                                <LeaderBoard />
+                              </StatsProvider>
+                            }
+                          />
+                          <Route path="/ssl" element={<Farm />} />
+                          <Route path="/ssl/temp-withdraw" element={<Farm />} />
                           <Route
-                            exact
-                            path={[
-                              ROUTES.GAMMA,
-                              `${ROUTES.GAMMA}/:typeA([^-/]+)-:typeB([^-/]+)`,
-                              ROUTES.GAMMA_PORTFOLIO,
-                              `${ROUTES.GAMMA_PORTFOLIO}/:typeA([^-/]+)-:typeB([^-/]+)`
-                            ]}
-                          >
-                            <GammaProvider>
-                              <KaminoProvider>
-                                <BoostedRewardsProvider>
-                                  <FarmV4 />
-                                </BoostedRewardsProvider>
-                              </KaminoProvider>
-                            </GammaProvider>
-                          </Route>
-                          <Route exact path={['/swap']}>
-                            <SwapProvider>
-                              <Swap />
-                            </SwapProvider>
-                          </Route>
-                          <Route exact path="/analytics">
-                            <AnalyticsWrapper />
-                          </Route>
-                          <Route exact path="/analytics/ssl">
-                            <SSLAnalyticsDashboard />
-                          </Route>
-                          <Route exact path="/analytics/ssl/pairdata">
-                            <CoinGeckoPairs />
-                          </Route>
-                          <Route>
-                            <GenericNotFound />
-                          </Route>
-                        </Switch>
+                            path={ROUTES.GAMMA}
+                            element={
+                              <GammaProvider>
+                                <KaminoProvider>
+                                  <BoostedRewardsProvider>
+                                    <FarmV4 />
+                                  </BoostedRewardsProvider>
+                                </KaminoProvider>
+                              </GammaProvider>
+                            }
+                          />
+                          <Route
+                            path={`${ROUTES.GAMMA}/:typeA([^-/]+)-:typeB([^-/]+)`}
+                            element={
+                              <GammaProvider>
+                                <KaminoProvider>
+                                  <BoostedRewardsProvider>
+                                    <FarmV4 />
+                                  </BoostedRewardsProvider>
+                                </KaminoProvider>
+                              </GammaProvider>
+                            }
+                          />
+                          <Route
+                            path={ROUTES.GAMMA_PORTFOLIO}
+                            element={
+                              <GammaProvider>
+                                <KaminoProvider>
+                                  <BoostedRewardsProvider>
+                                    <FarmV4 />
+                                  </BoostedRewardsProvider>
+                                </KaminoProvider>
+                              </GammaProvider>
+                            }
+                          />
+                          <Route
+                            path={`${ROUTES.GAMMA_PORTFOLIO}/:typeA([^-/]+)-:typeB([^-/]+)`}
+                            element={
+                              <GammaProvider>
+                                <KaminoProvider>
+                                  <BoostedRewardsProvider>
+                                    <FarmV4 />
+                                  </BoostedRewardsProvider>
+                                </KaminoProvider>
+                              </GammaProvider>
+                            }
+                          />
+                          <Route
+                            path="/swap"
+                            element={
+                              <SwapProvider>
+                                <Swap />
+                              </SwapProvider>
+                            }
+                          />
+                          <Route path="/analytics" element={<AnalyticsWrapper />} />
+                          <Route path="/analytics/ssl" element={<SSLAnalyticsDashboard />} />
+                          <Route path="/analytics/ssl/pairdata" element={<CoinGeckoPairs />} />
+                          <Route path="*" element={<GenericNotFound />} />
+                        </Routes>
                       </Suspense>
                     )}
                   </AppLayout>

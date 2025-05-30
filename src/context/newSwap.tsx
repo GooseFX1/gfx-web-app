@@ -2,7 +2,7 @@ import React, { createContext, FC, ReactNode, useContext, useEffect, useLayoutEf
 import { JupToken } from '@/pages/FarmV4/constants'
 import { fetchTokensByPublicKey } from '@/api/gamma'
 import { useConnectionConfig } from '@/context/settings'
-import { useHistory } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import useTokenInput, { useTokenInputCommands } from '@/hooks/useTokenInput'
 import useTokensQuery from '@/queries/useTokensQuery'
 
@@ -28,7 +28,8 @@ interface ISwapConfig {
 const SwapContext = createContext<ISwapConfig | null>(null)
 
 export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const history = useHistory()
+  const navigate = useNavigate()
+  const location = useLocation()
   const { userCache, updateUserCache } = useConnectionConfig()
   const [searchValue, setSearchValue] = useState<string>('')
   const [selectedTokenA, setSelectedTokenA] = useState<JupToken | null>(null)
@@ -75,13 +76,12 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     const newUrl = `${location.pathname}?${params.toString()}`;
     if (location.pathname !== newUrl) {
-      history.push({
+      navigate({
         pathname: location.pathname,
         search: params.toString()
-      });
+      }, { replace: true });
     }
-
-  }, [selectedTokenA, selectedTokenB])
+  }, [selectedTokenA, selectedTokenB, navigate, location.pathname])
 
   useEffect(() => {
     updateUserCache({

@@ -2,7 +2,7 @@ import { FC, ReactElement, useMemo } from 'react'
 import { useDarkMode } from '@/context'
 import { Badge, cn } from 'gfx-component-lib'
 import { loadIconImage, truncateAddress, truncateBigNumber } from '@/utils'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import { GAMMAToken } from '@/types/gamma'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 

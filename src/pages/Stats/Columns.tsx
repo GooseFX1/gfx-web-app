@@ -6,7 +6,7 @@ import tw, { styled } from 'twin.macro'
 import { PopupCustom } from '../../components'
 import 'styled-components/macro'
 import { Link } from 'react-router-dom'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import { Tooltip } from 'antd'
 import { User, useStats } from '../../context/stats'
 

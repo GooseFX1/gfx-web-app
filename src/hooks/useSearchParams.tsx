@@ -1,4 +1,4 @@
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
 type SearchParamOperations<T> = {
@@ -14,7 +14,7 @@ function useSearchParams<T extends Record<string, string | number | boolean>>():
   operators: SearchParamOperations<T>
 } {
   const { search } = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useState<Partial<T>>({})
 
   useEffect(() => {
@@ -44,7 +44,7 @@ function useSearchParams<T extends Record<string, string | number | boolean>>():
       currentSearch.delete(key)
     }
     setSearchParams({})
-    history.replace({ search: currentSearch.toString() })
+    navigate({ search: currentSearch.toString() }, { replace: true })
   }
 
   function getByKey(key: keyof T) {

@@ -1,7 +1,7 @@
 import React, { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import 'styled-components/macro'
 import Slider from 'react-slick'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import { Connect } from '@/layouts'
 import CreatePoolChooseTokenStep from './CreatePoolChooseTokenStep'
 import CreatePoolConfirmStep from './CreatePoolConfirmStep'

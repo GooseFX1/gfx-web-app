@@ -6,7 +6,7 @@ import { Connect } from '../../layouts'
 import { GradientText } from '../../components'
 import AnalyticsDashboard from './AnalyticsDashboard'
 import { useWalletBalance } from '@/context/walletBalanceContext'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 
 const CONNECT_WALLET_WRAPPER = styled.div`
   ${tw`w-full flex-col flex items-center justify-center`}

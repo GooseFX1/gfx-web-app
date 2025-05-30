@@ -3,7 +3,7 @@ import useBreakPoint from '../../hooks/useBreakPoint'
 import { useConnectionConfig, useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { executeAllPoolClaim } from '../../web3'
 import { truncateBigNumber } from '../../utils'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import { PublicKey } from '@solana/web3.js'
 import { TERMS_OF_SERVICE } from '../../constants'
 import {

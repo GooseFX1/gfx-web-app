@@ -5,7 +5,7 @@ import { useConnectionConfig, useDarkMode, usePriceFeedFarm, useSSLContext } fro
 import { checkMobile, formatUserBalance, truncateBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { Pool, poolType, SSLToken } from './constants'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 
 import { getPriceObject } from '../../web3'
 import BN from 'bn.js'

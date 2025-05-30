@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import useBreakPoint from '../hooks/useBreakPoint'
 import { truncateAddress } from '../utils'
 import { useConnectionConfig, useDarkMode, useWalletModal } from '../context'

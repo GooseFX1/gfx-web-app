@@ -3,7 +3,7 @@
 // import { useHistory } from 'react-router-dom'
 // import { useDarkMode } from '../../context'
 // import { SVGDynamicReverseMode } from '../../styles'
-// import { useWallet } from '@solana/wallet-adapter-react'
+// import { useWallet } from '@/hooks/useWallet'
 
 import { ReactElement } from "react";
 

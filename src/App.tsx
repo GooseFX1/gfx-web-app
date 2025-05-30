@@ -13,18 +13,10 @@ import {
 import { createAppKit } from "@reown/appkit/react";
 import { SolanaAdapter } from "@reown/appkit-adapter-solana/react";
 import { solana, solanaTestnet, solanaDevnet } from "@reown/appkit/networks";
-import {
-  NightlyWalletAdapter,
-  PhantomWalletAdapter,
-  SolflareWalletAdapter
-} from "@solana/wallet-adapter-wallets";
+// import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
+// import { SolflareWalletAdapter } from '@solana/wallet-adapter-solflare'
 
-const solanaWeb3JsAdapter = new SolanaAdapter({
-  wallets: [
-    new PhantomWalletAdapter() as any,
-    new NightlyWalletAdapter(),
-    new SolflareWalletAdapter()]
-});
+const solanaWeb3JsAdapter = new SolanaAdapter();
 
 const projectId = "804efe2fd86670567f9b09f936a8220a"; //Project created on Reown's website
 

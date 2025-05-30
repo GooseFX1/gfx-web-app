@@ -1,7 +1,7 @@
 import {
     useAppKitAccount,
     useDisconnect,
-    useWalletInfo,
+    // useWalletInfo,
     useAppKitProvider
 } from "@reown/appkit/react";
 import type { Provider } from "@reown/appkit-adapter-solana/react";
@@ -12,9 +12,10 @@ import {
     type SignInMessageSignerWalletAdapterProps,
     type WalletAdapterProps,
     type WalletName,
-    type WalletReadyState,
+    type WalletReadyState
 } from '@solana/wallet-adapter-base';
 import { PublicKey } from '@solana/web3.js';
+import { useMemo, useCallback } from "react";
 
 export interface Wallet {
     adapter: Adapter;
@@ -41,58 +42,75 @@ export interface WalletContextState {
     signIn: SignInMessageSignerWalletAdapterProps['signIn'] | undefined;
 }
 
-type ConnectedWalletInfo = {
-    name: string;
-    icon?: string;
-    type?: string;
-    [key: string]: unknown;
-};
+// type ConnectedWalletInfo = {
+//     name: string;
+//     icon?: string;
+//     type?: string;
+//     [key: string]: unknown;
+// };
 
-export interface WalletContextState {
-    autoConnect: boolean;
-    wallets: Wallet[];
-    wallet: Wallet | null;
-    publicKey: PublicKey | null;
-    connecting: boolean;
-    connected: boolean;
-    disconnecting: boolean;
 
-    select(walletName: WalletName | null): void;
-    connect(): Promise<void>;
-    disconnect(): Promise<void>;
+// type UseWalletReturn = {
+//     publicKey: PublicKey
+//     connected: boolean
+//     status: string
+//     walletInfo: ConnectedWalletInfo
+//     walletProvider: any
+//     disconnect: () => Promise<void>
+// };
 
-    sendTransaction: WalletAdapterProps['sendTransaction'];
-    signTransaction: SignerWalletAdapterProps['signTransaction'] | undefined;
-    signAllTransactions: SignerWalletAdapterProps['signAllTransactions'] | undefined;
-    signMessage: MessageSignerWalletAdapterProps['signMessage'] | undefined;
-    signIn: SignInMessageSignerWalletAdapterProps['signIn'] | undefined;
+export const useWallet = (): WalletContextState => {
+  const { address, isConnected, status } = useAppKitAccount({ namespace: 'solana' })
+  const { disconnect } = useDisconnect()
+  const { walletProvider } = useAppKitProvider<Provider>('solana')
+
+  const {
+    autoConnect = false,
+    wallets = [],
+    wallet = null,
+    select,
+    connect,
+    sendTransaction,
+    signTransaction,
+    signAllTransactions,
+    signMessage,
+    signIn,
+    disconnecting = false,
+  } = walletProvider || {}
+
+  const disconnectMemo = useCallback(() => disconnect(), [disconnect])
+
+  return useMemo(() => ({
+    autoConnect,
+    wallets,
+    wallet,
+    publicKey: address ? new PublicKey(address) : null,
+    connecting: status,
+    connected: isConnected,
+    disconnecting,
+    select,
+    connect,
+    disconnect: disconnectMemo,
+    sendTransaction,
+    signTransaction,
+    signAllTransactions,
+    signMessage,
+    signIn,
+  }), [
+    autoConnect,
+    wallets,
+    wallet,
+    address,
+    status,
+    isConnected,
+    disconnecting,
+    select,
+    connect,
+    disconnectMemo,
+    sendTransaction,
+    signTransaction,
+    signAllTransactions,
+    signMessage,
+    signIn,
+  ])
 }
-
-type UseWalletReturn = {
-    publicKey: PublicKey
-    connected: boolean
-    status: string
-    walletInfo: ConnectedWalletInfo
-    walletProvider: any
-    disconnect: () => Promise<void>
-};
-
-const useWallet = (): UseWalletReturn => {
-    const { address, isConnected, status } = useAppKitAccount();
-    const publicKey = address ? new PublicKey(address) : null;
-    const { disconnect } = useDisconnect();
-    const { walletInfo } = useWalletInfo();
-    const { walletProvider } = useAppKitProvider<Provider>('solana')
-    console.log({walletProvider})
-
-    return {
-        publicKey,
-        connected: isConnected,
-        status,
-        walletInfo,
-        walletProvider,
-        disconnect
-    }
-}
-
-export default useWallet;

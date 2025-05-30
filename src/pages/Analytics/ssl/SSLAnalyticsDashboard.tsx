@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { isAdminAllowed } from '../../../api/NFTLaunchpad'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { GradientText } from '../../../components'

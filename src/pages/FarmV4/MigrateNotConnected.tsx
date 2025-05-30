@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Connect } from '@/layouts'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import { Button } from 'gfx-component-lib'
 
 const MigrateNotConnected: FC<{noPositions:boolean}> = ({noPositions}) => {

@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import PortfolioConnect from './PortfolioConnect'
 import PortfolioScreen from './PortfolioScreen'
 

@@ -1,22 +1,17 @@
-import {
-  Coin98WalletAdapter,
-  CoinbaseWalletAdapter,
-  LedgerWalletAdapter,
-  MathWalletAdapter,
-  NightlyWalletAdapter,
-  PhantomWalletAdapter,
-  SolflareWalletAdapter,
-  TorusWalletAdapter
-} from '@solana/wallet-adapter-wallets'
 import { WalletAdapter, WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom'
+import { SolflareWalletAdapter } from '@solana/wallet-adapter-solflare'
+import { LedgerWalletAdapter } from '@solana/wallet-adapter-ledger'
+import { CoinbaseWalletAdapter } from '@solana/wallet-adapter-coinbase'
+
+import { WalletConnectWalletAdapter } from '@walletconnect/solana-adapter'
+import { MoongateWalletAdapter } from '@moongate/moongate-adapter'
 import {
   createDefaultAddressSelector,
   createDefaultAuthorizationResultCache,
   createDefaultWalletNotFoundHandler,
   SolanaMobileWalletAdapter
 } from '@solana-mobile/wallet-adapter-mobile'
-import { MoongateWalletAdapter } from '@moongate/moongate-adapter'
-import { WalletConnectWalletAdapter } from '@walletconnect/solana-adapter'
 
 export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[] => [
   new SolanaMobileWalletAdapter({
@@ -40,9 +35,5 @@ export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[
       projectId: 'bd4997ce3ede37c95770ba10a3804dad'
     }
   }),
-  new CoinbaseWalletAdapter(),
-  new TorusWalletAdapter(),
-  new MathWalletAdapter(),
-  new Coin98WalletAdapter(),
-  new NightlyWalletAdapter()
+  new CoinbaseWalletAdapter()
 ]

@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import MigrateNotConnected from '@/pages/FarmV4/MigrateNotConnected'
 import MigratePositionCard from '@/pages/FarmV4/MigratePositionCard'
 

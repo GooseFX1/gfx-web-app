@@ -404,34 +404,33 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 }
 
-export async function getLatestPriorityFees(txn: Transaction | VersionedTransaction) {
-  try{
-  const response = await fetch(HELIUS_RPC.endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      id: `getPriorityFeeEstimate-${Date.now()}`,
-      method: 'getPriorityFeeEstimate',
-      params: [
-        {
-          transaction: bs58.encode(txn.serialize()), // Pass the serialized transaction in Base58
-          options: {
-            includeAllPriorityFeeLevels: true
+export async function getLatestPriorityFees(connection: Connection, txn: Transaction | VersionedTransaction) {
+  try {
+    const response = await fetch(connection.rpcEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: `getPriorityFeeEstimate-${Date.now()}`,
+        method: 'getPriorityFeeEstimate',
+        params: [
+          {
+            transaction: bs58.encode(txn.serialize()), // Pass the serialized transaction in Base58
+            options: {
+              includeAllPriorityFeeLevels: true
+            }
           }
-        }
-      ]
+        ]
+      })
     })
-  })
-  const data = await response.json()
-  console.log('Fee in function for ', data.result)
-  return data.result.priorityFeeLevels as PriorityFeeLevelsFromHelius
-}catch(error){
-  console.log("Failed to fetch getLatestPriorityFees", error)
-
-  // default
-  return 0.0001;
-}
+    const data = await response.json()
+    console.log('Fee in function for ', data.result)
+    return data.result.priorityFeeLevels as PriorityFeeLevelsFromHelius
+  } catch (error) {
+    console.log('Failed to fetch getLatestPriorityFees', error)
+    // default
+    return 0.0001
+  }
 }
 
 type PriorityFeeLevelsFromHelius = {

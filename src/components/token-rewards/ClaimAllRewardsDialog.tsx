@@ -21,7 +21,6 @@ import { claimRewards } from '@/web3/Farm'
 import useTransaction from '@/hooks/useTransaction'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { useMutation } from '@tanstack/react-query'
-import { useWallet } from '@solana/wallet-adapter-react'
 
 type ClaimAllRewardsDialogProps = {
   openClaimAllRewardsDialog: boolean
@@ -38,9 +37,8 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
   const { createTransactionBuilder, sendBatchTransaction } = useTransaction()
   const { connection } = useConnectionConfig()
   const { GammaProgram } = usePriceFeedFarm()
-  const { publicKey: userPublicKey } = useWalletBalance()
-  const { wallet } = useWallet();
-
+  const { publicKey } = useWalletBalance()
+  
   const claimAllMutation = useMutation({
     mutationFn: async () => {
       // Split rewards into batches of 5
@@ -60,13 +58,12 @@ export const ClaimAllRewardsDialog: FC<ClaimAllRewardsDialogProps> = ({
           const batchTxBuilder = createTransactionBuilder()
           console.log(reward);
           for (const rewardInfo of reward.rewards) {
-            const tx = await claimRewards(GammaProgram, userPublicKey, connection, rewardInfo)
+            const tx = await claimRewards(GammaProgram, publicKey, connection, rewardInfo)
             batchTxBuilder.add(tx)
           }
           transactions.push(batchTxBuilder);
         }
       }
-      console.log(wallet);
 
       const { success } = await sendBatchTransaction(
         transactions,
