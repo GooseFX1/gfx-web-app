@@ -1,5 +1,4 @@
-import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
-import { PublicKey } from '@solana/web3.js'
+import React, { FC, useCallback, useEffect, useLayoutEffect } from 'react'
 import { useConnectionConfig, useDarkMode, useGamma } from '../../context'
 import {
   GAMMA_MAIN_SORT_CONFIG, GAMMA_MAIN_SORT_CONFIG_DEFAULT,
@@ -45,12 +44,8 @@ export const FarmContainer: FC = () => {
     isCardMode,
     setIsCardMode
   } = useGamma()
-  const { wallet, publicKey } = useWallet()
+  const { publicKey } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
-  const pubKey: PublicKey | null = useMemo(
-    () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
-    [wallet?.adapter?.publicKey]
-  )
 
   const [openClaimAllRewardsDialog, setOpenClaimAllRewardsDialog] = useBoolean(false)
 
@@ -72,7 +67,7 @@ export const FarmContainer: FC = () => {
   }, 0)
 
   useEffect(() => {
-    if (pubKey === null && userCache.gamma.showDepositedFilter)
+    if (publicKey === null && userCache.gamma.showDepositedFilter)
       setShowDeposited(() => {
         updateUserCache({
           gamma: {
@@ -82,7 +77,7 @@ export const FarmContainer: FC = () => {
         })
         return false
       })
-  }, [pubKey, userCache])
+  }, [publicKey, userCache])
 
   const handleShowDepositedToggle = () => {
     setShowDeposited((prev) => {
@@ -209,7 +204,7 @@ export const FarmContainer: FC = () => {
                                   />
                                 </div>
                               )}
-                              {pubKey != null && (
+                              {publicKey != null && (
                                 <>
                                   <div className="flex items-center justify-between ">
                                     <span

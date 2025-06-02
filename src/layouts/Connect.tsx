@@ -30,7 +30,8 @@ interface MenuItemProps {
   fullWidth?: boolean
 }
 
-export const Connect: FC<MenuItemProps> = ({
+// eslint-disable-next-line
+const ConnectClassic: FC<MenuItemProps> = ({
   containerStyle,
   customButtonStyle,
   customMenuListItemsContainerStyle,
@@ -70,7 +71,7 @@ export const Connect: FC<MenuItemProps> = ({
 
     const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 4
     return truncateAddress(base58PublicKey, leftRightSize)
-  }, [base58PublicKey, connected, adapterName, wallet, breakpoint, isAttempting])
+  }, [base58PublicKey, connected, adapterName, breakpoint, isAttempting])
 
   // watches for a selected wallet returned from modal
   if (base58PublicKey && !canConnect && !geoBlocked) {
@@ -286,3 +287,7 @@ export const Connect: FC<MenuItemProps> = ({
     </>
   )
 }
+
+const ConnectReown: FC = () => <appkit-button />
+
+export { ConnectReown as Connect }

@@ -1,4 +1,4 @@
-import { FC, ReactElement, useMemo } from 'react'
+import { FC, ReactElement } from 'react'
 import { useDarkMode } from '@/context'
 import { Badge, cn } from 'gfx-component-lib'
 import { loadIconImage, truncateAddress, truncateBigNumber } from '@/utils'
@@ -17,11 +17,10 @@ export const TokenRow: FC<{
     isDeposit
   }): ReactElement => {
     const { mode } = useDarkMode()
-    const { wallet } = useWallet()
-    const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+    const { publicKey } = useWallet()
 
     const getWalletIcon = () =>
-      (userPublicKey && balance > 0) ?
+      (publicKey && balance > 0) ?
         `/img/assets/wallet-${mode}-enabled.svg` :
         `/img/assets/wallet-${mode}-disabled.svg`
 
@@ -57,7 +56,7 @@ export const TokenRow: FC<{
           <div
             className={cn(
               'ml-1.5 text-regular font-semibold dark:text-grey-8 text-black-4',
-              userPublicKey && balance > 0 ? 'opacity-100' : 'opacity-50'
+              publicKey && balance > 0 ? 'opacity-100' : 'opacity-50'
             )}>
             {truncateBigNumber(balance)}
           </div>

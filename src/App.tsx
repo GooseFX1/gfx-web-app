@@ -13,19 +13,17 @@ import {
 import { createAppKit } from "@reown/appkit/react";
 import { SolanaAdapter } from "@reown/appkit-adapter-solana/react";
 import { solana, solanaTestnet, solanaDevnet } from "@reown/appkit/networks";
-// import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
-// import { SolflareWalletAdapter } from '@solana/wallet-adapter-solflare'
+import { APP_URL } from '@/constants'
 
 const solanaWeb3JsAdapter = new SolanaAdapter();
 
-const projectId = "804efe2fd86670567f9b09f936a8220a"; //Project created on Reown's website
-
+const projectId = "804efe2fd86670567f9b09f936a8220a";
 const metadata = {
-  name: "Goosefx AppKit Integration",
-  description: "GooseFX | Liquidity Reimagined",
-  url: "https://app.goosefx.io/",
-  icons: ["https://avatars.githubusercontent.com/u/179229932"]
-};
+  name: 'GooseFX',
+  description: 'GooseFX | Liquidity Reimagined',
+  url: APP_URL,
+  icons: ['https://media.goosefx.io/brand/Web_Clip.png']
+}
 
 createAppKit({
   adapters: [solanaWeb3JsAdapter],

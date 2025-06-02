@@ -12,8 +12,6 @@ import { SendTransactionOptions } from '@solana/wallet-adapter-base'
 import { notifyUsingPromise, promiseBuilder, SpawnLoaderToast } from '@/utils/perpsNotifications'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { toast, ToastT } from 'sonner'
-import { useAppKitProvider } from '@reown/appkit/react'
-import { Provider } from '@reown/appkit-adapter-solana/react'
 
 type SendTxnOptions = {
   connection?: Connection
@@ -53,11 +51,9 @@ const baseSet = new Set()
 
 function useTransaction(): useTransactionReturn {
   const { priorityFeeValue, priorityFee } = useConnectionConfig()
-  const { wallet, signAllTransactions } = useWallet()
+  const { wallet, signAllTransactions, walletProvider } = useWallet()
   const { connection: originalConnection } = useConnectionConfig()
   const { publicKey } = useWalletBalance()
-  // TODO: export from useWallet
-  const {walletProvider} = useAppKitProvider<Provider>('solana')
   const createTransactionBuilder = useCallback(
     (txn?: TXN) => new TransactionBuilder(txn).setPriorityFee(priorityFeeValue),
     [priorityFeeValue]

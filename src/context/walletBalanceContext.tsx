@@ -49,7 +49,7 @@ export interface IWalletBalanceContext {
 const WalletBalanceContext = createContext<IWalletBalanceContext>(null)
 
 function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JSX.Element {
-  const { publicKey, sendTransaction } = useWallet()
+  const { publicKey, walletProvider } = useWallet()
   const base58PublicKey = publicKey?.toBase58() ?? ''
   const { connection } = useConnectionConfig()
 
@@ -189,7 +189,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   async function createTokenAccount(data: CreateTokenAccountParams) {
     const txnInstruction = createTokenAccountInstruction(data)
     const txn = new Transaction().add(txnInstruction)
-    const txnSig = await sendTransaction(txn, connection).catch(() => {
+    const txnSig = await walletProvider.sendTransaction(txn, connection).catch(() => {
       console.error('Error creating token account')
       return ''
     })
@@ -201,7 +201,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   async function createTokenAccounts(data: CreateTokenAccountParams[]) {
     const txnInstruction = createTokenAccountInstructions(data)
     const txn = new Transaction().add(...txnInstruction)
-    const txnSig = await sendTransaction(txn, connection).catch(() => {
+    const txnSig = await walletProvider.sendTransaction(txn, connection).catch(() => {
       console.error('Error creating token account')
       return ''
     })

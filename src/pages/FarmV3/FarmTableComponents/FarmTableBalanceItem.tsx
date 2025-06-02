@@ -200,8 +200,7 @@ const CollapsibleContent: FC<{
     depositedBalanceConnection,
     connectionId
   } = useSSLContext()
-  const { wallet, connected } = useWallet()
-  const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const { publicKey, connected } = useWallet()
   const [currentSlot, setCurrentSlot] = useState<number>(0)
   useEffect(() => {
     ;(async () => {
@@ -216,8 +215,6 @@ const CollapsibleContent: FC<{
   }, [connection, actionModal])
   const [userSolBalance, setUserSOLBalance] = useState<number>(0)
   const [userTokenBalance, setUserTokenBalance] = useState<BigNumber>(new BigNumber(0))
-
-  const walletName = useMemo(() => wallet?.adapter?.name, [wallet?.adapter, wallet?.adapter?.name])
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false)
   const [actionType, setActionType] = useState<string>('')
@@ -229,23 +226,23 @@ const CollapsibleContent: FC<{
   const [withdrawAmount, setWithdrawAmount] = useState<string>('')
   const { sendTransaction, createTransactionBuilder } = useTransaction()
   useEffect(() => {
-    if (userPublicKey) {
+    if (publicKey) {
       if (coin.token === 'SOL') setUserTokenBalance(new BigNumber(userSolBalance))
       else setUserTokenBalance(new BigNumber(getUIAmount(tokenMintAddress)))
     }
-  }, [tokenMintAddress, userPublicKey, isTxnSuccessfull, userSolBalance, getUIAmount])
+  }, [tokenMintAddress, publicKey, isTxnSuccessfull, userSolBalance, getUIAmount])
 
   useEffect(() => {
     ;(async () => {
-      if (userPublicKey) {
-        const solAmount = await connection.getBalance(userPublicKey)
+      if (publicKey) {
+        const solAmount = await connection.getBalance(publicKey)
         setUserSOLBalance(solAmount / LAMPORTS_PER_SOL)
       } else {
         setDepositAmount(null)
         setWithdrawAmount(null)
       }
     })()
-  }, [userPublicKey, isTxnSuccessfull])
+  }, [publicKey, isTxnSuccessfull])
   const formattedapiSslData = useMemo(
     () => ({
       apy: apiSslData?.apy,
@@ -402,10 +399,10 @@ const CollapsibleContent: FC<{
     if (checkConditionsForDepositWithdraw(true)) return
     setIsButtonLoading(true)
     setOperationPending(true)
-    depositedBalanceConnection(userPublicKey, coin)
+    depositedBalanceConnection(publicKey, coin)
     setIsTxnSuccessfull(false)
     const txBuilder = createTransactionBuilder()
-    const tx = await executeDeposit(SSLProgram, wal, connection, depositAmount, coin, userPublicKey)
+    const tx = await executeDeposit(SSLProgram, wal, connection, depositAmount, coin, publicKey)
     txBuilder.add(tx)
     const { success } = await sendTransaction(txBuilder)
     console.log('success', success)
@@ -420,17 +417,17 @@ const CollapsibleContent: FC<{
     }
     setTimeout(() => setDepositAmount('0'), 500)
     setIsTxnSuccessfull(true)
-  }, [checkConditionsForDepositWithdraw, userPublicKey, SSLProgram, wal, connection, depositAmount, coin])
+  }, [checkConditionsForDepositWithdraw, publicKey, SSLProgram, wal, connection, depositAmount, coin])
   const handleWithdraw = useCallback(
     async (amount: BigNumber): Promise<void> => {
       if (checkConditionsForDepositWithdraw(false)) return
       console.log('withdraw', amount.toString())
       setIsButtonLoading(true)
       setOperationPending(true)
-      depositedBalanceConnection(userPublicKey, coin)
+      depositedBalanceConnection(publicKey, coin)
       setIsTxnSuccessfull(false)
       const txBuilder = createTransactionBuilder()
-      const tx = await executeWithdraw(SSLProgram, wal, connection, coin, withdrawAmount, userPublicKey)
+      const tx = await executeWithdraw(SSLProgram, wal, connection, coin, withdrawAmount, publicKey)
       txBuilder.add(tx)
       const { success } = await sendTransaction(txBuilder)
       setOperationPending(false)
@@ -446,12 +443,12 @@ const CollapsibleContent: FC<{
     },
     [
       checkConditionsForDepositWithdraw,
-      userPublicKey,
+      publicKey,
       coin,
       connection,
       SSLProgram,
       wal,
-      userPublicKey,
+      publicKey,
       withdrawAmount
     ]
   )
@@ -459,7 +456,7 @@ const CollapsibleContent: FC<{
     setIsButtonLoading(true)
     setOperationPending(true)
     setIsTxnSuccessfull(false)
-    const tx = await executeClaimRewards(SSLProgram, connection, coin, userPublicKey)
+    const tx = await executeClaimRewards(SSLProgram, connection, coin, publicKey)
     const { success } = await sendTransaction(createTransactionBuilder().add(tx))
     setIsButtonLoading(false)
     setOperationPending(false)
@@ -470,7 +467,7 @@ const CollapsibleContent: FC<{
       return
     }
     setIsTxnSuccessfull(true)
-  }, [SSLProgram, wal, connection, coin, userPublicKey, claimableReward, walletName])
+  }, [SSLProgram, wal, connection, coin, publicKey, claimableReward])
   const handleCancel = useCallback(() => {
     setIsButtonLoading(false)
     setOperationPending(false)

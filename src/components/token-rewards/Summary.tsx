@@ -44,10 +44,9 @@ export const Summary = ({
   const { isMobile } = useBreakPoint()
   const [sendingTransaction, setSendingTransaction] = useState(false)
   const { sendTransaction, createTransactionBuilder } = useTransaction()
-  const { wallet } = useWallet()
+  const { publicKey } = useWallet()
   const { connection } = useConnectionConfig()
   const { GammaProgram } = usePriceFeedFarm()
-  const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const { refreshRewards } = useBoostedRewards()
 
   const { estimatedRewardsPerDay, totalRewards } = useMemo(() => {
@@ -87,7 +86,7 @@ export const Summary = ({
         endDate,
         amountToken,
         selectedToken,
-        userPublicKey
+        publicKey
       )
       txBuilder.add(tx)
       // eslint-disable-next-line max-len

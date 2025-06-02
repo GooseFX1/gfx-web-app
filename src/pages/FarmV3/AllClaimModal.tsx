@@ -25,20 +25,16 @@ export const AllClaimModal: FC<{
 }> = ({ allClaimModal, setAllClaimModal, rewardsArray }) => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
-  const { wallet } = useWallet()
+  const { publicKey } = useWallet()
   const { SSLProgram } = usePriceFeedFarm()
   const { connection } = useConnectionConfig()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { rewards, allPoolSslData } = useSSLContext()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
-  const pubKey: PublicKey | null = useMemo(
-    () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
-    [wallet?.adapter?.publicKey]
-  )
 
   const handleAllClaim = async () => {
     setIsLoading(true)
-    const tx = await executeAllPoolClaim(SSLProgram, connection, pubKey, rewards, allPoolSslData)
+    const tx = await executeAllPoolClaim(SSLProgram, connection, publicKey, rewards, allPoolSslData)
     await sendTransaction(createTransactionBuilder().add(tx))
     setAllClaimModal(false)
     setIsLoading(false)

@@ -35,7 +35,7 @@ const PAGE_WRAPPER = styled.div`
 `
 
 const SSLAnalyticsDashboard: FC = () => {
-  const { wallet, connected } = useWallet()
+  const { publicKey, connected } = useWallet()
   const [adminAllowed, setAdminAllowed] = useState<boolean>(false)
   const [rawData, setRawData] = useState([])
   const [liquidityHistoric, setLiquidityHistoric] = useState([])
@@ -127,15 +127,15 @@ const SSLAnalyticsDashboard: FC = () => {
 
   useEffect(() => {
     ;(async () => {
-      if (!wallet?.adapter?.connected) {
+      if (!connected) {
         setAdminAllowed(false)
       }
-      if (wallet?.adapter?.publicKey) {
-        const data = await isAdminAllowed(wallet?.adapter?.publicKey.toString())
+      if (publicKey) {
+        const data = await isAdminAllowed(publicKey.toString())
         setAdminAllowed(data.allowed)
       }
     })()
-  }, [wallet?.adapter?.connected, wallet?.adapter?.publicKey])
+  }, [connected, publicKey])
 
   return !adminAllowed ? (
     <WRAPPER>

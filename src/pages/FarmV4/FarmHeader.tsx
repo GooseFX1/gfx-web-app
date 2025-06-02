@@ -36,8 +36,7 @@ export const FarmHeader: FC = () => {
     setShowCreatedPools
   } = useGamma()
   const statsQuery = useStatsQuery()
-  const { wallet } = useWallet()
-  const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
+  const { publicKey } = useWallet()
   const { isMobile } = useBreakPoint()
   const [isCreatePool, setIsCreatePool] = useState<boolean>(false)
   const [openRewardsDrawer, setOpenRewardsDrawer] = useState<boolean>(false)
@@ -76,14 +75,14 @@ export const FarmHeader: FC = () => {
         tooltip: ''
       }
     ]
-    // if (userPubKey) {
+    // if (publicKey) {
     //   data.unshift({
     //     name: 'Total Earned', value: totalEarnings.toString(),
     //     tooltip: ''
     //   })
     // }
     return data
-  }, [userPubKey, range, totalEarnings, computedViewRange, statsQuery.data])
+  }, [publicKey, range, totalEarnings, computedViewRange, statsQuery.data])
 
   const options = useMemo(
     () => [

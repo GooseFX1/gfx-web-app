@@ -13,9 +13,8 @@ const ORGANIZATION_NAME = 'goose'
 export default function useReferrals(): IReferrals {
   const [client, setClient] = useState<Client | null>(null)
   const [member, setMember] = useState<Member | null>(null)
-  const { wallet } = useWallet()
+  const { publicKey } = useWallet()
   const { connection } = useConnectionConfig()
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
   useEffect(() => {
     // TODO: this client is not being set due to errors. must be resolved to turn on referrals
