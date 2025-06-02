@@ -13,7 +13,6 @@ import {
 } from './context'
 import { APP_DEFAULT_ROUTE } from './constants'
 import Maintenance from './pages/Maintenance'
-import { StatsProvider } from './context/stats'
 import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
 import { Toaster } from 'gfx-component-lib'
 import { RewardsProvider } from '@/context/rewardsContext'
@@ -25,7 +24,6 @@ const Bridge = lazy(() => import('./pages/Bridge'))
 const GenericNotFound = lazy(() => import('./pages/InvalidUrl'))
 const AnalyticsWrapper = lazy(() => import('./pages/Analytics/AnalyticsWrapper'))
 const SSLAnalyticsDashboard = lazy(() => import('./pages/Analytics/ssl/SSLAnalyticsDashboard'))
-const LeaderBoard = lazy(() => import('./pages/Stats/LeaderBoard'))
 const Farm = lazy(() => import('./pages/FarmV3/Farm'))
 const FarmV4 = lazy(() => import('./pages/FarmV4/Farm'))
 
@@ -98,13 +96,6 @@ export const Router: FC = () => {
                             />
                           )}
                           <Route path="/bridge" element={<Bridge />} />
-                          <Route path="/leaderboard"
-                            element={
-                              <StatsProvider>
-                                <LeaderBoard />
-                              </StatsProvider>
-                            }
-                          />
                           <Route path="/ssl" element={<Farm />} />
                           <Route path="/ssl/temp-withdraw" element={<Farm />} />
                           <Route
@@ -120,7 +111,7 @@ export const Router: FC = () => {
                             }
                           />
                           <Route
-                            path={`${ROUTES.GAMMA}/:typeA([^-/]+)-:typeB([^-/]+)`}
+                            path={`${ROUTES.GAMMA}/:typeA-:typeB`}
                             element={
                               <GammaProvider>
                                 <KaminoProvider>
@@ -144,7 +135,7 @@ export const Router: FC = () => {
                             }
                           />
                           <Route
-                            path={`${ROUTES.GAMMA_PORTFOLIO}/:typeA([^-/]+)-:typeB([^-/]+)`}
+                            path={`${ROUTES.GAMMA_PORTFOLIO}/:typeA-:typeB`}
                             element={
                               <GammaProvider>
                                 <KaminoProvider>
