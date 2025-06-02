@@ -55,7 +55,7 @@ const RewardsPrograms: FC = () => {
         </AccordionTrigger>
         <AccordionContent className="pb-5">
           <Slider {...settings} ref={sliderRef}>
-            {/* <div className={`px-1 slide`}>
+            <div className={`px-1 slide`}>
               <div
                 className={`relative flex ${
                   isMobile ? '' : 'gap-7 items-center'
@@ -71,7 +71,7 @@ const RewardsPrograms: FC = () => {
                 )}
                 <div className={isMobile ? 'max-sm:flex-col' : 'gap-7 items-center'}>
                   <h2 className="text-primary-gradient mb-3 mr-5 max-sm:order-first">
-                    Earn 10K $JTO and 300K $GOFX for 30D
+                    Earn 3.5K $JTO and 300K $GOFX for 30D
                   </h2>
                   <div className={isMobile ? 'max-sm:flex max-sm:items-center' : ''}>
                     {isMobile && (
@@ -88,7 +88,7 @@ const RewardsPrograms: FC = () => {
                   </div>
                 </div>
               </div>
-            </div> */}
+            </div>
 
             <div className={`px-1 slide`}>
               <div
