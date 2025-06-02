@@ -12,6 +12,8 @@ import { SendTransactionOptions } from '@solana/wallet-adapter-base'
 import { notifyUsingPromise, promiseBuilder, SpawnLoaderToast } from '@/utils/perpsNotifications'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { toast, ToastT } from 'sonner'
+import { useAppKitProvider } from '@reown/appkit/react'
+import { Provider } from '@reown/appkit-adapter-solana/react'
 
 type SendTxnOptions = {
   connection?: Connection
@@ -51,9 +53,11 @@ const baseSet = new Set()
 
 function useTransaction(): useTransactionReturn {
   const { priorityFeeValue, priorityFee } = useConnectionConfig()
-  const { sendTransaction: sendTransactionOriginal, wallet, signAllTransactions } = useWallet()
+  const { wallet, signAllTransactions } = useWallet()
   const { connection: originalConnection } = useConnectionConfig()
   const { publicKey } = useWalletBalance()
+  // TODO: export from useWallet
+  const {walletProvider} = useAppKitProvider<Provider>('solana')
   const createTransactionBuilder = useCallback(
     (txn?: TXN) => new TransactionBuilder(txn).setPriorityFee(priorityFeeValue),
     [priorityFeeValue]
@@ -90,25 +94,28 @@ function useTransaction(): useTransactionReturn {
             )
         : txnIn
     txn.recentBlockhash = blockHash.blockhash
+    txn.feePayer = publicKey
     const result = await getLatestPriorityFees(connection, txn)
     const priorityFromLevel = typeof result === 'number' ? result : getPriorityFeeFromLevel(priorityFee, result)
     console.log({ result, priorityFromLevel })
     txn =
       txnIn instanceof TransactionBuilder
         ? await txnIn
-            .setPriorityFee(priorityFromLevel)
-            ._getTransaction(
-              publicKey,
-              blockHash.blockhash,
-              supportedTransactionTypes.has(0),
-              isCreatePoolInx,
-              skipComputeUnitsLimit
-            )
+          .setPriorityFee(priorityFromLevel)
+          ._getTransaction(
+            publicKey,
+            blockHash.blockhash,
+            supportedTransactionTypes.has(0),
+            isCreatePoolInx,
+            skipComputeUnitsLimit
+          )
         : txnIn
+    txn.recentBlockhash = blockHash.blockhash
+    txn.feePayer = publicKey
     console.log('signing txn', txn)
     const id = SpawnLoaderToast({ duration: connectionData?.transactionDuration ?? 60000 })
 
-    const txSig = await sendTransactionOriginal(txn, connection, options).catch((err) => {
+    const txSig = await walletProvider.sendTransaction(txn, connection, options).catch((err) => {
       console.log('[ERROR] Transaction failed', err)
       return ''
     })

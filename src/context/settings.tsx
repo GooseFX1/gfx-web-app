@@ -429,7 +429,7 @@ export async function getLatestPriorityFees(connection: Connection, txn: Transac
   } catch (error) {
     console.log('Failed to fetch getLatestPriorityFees', error)
     // default
-    return 0.0001
+    return 10000
   }
 }
 
