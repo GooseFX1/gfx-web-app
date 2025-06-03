@@ -111,7 +111,7 @@ export const Router: FC = () => {
                             }
                           />
                           <Route
-                            path={`${ROUTES.GAMMA}/:typeA-:typeB`}
+                            path={`/gamma/:gammaPoolPair`}
                             element={
                               <GammaProvider>
                                 <KaminoProvider>
@@ -135,7 +135,7 @@ export const Router: FC = () => {
                             }
                           />
                           <Route
-                            path={`${ROUTES.GAMMA_PORTFOLIO}/:typeA-:typeB`}
+                            path={`/gamma/portfolio/:portfolioPoolPair`}
                             element={
                               <GammaProvider>
                                 <KaminoProvider>

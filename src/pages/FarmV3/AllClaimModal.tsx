@@ -4,7 +4,6 @@ import { useConnectionConfig, useDarkMode, usePriceFeedFarm, useSSLContext } fro
 import { executeAllPoolClaim } from '../../web3'
 import { truncateBigNumber } from '../../utils'
 import { useWallet } from '@/hooks/useWallet'
-import { PublicKey } from '@solana/web3.js'
 import { TERMS_OF_SERVICE } from '../../constants'
 import {
   Button,

@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { ROUTES } from '@/Router'
 
 type DeepLink = {
@@ -12,69 +12,54 @@ type DeepLinkActions = {
 }
 
 function usePoolDeepLink(): [DeepLink, DeepLinkActions] {
-  const [deepLink, setDeepLink] = useState<{ symbolA?: string; symbolB?: string }>({
-    symbolA: undefined,
-    symbolB: undefined
-  })
-
+  const [deepLink, setDeepLink] = useState<DeepLink>({ symbolA: undefined, symbolB: undefined })
   const { pathname } = useLocation()
+
   useEffect(() => {
-    const split = pathname.split('/').filter((x) => x.trim() != '')
-    if (split.length == 0) {
-      setDeepLink({
-        symbolA: undefined,
-        symbolB: undefined
-      })
+    const split = pathname.split('/').filter(Boolean)
+    if (!split.length || !ROUTES.GAMMA.includes(split[0])) {
+      setDeepLink((prev) =>
+        prev.symbolA === undefined && prev.symbolB === undefined ? prev : { symbolA: undefined, symbolB: undefined }
+      )
       return
     }
-    // not gamma path
-    if (!ROUTES.GAMMA.includes(split[0])) return
-    const symbol = split.filter(x=>x.includes('-'))?.[0]
+
+    const symbol = split.find((x) => x.includes('-'))
     if (!symbol) {
-      setDeepLink({
-        symbolA: undefined,
-        symbolB: undefined
-      })
-      return
-    } // // no symbols
-    const splitSymbols = symbol.split('-')
-    if (splitSymbols.length == 0) {
-      // no symbols
-      setDeepLink({
-        symbolA: undefined,
-        symbolB: undefined
-      })
+      setDeepLink((prev) =>
+        prev.symbolA === undefined && prev.symbolB === undefined ? prev : { symbolA: undefined, symbolB: undefined }
+      )
       return
     }
-    const symbolA = splitSymbols[0]
-    const symbolB = splitSymbols[1]
-    if (!symbolA || !symbolA.trim() || !symbolB || !symbolB.trim() || symbolA == symbolB) {
-      setDeepLink({
-        symbolA: undefined,
-        symbolB: undefined
-      })
+
+    const [symbolA, symbolB] = symbol.split('-')
+    if (!symbolA || !symbolB || symbolA.trim() === '' || symbolB.trim() === '' || symbolA === symbolB) {
+      setDeepLink((prev) =>
+        prev.symbolA === undefined && prev.symbolB === undefined ? prev : { symbolA: undefined, symbolB: undefined }
+      )
       return
     }
-    setDeepLink((prev) => {
-      if (prev.symbolA == symbolA && prev.symbolB == symbolB) return prev
-      return {
-        symbolA: symbolA,
-        symbolB: symbolB
-      }
-    })
+
+    setDeepLink((prev) =>
+      prev.symbolA === symbolA && prev.symbolB === symbolB ? prev : { symbolA, symbolB }
+    )
   }, [pathname])
 
-  return [
-    deepLink,
-    {
-      setDeepLink,
-      clearDeepLink: () =>
-        setDeepLink({
-          symbolA: undefined,
-          symbolB: undefined
-        })
-    }
-  ]
+  const memoizedSetDeepLink = useCallback((dl: DeepLink) => setDeepLink(dl), [])
+  const memoizedClearDeepLink = useCallback(
+    () => setDeepLink({ symbolA: undefined, symbolB: undefined }),
+    []
+  )
+
+  const actions = useMemo(
+    () => ({
+      setDeepLink: memoizedSetDeepLink,
+      clearDeepLink: memoizedClearDeepLink
+    }),
+    [memoizedSetDeepLink, memoizedClearDeepLink]
+  )
+
+  return [deepLink, actions]
 }
 
 export default usePoolDeepLink

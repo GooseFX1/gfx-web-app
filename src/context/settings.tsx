@@ -404,7 +404,10 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 }
 
-export async function getLatestPriorityFees(connection: Connection, txn: Transaction | VersionedTransaction) {
+export async function getPriorityFeeEstimate(
+  connection: Connection,
+  txn: Transaction | VersionedTransaction
+): Promise<PriorityFeeEstimateResponse | null> {
   try {
     const response = await fetch(connection.rpcEndpoint, {
       method: 'POST',
@@ -415,7 +418,7 @@ export async function getLatestPriorityFees(connection: Connection, txn: Transac
         method: 'getPriorityFeeEstimate',
         params: [
           {
-            transaction: bs58.encode(txn.serialize()), // Pass the serialized transaction in Base58
+            transaction: bs58.encode(txn.serialize({ requireAllSignatures: false, verifySignatures: false })),
             options: {
               includeAllPriorityFeeLevels: true
             }
@@ -424,16 +427,23 @@ export async function getLatestPriorityFees(connection: Connection, txn: Transac
       })
     })
     const data = await response.json()
-    console.log('Fee in function for ', data.result)
-    return data.result.priorityFeeLevels as PriorityFeeLevelsFromHelius
+    console.log('Fee in function for ', data)
+    return data.result.priorityFeeLevels as PriorityFeeEstimateResponse
   } catch (error) {
-    console.log('Failed to fetch getLatestPriorityFees', error)
+    console.log('Failed to fetch getPriorityFeeEstimate', error.message)
     // default
-    return 10000
+    return {
+      min: 1000,
+      low: 10000,
+      medium: 12500,
+      high: 50000,
+      veryHigh: 300000,
+      unsafeMax: 54000000
+    }
   }
 }
 
-type PriorityFeeLevelsFromHelius = {
+type PriorityFeeEstimateResponse = {
   min: number
   low: number
   medium: number
@@ -444,8 +454,8 @@ type PriorityFeeLevelsFromHelius = {
 
 export function getPriorityFeeFromLevel(
   priorityFee: PriorityFeeName,
-  priorityFeeLevels: PriorityFeeLevelsFromHelius
-) {
+  priorityFeeLevels: PriorityFeeEstimateResponse
+): number {
   switch (priorityFee) {
     case 'Default':
       return priorityFeeLevels.low

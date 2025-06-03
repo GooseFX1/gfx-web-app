@@ -96,7 +96,7 @@ class TransactionBuilder {
       // console.log("SIMULATED CU", computeUnits)
       // console.log('Assuming comsumption of', computeUnits, 'compute units')
     }
-
+    
     if (useVersionedTransaction) {
       const message = new TransactionMessage({
         instructions: this._instructions,
@@ -106,7 +106,10 @@ class TransactionBuilder {
 
       return new VersionedTransaction(message)
     }
-    return new Transaction().add(...this._instructions)
+    const tx = new Transaction().add(...this._instructions)
+    tx.recentBlockhash = recentBlockhash
+    tx.feePayer = walletPublicKey
+    return tx
   }
 
   async _getTransactionWithoutPriorityFee(

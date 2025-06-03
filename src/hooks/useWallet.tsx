@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useEffect } from 'react'
+import { useMemo, useCallback } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import {
   type Adapter,
@@ -44,16 +44,12 @@ export interface WalletContextState {
 }
 
 export const useWallet = (): WalletContextState => {
-  const { address, isConnected, status, embeddedWalletInfo } = useAppKitAccount({ namespace: 'solana' })
+  // https://docs.reown.com/appkit/react/core/hooks#ethereum%2Fsolana-library
+  // https://github.com/reown-com/appkit
+  const { address, isConnected, status } = useAppKitAccount({ namespace: 'solana' })
   const { disconnect } = useDisconnect()
   const { walletProvider } = useAppKitProvider<Provider>('solana')
   const reactWallet = useReactWallet()
-
-  useEffect(() => {
-    console.log('WALLET PROVIDER', walletProvider, isConnected)
-    console.log('EMBEDDED WALLET INFO', embeddedWalletInfo)
-    console.log('REACT WALLET', reactWallet)
-  }, [reactWallet, walletProvider, embeddedWalletInfo])
 
   const disconnectMemo = useCallback(() => {
     disconnect()

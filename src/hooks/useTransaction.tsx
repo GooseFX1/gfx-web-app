@@ -1,6 +1,11 @@
 import { ReactNode, useCallback, useMemo } from 'react'
 import TransactionBuilder, { TXN } from '@/web3/Builders/transaction.builder'
-import { getLatestPriorityFees, getPriorityFeeFromLevel, useConnectionConfig } from '@/context'
+import {
+  getPriorityFeeEstimate,
+  getPriorityFeeFromLevel,
+  PriorityFeeEstimateResponse,
+  useConnectionConfig
+} from '@/context'
 import {
   BlockheightBasedTransactionConfirmationStrategy,
   Commitment,
@@ -51,7 +56,7 @@ const baseSet = new Set()
 
 function useTransaction(): useTransactionReturn {
   const { priorityFeeValue, priorityFee } = useConnectionConfig()
-  const { wallet, signAllTransactions, walletProvider } = useWallet()
+  const { wallet, walletProvider } = useWallet()
   const { connection: originalConnection } = useConnectionConfig()
   const { publicKey } = useWalletBalance()
   const createTransactionBuilder = useCallback(
@@ -91,20 +96,21 @@ function useTransaction(): useTransactionReturn {
         : txnIn
     txn.recentBlockhash = blockHash.blockhash
     txn.feePayer = publicKey
-    const result = await getLatestPriorityFees(connection, txn)
-    const priorityFromLevel = typeof result === 'number' ? result : getPriorityFeeFromLevel(priorityFee, result)
-    console.log({ result, priorityFromLevel })
+
+    const priorityFeeEstimate: PriorityFeeEstimateResponse = await getPriorityFeeEstimate(connection, txn)
+    const priorityFromLevel = getPriorityFeeFromLevel(priorityFee, priorityFeeEstimate)
+    console.log({ priorityFeeEstimate, priorityFromLevel })
     txn =
       txnIn instanceof TransactionBuilder
         ? await txnIn
-          .setPriorityFee(priorityFromLevel)
-          ._getTransaction(
-            publicKey,
-            blockHash.blockhash,
-            supportedTransactionTypes.has(0),
-            isCreatePoolInx,
-            skipComputeUnitsLimit
-          )
+            .setPriorityFee(priorityFromLevel)
+            ._getTransaction(
+              publicKey,
+              blockHash.blockhash,
+              supportedTransactionTypes.has(0),
+              isCreatePoolInx,
+              skipComputeUnitsLimit
+            )
         : txnIn
     txn.recentBlockhash = blockHash.blockhash
     txn.feePayer = publicKey
@@ -181,24 +187,25 @@ function useTransaction(): useTransactionReturn {
     console.log('STARTING SEND TXN')
     const connection = connectionData?.connection ?? originalConnection
     const blockHash = await connection.getLatestBlockhash('confirmed')
-    const txnForFee = txnIns[0] instanceof TransactionBuilder
-      ? await txnIns[0]._getTransactionWithoutPriorityFee(
-          publicKey,
-          blockHash.blockhash,
-          supportedTransactionTypes.has(0)
-        )
-      : txnIns[0]
+    const txnForFee =
+      txnIns[0] instanceof TransactionBuilder
+        ? await txnIns[0]
+            .setPriorityFee(priorityFeeValue)
+            ._getTransaction(
+              publicKey,
+              blockHash.blockhash,
+              supportedTransactionTypes.has(0),
+              isCreatePoolInx,
+              skipComputeUnitsLimit
+            )
+        : txnIns[0]
 
-    if (!txnForFee.recentBlockhash) {
-      txnForFee.recentBlockhash = blockHash.blockhash
-    }
-    if (!txnForFee.feePayer) {
-      txnForFee.feePayer = publicKey
-    }
+    txnForFee.recentBlockhash = blockHash.blockhash
+    txnForFee.feePayer = publicKey
 
-    const result = await getLatestPriorityFees(connection, txnForFee)
-    const priorityFromLevel = typeof result === 'number' ? result : getPriorityFeeFromLevel(priorityFee, result)
-    console.log({ result, priorityFromLevel })
+    const priorityFeeEstimate: PriorityFeeEstimateResponse = await getPriorityFeeEstimate(connection, txnForFee)
+    const priorityFromLevel = getPriorityFeeFromLevel(priorityFee, priorityFeeEstimate)
+    console.log({ priorityFeeEstimate, priorityFromLevel })
     console.log('signing txn', txnIns)
     const id = SpawnLoaderToast({ duration: connectionData?.transactionDuration ?? 60000 })
 
@@ -218,7 +225,7 @@ function useTransaction(): useTransactionReturn {
       )
     )
 
-    const signedTransactions = await signAllTransactions(txns)
+    const signedTransactions = await walletProvider.signAllTransactions(txns)
 
     console.log('user has signed ' + signedTransactions.length + ' transactions')
 

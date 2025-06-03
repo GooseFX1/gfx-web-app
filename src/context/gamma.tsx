@@ -305,7 +305,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     // guarding against unneeded requests
     if (data.isLoading) return { id: 'LOADING' } as GAMMAPoolWithUserLiquidity
     return { id: 'NOT_FOUND' } as GAMMAPoolWithUserLiquidity
-  }, [isPortfolio, poolsQuery, portfolioPoolsQuery, selectedCard])
+  }, [isPortfolio, poolsQuery, portfolioPoolsQuery, selectedCard, deepLink])
 
   const selectPoolByDeeplinkQuery = useSelectPoolBySymbols({
     symbolA: deepLink.symbolA,

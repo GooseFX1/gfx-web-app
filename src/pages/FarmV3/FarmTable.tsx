@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
-import { PublicKey } from '@solana/web3.js'
 import { ShowDepositedToggle, SkeletonCommon } from '../../components'
 import { useConnectionConfig, useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { checkMobile, formatUserBalance, truncateBigString } from '../../utils'
