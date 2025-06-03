@@ -23,6 +23,7 @@ type UserTokenFeedConfig = {
     social: boolean
     new: boolean
     migrated: boolean
+    soon: boolean
   }
 }
 export interface USER_CONFIG_CACHE {

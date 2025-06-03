@@ -57,7 +57,7 @@ export const TokenFeedContainerHeaderWithTitle: FC<Partial<TokenFeedContainerPro
 export const TokenFeedContentContainer: FC<{ children: ReactNode | ReactNode[]; className?: string }> = ({
   children,
   className
-}) => <div className={cn(`flex flex-col gap-4 py-4 overflow-scroll`, className)}>{children}</div>
+}) => <div className={cn(`flex flex-1 flex-col gap-4 pt-4 overflow-scroll`, className)}>{children}</div>
 
 export const TokenFeedTokensContainer: FC<{ tokens: TokenFeedToken[] }> = ({ tokens }) => (
   <TokenFeedContentContainer>

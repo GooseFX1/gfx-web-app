@@ -7,6 +7,7 @@ type TokenFeedColumns = {
   social: boolean
   new: boolean
   migrated: boolean
+  soon: boolean
 }
 
 interface ITokenFeed {
@@ -24,29 +25,29 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
     userCache?.tokenFeed?.enabledColumns ?? {
       social: true,
       new: true,
-      migrated: true
+      migrated: true,
+      soon: false
     }
   )
-  const { isUserSettingsCustom, totalColumnsEnabled } = useMemo(
-    () => {
-      const keys = Object.values(userCache.tokenFeed?.enabledColumns ?? {});
+  const { isUserSettingsCustom, totalColumnsEnabled } = useMemo(() => {
+    const keys = Object.values(userCache.tokenFeed?.enabledColumns ?? {})
 
-      return {
-        isUserSettingsCustom: keys.some((value) => value !== true),
-        totalColumnsEnabled: keys.filter((value) => value).length
-      }
-    },
-    [userCache.tokenFeed]
-  )
+    return {
+      isUserSettingsCustom: keys.some((value) => value !== true),
+      totalColumnsEnabled: keys.filter((value) => value).length
+    }
+  }, [userCache.tokenFeed])
   const enableColumn = (column: keyof TokenFeedColumns, enabled: boolean) => {
     setEnabledColumns((prev) => {
       const curr = { ...prev }
       curr[column] = enabled
-      if (Object.values(curr).every((value) => !value)) {
+      const atleastTwoColumnsOfTokensEnabled =
+        Object.keys(curr).filter((value) => value != 'social' && curr[value]).length > 2
+      if (atleastTwoColumnsOfTokensEnabled) {
         toast(
           <IntemediaryToast className={cn(`w-[290px]`)}>
             <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
-            <p>Atleast one column must be enabled!</p>
+            <p>Atleast two columns must be enabled for tokens!</p>
           </IntemediaryToast>,
           {
             id: 'token-feed-error'
