@@ -4,16 +4,14 @@ import {
   Checkbox,
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-  Icon
+  Icon,
+  Input
 } from 'gfx-component-lib'
 
 import { useDarkMode } from '@/context'
 import useBoolean from '@/hooks/useBoolean'
+import { H4, P } from '@/components/text/TextComponents'
 
 const TokenFeedSettingsCheckBox: FC<{
   checked: boolean
@@ -38,6 +36,32 @@ const TokenFeedSettingsCheckBox: FC<{
     />
   </div>
 )
+const TokenSettingsMinMaxInput: FC<{
+  label: string
+  minValue?: string
+  maxValue?: string
+  setMinValue: (value: string) => void
+  setMaxValue: (value: string) => void
+}> = ({ label, minValue, maxValue, setMinValue, setMaxValue }) => (
+  <div className={`flex flex-col gap-2 px-2`}>
+    <P className={'text-b2'}>{label}</P>
+    <div className={`flex gap-2 items-center`}>
+      <Input
+        className={`min-w-[166px]`}
+        value={minValue}
+        placeholder={'Min'}
+        onChange={(e) => setMinValue(e.target.value)}
+      />
+      <P className={`text-b2`}>-</P>
+      <Input
+        className={`min-w-[166px]`}
+        value={maxValue}
+        placeholder={'Max'}
+        onChange={(e) => setMaxValue(e.target.value)}
+      />
+    </div>
+  </div>
+)
 
 function TokenFeedSettings() {
   const [isOpen, setIsOpen] = useBoolean(false)
@@ -53,55 +77,85 @@ function TokenFeedSettings() {
             size={'md'}
             className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px] max-sm:ml-2.5'}
           />
-          {/*{(!isPortfolio && currentSort !== GAMMA_MAIN_SORT_CONFIG_DEFAULT) ||*/}
-          {/*(isPortfolio && currentSort != GAMMA_PORTFOLIO_SORT_CONFIG_DEFAULT) ||*/}
-          {/*showCreatedPools ||*/}
-          {/*(!isPortfolio && showDeposited) ? (*/}
-          {/*  <img*/}
-          {/*    className={`absolute top-0.5 left-0 border-1 border-solid w-2.5 h-2.5*/}
-          {/*              border-background-lightmode-primary dark:border-background-darkmode-primary rounded-full`}*/}
-          {/*    src={'/img/assets/red-notification-circle.svg'}*/}
-          {/*  />*/}
-          {/*) : null}*/}
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent portal={false} align={'end'} className={'max-w-[374px]'}>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Filters</DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuItem></DropdownMenuItem>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Socials</DropdownMenuSubTrigger>
-          <DropdownMenuSubContent className={'flex flex-col p-2 gap-2'}>
-            <DropdownMenuItem asChild>
-              <TokenFeedSettingsCheckBox
-                checked={false}
-                onCheckedChange={() => console.log()}
-                id={'x'}
-                label={'X'}
-              />
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <TokenFeedSettingsCheckBox
-                checked={false}
-                onCheckedChange={() => console.log()}
-                id={'website'}
-                label={'Website'}
-              />
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <TokenFeedSettingsCheckBox
-                checked={false}
-                onCheckedChange={() => console.log()}
-                id={'Telegram'}
-                label={'Telegram'}
-              />
-            </DropdownMenuItem>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
+      <DropdownMenuContent portal={false} align={'end'} className={'p-0 pt-1 pb-2 w-[374px] flex flex-col gap-2'}>
+        <div className={`flex flex-col gap-2`}>
+          <div
+            className={`w-full border-b-solid border-b-1 border-border-lightmode-secondary
+           dark:border-border-darkmode-secondary pb-2`}
+          >
+            <H4 className={'px-2'}>Filters</H4>
+          </div>
+          <TokenSettingsMinMaxInput
+            label={'Volume'}
+            maxValue={undefined}
+            minValue={undefined}
+            setMaxValue={() => console.log('')}
+            setMinValue={() => console.log('')}
+          />
+          <TokenSettingsMinMaxInput
+            label={'Market Cap'}
+            maxValue={undefined}
+            minValue={undefined}
+            setMaxValue={() => console.log('')}
+            setMinValue={() => console.log('')}
+          />
+          <TokenSettingsMinMaxInput
+            label={'Bonding Curve %'}
+            maxValue={undefined}
+            minValue={undefined}
+            setMaxValue={() => console.log('')}
+            setMinValue={() => console.log('')}
+          />
+          <TokenSettingsMinMaxInput
+            label={'Age (Mins)'}
+            maxValue={undefined}
+            minValue={undefined}
+            setMaxValue={() => console.log('')}
+            setMinValue={() => console.log('')}
+          />
+          <TokenSettingsMinMaxInput
+            label={'Holders'}
+            maxValue={undefined}
+            minValue={undefined}
+            setMaxValue={() => console.log('')}
+            setMinValue={() => console.log('')}
+          />
+          <TokenSettingsMinMaxInput
+            label={'Top 10 Holders %'}
+            maxValue={undefined}
+            minValue={undefined}
+            setMaxValue={() => console.log('')}
+            setMinValue={() => console.log('')}
+          />
+        </div>
+        <div className={`flex flex-col gap-2`}>
+          <div
+            className={`w-full border-b-solid border-b-1 border-border-lightmode-secondary
+           dark:border-border-darkmode-secondary pb-2`}
+          >
+            <H4 className={`px-2`}>Socials</H4>
+          </div>
+          <div className={`flex gap-4 px-2`}>
+            <TokenFeedSettingsCheckBox checked={false} onCheckedChange={() => console.log()} id={'x'} label={'X'} />
+            <TokenFeedSettingsCheckBox
+              checked={false}
+              onCheckedChange={() => console.log()}
+              id={'website'}
+              label={'Website'}
+            />
+          </div>
+          <div className={`flex gap-4 px-2 w-1/2`}>
+            <TokenFeedSettingsCheckBox
+              checked={false}
+              onCheckedChange={() => console.log()}
+              id={'Telegram'}
+              label={'Telegram'}
+            />
+          </div>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   )
