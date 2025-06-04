@@ -34,22 +34,22 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
   )
   const [quickBuyAmount, setQuickBuyAmount] = useState<string>(userCache?.tokenFeed?.quickBuyAmount ?? '')
 
-  const maxColumnsReached = useMemo(()=>{
-    const totalColumnsEnabled = Object.keys(enabledColumns).filter((key) => {
-      if (key == 'social') return false
-      return enabledColumns[key as keyof TokenFeedColumns]
-    }).length
-    return totalColumnsEnabled >=3
-  },[enabledColumns])
+  const maxColumnsReached = useMemo(() => {
+    const totalColumnsEnabled = Object.keys(enabledColumns).filter(
+      (key) => enabledColumns[key as keyof TokenFeedColumns]
+    ).length
+    return totalColumnsEnabled >= 3
+  }, [enabledColumns])
 
-  const { isUserSettingsCustom, totalColumnsEnabled } = useMemo(() => {
-    const keys = Object.values(userCache.tokenFeed?.enabledColumns ?? {})
+  const { isUserSettingsCustom, totalColumnsEnabled } = useMemo(
+    () => ({
+      isUserSettingsCustom:
+        !enabledColumns.social || !enabledColumns.new || !enabledColumns.migrated || enabledColumns.soon,
+      totalColumnsEnabled: Object.values(userCache.tokenFeed?.enabledColumns ?? {}).filter((value) => value).length
+    }),
+    [userCache.tokenFeed]
+  )
 
-    return {
-      isUserSettingsCustom: keys.some((value) => value !== true),
-      totalColumnsEnabled: keys.filter((value) => value).length
-    }
-  }, [userCache.tokenFeed])
   const enableColumn = (column: keyof TokenFeedColumns, enabled: boolean) => {
     setEnabledColumns((prev) => {
       const curr = { ...prev }
