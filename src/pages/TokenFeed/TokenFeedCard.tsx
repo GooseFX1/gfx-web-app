@@ -9,9 +9,9 @@ import { toast } from 'sonner'
 import SuccessIcon from '@/assets/Success-icon.svg?react'
 import { useDarkMode, useGamma } from '@/context'
 import CircularProgress from '@/components/CircularProgress'
-import { useHistory } from 'react-router-dom'
 import { H4, H3, P } from '@/components/text/TextComponents'
 import { useTokenFeed } from '@/context/tokenFeedContext'
+import useTokenQuery from '@/queries/useTokenQuery'
 
 const IconWithInfo: FC<{
   data: ReactNode
@@ -49,8 +49,7 @@ const TokenFeedStats: FC<{
 
 function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
   const { mode } = useDarkMode()
-  const history = useHistory()
-  const { setIsCreatePool } = useGamma()
+  const { setIsCreatePool, setCreatePoolTokenA } = useGamma()
   const { quickBuyAmount } = useTokenFeed()
   const [progressSim, setProgressSim] = useState(0)
 
@@ -63,6 +62,10 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
     },
     enabled: !!token.address,
     staleTime: INTERVALS.SECOND * 5
+  })
+
+  const tokenQuery = useTokenQuery({
+    address: token?.address,
   })
 
   const copyTokenDetails = () => {
@@ -97,16 +100,14 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
   }, [])
 
   const handleLp = () => {
-    if (doesTokenPoolExist.isSuccess) {
+    if (doesTokenPoolExist.isSuccess && tokenQuery.isSuccess) {
       if (doesTokenPoolExist.data) {
         setIsCreatePool(true)
+        setCreatePoolTokenA(tokenQuery.data)
       } else {
         // TODO: how are we handling this
       }
     }
-    history.replace({
-      pathname: '/gamma'
-    })
   }
   const img = loadIconImage(token.src, mode)
 

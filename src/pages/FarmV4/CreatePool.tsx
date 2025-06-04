@@ -34,9 +34,7 @@ export const CreatePool = (): JSX.Element => {
   const slider = React.useRef<Slider>(null)
   const breakpoint = useBreakPoint()
   const [currentSlide, setCurrentSlide] = useState<number>(0)
-  const [tokenA, setTokenA] = useState(null)
   const [amountTokenA, setAmountTokenA] = useState<string>('')
-  const [tokenB, setTokenB] = useState(null)
   const [amountTokenB, setAmountTokenB] = useState<string>('')
   const [feeTier, setFeeTier] = useState<string>('0.01')
   const { connected } = useWallet()
@@ -54,7 +52,11 @@ export const CreatePool = (): JSX.Element => {
     setCreatePoolState,
     updateGammaRoute,
     isCreatePool,
-    setIsCreatePool
+    setIsCreatePool,
+    createPoolTokenA: tokenA,
+    setCreatePoolTokenA: setTokenA,
+    createPoolTokenB: tokenB,
+    setCreatePoolTokenB: setTokenB
   } = useGamma()
   const { balance, publicKey } = useWalletBalance()
 

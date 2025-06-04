@@ -95,6 +95,10 @@ interface GAMMADataModel {
   setCreatePoolState: Dispatch<SetStateAction<CreationPoolFlowStateEnum>>
   isCreatePool: boolean
   setIsCreatePool: Dispatch<SetStateAction<boolean>>
+  createPoolTokenA: TokenListToken
+  setCreatePoolTokenA: Dispatch<SetStateAction<TokenListToken>>
+  createPoolTokenB: TokenListToken
+  setCreatePoolTokenB: Dispatch<SetStateAction<TokenListToken>>
 }
 
 export type TokenListToken = {
@@ -157,7 +161,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const previousCreatePoolState = usePrevious(createPoolState)
   const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
   const [isCreatePool, setIsCreatePool] = useState<boolean>(false)
-
+  const [createPoolTokenA, setCreatePoolTokenA] = useState<TokenListToken>()
+  const [createPoolTokenB, setCreatePoolTokenB] = useState<TokenListToken>()
   const isPortfolio = useMemo(
     () => location.pathname.includes(ROUTES.GAMMA_PORTFOLIO),
     [location.pathname]
@@ -526,7 +531,11 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         createPoolState,
         setCreatePoolState,
         isCreatePool,
-        setIsCreatePool
+        setIsCreatePool,
+        createPoolTokenA,
+        setCreatePoolTokenA,
+        createPoolTokenB,
+        setCreatePoolTokenB
       }}
     >
       {children}

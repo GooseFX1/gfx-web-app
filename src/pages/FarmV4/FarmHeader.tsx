@@ -19,7 +19,6 @@ import {
 import useBreakPoint from '@/hooks/useBreakPoint'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import DocsBanner from './DocsBanner'
-import { CreatePool } from './CreatePool'
 import BigNumber from 'bignumber.js'
 import { TokenRewardsDrawer } from '@/components/token-rewards'
 import useStatsQuery from '@/queries/GAMMA/useStatsQuery'
@@ -108,7 +107,6 @@ export const FarmHeader: FC = () => {
   return (
     <div className="mt-[15px]">
       <TokenRewardsDrawer isOpen={openRewardsDrawer} setOpen={setOpenRewardsDrawer} />
-      <CreatePool/>
 
       <div className={'max-sm:px-2.5 px-5'}>
         <DocsBanner />
