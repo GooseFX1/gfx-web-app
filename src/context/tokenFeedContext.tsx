@@ -15,6 +15,9 @@ interface ITokenFeed {
   enableColumn: (column: keyof TokenFeedColumns, enabled: boolean) => void
   isUserSettingsCustom: boolean
   totalColumnsEnabled: number
+  maxColumnsReached: boolean
+  quickBuyAmount: string
+  updateQuickBuyAmount: (amount: string) => void
 }
 
 const TokenFeedContext = createContext<ITokenFeed | null>(null)
@@ -29,6 +32,16 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
       soon: false
     }
   )
+  const [quickBuyAmount, setQuickBuyAmount] = useState<string>(userCache?.tokenFeed?.quickBuyAmount ?? '')
+
+  const maxColumnsReached = useMemo(()=>{
+    const totalColumnsEnabled = Object.keys(enabledColumns).filter((key) => {
+      if (key == 'social') return false
+      return enabledColumns[key as keyof TokenFeedColumns]
+    }).length
+    return totalColumnsEnabled >=3
+  },[enabledColumns])
+
   const { isUserSettingsCustom, totalColumnsEnabled } = useMemo(() => {
     const keys = Object.values(userCache.tokenFeed?.enabledColumns ?? {})
 
@@ -41,9 +54,12 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
     setEnabledColumns((prev) => {
       const curr = { ...prev }
       curr[column] = enabled
-      const atleastTwoColumnsOfTokensEnabled =
-        Object.keys(curr).filter((value) => value != 'social' && curr[value]).length > 2
-      if (atleastTwoColumnsOfTokensEnabled) {
+
+      const totalColumnsEnabled = Object.keys(curr).filter((key) => {
+        if (key == 'social') return false
+        return curr[key as keyof TokenFeedColumns]
+      }).length
+      if (totalColumnsEnabled < 2) {
         toast(
           <IntemediaryToast className={cn(`w-[290px]`)}>
             <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
@@ -65,13 +81,27 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
       return curr
     })
   }
+
+  const updateQuickBuyAmount = (amount: string) => {
+    setQuickBuyAmount(amount)
+    updateUserCache({
+      ...userCache,
+      tokenFeed: {
+        ...userCache.tokenFeed,
+        quickBuyAmount: amount
+      }
+    })
+  }
   return (
     <TokenFeedContext.Provider
       value={{
         enabledColumns,
         enableColumn,
         isUserSettingsCustom,
-        totalColumnsEnabled
+        totalColumnsEnabled,
+        maxColumnsReached,
+        quickBuyAmount,
+        updateQuickBuyAmount
       }}
     >
       {children}

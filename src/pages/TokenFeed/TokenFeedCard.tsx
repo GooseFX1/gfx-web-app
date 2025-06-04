@@ -10,13 +10,14 @@ import SuccessIcon from '@/assets/Success-icon.svg?react'
 import { useDarkMode, useGamma } from '@/context'
 import CircularProgress from '@/components/CircularProgress'
 import { useHistory } from 'react-router-dom'
-import { H4,H3, P } from '@/components/text/TextComponents'
+import { H4, H3, P } from '@/components/text/TextComponents'
+import { useTokenFeed } from '@/context/tokenFeedContext'
 
 const IconWithInfo: FC<{
   data: ReactNode
   src: string
 }> = ({ data, src }) => (
-  <div className={`inline-flex p-1 gap-1 items-center group`}>
+  <div className={`inline-flex py-1 gap-1 items-center group`}>
     <Icon
       className={`rounded-full !w-[18px] !h-[18px] !max-w-[18px] !max-h-[18px] !min-w-[18px] !min-h-[18px]
       group-hover:hue-rotate-[-45deg]`}
@@ -27,31 +28,30 @@ const IconWithInfo: FC<{
 )
 const SocialIcon: FC<{
   socialLink: string
-  src: string,
-}> = ({ src, socialLink }) => <Icon
-  src={src}
-  size={'sm'}
-  className={`cursor-pointer hover:invert hover:hue-rotate-[553deg]`}
-  onClick={() => openLinkInNewTab(socialLink)}
+  src: string
+}> = ({ src, socialLink }) => (
+  <Icon
+    src={src}
+    size={'sm'}
+    className={`cursor-pointer hover:invert hover:hue-rotate-[553deg]`}
+    onClick={() => openLinkInNewTab(socialLink)}
   />
+)
 const TokenFeedStats: FC<{
   marketCap: string
   volume: string
 }> = ({ marketCap, volume }) => (
   <div className={`inline-flex gap-5`}>
-    <P className={`text-b2 text-text-lightmode-primary dark:text-text-darkmode-primary`}>
-      MC ${marketCap}
-    </P>
-    <P className={`text-b2 text-text-lightmode-primary dark:text-text-darkmode-primary`}>
-      V ${volume}
-    </P>
+    <P className={`text-b2 text-text-lightmode-primary dark:text-text-darkmode-primary`}>MC ${marketCap}</P>
+    <P className={`text-b2 text-text-lightmode-primary dark:text-text-darkmode-primary`}>V ${volume}</P>
   </div>
 )
 
 function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
   const { mode } = useDarkMode()
   const history = useHistory()
-  const {setIsCreatePool} = useGamma()
+  const { setIsCreatePool } = useGamma()
+  const { quickBuyAmount } = useTokenFeed()
   const [progressSim, setProgressSim] = useState(0)
 
   const doesTokenPoolExist = useQuery({
@@ -75,9 +75,7 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
         >
           <H4 className={'text-text-green'}>Success</H4>
         </ToastTitle>
-        <P className={'text-b3 mt-2'}>
-          Token address copied successfully!
-        </P>
+        <P className={'text-b3 mt-2'}>Token address copied successfully!</P>
       </div>,
       {
         id: 'copyTokenFeedAddress'
@@ -85,8 +83,8 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
     )
   }
   useEffect(() => {
-    const interval = setInterval(()=>{
-      setProgressSim(prev=>{
+    const interval = setInterval(() => {
+      setProgressSim((prev) => {
         const newProgress = prev + 1
         if (newProgress >= 100) {
           clearInterval(interval)
@@ -94,11 +92,11 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
         }
         return newProgress
       })
-    },1000)
-    return ()=>clearInterval(interval)
+    }, 1000)
+    return () => clearInterval(interval)
   }, [])
 
-  const handleLp = ()=>{
+  const handleLp = () => {
     if (doesTokenPoolExist.isSuccess) {
       if (doesTokenPoolExist.data) {
         setIsCreatePool(true)
@@ -119,9 +117,7 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
     >
       <div className={'inline-flex gap-2 justify-between'}>
         <H3>{token.tickerSymbol}</H3>
-        <P className={`text-b2`}>
-          {token.name}
-        </P>
+        <P className={`text-b2`}>{token.name}</P>
         <Icon
           src={'/img/assets/clipboard_dark.svg'}
           className={`!w-[15px] !h-[15px] !max-w-[15px] !max-h-[15px] !min-w-[15px] !min-h-[15px]
@@ -158,12 +154,19 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
             variant={'secondary'}
             colorScheme={'secondaryGradient'}
             size={'md'}
-            className={`px-2.5 py-[5px] w-[56px] h-[35px]
+            className={`px-2.5 py-[5px] min-w-[56px] max-w-[87px] h-[35px]
                    from-brand-secondaryGradient-primary to-brand-secondaryGradient-secondary`}
           >
-            <Icon src={`/img/assets/lightning.svg`} size={'sm'} />
+            {quickBuyAmount ? (
+              <>
+                {quickBuyAmount}&nbsp;
+                <Icon src={`/img/crypto/Solana (SOL).svg`} size={'sm'} />
+              </>
+            ) : (
+              <Icon src={`/img/assets/swap_white.svg`} size={'sm'} />
+            )}
           </Button>
-          {token.migrated &&
+          {token.migrated && (
             <Button
               colorScheme={'secondaryGradient'}
               variant={'outline'}
@@ -173,7 +176,7 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
             >
               LP
             </Button>
-          }
+          )}
         </div>
       </div>
     </div>

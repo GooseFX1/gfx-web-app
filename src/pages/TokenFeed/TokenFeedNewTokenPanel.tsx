@@ -5,12 +5,15 @@ import TokenFeedContainer, {
 } from '@/pages/TokenFeed/TokenFeedContainer'
 import { useTokenFeed } from '@/context/tokenFeedContext'
 import TokenFeedSettings from '@/pages/TokenFeed/TokenFeedSettings'
+import { cn } from 'gfx-component-lib'
 
 function TokenFeedNewTokenPanel() {
   const { enabledColumns } = useTokenFeed()
   if (!enabledColumns.new) return null
   return (
-    <TokenFeedContainer>
+    <TokenFeedContainer className={cn(
+      enabledColumns.social ? 'ml-auto' : 'mr-auto',
+    )}>
       <TokenFeedContainerHeaderWithTitle title={'New Pairs'} tooltip={''} settings={<TokenFeedSettings />} />
       <TokenFeedTokensContainer
         tokens={[

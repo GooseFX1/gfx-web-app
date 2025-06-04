@@ -193,7 +193,7 @@ const MobileNav: FC = () => {
                   )}
                   onClick={() => {
                     setIsOpen.off()
-                    history.push('/gamma')
+                    history.push('/token-feed')
                   }}
                 >
                   <img

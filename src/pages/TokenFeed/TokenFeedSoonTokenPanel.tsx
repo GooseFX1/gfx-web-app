@@ -4,14 +4,18 @@ import TokenFeedContainer, {
   TokenFeedTokensContainer
 } from '@/pages/TokenFeed/TokenFeedContainer'
 import { useTokenFeed } from '@/context/tokenFeedContext'
+import { cn } from 'gfx-component-lib'
+import TokenFeedSettings from '@/pages/TokenFeed/TokenFeedSettings'
 
 function TokenFeedSoonTokenPanel() {
   const { enabledColumns } = useTokenFeed()
 
   if (!enabledColumns.soon) return null
   return (
-    <TokenFeedContainer>
-      <TokenFeedContainerHeaderWithTitle title={'Migrated'} tooltip={''} settings={null} />
+    <TokenFeedContainer className={cn(
+      (enabledColumns.social || enabledColumns.new || enabledColumns.migrated) ? 'ml-auto' : 'mr-auto'
+    )}>
+      <TokenFeedContainerHeaderWithTitle title={'Soon'} tooltip={''} settings={<TokenFeedSettings />} />
       <TokenFeedTokensContainer
         tokens={[
           {

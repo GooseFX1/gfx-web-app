@@ -35,7 +35,7 @@ const GridSettingsCheckBox: FC<{
 function TokenFeedGridSettings() {
   const { mode } = useDarkMode()
   const [isOpen, setIsOpen] = useBoolean(false)
-  const { enabledColumns, enableColumn, isUserSettingsCustom, totalColumnsEnabled } = useTokenFeed()
+  const { enabledColumns, enableColumn, isUserSettingsCustom, totalColumnsEnabled, maxColumnsReached } = useTokenFeed()
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
       <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
@@ -71,23 +71,26 @@ function TokenFeedGridSettings() {
             checked={enabledColumns.social}
             id={'social'}
             label={'Social Feed'}
+            disabled={maxColumnsReached && !enabledColumns.social}
             onCheckedChange={(state) => enableColumn('social', state as boolean)}
           />
           <GridSettingsCheckBox
             checked={enabledColumns.new}
             id={'new'}
             label={'New Tokens'}
+            disabled={maxColumnsReached && !enabledColumns.new}
             onCheckedChange={(state) => enableColumn('new', state as boolean)}/>
           <GridSettingsCheckBox
             checked={enabledColumns.migrated}
             id={'migrated'}
             label={'Migrated Tokens'}
+            disabled={maxColumnsReached && !enabledColumns.migrated}
             onCheckedChange={(state) => enableColumn('migrated', state as boolean)}/>
           <GridSettingsCheckBox
             checked={enabledColumns.soon}
             id={'soon'}
             label={'Soon'}
-            disabled={true}
+            disabled={maxColumnsReached && !enabledColumns.soon}
             onCheckedChange={(state) => enableColumn('soon', state as boolean)}/>
         </div>
       </DropdownMenuContent>

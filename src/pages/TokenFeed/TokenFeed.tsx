@@ -5,25 +5,26 @@ import TokenFeedSocialPanel from '@/pages/TokenFeed/TokenFeedSocialPanel'
 import TokenFeedNewTokenPanel from '@/pages/TokenFeed/TokenFeedNewTokenPanel'
 import TokenFeedMigratedTokenPanel from '@/pages/TokenFeed/TokenFeedMigratedTokenPanel'
 import { H2 } from '@/components/text/TextComponents'
-import {
-  cn
-} from 'gfx-component-lib'
+import { cn } from 'gfx-component-lib'
 import TokenFeedSoonTokenPanel from './TokenFeedSoonTokenPanel'
+import TokenFeedQuickBuy from './TokenFeedQuickBuy'
 
 function TokenFeed() {
 
   return (
-    <div
-      className={`flex flex-col flex‐1 overflow‐auto px-7.5`}
-    >
-      <div className={`flex flex-col w-full max-w-[1380px] gap-4 mx-auto mt-2 mb-[15px]`}>
+    <div className={`flex flex-col flex‐1 overflow‐auto px-7.5 w-full`}>
+      <div className={`flex flex-col w-full max-w-[1380px] gap-4 mx-auto`}>
         <div className={'inline-flex w-full justify-between'}>
           <H2>Trade</H2>
-          <TokenFeedGridSettings />
+          <div className={'inline-flex gap-4'}>
+            <TokenFeedQuickBuy/>
+            <TokenFeedGridSettings />
+          </div>
         </div>
         <div
-          className={cn(`grid items-center justify-center justify-items-center gap-4 grid-cols-1
-      md:grid-cols-2 xl:grid-cols-3
+          className={cn(`grid items-center justify-center justify-items-center gap-4 content-between
+          grid-cols-[repeat(1,_minmax(450px,_1fr))] md:grid-cols-[repeat(2,_minmax(330px,_1fr))]
+           lg:grid-cols-[repeat(3,_minmax(330px,_1fr))] 
        `)}
         >
           <TokenFeedSocialPanel />
@@ -35,6 +36,7 @@ function TokenFeed() {
     </div>
   )
 }
+
 //
 // function MobileDrawer() {
 //   const [open, setOpen] = useBoolean(false);

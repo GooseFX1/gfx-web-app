@@ -24,7 +24,8 @@ type UserTokenFeedConfig = {
     new: boolean
     migrated: boolean
     soon: boolean
-  }
+  },
+  quickBuyAmount?: string
 }
 export interface USER_CONFIG_CACHE {
   hasDexOnboarded: boolean

@@ -30,7 +30,7 @@ function TokenFeedSocialPanel() {
 
   if (!enabledColumns.social) return null
   return (
-    <TokenFeedContainer>
+    <TokenFeedContainer className={'md:mr-auto'}>
       <TokenFeedContainerHeader>
         <RadioGroup defaultValue={'social'} className={'flex-shrink gap-1.25 w-max'}>
           <RadioGroupItem value={'social'} variant={'primary'} size={'md'}>
