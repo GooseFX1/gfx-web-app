@@ -89,9 +89,6 @@ export const useWallet = (): IUseWallet => {
 
   const connected = isConnected || (reactWallet && reactWallet.connected)
 
-  if (currentWalletProvider) {
-    console.log('currentWalletProvider', currentWalletProvider)
-  }
   return useMemo(
     () => ({
       ...reactWallet,
