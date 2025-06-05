@@ -52,7 +52,7 @@ export const DepositWithdrawSlider: FC<{
   preventAutoClose: boolean
   container?: Element
 }> = ({ preventAutoClose, container }) => {
-  const { wallet } = useWallet()
+  const { walletProvider } = useWallet()
   const { isMobile } = useBreakPoint()
   const { connection } = useConnectionConfig()
   const {
@@ -167,12 +167,11 @@ export const DepositWithdrawSlider: FC<{
         transactionLPAmount,
         slippage,
         selectedCard,
-        publicKey,
         GammaProgram,
         connection,
         userSourceTokenType,
         userTargetTokenType,
-        wallet,
+        walletProvider,
         poolIdQuery.data,
         liqKeyQuery.data
       )

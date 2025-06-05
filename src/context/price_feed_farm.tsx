@@ -12,7 +12,7 @@ import {
 import { getFarmTokenPrices } from '../api/SSL'
 import { Program, Provider } from '@project-serum/anchor'
 import { Program as coralProgram, AnchorProvider, IdlAccounts } from '@coral-xyz/anchor'
-import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import { getStakingAccountKey, SSL_PROGRAM_ID } from '../web3'
 import { useConnectionConfig } from './settings'
 import { AccountInfo, PublicKey } from '@solana/web3.js'
@@ -76,7 +76,7 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
   const [priceFetched, setPriceFetched] = useState<boolean>(false)
   const [statsData, setStatsData] = useState<IStats | null>()
   const [stakeAccountKey, setAccountKey] = useState<PublicKey>()
-  const wal = useWallet()
+  const { walletProvider } = useWallet()
   const [solPrice, setSolPrice] = useState<number>(0)
   const { publicKey } = useWalletBalance()
   const { connection, network } = useConnectionConfig()
@@ -86,7 +86,7 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
         ? new Program(
             sslJson as any,
             SSL_PROGRAM_ID,
-            new Provider(connection, wal as WalletContextState, { commitment: 'finalized' })
+            new Provider(connection, walletProvider, { commitment: 'finalized' })
           )
         : undefined,
     [connection, publicKey, network]
@@ -94,7 +94,7 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
   useEffect(() => {
     if (publicKey) {
       if (stakeAccountKey === undefined) {
-        getStakingAccountKey(wal, network).then((accountKey) => setAccountKey(accountKey))
+        getStakingAccountKey(walletProvider, network).then((accountKey) => setAccountKey(accountKey))
       }
     } else {
       setAccountKey(undefined)
@@ -107,7 +107,7 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
       new Program(
         sslJson as any,
         SSL_PROGRAM_ID,
-        new Provider(connection, wal as WalletContextState, { commitment: 'finalized' })
+        new Provider(connection, walletProvider, { commitment: 'finalized' })
       ),
     [connection]
   )
@@ -116,7 +116,7 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
     () =>
       new coralProgram(
         GammaJson as Gamma,
-        new AnchorProvider(connection, wal as WalletContextState, { commitment: 'finalized' })
+        new AnchorProvider(connection, walletProvider, { commitment: 'finalized' })
       ),
     [connection]
   )

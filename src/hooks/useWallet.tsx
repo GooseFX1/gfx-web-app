@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from 'react'
-import { PublicKey } from '@solana/web3.js'
+import { PublicKey, type Transaction, type VersionedTransaction } from '@solana/web3.js'
 import {
   type Adapter,
   type MessageSignerWalletAdapterProps,
@@ -22,48 +22,81 @@ export interface Wallet {
   readyState: WalletReadyState
 }
 
-export interface WalletContextState {
+export interface IUseWallet {
+  // TODO: Deprecate these
   autoConnect: boolean
   wallets: Wallet[]
   wallet: Wallet | null
-  publicKey: PublicKey | null
   connecting: boolean
-  connected: boolean
   disconnecting: boolean
-
   select(walletName: WalletName | null): void
   connect(): Promise<void>
-  disconnect(): Promise<void>
-
   sendTransaction: WalletAdapterProps['sendTransaction']
   signTransaction: SignerWalletAdapterProps['signTransaction'] | undefined
   signAllTransactions: SignerWalletAdapterProps['signAllTransactions'] | undefined
   signMessage: MessageSignerWalletAdapterProps['signMessage'] | undefined
   signIn: SignInMessageSignerWalletAdapterProps['signIn'] | undefined
-  walletProvider: Provider | undefined
+
+  // permanent properties
+  publicKey: PublicKey | null
+  connected: boolean
+  disconnect: () => Promise<void>
+  // reown wallet adapter provider
+  walletProvider: Provider | Adapter | undefined
 }
 
-export const useWallet = (): WalletContextState => {
+export interface AnchorWallet {
+  publicKey: PublicKey
+  signTransaction<T extends Transaction | VersionedTransaction>(transaction: T): Promise<T>
+  signAllTransactions<T extends Transaction | VersionedTransaction>(transactions: T[]): Promise<T[]>
+}
+
+export const useWallet = (): IUseWallet => {
   // https://docs.reown.com/appkit/react/core/hooks#ethereum%2Fsolana-library
   // https://github.com/reown-com/appkit
-  const { address, isConnected, status } = useAppKitAccount({ namespace: 'solana' })
+  const { address, isConnected } = useAppKitAccount({ namespace: 'solana' })
   const { disconnect } = useDisconnect()
-  const { walletProvider } = useAppKitProvider<Provider>('solana')
+  const { walletProvider: appkitWalletProvider } = useAppKitProvider<Provider>('solana')
   const reactWallet = useReactWallet()
 
   const disconnectMemo = useCallback(() => {
-    disconnect()
-  }, [disconnect])
+    if (appkitWalletProvider?.publicKey) {
+      disconnect()
+    } else {
+      reactWallet.disconnect()
+    }
+  }, [disconnect, appkitWalletProvider?.publicKey, reactWallet])
+
+  const publicKey: PublicKey | null = useMemo(() => {
+    if (appkitWalletProvider && appkitWalletProvider.publicKey) {
+      return appkitWalletProvider.publicKey
+    }
+    if (reactWallet && reactWallet.publicKey) {
+      return reactWallet.publicKey
+    }
+    return null
+  }, [address, appkitWalletProvider, reactWallet])
+
+  const currentWalletProvider = useMemo(() => {
+    if (appkitWalletProvider) {
+      return appkitWalletProvider
+    }
+    if (reactWallet && reactWallet.wallet && reactWallet.wallet.adapter) {
+      return reactWallet.wallet.adapter
+    }
+    return undefined
+  }, [appkitWalletProvider, reactWallet])
+
+  const connected = isConnected || (reactWallet && reactWallet.connected)
 
   return useMemo(
     () => ({
       ...reactWallet,
-      walletProvider,
-      publicKey: address ? new PublicKey(address) : null,
-      connecting: status.includes('connecting'),
-      connected: isConnected,
+      walletProvider: currentWalletProvider,
+      publicKey,
+      connected,
       disconnect: disconnectMemo
     }),
-    [walletProvider, address, isConnected, status, disconnectMemo, reactWallet]
+    [disconnectMemo, currentWalletProvider, publicKey, connected, reactWallet]
   )
 }

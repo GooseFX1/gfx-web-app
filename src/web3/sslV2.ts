@@ -183,7 +183,6 @@ const checkIfTokenAccExists = async (
 }
 export const executeWithdraw = async (
   program: Program<Idl>,
-  wallet: WalletContextState,
   connection: Connection,
   token: SSLToken,
   amount: string,
@@ -206,11 +205,6 @@ export const executeWithdraw = async (
   const amountInNative = convertToNativeValue(amount, token?.mintDecimals)
 
   const withdrawTX: Transaction = new Transaction()
-  // const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
-  //   microLamports: 250000
-  // })
-
-  // withdrawTX.add(addPriorityFee)
 
   const ataAddress = await getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
 
@@ -237,17 +231,7 @@ export const executeWithdraw = async (
     const tr = createCloseAccountInstruction(ataAddress, walletPublicKey, walletPublicKey)
     withdrawTX.add(tr)
   }
-  // let signature
-  // try {
-  //   signature = await wallet.sendTransaction(withdrawTX, connection)
-  //   console.log(signature)
-  //   const confirm = await confirmTransaction(connection, signature, 'processed')
-  //   return { confirm, signature }
-  // } catch (error) {
-  //   console.log(error, 'withdraw error\n', signature)
-  //   if (shouldThrow) throw error
-  //   return { error, signature }
-  // }
+
   return withdrawTX
 }
 
@@ -390,7 +374,6 @@ const depositAmount = async (
   sslAccountKey: PublicKey,
   liquidityAccountKey: PublicKey,
   poolRegistryAccountKey: PublicKey,
-  wallet: WalletContextState,
   connection: Connection,
   tokenMintAddress: PublicKey,
   tokenName: string,
@@ -428,28 +411,12 @@ const depositAmount = async (
     depositAmountTX.add(createLiquidityIX)
   }
   depositAmountTX.add(depositAmountIX)
-  // const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
-  //   microLamports: 250000
-  // })
 
-  // depositAmountTX.add(addPriorityFee).add(depositAmountIX)
-  // signature = await wallet.sendTransaction(depositAmountTX, connection, { skipPreflight: true })
-  // const confirm = await confirmTransaction(connection, signature, 'processed')
-  // console.log('txn confirmed ', signature, confirm)
-  // return { confirm, signature }
-  // } catch (error) {
-  //   console.log(error, 'deposit error\n', signature)
-  //   if (shouldThrow) {
-  //     throw error
-  //   }
-  //   return { error, signature }
-  // }
   return depositAmountTX
 }
 
 export const executeDeposit = async (
   program: Program<Idl>,
-  wallet: WalletContextState,
   connection: Connection,
   amount: string,
   token: SSLToken,
@@ -479,7 +446,6 @@ export const executeDeposit = async (
     sslAccountKey,
     liquidityAccountKey,
     poolRegistryAccountKey,
-    wallet,
     connection,
     tokenMintAddress,
     token?.token,

@@ -18,6 +18,7 @@ import { STAKE_PREFIX, toPublicKey, ADDRESSES } from '../web3'
 import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
 import { CONTROLLER_LAYOUT, STAKING_ACCOUNT_LAYOUT } from 'goosefx-ssl-sdk'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { AnchorWallet } from '@/hooks/useWallet'
 
 export interface TxnReturn {
   error?: Error
@@ -33,7 +34,7 @@ interface FetchCurrentAmountStaked {
 }
 
 export const getStakingAccountKey = async (
-  wallet: WalletContextState,
+  wallet: AnchorWallet,
   network: WalletAdapterNetwork
 ): Promise<undefined | PublicKey> => {
   const NETWORK = getNetworkConnection(network)

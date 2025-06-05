@@ -185,8 +185,6 @@ const CollapsibleContent: FC<{
   const [actionModal, setActionModal] = useState<boolean>(false)
 
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
-  const slotConnection = new Connection(HELIUS_RPC.endpoint, 'finalized')
-  const wal = useWallet()
   const { connection } = useConnectionConfig()
   const { prices, SSLProgram } = usePriceFeedFarm()
   const {
@@ -205,7 +203,7 @@ const CollapsibleContent: FC<{
   useEffect(() => {
     ;(async () => {
       try {
-        const slot = await slotConnection.getSlot()
+        const slot = await connection.getSlot()
         setCurrentSlot(slot)
       } catch (error) {
         console.error('Error getting current slot:', error)
@@ -402,7 +400,7 @@ const CollapsibleContent: FC<{
     depositedBalanceConnection(publicKey, coin)
     setIsTxnSuccessfull(false)
     const txBuilder = createTransactionBuilder()
-    const tx = await executeDeposit(SSLProgram, wal, connection, depositAmount, coin, publicKey)
+    const tx = await executeDeposit(SSLProgram, connection, depositAmount, coin, publicKey)
     txBuilder.add(tx)
     const { success } = await sendTransaction(txBuilder)
     console.log('success', success)
@@ -417,7 +415,7 @@ const CollapsibleContent: FC<{
     }
     setTimeout(() => setDepositAmount('0'), 500)
     setIsTxnSuccessfull(true)
-  }, [checkConditionsForDepositWithdraw, publicKey, SSLProgram, wal, connection, depositAmount, coin])
+  }, [checkConditionsForDepositWithdraw, publicKey, SSLProgram, connection, depositAmount, coin])
   const handleWithdraw = useCallback(
     async (amount: BigNumber): Promise<void> => {
       if (checkConditionsForDepositWithdraw(false)) return
@@ -427,7 +425,7 @@ const CollapsibleContent: FC<{
       depositedBalanceConnection(publicKey, coin)
       setIsTxnSuccessfull(false)
       const txBuilder = createTransactionBuilder()
-      const tx = await executeWithdraw(SSLProgram, wal, connection, coin, withdrawAmount, publicKey)
+      const tx = await executeWithdraw(SSLProgram, connection, coin, withdrawAmount, publicKey)
       txBuilder.add(tx)
       const { success } = await sendTransaction(txBuilder)
       setOperationPending(false)
@@ -447,7 +445,6 @@ const CollapsibleContent: FC<{
       coin,
       connection,
       SSLProgram,
-      wal,
       publicKey,
       withdrawAmount
     ]
@@ -467,7 +464,7 @@ const CollapsibleContent: FC<{
       return
     }
     setIsTxnSuccessfull(true)
-  }, [SSLProgram, wal, connection, coin, publicKey, claimableReward])
+  }, [SSLProgram, connection, coin, publicKey, claimableReward])
   const handleCancel = useCallback(() => {
     setIsButtonLoading(false)
     setOperationPending(false)

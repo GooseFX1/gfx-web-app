@@ -38,8 +38,8 @@ const ConnectClassic: FC<MenuItemProps> = ({
   customMenuListItemStyle,
   fullWidth
 }) => {
-  const { wallet, connected, disconnect, connecting, disconnecting } = useWallet()
-  const { base58PublicKey } = useWalletBalance()
+  const { walletProvider, connected, disconnect, connecting, disconnecting } = useWallet()
+  const { balance, base58PublicKey } = useWalletBalance()
   const isAttempting = connecting || disconnecting
   const { blacklisted } = useConnectionConfig()
   const [isOpen, setIsOpen] = useBoolean(false)
@@ -55,10 +55,7 @@ const ConnectClassic: FC<MenuItemProps> = ({
     (blacklisted && pathname === '/farm/temp-withdraw') ||
     (blacklisted && ALLOWED_WALLETS.includes(base58PublicKey))
 
-  const { balance } = useWalletBalance()
-
-  const { adapter } = wallet || {}
-  const { name: adapterName, icon: adapterIcon } = adapter || {}
+  const { name: adapterName, icon: adapterIcon } = walletProvider || {}
 
   useEffect(() => {
     if (geoBlocked && visible) setWalletModalVisible(false)
@@ -288,6 +285,7 @@ const ConnectClassic: FC<MenuItemProps> = ({
   )
 }
 
+// eslint-disable-next-line
 const ConnectReown: FC = () => <appkit-button />
 
 export { ConnectReown as Connect }

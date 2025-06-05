@@ -51,7 +51,7 @@ import {
   KAMINO_PROGRAM_ID,
   KaminoReserve
 } from './kamino'
-import { Wallet } from '@solana/wallet-adapter-react'
+import { AnchorWallet } from '@/hooks/useWallet'
 import {
   GammaAccountWithInfo,
   GammaAmmConfig,
@@ -534,7 +534,7 @@ const getWithdrawRemainingAccounts = async (
   selectedCard: any,
   poolAddress: PublicKey,
   connection: Connection,
-  wallet: Wallet
+  wallet: AnchorWallet
 ) => {
   const kaminoReserves = await getReservesForMarket(connection, wallet)
   const kaminoReserveToken0 = getReservesForMarketLiquidityToken(
@@ -609,15 +609,15 @@ export const withdraw = async (
   lpAmount: BN,
   slippage: number,
   selectedCard: any,
-  userPublicKey: PublicKey,
   program: Program<Gamma>,
   connection: Connection,
   userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
-  wallet: Wallet,
+  wallet: AnchorWallet,
   poolIdKey,
   liqKey
 ): Promise<Transaction> => {
+  const userPublicKey = wallet.publicKey
   //console.log('user withdraws', userSourceWithdrawAmount, userTargetWithdrawAmount)
   const withdrawAccounts = await getAccountsForDepositWithdraw(
     selectedCard,
@@ -971,7 +971,7 @@ const getRewardVaultKey = async (rewardInfo: PublicKey) => {
 
 const checkIfTokenAccExists = async (
   tokenMintAddress: PublicKey,
-  wallet: PublicKey,
+  publicKey: PublicKey,
   connection,
   ataAddress: PublicKey
 ) => {
@@ -980,7 +980,7 @@ const checkIfTokenAccExists = async (
   // CHECK if the associated token account exists or not if not create one
   if (!associatedTokenAccount) {
     try {
-      const tr = createAssociatedTokenAccountInstruction(wallet, ataAddress, wallet, tokenMintAddress)
+      const tr = createAssociatedTokenAccountInstruction(publicKey, ataAddress, publicKey, tokenMintAddress)
       return tr
     } catch (e) {
       console.log(e)

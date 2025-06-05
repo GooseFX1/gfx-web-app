@@ -15,7 +15,6 @@ import {
 import { useWallet } from '@/hooks/useWallet'
 import { SendTransactionOptions } from '@solana/wallet-adapter-base'
 import { notifyUsingPromise, promiseBuilder, SpawnLoaderToast } from '@/utils/perpsNotifications'
-import { useWalletBalance } from '@/context/walletBalanceContext'
 import { toast, ToastT } from 'sonner'
 
 type SendTxnOptions = {
@@ -52,27 +51,22 @@ type useTransactionReturn = {
     skipComputeUnitsLimit?: boolean
   ) => Promise<{ success: boolean; txSig: string }>
 }
-const baseSet = new Set()
 
 function useTransaction(): useTransactionReturn {
   const { priorityFeeValue, priorityFee } = useConnectionConfig()
-  const { wallet, walletProvider } = useWallet()
+  const { publicKey, walletProvider } = useWallet()
   const { connection: originalConnection } = useConnectionConfig()
-  const { publicKey } = useWalletBalance()
   const createTransactionBuilder = useCallback(
     (txn?: TXN) => new TransactionBuilder(txn).setPriorityFee(priorityFeeValue),
     [priorityFeeValue]
   )
-  const supportedTransactionTypes = useMemo(
-    () => wallet?.adapter?.supportedTransactionVersions ?? baseSet,
-    [wallet]
-  )
+  const supportedTransactionTypes = useMemo(() => new Set([0]), [])
   const sendTransaction = async (
     txnIn: Transaction | TransactionBuilder,
     connectionData?: SendTxnOptions,
     notify = notifyUsingPromise,
     isCreatePoolInx?: boolean,
-    skipComputeUnitsLimit = true
+    skipComputeUnitsLimit = false
   ) => {
     console.log('STARTING SEND TXN')
     const connection = connectionData?.connection ?? originalConnection
