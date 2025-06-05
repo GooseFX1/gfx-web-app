@@ -2,6 +2,9 @@ import React, { createContext, useMemo, useState } from 'react'
 import { useConnectionConfig } from '@/context/settings'
 import { toast } from 'sonner'
 import { cn, IntemediaryToast, IntemediaryToastHeading } from 'gfx-component-lib'
+import useTokenQuery from '@/queries/useTokenQuery'
+import { TokenListToken } from '@/context/gamma'
+import { UseQueryResult } from '@tanstack/react-query'
 
 type TokenFeedColumns = {
   social: boolean
@@ -18,6 +21,8 @@ interface ITokenFeed {
   maxColumnsReached: boolean
   quickBuyAmount: string
   updateQuickBuyAmount: (amount: string) => void
+  quickBuyTokenQuery: UseQueryResult<TokenListToken | null>
+  updateQuickBuyToken: (token: TokenListToken) => void
 }
 
 const TokenFeedContext = createContext<ITokenFeed | null>(null)
@@ -33,7 +38,9 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
     }
   )
   const [quickBuyAmount, setQuickBuyAmount] = useState<string>(userCache?.tokenFeed?.quickBuyAmount ?? '')
-
+  const quickBuyTokenQuery = useTokenQuery({
+    address: userCache?.tokenFeed?.quickBuyToken ?? 'So11111111111111111111111111111111111111112'
+  })
   const maxColumnsReached = useMemo(() => {
     const totalColumnsEnabled = Object.keys(enabledColumns).filter(
       (key) => enabledColumns[key as keyof TokenFeedColumns]
@@ -92,6 +99,17 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
       }
     })
   }
+
+  const updateQuickBuyToken = (token: TokenListToken) => {
+    updateUserCache({
+      ...userCache,
+      tokenFeed: {
+        ...userCache.tokenFeed,
+        quickBuyToken: token.address
+      }
+    })
+  }
+
   return (
     <TokenFeedContext.Provider
       value={{
@@ -101,7 +119,9 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
         totalColumnsEnabled,
         maxColumnsReached,
         quickBuyAmount,
-        updateQuickBuyAmount
+        updateQuickBuyAmount,
+        quickBuyTokenQuery,
+        updateQuickBuyToken
       }}
     >
       {children}

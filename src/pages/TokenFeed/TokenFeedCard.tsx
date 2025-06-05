@@ -12,6 +12,7 @@ import CircularProgress from '@/components/CircularProgress'
 import { H4, H3, P } from '@/components/text/TextComponents'
 import { useTokenFeed } from '@/context/tokenFeedContext'
 import useTokenQuery from '@/queries/useTokenQuery'
+import { IconWithFallback } from '@/components/common/IconWithFallback'
 
 const IconWithInfo: FC<{
   data: ReactNode
@@ -50,7 +51,7 @@ const TokenFeedStats: FC<{
 function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
   const { mode } = useDarkMode()
   const { setIsCreatePool, setCreatePoolTokenA } = useGamma()
-  const { quickBuyAmount } = useTokenFeed()
+  const { quickBuyAmount, quickBuyTokenQuery } = useTokenFeed()
   const [progressSim, setProgressSim] = useState(0)
 
   const doesTokenPoolExist = useQuery({
@@ -161,7 +162,7 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
             {quickBuyAmount ? (
               <>
                 {quickBuyAmount}&nbsp;
-                <Icon src={`/img/crypto/Solana (SOL).svg`} size={'sm'} />
+                <IconWithFallback src={loadIconImage(quickBuyTokenQuery.data?.logoURI,mode)} size={'sm'} />
               </>
             ) : (
               <Icon src={`/img/assets/swap_white.svg`} size={'sm'} />

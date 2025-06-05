@@ -138,7 +138,9 @@ function newCache(): USER_CONFIG_CACHE {
         social: true,
         new: true,
         migrated: true
-      }
+      },
+      quickBuyAmount: undefined,
+      quickBuyToken: 'So11111111111111111111111111111111111111112'
     },
     hasSignedTC: false,
     endpointName: DEFAULT_ENDPOINT_NAME,
