@@ -434,8 +434,8 @@ export async function getPriorityFeeEstimate(
     // default
     return {
       min: 1000,
-      low: 10000,
-      medium: 50000,
+      low: 50000,
+      medium: 70000,
       high: 500000,
       veryHigh: 1000000,
       unsafeMax: 10000000
