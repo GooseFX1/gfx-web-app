@@ -62,6 +62,7 @@ export default function useTokenAccount(): UseTokenAccountReturn {
         })
     }
   }
+  
   async function getAccountInfo(
     mint: PublicKey,
     rest?: {
@@ -71,16 +72,22 @@ export default function useTokenAccount(): UseTokenAccountReturn {
     }
   ) {
     if (!publicKey) return { tokenAccountInfo: null, tokenAccount: null }
+    const {
+      allowOffCurve = true,
+      programId,
+      associatedTokenAddress
+    } = rest || {}
     const tokenAccount = getAssociatedTokenAddressSync(
       mint,
       publicKey,
-      rest?.allowOffCurve,
-      rest?.programId,
-      rest?.associatedTokenAddress
+      allowOffCurve,
+      programId,
+      associatedTokenAddress
     )
     const tokenAccountInfo = await connection.getParsedAccountInfo(tokenAccount)
     return { tokenAccountInfo, tokenAccount }
   }
+
   return {
     publicKey,
     createTokenAccountIfNotExist,

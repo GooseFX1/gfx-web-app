@@ -142,8 +142,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         console.log('get-user-metadata-failed', err)
         return null
       }),
-      getAssociatedTokenAddress(ADDRESSES[getNetwork(network)].USDC_MINT, publicKey),
-      getAssociatedTokenAddress(ADDRESSES[getNetwork(network)].GOFX_MINT, publicKey)
+      getAssociatedTokenAddress(ADDRESSES[getNetwork(network)].USDC_MINT, publicKey, true),
+      getAssociatedTokenAddress(ADDRESSES[getNetwork(network)].GOFX_MINT, publicKey, true)
     ])
     const [usdcAccount, gofxAccount] = await Promise.all([
       connection.getAccountInfo(usdcAddress),
@@ -221,7 +221,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const ata = await getAssociatedTokenAddress(
           gofxMint, // mint
           publicKey, // owner
-          false
+          true
         )
         const tx = createAssociatedTokenAccountIx(gofxMint, ata, publicKey)
         txBuilder.add(tx)

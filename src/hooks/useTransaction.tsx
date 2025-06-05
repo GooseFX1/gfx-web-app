@@ -1,11 +1,6 @@
 import { ReactNode, useCallback, useMemo } from 'react'
 import TransactionBuilder, { TXN } from '@/web3/Builders/transaction.builder'
-import {
-  getPriorityFeeEstimate,
-  getPriorityFeeFromLevel,
-  PriorityFeeEstimateResponse,
-  useConnectionConfig
-} from '@/context'
+import { getPriorityFeeEstimate, getPriorityFeeFromLevel, useConnectionConfig } from '@/context'
 import {
   BlockheightBasedTransactionConfirmationStrategy,
   Commitment,
@@ -60,13 +55,16 @@ function useTransaction(): useTransactionReturn {
     (txn?: TXN) => new TransactionBuilder(txn).setPriorityFee(priorityFeeValue),
     [priorityFeeValue]
   )
-  const supportedTransactionTypes = useMemo(() => new Set([0]), [])
+  const supportedTransactionTypes = useMemo(
+    () => new Set([0]),
+    []
+  )
   const sendTransaction = async (
     txnIn: Transaction | TransactionBuilder,
     connectionData?: SendTxnOptions,
     notify = notifyUsingPromise,
     isCreatePoolInx?: boolean,
-    skipComputeUnitsLimit = false
+    skipComputeUnitsLimit = true
   ) => {
     console.log('STARTING SEND TXN')
     const connection = connectionData?.connection ?? originalConnection
@@ -76,25 +74,18 @@ function useTransaction(): useTransactionReturn {
       maxRetries: connectionData?.options?.maxRetries ?? 3
     }
     const blockHash = await connection.getLatestBlockhash('confirmed')
-    let txn =
+    const result = await getPriorityFeeEstimate(
       txnIn instanceof TransactionBuilder
-        ? await txnIn
-            .setPriorityFee(priorityFeeValue)
-            ._getTransaction(
-              publicKey,
-              blockHash.blockhash,
-              supportedTransactionTypes.has(0),
-              isCreatePoolInx,
-              skipComputeUnitsLimit
-            )
+        ? await txnIn._getTransactionWithoutPriorityFee(
+            publicKey,
+            blockHash.blockhash,
+            supportedTransactionTypes.has(0)
+          )
         : txnIn
-    txn.recentBlockhash = blockHash.blockhash
-    txn.feePayer = publicKey
-
-    const priorityFeeEstimate: PriorityFeeEstimateResponse = await getPriorityFeeEstimate(connection, txn)
-    const priorityFromLevel = getPriorityFeeFromLevel(priorityFee, priorityFeeEstimate)
-    console.log({ priorityFeeEstimate, priorityFromLevel })
-    txn =
+    )
+    const priorityFromLevel = typeof result === 'number' ? result : getPriorityFeeFromLevel(priorityFee, result)
+    console.log({ result, priorityFromLevel })
+    const txn =
       txnIn instanceof TransactionBuilder
         ? await txnIn
             .setPriorityFee(priorityFromLevel)
@@ -106,8 +97,6 @@ function useTransaction(): useTransactionReturn {
               skipComputeUnitsLimit
             )
         : txnIn
-    txn.recentBlockhash = blockHash.blockhash
-    txn.feePayer = publicKey
     console.log('signing txn', txn)
     const id = SpawnLoaderToast({ duration: connectionData?.transactionDuration ?? 60000 })
 
@@ -181,25 +170,17 @@ function useTransaction(): useTransactionReturn {
     console.log('STARTING SEND TXN')
     const connection = connectionData?.connection ?? originalConnection
     const blockHash = await connection.getLatestBlockhash('confirmed')
-    const txnForFee =
+    const result = await getPriorityFeeEstimate(
       txnIns[0] instanceof TransactionBuilder
-        ? await txnIns[0]
-            .setPriorityFee(priorityFeeValue)
-            ._getTransaction(
-              publicKey,
-              blockHash.blockhash,
-              supportedTransactionTypes.has(0),
-              isCreatePoolInx,
-              skipComputeUnitsLimit
-            )
+        ? await txnIns[0]._getTransactionWithoutPriorityFee(
+            publicKey,
+            blockHash.blockhash,
+            supportedTransactionTypes.has(0)
+          )
         : txnIns[0]
-
-    txnForFee.recentBlockhash = blockHash.blockhash
-    txnForFee.feePayer = publicKey
-
-    const priorityFeeEstimate: PriorityFeeEstimateResponse = await getPriorityFeeEstimate(connection, txnForFee)
-    const priorityFromLevel = getPriorityFeeFromLevel(priorityFee, priorityFeeEstimate)
-    console.log({ priorityFeeEstimate, priorityFromLevel })
+    )
+    const priorityFromLevel = typeof result === 'number' ? result : getPriorityFeeFromLevel(priorityFee, result)
+    console.log({ result, priorityFromLevel })
     console.log('signing txn', txnIns)
     const id = SpawnLoaderToast({ duration: connectionData?.transactionDuration ?? 60000 })
 

@@ -324,7 +324,7 @@ export const executeWithdraw = async (
   })
   const withdrawTX: Transaction = new Transaction()
   if (tokenName === TOKEN_NAMES.SOL) {
-    const associatedTokenAccountAddress = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
+    const associatedTokenAccountAddress = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey, true)
     const associatedTokenAccount = await connection.getAccountInfo(associatedTokenAccountAddress)
     try {
       if (!associatedTokenAccount) {
@@ -376,7 +376,7 @@ export const executeWithdraw = async (
 const wrapSolToken = async (wallet: any, connection: Connection, amount: number) => {
   try {
     const tx = new Transaction()
-    const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
+    const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey, true)
     const accountExists = await connection.getAccountInfo(associatedTokenAccount)
     // Create token account to hold your wrapped SOL
     if (!accountExists)

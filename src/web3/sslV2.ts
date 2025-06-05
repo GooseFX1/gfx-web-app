@@ -206,7 +206,7 @@ export const executeWithdraw = async (
 
   const withdrawTX: Transaction = new Transaction()
 
-  const ataAddress = await getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
+  const ataAddress = await getAssociatedTokenAddress(tokenMintAddress, walletPublicKey, true)
 
   const createTokenAccIX = await checkIfTokenAccExists(tokenMintAddress, walletPublicKey, connection, ataAddress)
   if (createTokenAccIX) withdrawTX.add(createTokenAccIX)
@@ -247,7 +247,7 @@ export const executeClaimRewards = async (
     findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress),
     findAssociatedTokenAddress(walletPublicKey, tokenMintAddress),
     getLiquidityAccountKey(walletPublicKey, tokenMintAddress),
-    getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
+    getAssociatedTokenAddress(tokenMintAddress, walletPublicKey, true, true)
   ])
 
   const claimTX = new TransactionBuilder().usePriorityFee(false)
@@ -309,7 +309,7 @@ export const executeAllPoolClaim = async (
       findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress),
       findAssociatedTokenAddress(walletPublicKey, tokenMintAddress),
       getLiquidityAccountKey(walletPublicKey, tokenMintAddress),
-      getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
+      getAssociatedTokenAddress(tokenMintAddress, walletPublicKey, true)
     ])
 
     const createTokenAccIX = await checkIfTokenAccExists(tokenMintAddress, walletPublicKey, connection, ataAddress)
@@ -341,7 +341,7 @@ const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, 
   try {
     const tx = new Transaction()
 
-    const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, walletPublicKey)
+    const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, walletPublicKey, true)
     const accountExists = await connection.getAccountInfo(associatedTokenAccount)
     // Create token account to hold your wrapped SOL
     if (!accountExists)
