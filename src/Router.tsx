@@ -16,8 +16,8 @@ import Maintenance from './pages/Maintenance'
 import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
 import { Toaster } from 'gfx-component-lib'
 import { RewardsProvider } from '@/context/rewardsContext'
-import { Swap } from '@/pages/Swap'
-import { SwapProvider } from '@/context/newSwap'
+// import { Swap } from '@/pages/Swap'
+// import { SwapProvider } from '@/context/newSwap'
 import { BoostedRewardsProvider } from './context/boostedRewardsContext'
 import { KaminoProvider } from './context/kaminoContext'
 const Bridge = lazy(() => import('./pages/Bridge'))
@@ -146,14 +146,14 @@ export const Router: FC = () => {
                               </GammaProvider>
                             }
                           />
-                          <Route
+                          {/* <Route
                             path="/swap"
                             element={
                               <SwapProvider>
                                 <Swap />
                               </SwapProvider>
                             }
-                          />
+                          /> */}
                           <Route path="/analytics" element={<AnalyticsWrapper />} />
                           <Route path="/analytics/ssl" element={<SSLAnalyticsDashboard />} />
                           <Route path="/analytics/ssl/pairdata" element={<CoinGeckoPairs />} />
