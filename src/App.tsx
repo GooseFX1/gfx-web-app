@@ -17,7 +17,7 @@ import { APP_URL } from '@/constants'
 
 const solanaWeb3JsAdapter = new SolanaAdapter();
 
-const projectId = "804efe2fd86670567f9b09f936a8220a";
+const projectId = "f294cea1e9cd00f0e185354688de6620";
 const metadata = {
   name: 'GooseFX',
   description: 'GooseFX | Liquidity Reimagined',
