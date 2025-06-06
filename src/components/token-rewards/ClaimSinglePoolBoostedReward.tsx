@@ -1,7 +1,15 @@
 import { loadIconImage } from '@/utils/misc'
 import { IconWithFallback } from '../common/IconWithFallback'
 import { useDarkMode } from '@/context'
-import { AccordionContent, AccordionItem, AccordionTrigger, Icon } from 'gfx-component-lib'
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  Icon,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from 'gfx-component-lib'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
 import { GAMMAPool } from '@/types/gamma'
 import { PublicKey } from '@solana/web3.js'
@@ -26,7 +34,7 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
         </AccordionTrigger>
         <AccordionContent>
           <div className="flex flex-col gap-[10px] pt-2">
-            {activeReward.map((reward) => (
+            {activeReward.map((reward, i) => (
               <div key={reward.token.address.toString()} className="flex flex-row items-center justify-between">
                 <div className="flex flex-row items-center gap-[5px]">
                   <IconWithFallback src={loadIconImage(reward.token.logoURI, mode)} className=" rounded-full " />
@@ -37,12 +45,28 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
                     {reward.token.symbol}
                   </p>
                 </div>
-                <p
-                  className="font-display font-semibold text-[15px] 
-                      text-text-lightmode-secondary dark:text-text-darkmode-secondary"
-                >
-                  {numberFormatter(reward.pricePerDay.toNumber())} {reward.token.symbol} / day
-                </p>
+                {i == 0 ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <p
+                        className="font-display font-semibold text-[15px] decoration-dashed underline-offset-8
+                      text-text-lightmode-secondary dark:text-text-darkmode-secondary  decoration-2"
+                      >
+                        {numberFormatter(reward.pricePerDay.toNumber())} {reward.token.symbol} / day
+                      </p>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      This is the total amount of rewards shared by all LPs in the pool
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <p
+                    className="font-display font-semibold text-[15px] decoration-dashed underline-offset-8
+                      text-text-lightmode-secondary dark:text-text-darkmode-secondary  decoration-2"
+                  >
+                    {numberFormatter(reward.pricePerDay.toNumber())} {reward.token.symbol} / day
+                  </p>
+                )}
               </div>
             ))}
           </div>
