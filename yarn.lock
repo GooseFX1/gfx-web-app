@@ -2677,7 +2677,7 @@
   dependencies:
     "@solana/wallet-adapter-base" "^0.9.26"
 
-"@solana/wallet-adapter-react@^0.15.35", "@solana/wallet-adapter-react@^0.15.38":
+"@solana/wallet-adapter-react@^0.15.38":
   version "0.15.38"
   resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-react/-/wallet-adapter-react-0.15.38.tgz#29bd1fa45d9d990223fb37f281212084e108241f"
   integrity sha512-BFyYigdnEb45+HNoqNHh2GNIsUJyLBnD76SXW7KXt+lheCkh2wzRqWYnRtG1yTVrLbf09fs/z3eWOc0RYCO5aA==
@@ -2769,7 +2769,7 @@
     "@solana/wallet-standard-core" "^1.1.2"
     "@solana/wallet-standard-wallet-adapter" "^1.1.4"
 
-"@solana/web3.js@1.98.2", "@solana/web3.js@^1.17.0", "@solana/web3.js@^1.21.0", "@solana/web3.js@^1.32.0", "@solana/web3.js@^1.36.0", "@solana/web3.js@^1.41.1", "@solana/web3.js@^1.56.2", "@solana/web3.js@^1.66.2", "@solana/web3.js@^1.68.0", "@solana/web3.js@^1.73.0", "@solana/web3.js@^1.75.0", "@solana/web3.js@^1.91.6", "@solana/web3.js@^1.91.8", "@solana/web3.js@^1.95.5", "@solana/web3.js@^1.95.8", "@solana/web3.js@^1.98.0":
+"@solana/web3.js@1.98.2", "@solana/web3.js@^1.17.0", "@solana/web3.js@^1.21.0", "@solana/web3.js@^1.32.0", "@solana/web3.js@^1.36.0", "@solana/web3.js@^1.41.1", "@solana/web3.js@^1.56.2", "@solana/web3.js@^1.66.2", "@solana/web3.js@^1.68.0", "@solana/web3.js@^1.73.0", "@solana/web3.js@^1.91.6", "@solana/web3.js@^1.91.8", "@solana/web3.js@^1.95.5", "@solana/web3.js@^1.95.8", "@solana/web3.js@^1.98.0":
   version "1.98.2"
   resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.98.2.tgz#45167a5cfb64436944bf4dc1e8be8482bd6d4c14"
   integrity sha512-BqVwEG+TaG2yCkBMbD3C4hdpustR4FpuUFRPUmqRZYYlPI9Hg4XMWxHWOWRzHE9Lkc9NDjzXFX7lDXSgzC7R1A==
@@ -3225,7 +3225,7 @@
   resolved "https://registry.yarnpkg.com/@types/big.js/-/big.js-6.2.2.tgz#69422ec9ef59df1330ccfde2106d9e1159a083c3"
   integrity sha512-e2cOW9YlVzFY2iScnGBBkplKsrn2CsObHQ2Hiw4V1sSyiGbgWL8IyqE3zFi1Pt5o1pdAtYkDAIsF3KKUPjdzaA==
 
-"@types/bn.js@^5.1.0", "@types/bn.js@^5.1.1":
+"@types/bn.js@^5.1.0":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@types/bn.js/-/bn.js-5.2.0.tgz#4349b9710e98f9ab3cdc50f1c5e4dcbd8ef29c80"
   integrity sha512-DLbJ1BPqxvQhIGbeu8VbUC1DiAiahHtAYvA0ZEAa4P31F7IaArc8z3C3BRQdWX4mtLQuABG4yzp76ZrS02Ui1Q==
@@ -4523,7 +4523,7 @@ axios@^0.27.2:
     follow-redirects "^1.14.9"
     form-data "^4.0.0"
 
-axios@^1.1.3, axios@^1.4.0:
+axios@^1.1.3:
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.9.0.tgz#25534e3b72b54540077d33046f77e3b8d7081901"
   integrity sha512-re4CqKTJaURpzbLHtIi6XpDv20/CnpXOtjRY5/CU32L8gU8ek9UIivcfvSWvmKEngmVbrUtPpdDwWDWL7DNHvg==
@@ -6926,22 +6926,6 @@ gfx-component-lib@^1.17.0:
     tailwind-merge "^2.2.1"
     tailwindcss-animate "^1.0.7"
     tailwindcss-border-gradient-radius "^3.0.1"
-
-"gfx-perp-sdk@https://github.com/GooseFX1/gfx-perp-ts-sdk/releases/download/5/gfx-perp-sdk.tar.gz":
-  version "1.2.1"
-  resolved "https://github.com/GooseFX1/gfx-perp-ts-sdk/releases/download/5/gfx-perp-sdk.tar.gz#f3af1a11f5cd378489892d97c7704e8cb256d545"
-  dependencies:
-    "@project-serum/anchor" "^0.26.0"
-    "@project-serum/borsh" "^0.2.5"
-    "@solana/spl-token" "^0.3.7"
-    "@solana/wallet-adapter-react" "^0.15.35"
-    "@solana/web3.js" "^1.75.0"
-    "@types/bn.js" "^5.1.1"
-    axios "^1.4.0"
-    bn.js "^5.2.1"
-
-"gfx_stocks_pool@file:./wasm":
-  version "0.1.0"
 
 github-from-package@0.0.0:
   version "0.0.0"
