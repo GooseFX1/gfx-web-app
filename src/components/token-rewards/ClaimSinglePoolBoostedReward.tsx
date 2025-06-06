@@ -5,10 +5,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  Icon,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger
+  Icon
 } from 'gfx-component-lib'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
 import { GAMMAPool } from '@/types/gamma'
@@ -34,7 +31,7 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
         </AccordionTrigger>
         <AccordionContent>
           <div className="flex flex-col gap-[10px] pt-2">
-            {activeReward.map((reward, i) => (
+            {activeReward.map((reward) => (
               <div key={reward.token.address.toString()} className="flex flex-row items-center justify-between">
                 <div className="flex flex-row items-center gap-[5px]">
                   <IconWithFallback src={loadIconImage(reward.token.logoURI, mode)} className=" rounded-full " />
@@ -45,30 +42,17 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
                     {reward.token.symbol}
                   </p>
                 </div>
-                {i == 0 ? (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <p
-                        className="font-display font-semibold text-[15px] decoration-dashed underline-offset-8
-                      text-text-lightmode-secondary dark:text-text-darkmode-secondary  decoration-2"
-                      >
-                        {numberFormatter(reward.pricePerDay.toNumber())} {reward.token.symbol} / day
-                      </p>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      This is the total amount of rewards shared by all LPs in the pool
-                    </TooltipContent>
-                  </Tooltip>
-                ) : (
-                  <p
-                    className="font-display font-semibold text-[15px] decoration-dashed underline-offset-8
-                      text-text-lightmode-secondary dark:text-text-darkmode-secondary  decoration-2"
-                  >
-                    {numberFormatter(reward.pricePerDay.toNumber())} {reward.token.symbol} / day
-                  </p>
-                )}
+                <p
+                  className="font-display font-semibold text-[15px] decoration-dashed underline-offset-8
+                      text-text-lightmode-secondary dark:text-text-darkmode-secondary  decoration-[1px]"
+                >
+                  {numberFormatter(reward.pricePerDay.toNumber())} {reward.token.symbol} / day
+                </p>
               </div>
             ))}
+            <p className={`text-b3 text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold`}>
+              Total rewards shared to all LPs in the pool daily
+            </p>
           </div>
         </AccordionContent>
       </AccordionItem>
