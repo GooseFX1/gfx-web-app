@@ -113,6 +113,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@esbuild-plugins/node-resolve": "^0.2.2",
+    "@rollup/plugin-node-resolve": "^15.0.1",
     "@tanstack/eslint-plugin-query": "4",
     "@types/bn.js": "^5.1.0",
     "@types/bs58": "^4.0.1",
@@ -172,7 +173,8 @@
     "@ethereumjs/util": "8.1.0",
     "node-addon-api": "7.1.0",
     "commander": "11.0.0",
-    "@walletconnect/sign-client": "2.13.3"
+    "@walletconnect/sign-client": "2.13.3",
+    "@rollup/plugin-node-resolve": "^15.0.1"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

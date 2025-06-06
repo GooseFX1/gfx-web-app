@@ -12,22 +12,11 @@ import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { getThemeVariables } from 'antd/dist/theme'
 import svgr from 'vite-plugin-svgr'
-import nodeResolve from '@esbuild-plugins/node-resolve';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
     nodePolyfills(),
-    nodeResolve({
-      extensions: ['.js', '.ts'],
-      onResolved: (resolved) => {
-        // Fix for process/ import
-        if (resolved.includes('process/')) {
-          return resolved.replace('process/', 'process');
-        }
-        return resolved;
-      }
-    }),
     tsconfigPaths(),
     wasm(),
     topLevelAwait(),
@@ -143,9 +132,7 @@ export default defineConfig(({ mode }) => ({
     }
   },
   define: {
-    // Replace process module references with a browser-compatible version
-    'require("process/")': '{}',
-    "require('process/')": '{}',
+    // Only keep valid define keys
     'process.env': '{}'
   }
 }))

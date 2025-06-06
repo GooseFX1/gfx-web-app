@@ -10,8 +10,8 @@ import {
   SSLToken
 } from '@/pages/FarmV3/constants'
 import { useWallet } from '@/hooks/useWallet'
-import { HELIUS_RPC, useAccounts, useConnectionConfig, usePriceFeedFarm, useSSLContext } from '@/context'
-import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { useAccounts, useConnectionConfig, usePriceFeedFarm, useSSLContext } from '@/context'
+import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import useSolSub from '@/hooks/useSolSub'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject } from '@/web3'
