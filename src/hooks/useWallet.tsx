@@ -13,9 +13,9 @@ import { useWallet as useReactWallet } from '@solana/wallet-adapter-react'
 import {
   useAppKitAccount,
   useDisconnect,
-  useAppKitProvider
-} from '@reown/appkit/react'
-import type { Provider } from '@reown/appkit-adapter-solana/react'
+  useAppKitProvider,
+  Provider
+} from './reownConfig'
 
 export interface Wallet {
   adapter: Adapter

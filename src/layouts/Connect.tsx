@@ -20,6 +20,7 @@ import useBoolean from '@/hooks/useBoolean'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { ALLOWED_WALLETS } from '@/pages/FarmV3/constants'
 import { GeorestrictionModal } from './GeorestrictionModal'
+import { useAppKit, useWalletInfo } from '@/hooks/reownConfig'
 
 interface MenuItemProps {
   containerStyle?: string
@@ -177,7 +178,7 @@ const ConnectClassic: FC<MenuItemProps> = ({
                 className={`flex items-center justify-center border-2 dark:border-black-1 border-solid
                   border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 overflow-hidden`}
               >
-                <Icon size={'sm'} src={adapterIcon} className='rounded-lg' />
+                <Icon size={'sm'} src={adapterIcon} className="rounded-lg" />
               </div>
               <div>
                 <h4
@@ -285,7 +286,55 @@ const ConnectClassic: FC<MenuItemProps> = ({
   )
 }
 
-// eslint-disable-next-line
-const ConnectReown: FC = () => <appkit-button />
+const ConnectReown: FC = ({
+  containerStyle,
+  customButtonStyle,
+  fullWidth
+}) => {
+  const modal = useAppKit()
+  const { walletInfo } = useWalletInfo()
+  const { connected, connecting, publicKey } = useWallet()
+  const breakpoint = useBreakPoint()
+
+  const base58PublicKey = useMemo(() => connected ? publicKey?.toBase58() : null, [publicKey, connected])
+
+  const connectLabel = useMemo(() => {
+    if (!connected || connecting || !base58PublicKey) {
+      return 'Connect Wallet'
+    }
+
+    const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 4
+    return truncateAddress(base58PublicKey, leftRightSize)
+  }, [base58PublicKey, connected, breakpoint, connecting])
+
+  function openAppKit() {
+    modal.open()
+  }
+
+  return (
+    <Button
+      colorScheme={!connected ? 'purple' : 'primaryGradient'}
+      size={'sm'}
+      className={cn(
+        `flex min-w-[120px] min-md:min-w-[143px] px-1 py-1.75 focus-visible:outline-none justify-center`,
+        customButtonStyle,
+        containerStyle
+      )}
+      fullWidth={fullWidth}
+      onClick={openAppKit}
+      isLoading={connecting}
+    >
+      {connected && (
+        <div
+          className={`flex items-center justify-center border-4 dark:border-black-1 border-solid
+                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 w-[24px] h-[24px] overflow-hidden mr-auto`}
+        >
+          <img className={'w-auto rounded-lg'} src={walletInfo?.icon} alt={`${walletInfo?.name}_icon`} />
+        </div>
+      )}
+      {connectLabel}
+    </Button>
+  )
+}
 
 export { ConnectReown as Connect }
