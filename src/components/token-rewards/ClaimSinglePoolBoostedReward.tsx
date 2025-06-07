@@ -1,7 +1,12 @@
 import { loadIconImage } from '@/utils/misc'
 import { IconWithFallback } from '../common/IconWithFallback'
 import { useDarkMode } from '@/context'
-import { AccordionContent, AccordionItem, AccordionTrigger, Icon } from 'gfx-component-lib'
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  Icon
+} from 'gfx-component-lib'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
 import { GAMMAPool } from '@/types/gamma'
 import { PublicKey } from '@solana/web3.js'
@@ -38,13 +43,16 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
                   </p>
                 </div>
                 <p
-                  className="font-display font-semibold text-[15px] 
+                  className="font-display font-semibold text-[15px]
                       text-text-lightmode-secondary dark:text-text-darkmode-secondary"
                 >
                   {numberFormatter(reward.pricePerDay.toNumber())} {reward.token.symbol} / day
                 </p>
               </div>
             ))}
+            <p className={`text-b3 text-text-lightmode-secondary dark:text-text-darkmode-secondary font-semibold`}>
+              Total rewards shared to all LPs in the pool daily
+            </p>
           </div>
         </AccordionContent>
       </AccordionItem>
