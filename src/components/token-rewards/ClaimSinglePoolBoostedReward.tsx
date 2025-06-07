@@ -43,8 +43,8 @@ export function ClaimSinglePoolBoostedReward({ pool }: { pool: GAMMAPool }) {
                   </p>
                 </div>
                 <p
-                  className="font-display font-semibold text-[15px] decoration-dashed underline-offset-8
-                      text-text-lightmode-secondary dark:text-text-darkmode-secondary  decoration-[1px]"
+                  className="font-display font-semibold text-[15px]
+                      text-text-lightmode-secondary dark:text-text-darkmode-secondary"
                 >
                   {numberFormatter(reward.pricePerDay.toNumber())} {reward.token.symbol} / day
                 </p>
