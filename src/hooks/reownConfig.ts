@@ -14,8 +14,6 @@ import {
   useAppKitProvider
 } from '@reown/appkit/react'
 import type { Provider } from '@reown/appkit-adapter-solana/react'
-
-
 import { APP_URL } from '@/constants'
 
 const projectId = 'f294cea1e9cd00f0e185354688de6620'
@@ -34,8 +32,10 @@ const modal = createAppKit({
   },
   projectId,
   themeVariables: {
-    '--w3m-border-radius-master': '4px',
-    '--w3m-font-family': 'Poppins, sans-serif'
+    '--w3m-border-radius-master': '1px',
+    '--w3m-font-family': 'Poppins, sans-serif',
+    '--w3m-accent': '#5855FF',
+    '--w3m-color-mix': '#131313'
   },
   themeMode: 'dark',
   features: {

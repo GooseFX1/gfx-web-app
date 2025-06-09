@@ -67,7 +67,7 @@ const ConnectClassic: FC<MenuItemProps> = ({
       return 'Connect Wallet'
     }
 
-    const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 4
+    const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 5
     return truncateAddress(base58PublicKey, leftRightSize)
   }, [base58PublicKey, connected, adapterName, breakpoint, isAttempting])
 
@@ -300,11 +300,19 @@ const ConnectReown: FC = ({
 
   const connectLabel = useMemo(() => {
     if (!connected || connecting || !base58PublicKey) {
-      return 'Connect Wallet'
+      return (
+        <span className='mx-2 font-bold'>
+          Connect Wallet
+        </span>
+      )
     }
 
     const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 4
-    return truncateAddress(base58PublicKey, leftRightSize)
+    return (
+      <span className='font-bold'>
+        {truncateAddress(base58PublicKey, leftRightSize)}
+      </span>
+    )
   }, [base58PublicKey, connected, breakpoint, connecting])
 
   function openAppKit() {
@@ -316,8 +324,8 @@ const ConnectReown: FC = ({
       colorScheme={!connected ? 'purple' : 'primaryGradient'}
       size={'sm'}
       className={cn(
-        `flex min-w-[120px] min-md:min-w-[143px] px-1 py-1.75 focus-visible:outline-none gap-1.75`,
-        connected && !connecting ? 'justify-start' : 'justify-center',
+        `flex py-1.75 focus-visible:outline-none gap-1.75`,
+        connected && !connecting ? 'justify-start pl-1 pr-3' : 'justify-center',
         customButtonStyle,
         containerStyle
       )}
