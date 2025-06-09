@@ -316,7 +316,8 @@ const ConnectReown: FC = ({
       colorScheme={!connected ? 'purple' : 'primaryGradient'}
       size={'sm'}
       className={cn(
-        `flex min-w-[120px] min-md:min-w-[143px] px-1 py-1.75 focus-visible:outline-none justify-center`,
+        `flex min-w-[120px] min-md:min-w-[143px] px-1 py-1.75 focus-visible:outline-none gap-1.75`,
+        connected && !connecting ? 'justify-start' : 'justify-center',
         customButtonStyle,
         containerStyle
       )}
@@ -327,7 +328,7 @@ const ConnectReown: FC = ({
       {connected && (
         <div
           className={`flex items-center justify-center border-4 dark:border-black-1 border-solid
-                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 w-[24px] h-[24px] overflow-hidden mr-auto`}
+                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 w-[24px] h-[24px] overflow-hidden`}
         >
           <img className={'w-auto rounded-lg'} src={walletInfo?.icon} alt={`${walletInfo?.name}_icon`} />
         </div>

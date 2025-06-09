@@ -34,10 +34,10 @@ const modal = createAppKit({
   },
   projectId,
   themeVariables: {
-    '--w3m-color-mix': '#00BB7F',
     '--w3m-border-radius-master': '4px',
-    '--w3m-font-family': 'Poppins, sans-serif',
+    '--w3m-font-family': 'Poppins, sans-serif'
   },
+  themeMode: 'dark',
   features: {
     analytics: true
   }
