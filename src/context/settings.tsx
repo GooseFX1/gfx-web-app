@@ -252,6 +252,9 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (Object.keys(cacheUpdateQueue).length === 0) return
     const timeout = setTimeout(() => {
       setUserCache((prevCache) => {
+        // redundant updates
+        if (JSON.stringify(cacheUpdateQueue) == JSON.stringify(prevCache)) return prevCache
+
         const newCache = {
           ...prevCache,
           ...cacheUpdateQueue

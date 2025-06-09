@@ -120,11 +120,14 @@ export const axiosFetchWithRetries = async (
       // Comment the above lines and uncomment the following one to switch from axios to fetch
       // const response = await fetch(input, init);
 
+      if (!response.ok) {
+        // preventing infinite looping
+        attempt++
+      }
+
       // Traffic might get routed to backups or node restarts or if anything throws a 502, retry
       if (response.status === 502) {
         console.log('Retrying due to 502')
-
-        attempt++
 
         // Backoff to avoid hammering the server
         await new Promise<void>((resolve) => setTimeout(resolve, 100 * attempt))
