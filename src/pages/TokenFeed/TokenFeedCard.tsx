@@ -167,13 +167,23 @@ function TokenFeedCard({
         </div>
         <div className={`flex gap-2 items-center ml-auto`}>
           <Button
-            variant={'secondary'}
-            colorScheme={'secondaryGradient'}
+            variant={'primary'}
+            colorScheme={
+              !token?.bondingCurveProgress || token?.bondingCurveProgress < 100 ? 'grey' : 'secondaryGradient'
+            }
             size={'md'}
-            className={`px-2.5 py-[5px] min-w-[56px] max-w-[87px] h-[35px]
-                   from-brand-secondaryGradient-primary to-brand-secondaryGradient-secondary`}
+            className={cn(
+              `px-2.5 py-[5px] min-w-[56px] max-w-[87px] h-[35px]
+                   from-brand-secondaryGradient-primary to-brand-secondaryGradient-secondary`,
+              (!token?.bondingCurveProgress || token?.bondingCurveProgress < 100) &&
+                `animate-lightTextPulse dark:animate-darkTextPulse bg-buttons-lightmode-disabled-primary
+                 dark:bg-buttons-darkmode-disabled-primary`
+            )}
+            disabled={!token?.bondingCurveProgress || token?.bondingCurveProgress < 100}
           >
-            {quickBuyAmount ? (
+            {!token?.bondingCurveProgress || token?.bondingCurveProgress < 100 ? (
+              'Bonding'
+            ) : quickBuyAmount ? (
               <>
                 {quickBuyAmount}&nbsp;
                 <IconWithFallback src={loadIconImage(quickBuyTokenQuery.data?.logoURI, mode)} size={'sm'} />

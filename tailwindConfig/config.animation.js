@@ -39,6 +39,22 @@ const keyframes = {
       opacity: 1
     }
   },
+  lightTextPulse: {
+    "0%, 100%" :{
+      color: `#AEA0B9`
+    },
+    "50%": {
+      color: `#636363`
+    }
+  },
+  darkTextPulse: {
+    "0%, 100%" :{
+      color: `#B5B5B5`
+    },
+    "50%": {
+      color: `#636363`
+    }
+  },
   ...twConfigAnimations.keyframes
 }
 
@@ -46,6 +62,8 @@ const animation = {
   slideInBottom: 'slideInBottom 0.5s',
   slideInTop: 'slideInTop 0.5s',
   slideOutTop: 'slideInTop 0.5s reverse',
+  lightTextPulse: 'lightTextPulse 2.5s infinite',
+  darkTextPulse: 'darkTextPulse 2.5s infinite',
   ...twConfigAnimations.animation
 }
 

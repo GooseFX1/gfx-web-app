@@ -13,6 +13,7 @@ export type TokenFeedToken = {
   holders: number
   migrated: boolean
   src?: string
+  bondingCurveProgress?: number
 }
 
 type TokenFeedContainerProps = {
