@@ -5,12 +5,109 @@ import { cn, IntemediaryToast, IntemediaryToastHeading } from 'gfx-component-lib
 import useTokenQuery from '@/queries/useTokenQuery'
 import { TokenListToken } from '@/context/gamma'
 import { UseQueryResult } from '@tanstack/react-query'
+import { UserTokenFeedFilterConfig } from '@/types/app_params'
 
 type TokenFeedColumns = {
   social: boolean
   new: boolean
   migrated: boolean
   soon: boolean
+}
+export type TokenFeedTokenColumn = Exclude<keyof TokenFeedColumns, 'social'>
+const defaultTokenFeedFilters: Record<TokenFeedTokenColumn, UserTokenFeedFilterConfig> = {
+  new: {
+    age: {
+      min: undefined,
+      max: undefined
+    },
+    holders: {
+      min: undefined,
+      max: undefined
+    },
+    topHolders: {
+      min: undefined,
+      max: undefined
+    },
+    bondingCurveProgress: {
+      min: undefined,
+      max: undefined
+    },
+    marketCap: {
+      min: undefined,
+      max: undefined
+    },
+    volume: {
+      min: undefined,
+      max: undefined
+    },
+    enabledSocials: {
+      x: true,
+      website: true,
+      telegram: true
+    }
+  },
+  migrated: {
+    age: {
+      min: undefined,
+      max: undefined
+    },
+    holders: {
+      min: undefined,
+      max: undefined
+    },
+    topHolders: {
+      min: undefined,
+      max: undefined
+    },
+    bondingCurveProgress: {
+      min: undefined,
+      max: undefined
+    },
+    marketCap: {
+      min: undefined,
+      max: undefined
+    },
+    volume: {
+      min: undefined,
+      max: undefined
+    },
+    enabledSocials: {
+      x: true,
+      website: true,
+      telegram: true
+    }
+  },
+  soon: {
+    age: {
+      min: undefined,
+      max: undefined
+    },
+    holders: {
+      min: undefined,
+      max: undefined
+    },
+    topHolders: {
+      min: undefined,
+      max: undefined
+    },
+    bondingCurveProgress: {
+      min: undefined,
+      max: undefined
+    },
+    marketCap: {
+      min: undefined,
+      max: undefined
+    },
+    volume: {
+      min: undefined,
+      max: undefined
+    },
+    enabledSocials: {
+      x: true,
+      website: true,
+      telegram: true
+    }
+  }
 }
 
 interface ITokenFeed {
@@ -23,6 +120,12 @@ interface ITokenFeed {
   updateQuickBuyAmount: (amount: string) => void
   quickBuyTokenQuery: UseQueryResult<TokenListToken | null>
   updateQuickBuyToken: (token: TokenListToken) => void
+  columnFilters: {
+    new: UserTokenFeedFilterConfig
+    migrated: UserTokenFeedFilterConfig
+    soon: UserTokenFeedFilterConfig
+  }
+  updateColumnFilters: (column: TokenFeedTokenColumn, filters: UserTokenFeedFilterConfig) => void
 }
 
 const TokenFeedContext = createContext<ITokenFeed | null>(null)
@@ -41,6 +144,12 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
   const quickBuyTokenQuery = useTokenQuery({
     address: userCache?.tokenFeed?.quickBuyToken ?? 'So11111111111111111111111111111111111111112'
   })
+  const [columnFilters, setColumnFilters] = useState<{
+    new: UserTokenFeedFilterConfig
+    migrated: UserTokenFeedFilterConfig
+    soon: UserTokenFeedFilterConfig
+  }>(userCache.tokenFeed?.columnFilters ?? defaultTokenFeedFilters)
+
   const maxColumnsReached = useMemo(() => {
     const totalColumnsEnabled = Object.keys(enabledColumns).filter(
       (key) => enabledColumns[key as keyof TokenFeedColumns]
@@ -109,7 +218,25 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
       }
     })
   }
-
+  const updateColumnFilters = (
+    column: Exclude<keyof TokenFeedColumns, 'social'>,
+    filters: UserTokenFeedFilterConfig
+  ) => {
+    setColumnFilters((prev) => ({
+      ...prev,
+      [column]: filters
+    }))
+    updateUserCache({
+      ...userCache,
+      tokenFeed: {
+        ...userCache.tokenFeed,
+        columnFilters: {
+          ...userCache.tokenFeed.columnFilters,
+          [column]: filters
+        }
+      }
+    })
+  }
   return (
     <TokenFeedContext.Provider
       value={{
@@ -121,7 +248,9 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
         quickBuyAmount,
         updateQuickBuyAmount,
         quickBuyTokenQuery,
-        updateQuickBuyToken
+        updateQuickBuyToken,
+        columnFilters,
+        updateColumnFilters
       }}
     >
       {children}

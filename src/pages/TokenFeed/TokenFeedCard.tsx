@@ -13,6 +13,7 @@ import { H4, H3, P } from '@/components/text/TextComponents'
 import { useTokenFeed } from '@/context/tokenFeedContext'
 import useTokenQuery from '@/queries/useTokenQuery'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
+import { UserTokenFeedFilterConfig } from '@/types/app_params'
 
 const IconWithInfo: FC<{
   data: ReactNode
@@ -48,7 +49,14 @@ const TokenFeedStats: FC<{
   </div>
 )
 
-function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
+function TokenFeedCard({
+  token,
+  currentFilters
+}: {
+  token: TokenFeedToken
+  key?: string
+  currentFilters: UserTokenFeedFilterConfig
+}) {
   const { mode } = useDarkMode()
   const { setIsCreatePool, setCreatePoolTokenA } = useGamma()
   const { quickBuyAmount, quickBuyTokenQuery } = useTokenFeed()
@@ -66,7 +74,7 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
   })
 
   const tokenQuery = useTokenQuery({
-    address: token?.address,
+    address: token?.address
   })
 
   const copyTokenDetails = () => {
@@ -127,10 +135,16 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
           onClick={copyTokenDetails}
         />
         <div className={'inline-flex ml-auto gap-4'}>
-          <SocialIcon socialLink={'https://twitter.com/'} src={`/img/assets/x_${mode}.svg`} />
+          {currentFilters?.enabledSocials?.x && (
+            <SocialIcon socialLink={'https://twitter.com/'} src={`/img/assets/x_${mode}.svg`} />
+          )}
           <SocialIcon socialLink={'https://twitter.com/'} src={`/img/assets/token_redirect_${mode}.svg`} />
-          <SocialIcon socialLink={'https://twitter.com/'} src={`/img/assets/embedded_post_${mode}.svg`} />
-          <SocialIcon socialLink={'https://twitter.com/'} src={`/img/assets/website_${mode}.svg`} />
+          {currentFilters?.enabledSocials?.telegram && (
+            <SocialIcon socialLink={'https://twitter.com/'} src={`/img/assets/embedded_post_${mode}.svg`} />
+          )}
+          {currentFilters?.enabledSocials?.website && (
+            <SocialIcon socialLink={'https://twitter.com/'} src={`/img/assets/website_${mode}.svg`} />
+          )}
         </div>
       </div>
       <div className={`inline-flex gap-4 justify-between`}>
@@ -162,7 +176,7 @@ function TokenFeedCard({ token }: { token: TokenFeedToken; key?: string }) {
             {quickBuyAmount ? (
               <>
                 {quickBuyAmount}&nbsp;
-                <IconWithFallback src={loadIconImage(quickBuyTokenQuery.data?.logoURI,mode)} size={'sm'} />
+                <IconWithFallback src={loadIconImage(quickBuyTokenQuery.data?.logoURI, mode)} size={'sm'} />
               </>
             ) : (
               <Icon src={`/img/assets/swap_white.svg`} size={'sm'} />

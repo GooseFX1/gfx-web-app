@@ -2,6 +2,7 @@ import React, { FC, ReactNode } from 'react'
 import { cn, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import TokenFeedCard from '@/pages/TokenFeed/TokenFeedCard'
 import { H3 } from '@/components/text/TextComponents'
+import { UserTokenFeedFilterConfig } from '@/types/app_params'
 
 export type TokenFeedToken = {
   address: string
@@ -59,10 +60,13 @@ export const TokenFeedContentContainer: FC<{ children: ReactNode | ReactNode[]; 
   className
 }) => <div className={cn(`flex flex-1 flex-col gap-4 pt-4 overflow-scroll`, className)}>{children}</div>
 
-export const TokenFeedTokensContainer: FC<{ tokens: TokenFeedToken[] }> = ({ tokens }) => (
+export const TokenFeedTokensContainer: FC<{
+  tokens: TokenFeedToken[]
+  currentFilters: UserTokenFeedFilterConfig
+}> = ({ tokens, currentFilters }) => (
   <TokenFeedContentContainer>
     {tokens.length > 0 ? (
-      tokens.map((token) => <TokenFeedCard key={token.address} token={token} />)
+      tokens.map((token) => <TokenFeedCard key={token.address} token={token} currentFilters={currentFilters} />)
     ) : (
       <H3 className={`text-center`}>No Tokens Found</H3>
     )}
@@ -72,9 +76,12 @@ export const TokenFeedTokensContainer: FC<{ tokens: TokenFeedToken[] }> = ({ tok
 function TokenFeedContainer({ children, className }: { children: ReactNode | ReactNode[]; className?: string }) {
   return (
     <div
-      className={cn(`flex flex-col p-4 w-full max-w-[450px] border-1 border-solid dark:border-border-darkmode-secondary
+      className={cn(
+        `flex flex-col p-4 w-full max-w-[450px] border-1 border-solid dark:border-border-darkmode-secondary
     rounded-[16px] border-border-lightmode-secondary h-[724px] overflow-hidden
-    `, className)}
+    `,
+        className
+      )}
     >
       {children}
     </div>

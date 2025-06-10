@@ -8,14 +8,18 @@ import TokenFeedSettings from '@/pages/TokenFeed/TokenFeedSettings'
 import { cn } from 'gfx-component-lib'
 
 function TokenFeedNewTokenPanel() {
-  const { enabledColumns } = useTokenFeed()
+  const { enabledColumns, columnFilters } = useTokenFeed()
   if (!enabledColumns.new) return null
+  const currentFilters = columnFilters.new
   return (
-    <TokenFeedContainer className={cn(
-      enabledColumns.social ? 'ml-auto' : 'mr-auto',
-    )}>
-      <TokenFeedContainerHeaderWithTitle title={'New Pairs'} tooltip={''} settings={<TokenFeedSettings />} />
+    <TokenFeedContainer className={cn(enabledColumns.social ? 'ml-auto' : 'mr-auto')}>
+      <TokenFeedContainerHeaderWithTitle
+        title={'New Pairs'}
+        tooltip={''}
+        settings={<TokenFeedSettings column={'new'} />}
+      />
       <TokenFeedTokensContainer
+        currentFilters={currentFilters}
         tokens={[
           {
             age: '14m',

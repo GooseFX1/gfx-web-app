@@ -12,6 +12,7 @@ import {
 import { useDarkMode } from '@/context'
 import useBoolean from '@/hooks/useBoolean'
 import { H4, P } from '@/components/text/TextComponents'
+import { TokenFeedTokenColumn, useTokenFeed } from '@/context/tokenFeedContext'
 
 const TokenFeedSettingsCheckBox: FC<{
   checked: boolean
@@ -27,13 +28,7 @@ const TokenFeedSettingsCheckBox: FC<{
     >
       {label}
     </label>
-    <Checkbox
-      disabled={disabled}
-      id={id}
-      defaultChecked={false}
-      checked={checked}
-      onCheckedChange={onCheckedChange}
-    />
+    <Checkbox disabled={disabled} id={id} checked={checked} onCheckedChange={onCheckedChange} />
   </div>
 )
 const TokenSettingsMinMaxInput: FC<{
@@ -50,6 +45,7 @@ const TokenSettingsMinMaxInput: FC<{
         className={`min-w-[166px]`}
         value={minValue}
         placeholder={'Min'}
+        type={'number'}
         onChange={(e) => setMinValue(e.target.value)}
       />
       <P className={`text-b2`}>-</P>
@@ -57,17 +53,61 @@ const TokenSettingsMinMaxInput: FC<{
         className={`min-w-[166px]`}
         value={maxValue}
         placeholder={'Max'}
+        type={'number'}
         onChange={(e) => setMaxValue(e.target.value)}
       />
     </div>
   </div>
 )
 
-function TokenFeedSettings() {
+function isMaxGreaterThanMin(max: string | undefined, min: string | undefined): boolean {
+  if (!max || !min) return true
+  const maxValue = parseFloat(max)
+  const minValue = parseFloat(min)
+  if (isNaN(maxValue) || isNaN(minValue)) return true
+  return maxValue >= minValue
+}
+
+function TokenFeedSettings({ column }: { column: TokenFeedTokenColumn }) {
   const [isOpen, setIsOpen] = useBoolean(false)
-
+  const { columnFilters, updateColumnFilters } = useTokenFeed()
   const { mode } = useDarkMode()
+  const currentFilter = columnFilters[column]
 
+  const updateProperty = (property: Exclude<keyof typeof currentFilter, 'enabledSocials'>) => ({
+    setMaxValue: (value: string) => {
+      if (!isMaxGreaterThanMin(value, currentFilter[property]?.min)) return
+      updateColumnFilters(column, {
+        ...currentFilter,
+        [property]: {
+          ...currentFilter[property],
+          max: value
+        }
+      })
+    },
+    setMinValue: (value: string) => {
+      console.log(
+        `Setting min value for ${property} to ${value}`,
+        !isMaxGreaterThanMin(currentFilter[property]?.max, value)
+      )
+      if (!isMaxGreaterThanMin(currentFilter[property]?.max, value)) return
+      updateColumnFilters(column, {
+        ...currentFilter,
+        [property]: {
+          ...currentFilter[property],
+          min: value
+        }
+      })
+    }
+  })
+  const enableSocial = (social: keyof typeof currentFilter.enabledSocials) => (state: boolean) =>
+    updateColumnFilters(column, {
+      ...currentFilter,
+      enabledSocials: {
+        ...currentFilter.enabledSocials,
+        [social]: state
+      }
+    })
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
       <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
@@ -90,45 +130,38 @@ function TokenFeedSettings() {
           </div>
           <TokenSettingsMinMaxInput
             label={'Volume'}
-            maxValue={undefined}
-            minValue={undefined}
-            setMaxValue={() => console.log('')}
-            setMinValue={() => console.log('')}
+            maxValue={currentFilter?.volume?.max}
+            minValue={currentFilter?.volume?.min}
+            setMaxValue={updateProperty('volume').setMaxValue}
+            setMinValue={updateProperty('volume').setMinValue}
           />
           <TokenSettingsMinMaxInput
             label={'Market Cap'}
-            maxValue={undefined}
-            minValue={undefined}
-            setMaxValue={() => console.log('')}
-            setMinValue={() => console.log('')}
+            maxValue={currentFilter?.marketCap?.max}
+            minValue={currentFilter?.marketCap?.min}
+            setMaxValue={updateProperty('marketCap').setMaxValue}
+            setMinValue={updateProperty('marketCap').setMinValue}
           />
           <TokenSettingsMinMaxInput
             label={'Bonding Curve %'}
-            maxValue={undefined}
-            minValue={undefined}
-            setMaxValue={() => console.log('')}
-            setMinValue={() => console.log('')}
+            maxValue={currentFilter?.bondingCurveProgress?.max}
+            minValue={currentFilter?.bondingCurveProgress?.min}
+            setMaxValue={updateProperty('bondingCurveProgress').setMaxValue}
+            setMinValue={updateProperty('bondingCurveProgress').setMinValue}
           />
           <TokenSettingsMinMaxInput
             label={'Age (Mins)'}
-            maxValue={undefined}
-            minValue={undefined}
-            setMaxValue={() => console.log('')}
-            setMinValue={() => console.log('')}
+            maxValue={currentFilter?.age?.max}
+            minValue={currentFilter?.age?.min}
+            setMaxValue={updateProperty('age').setMaxValue}
+            setMinValue={updateProperty('age').setMinValue}
           />
           <TokenSettingsMinMaxInput
             label={'Holders'}
-            maxValue={undefined}
-            minValue={undefined}
-            setMaxValue={() => console.log('')}
-            setMinValue={() => console.log('')}
-          />
-          <TokenSettingsMinMaxInput
-            label={'Top 10 Holders %'}
-            maxValue={undefined}
-            minValue={undefined}
-            setMaxValue={() => console.log('')}
-            setMinValue={() => console.log('')}
+            maxValue={currentFilter?.holders?.max}
+            minValue={currentFilter?.holders?.min}
+            setMaxValue={updateProperty('holders').setMaxValue}
+            setMinValue={updateProperty('holders').setMinValue}
           />
         </div>
         <div className={`flex flex-col gap-2`}>
@@ -139,18 +172,23 @@ function TokenFeedSettings() {
             <H4 className={`px-2`}>Socials</H4>
           </div>
           <div className={`flex gap-4 px-2`}>
-            <TokenFeedSettingsCheckBox checked={false} onCheckedChange={() => console.log()} id={'x'} label={'X'} />
             <TokenFeedSettingsCheckBox
-              checked={false}
-              onCheckedChange={() => console.log()}
+              checked={currentFilter?.enabledSocials?.x}
+              onCheckedChange={enableSocial('x')}
+              id={'x'}
+              label={'X'}
+            />
+            <TokenFeedSettingsCheckBox
+              checked={currentFilter?.enabledSocials?.website}
+              onCheckedChange={enableSocial('website')}
               id={'website'}
               label={'Website'}
             />
           </div>
           <div className={`flex gap-4 px-2 w-1/2`}>
             <TokenFeedSettingsCheckBox
-              checked={false}
-              onCheckedChange={() => console.log()}
+              checked={currentFilter?.enabledSocials?.telegram}
+              onCheckedChange={enableSocial('telegram')}
               id={'Telegram'}
               label={'Telegram'}
             />

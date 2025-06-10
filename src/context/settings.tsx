@@ -140,7 +140,102 @@ function newCache(): USER_CONFIG_CACHE {
         migrated: true
       },
       quickBuyAmount: undefined,
-      quickBuyToken: 'So11111111111111111111111111111111111111112'
+      quickBuyToken: 'So11111111111111111111111111111111111111112',
+      columnFilters: {
+        new: {
+          age: {
+            min: undefined,
+            max: undefined
+          },
+          holders: {
+            min: undefined,
+            max: undefined
+          },
+          topHolders: {
+            min: undefined,
+            max: undefined
+          },
+          bondingCurveProgress: {
+            min: undefined,
+            max: undefined
+          },
+          marketCap: {
+            min: undefined,
+            max: undefined
+          },
+          volume: {
+            min: undefined,
+            max: undefined
+          },
+          enabledSocials: {
+            x: true,
+            website: true,
+            telegram: true
+          }
+        },
+        migrated: {
+          age: {
+            min: undefined,
+            max: undefined
+          },
+          holders: {
+            min: undefined,
+            max: undefined
+          },
+          topHolders: {
+            min: undefined,
+            max: undefined
+          },
+          bondingCurveProgress: {
+            min: undefined,
+            max: undefined
+          },
+          marketCap: {
+            min: undefined,
+            max: undefined
+          },
+          volume: {
+            min: undefined,
+            max: undefined
+          },
+          enabledSocials: {
+            x: true,
+            website: true,
+            telegram: true
+          }
+        },
+        soon: {
+          age: {
+            min: undefined,
+            max: undefined
+          },
+          holders: {
+            min: undefined,
+            max: undefined
+          },
+          topHolders: {
+            min: undefined,
+            max: undefined
+          },
+          bondingCurveProgress: {
+            min: undefined,
+            max: undefined
+          },
+          marketCap: {
+            min: undefined,
+            max: undefined
+          },
+          volume: {
+            min: undefined,
+            max: undefined
+          },
+          enabledSocials: {
+            x: true,
+            website: true,
+            telegram: true
+          }
+        }
+      }
     },
     hasSignedTC: false,
     endpointName: DEFAULT_ENDPOINT_NAME,

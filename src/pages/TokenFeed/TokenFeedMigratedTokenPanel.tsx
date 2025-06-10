@@ -8,17 +8,19 @@ import { cn } from 'gfx-component-lib'
 import TokenFeedSettings from '@/pages/TokenFeed/TokenFeedSettings'
 
 function TokenFeedMigratedTokenPanel() {
-  const { enabledColumns } = useTokenFeed()
+  const { enabledColumns, columnFilters } = useTokenFeed()
 
   if (!enabledColumns.migrated) return null
+  const currentFilters = columnFilters.migrated
   return (
-    <TokenFeedContainer className={
-      cn(
-        (enabledColumns.new || enabledColumns.new) ? 'ml-auto' : 'mr-auto',
-      )
-    }>
-      <TokenFeedContainerHeaderWithTitle title={'Migrated'} tooltip={''} settings={<TokenFeedSettings />} />
+    <TokenFeedContainer className={cn(enabledColumns.new || enabledColumns.new ? 'ml-auto' : 'mr-auto')}>
+      <TokenFeedContainerHeaderWithTitle
+        title={'Migrated'}
+        tooltip={''}
+        settings={<TokenFeedSettings column={'migrated'} />}
+      />
       <TokenFeedTokensContainer
+        currentFilters={currentFilters}
         tokens={[
           {
             age: '14m',
