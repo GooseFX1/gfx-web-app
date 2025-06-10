@@ -28,6 +28,7 @@ import { INTERVALS } from '@/utils/time'
 import { GAMMA_STABLE_TOKENS, POOL_TYPE } from '@/pages/FarmV4/constants'
 import useGetGammaConfigIdQuery from '@/queries/GAMMA/pools/useGetGammaConfigIdQuery'
 import { useMutation } from '@tanstack/react-query'
+import useAddOrCheckTokenQuery from '@/queries/GAMMA/pools/useAddOrCheckTokenQuery'
 
 export const CreatePool: FC<{
   isCreatePool: boolean
@@ -96,8 +97,18 @@ export const CreatePool: FC<{
       isSource ? setAmountTokenA(inputNumber) : setAmountTokenB(inputNumber)
     }
   }
+
+  const addOrCheckTokenQueryTokenA = useAddOrCheckTokenQuery({ address: tokenA?.address })
+  const addOrCheckTokenQueryTokenB = useAddOrCheckTokenQuery({ address: tokenB?.address })
+
   const createPoolMutation = useMutation({
-    mutationFn: async () =>{
+    mutationFn: async () => {
+      if (addOrCheckTokenQueryTokenA.isError) {
+        throw new Error('Token A is not supported')
+      }
+      if (addOrCheckTokenQueryTokenB.isError) {
+        throw new Error('Token B is not supported')
+      }
       setCreatePoolState(CreationPoolFlowStateEnum.ON_CHAIN)
       const txBuilder = createTransactionBuilder()
       const tx = await createPool(

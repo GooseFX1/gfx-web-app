@@ -24,7 +24,8 @@ function RewardsClaimButton(): JSX.Element {
       onClick={()=>claimFeesMutation.mutate()}
       variant={'outline'}
       className={cn(
-        'text-white bg-button-darkmode-primary disabled:bg-button-darkmode-disabled-primary ',
+        `text-white bg-button-darkmode-primary disabled:bg-button-darkmode-disabled-primary w-[220px]
+        sticky bottom-2.5 lg:bottom-0 lg:relative`,
         claimable > 0 && `opacity-100`
       )}
       isLoading={claimFeesMutation.isLoading}

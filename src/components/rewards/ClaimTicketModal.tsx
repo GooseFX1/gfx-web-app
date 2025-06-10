@@ -11,7 +11,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogOverlay,
-  DialogPortal
+  DialogPortal, Icon
 } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import CloseLite from '@/assets/close-lite.svg?react'
@@ -36,7 +36,7 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
         >
           <DialogHeader
             className={`space-y-0 flex flex-col w-full h-[58px] justify-between px-2.5 pb-1.25 border-b-1 border-solid
-        border-border-lightmode-secondary dark:border-border-darkmode-secondary`}
+        border-border-lightmode-secondary dark:border-border-darkmode-secondary gap-1.5`}
           >
             <div className={'w-full flex flex-row justify-between items-center'}>
               <h3 className={`mb-0 text-h3 `}>All Active Cooldowns</h3>
@@ -48,8 +48,14 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
               />
             </div>
             <div className={`flex w-full justify-between `}>
-              <h5 className={`mb-0 text-h5 `}>Unstake Amount</h5>
-              <h5 className={`mb-0 text-h5 `}>Days Remaining</h5>
+              <p className={`mb-0 text-b3 font-semibold dark:text-text-darkmode-secondary 
+              text-text-lightmode-secondary`}>
+                GOFX Amount
+              </p>
+              <p className={`mb-0 text-b3 font-semibold dark:text-text-darkmode-secondary 
+              text-text-lightmode-secondary`}>
+                Days Remaining
+              </p>
             </div>
           </DialogHeader>
           <DialogBody
@@ -119,9 +125,13 @@ const UnstakingTicketLineItem = ({ ticket }: PropsWithKey<{ ticket: UnstakeTicke
 
   return (
     <div className={`flex w-full justify-between items-center`}>
-      <p className={`text-[18px] leading-[22px] mb-0 text-grey-1 dark:text-grey-2 font-semibold`}>
-        {numberFormatter(uiUnstakeAmount, uiUnstakeAmount <= 0.1 && uiUnstakeAmount >= 0.0 ? 4 : 2)} GOFX
-      </p>
+      <div className={'inline-flex gap-2 items-center'}>
+        <Icon src={'/img/crypto/GOFX.svg'} className={'w-[25px] h-[25px] min-w-[25px] min-h-[25px]'}/>
+        <p className={`text-b2 leading-normal mb-0 text-text-lightmode-primary dark:text-text-darkmode-primary 
+      font-semibold`}>
+          {numberFormatter(uiUnstakeAmount, uiUnstakeAmount <= 0.1 && uiUnstakeAmount >= 0.0 ? 4 : 2)}
+        </p>
+      </div>
 
       <Button
         className={cn(

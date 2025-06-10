@@ -349,13 +349,19 @@ function TokenSelectionInput({
   setToken: Dispatch<SetStateAction<JupToken>>
 }) {
   const [searchValue, setSearchValue] = useState('')
-  const query = useTokensQuery({searchValue})
+  const query = useTokensQuery({ searchValue })
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
   // const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
   const [popularTokens, setPopularTokens] = useState<JupToken[]>([])
   const [loadingPopularTokens, setLoadingPopularTokens] = useBoolean(false)
-  const { publicKey } = useWalletBalance()
+  const { publicKey, fetchTokenWithMetadata } = useWalletBalance()
+  const [tokenList, setTokenList] = useState<TokenListToken[]>([])
+  const [loadingOnChainSearch, setLoadingOnChainSearch] = useState(false)
+
+  useEffect(() => {
+    setTokenList(query.data.allPages ?? [])
+  }, [query.data.allPages])
 
   useEffect(() => {
     setLoadingPopularTokens.on()
@@ -367,7 +373,20 @@ function TokenSelectionInput({
       })
       .finally(() => setLoadingPopularTokens.off())
   }, [])
-  const tokenList = query.data.allPages ?? [];
+
+  useEffect(() => {
+    if (searchValue && tokenList.length == 0 && !query.isFetching) {
+      ;(async () => {
+        setLoadingOnChainSearch(true)
+        const token = await fetchTokenWithMetadata(searchValue)
+        if (token) {
+          setTokenList([token])
+        }
+        setLoadingOnChainSearch(false)
+      })()
+    }
+  }, [searchValue, query.isFetching])
+
   return (
     <InputGroup
       leftItem={
@@ -474,7 +493,7 @@ function TokenSelectionInput({
                   )}
                 </div>
               </div>
-              {searchValue && tokenList.length == 0 && !query.isFetching ? (
+              {searchValue && tokenList.length == 0 && !query.isFetching && !loadingOnChainSearch ? (
                 <div className={'mb-auto p-2'}>No Tokens Found..</div>
               ) : null}
               {tokenList.length > 0 ? (

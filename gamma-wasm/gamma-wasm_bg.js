@@ -211,9 +211,9 @@ function takeFromExternrefTable0(idx) {
 
 function passArrayJsValueToWasm0(array, malloc) {
     const ptr = malloc(array.length * 4, 4) >>> 0;
-    const mem = getDataViewMemory0();
     for (let i = 0; i < array.length; i++) {
-        mem.setUint32(ptr + 4 * i, addToExternrefTable0(array[i]), true);
+        const add = addToExternrefTable0(array[i]);
+        getDataViewMemory0().setUint32(ptr + 4 * i, add, true);
     }
     WASM_VECTOR_LEN = array.length;
     return ptr;
@@ -964,7 +964,7 @@ export class Transaction {
     /**
      * Create a new `Transaction`
      * @param {Instructions} instructions
-     * @param {Pubkey | undefined} [payer]
+     * @param {Pubkey | null} [payer]
      */
     constructor(instructions, payer) {
         _assertClass(instructions, Instructions);
