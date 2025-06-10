@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect } from 'react'
+import { createContext, useContext, useEffect, useCallback } from 'react'
 import { ParsedAccountData, PublicKey, TokenAmount, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { useWallet } from '@/hooks/useWallet'
 import { useConnectionConfig } from '@/context/settings'
@@ -249,7 +249,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       const metadata = Metadata.deserialize(metadataAccount.data)
       return metadata[0]
     } else {
-      console.log('Metadata not found on chain.')
+      console.log('Metadata not found on chain. for mint:', metadataPDA.toBase58())
     }
   }
 
@@ -293,13 +293,15 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
 
       let image = ''
 
-      if (metadata.data.uri) {
+      if (metadata.data.uri && metadata.data.uri.length > 0) {
         try {
           const response = await fetch(metadata.data.uri)
           const data = await response.json()
-          image = data.image
+          if (data.image) {
+            image = data.image
+          }
         } catch (e) {
-          console.log('Error fetching image', e)
+          // fail silently
         }
       }
 
