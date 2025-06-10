@@ -119,7 +119,7 @@ interface ITokenFeed {
   quickBuyAmount: string
   updateQuickBuyAmount: (amount: string) => void
   quickBuyTokenQuery: UseQueryResult<TokenListToken | null>
-  updateQuickBuyToken: (token: TokenListToken) => void
+  updateQuickBuyToken: (tokenAddress: string) => void
   columnFilters: {
     new: UserTokenFeedFilterConfig
     migrated: UserTokenFeedFilterConfig
@@ -209,12 +209,12 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
     })
   }
 
-  const updateQuickBuyToken = (token: TokenListToken) => {
+  const updateQuickBuyToken = (token: string) => {
     updateUserCache({
       ...userCache,
       tokenFeed: {
         ...userCache.tokenFeed,
-        quickBuyToken: token.address
+        quickBuyToken: token
       }
     })
   }
