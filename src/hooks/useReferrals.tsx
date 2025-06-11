@@ -1,5 +1,5 @@
 import { useWallet } from '@/hooks/useWallet'
-import { useCallback, useEffect, useState, useMemo } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Client, Member, Treasury } from '@ladderlabs/buddy-sdk'
 import { AccountMeta, Connection, PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useConnectionConfig } from '../context'
