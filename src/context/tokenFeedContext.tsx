@@ -6,6 +6,7 @@ import useTokenQuery from '@/queries/useTokenQuery'
 import { TokenListToken } from '@/context/gamma'
 import { UseQueryResult } from '@tanstack/react-query'
 import { UserTokenFeedFilterConfig } from '@/types/app_params'
+import useBoolean from '@/hooks/useBoolean'
 
 type TokenFeedColumns = {
   social: boolean
@@ -126,6 +127,11 @@ interface ITokenFeed {
     soon: UserTokenFeedFilterConfig
   }
   updateColumnFilters: (column: TokenFeedTokenColumn, filters: UserTokenFeedFilterConfig) => void
+  isTokenDepositOpen: boolean
+  // TODO: update this type once we know what it is
+  selectToken: (token: any)=>void
+  // TODO: update this type once we know what it is
+  selectedToken?: any
 }
 
 const TokenFeedContext = createContext<ITokenFeed | null>(null)
@@ -149,7 +155,8 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
     migrated: UserTokenFeedFilterConfig
     soon: UserTokenFeedFilterConfig
   }>(userCache.tokenFeed?.columnFilters ?? defaultTokenFeedFilters)
-
+  const [isTokenDepositOpen, setIsTokenDepositOpen] = useBoolean(false)
+  const [selectedToken, setSelectedToken] = useState<TokenListToken | undefined>(undefined)
   const maxColumnsReached = useMemo(() => {
     const totalColumnsEnabled = Object.keys(enabledColumns).filter(
       (key) => enabledColumns[key as keyof TokenFeedColumns]
@@ -237,6 +244,11 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
       }
     })
   }
+  const selectToken = (token?: TokenListToken) => {
+    console.log(!!token)
+    setIsTokenDepositOpen.set(!!token)
+    setSelectedToken(token)
+  }
   return (
     <TokenFeedContext.Provider
       value={{
@@ -250,7 +262,10 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
         quickBuyTokenQuery,
         updateQuickBuyToken,
         columnFilters,
-        updateColumnFilters
+        updateColumnFilters,
+        isTokenDepositOpen,
+        selectToken,
+        selectedToken
       }}
     >
       {children}

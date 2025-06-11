@@ -8,6 +8,7 @@ import { H2 } from '@/components/text/TextComponents'
 import { cn } from 'gfx-component-lib'
 import TokenFeedSoonTokenPanel from './TokenFeedSoonTokenPanel'
 import TokenFeedQuickBuy from './TokenFeedQuickBuy'
+import TokenFeedLPDrawer from '@/pages/TokenFeed/TokenFeedLPDrawer'
 
 function TokenFeed() {
 
@@ -27,6 +28,7 @@ function TokenFeed() {
            lg:grid-cols-[repeat(3,_minmax(330px,_1fr))] 
        `)}
         >
+          <TokenFeedLPDrawer />
           <TokenFeedSocialPanel />
           <TokenFeedNewTokenPanel />
           <TokenFeedMigratedTokenPanel />

@@ -59,7 +59,8 @@ function TokenFeedCard({
 }) {
   const { mode } = useDarkMode()
   const { setIsCreatePool, setCreatePoolTokenA } = useGamma()
-  const { quickBuyAmount, quickBuyTokenQuery } = useTokenFeed()
+  const { quickBuyAmount, quickBuyTokenQuery, selectToken } = useTokenFeed()
+  // TODO: remove this once we get actual data
   const [progressSim, setProgressSim] = useState(0)
 
   const doesTokenPoolExist = useQuery({
@@ -109,13 +110,24 @@ function TokenFeedCard({
   }, [])
 
   const handleLp = () => {
+    console.log('a')
     if (doesTokenPoolExist.isSuccess && tokenQuery.isSuccess) {
-      if (doesTokenPoolExist.data) {
+      console.log('b')
+      if (!doesTokenPoolExist.data) {
+        console.log('c')
         setIsCreatePool(true)
         setCreatePoolTokenA(tokenQuery.data)
       } else {
-        // TODO: how are we handling this
+        console.log('c1')
+        selectToken(tokenQuery.data)
       }
+    }
+  }
+  const handleQuickBuy = () => {
+    if (!doesTokenPoolExist.data) {
+      // TODO: jup flow
+    } else {
+      selectToken(tokenQuery.data)
     }
   }
   const img = loadIconImage(token.src, mode)
@@ -179,6 +191,7 @@ function TokenFeedCard({
                 `animate-lightTextPulse dark:animate-darkTextPulse bg-buttons-lightmode-disabled-primary
                  dark:bg-buttons-darkmode-disabled-primary`
             )}
+            onClick={handleQuickBuy}
             disabled={!token?.bondingCurveProgress || token?.bondingCurveProgress < 100}
           >
             {!token?.bondingCurveProgress || token?.bondingCurveProgress < 100 ? (
