@@ -37,7 +37,8 @@ function TokenFeedNewTokenPanel() {
             holders: 1000,
             tickerSymbol: 'GFX',
             topHolders: '0.1%',
-            migrated: false
+            migrated: false,
+            bondingCurveProgress: 100
           },
           {
             age: '14m',

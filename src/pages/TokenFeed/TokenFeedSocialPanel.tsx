@@ -54,7 +54,9 @@ function TokenFeedSocialPanel() {
       </TokenFeedContainerHeader>
       <TokenFeedContentContainer className={'items-center justify-center w-full h-full'}>
         <div className={`flex flex-col items-center justify-between w-full gap-4`}>
-          <Lottie animationData={performanceAnimation} className={cn(`h-[80px]`, connected && `h-[77px]`)} />
+          <Lottie
+            loop={true}
+            animationData={performanceAnimation} className={cn(`h-[80px]`, connected && `h-[77px]`)} />
           <div className={`flex flex-col gap-2 items-center text-center w-[300px]`}>
             <H2 >My Performance</H2>
             <P

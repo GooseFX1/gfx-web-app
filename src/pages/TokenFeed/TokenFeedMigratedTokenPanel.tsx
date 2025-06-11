@@ -29,7 +29,8 @@ function TokenFeedMigratedTokenPanel() {
             holders: 1000,
             tickerSymbol: 'GFX',
             topHolders: '0.1%',
-            migrated: true
+            migrated: true,
+            bondingCurveProgress: 100
           },
           {
             age: '14m',
@@ -38,7 +39,8 @@ function TokenFeedMigratedTokenPanel() {
             holders: 1000,
             tickerSymbol: 'GFX',
             topHolders: '0.1%',
-            migrated: true
+            migrated: true,
+            bondingCurveProgress: 100
           },
           {
             age: '14m',
@@ -47,7 +49,8 @@ function TokenFeedMigratedTokenPanel() {
             holders: 1000,
             tickerSymbol: 'GFX',
             topHolders: '0.1%',
-            migrated: true
+            migrated: true,
+            bondingCurveProgress: 100
           },
           {
             age: '14m',
@@ -56,7 +59,8 @@ function TokenFeedMigratedTokenPanel() {
             holders: 1000,
             tickerSymbol: 'GFX',
             topHolders: '0.1%',
-            migrated: true
+            migrated: true,
+            bondingCurveProgress: 100
           },
           {
             age: '14m',
@@ -65,7 +69,8 @@ function TokenFeedMigratedTokenPanel() {
             holders: 1000,
             tickerSymbol: 'GFX',
             topHolders: '0.1%',
-            migrated: true
+            migrated: true,
+            bondingCurveProgress: 100
           },
           {
             age: '14m',
@@ -74,7 +79,8 @@ function TokenFeedMigratedTokenPanel() {
             holders: 1000,
             tickerSymbol: 'GFX',
             topHolders: '0.1%',
-            migrated: true
+            migrated: true,
+            bondingCurveProgress: 100
           }
         ]}
       />

@@ -70,7 +70,7 @@ function TokenFeedQuickBuy() {
                   onSelect={() => updateQuickBuyToken(`EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v`)}
                 >
                   <Icon src={`/img/crypto/USD Coin (USDC).svg`} size={'sm'} />
-                  <P className={'text-b2 ml-2'}>USDC)</P>
+                  <P className={'text-b2 ml-2'}>USDC</P>
                 </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
