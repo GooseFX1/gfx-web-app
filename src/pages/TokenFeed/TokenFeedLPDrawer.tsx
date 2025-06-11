@@ -130,11 +130,13 @@ function TokenFeedLpDrawer() {
         <DialogContent
           placement={isMobile ? 'bottom' : 'right'}
           fullScreen={isMobile}
-          className={'flex flex-col gap-3 p-0 rounded-none max-h-none h-full'}
+          className={`flex flex-col gap-3 p-0 rounded-none h-full sm:w-[450px] sm:max-h-screen border-1 border-solid
+           sm:border-r-0 dark:border-black-4 sm:rounded-none border-b-0 rounded-b-[0px] max-h-[calc(100vh-56px)]`}
         >
           <DialogHeader
             className={`px-[10px] py-2 border-b-1 border-b-solid border-border-lightmode-secondary
-             dark:border-border-darkmode-secondary flex flex-col gap-2`}
+             dark:border-border-darkmode-secondary flex flex-col gap-2 bg-white dark:bg-black-2 relative w-full
+              overflow-y-hidden`}
           >
             <div className={`inline-flex gap-2 items-center`}>
               <div className={'w-[40px] h-[40px] p-1.25 relative'}>
@@ -168,11 +170,13 @@ function TokenFeedLpDrawer() {
             </div>
             <DialogCloseDefault className={`top-2`} />
           </DialogHeader>
-          <DialogBody className={`px-2.5 flex flex-col gap-2.5`}>
+          <DialogBody className={`px-2.5 flex flex-col gap-2.5 bg-white dark:bg-black-2 relative w-full py-2
+           overflow-y-hidden`}>
             <TokenFeedDrawerTokenMetrics selectedToken={selectedToken} />
             <TokenFeedDrawerBuySell selectedToken={selectedToken} onTokensUpdate={onTokensUpdate} />
           </DialogBody>
-          <DialogFooter className={`flex-row p-2.5 gap-2`}>
+          <DialogFooter className={`flex-row p-2.5 gap-2 bg-white dark:bg-black-2 relative w-full py-2
+           overflow-y-hidden`}>
             {!connected ? (
               <Connect fullWidth />
             ) : (
