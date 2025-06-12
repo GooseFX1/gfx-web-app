@@ -188,18 +188,27 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         return { balance: {}, tokens: [] }
       const balance: Balance = gammaTokenQuery.data?.balance ?? {}
 
-      const tokenAccounts = gammaTokenQuery.data?.tokenAccounts
+      // Get token accounts from gamma query data
+      const tokenAccounts: UserTokenAccounts[] = gammaTokenQuery.data?.tokenAccounts
+      // Get on-chain accounts from token query data
       const onChainAccounts = onChainTokenQuery.data?.accounts
-
+      // Create a Set of token mint addresses from token accounts
       const tokenMetaData = new Set<string>(tokenAccounts.map((token) => token.mint))
+
+      // Filter accounts that don't have metadata in the tokenMetaData Set
       const tokenWithoutMetadata = onChainAccounts.filter(
         (account) => !tokenMetaData.has(account.account.data.parsed.info.mint)
       )
-      const onChainTokenMetaData = await getTokensMetadata(
+      // Fetch metadata for tokens without metadata using their mint addresses
+      const onChainTokenMetaData: Metadata[] = await getTokensMetadata(
         tokenWithoutMetadata.map((tokenAccount) => new PublicKey(tokenAccount.account?.data?.parsed?.info?.mint))
       )
-      const onChainTokenMetaDataMap = new Map(onChainTokenMetaData.map((meta) => [meta.mint.toBase58(), meta]))
-      const metaDataInfoMap = await getMetaDataInfo(onChainTokenMetaDataMap, tokenWithoutMetadata);
+      // Create a Map of mint addresses to their metadata
+      const onChainTokenMetaDataMap: Map<string, Metadata> = new Map(
+        onChainTokenMetaData.map((meta) => [meta.mint.toBase58(), meta])
+      )
+      // Get additional metadata info for tokens
+      const metaDataInfoMap: Record<string, any> = await getMetaDataInfo(onChainTokenMetaDataMap, tokenWithoutMetadata)
 
       const promises = tokenWithoutMetadata.map((tokenAccount) =>
         fetchTokenWithMetadata(
@@ -209,7 +218,8 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
           metaDataInfoMap
         )
       )
-      const tokens = await Promise.all(promises)
+
+      const tokens: TokenListToken[] = await Promise.all(promises)
 
       for (const token of tokens) {
         const onChainAccount = onChainAccounts.find(
@@ -244,32 +254,46 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       gammaTokenQuery.isSuccess &&
       !gammaTokenQuery.isFetching
   })
-  const getMetaDataInfo = async (onChainTokenMetaDataMap: Map<string, Metadata>, tokenWithoutMetadata: any[]) => {
-    const metaDataInfo: Record<string, any> = new Map<string, object>();
-    const result = await Promise.allSettled(tokenWithoutMetadata.map(async (tokenAccount)=>{
-      const mint = tokenAccount.account?.data?.parsed?.info?.mint
-      if (!mint) return
-      const metadata = onChainTokenMetaDataMap.get(mint)
-      if (metadata && metadata.data.uri && metadata.data.uri.length > 0 && !metaDataInfo[metadata.data.uri]) {
-        metaDataInfo[metadata.data.uri] = {}
-        const response = await fetch(metadata.data.uri)
-        return response.json()
-      }
-    }));
-    result.forEach(res=>{
-      if (res.status != 'rejected') {
+
+  const getMetaDataInfo = async (
+    onChainTokenMetaDataMap: Map<string, Metadata>,
+    tokenWithoutMetadata: any[]
+  ): Promise<Record<string, any>> => {
+    const metaDataInfo: Record<string, any> = new Map<string, object>()
+    // Process all token accounts in parallel using Promise.allSettled
+    const result = await Promise.allSettled(
+      tokenWithoutMetadata.map(async (tokenAccount) => {
+        const mint = tokenAccount.account?.data?.parsed?.info?.mint
+        if (!mint) return
+        
+        // Get metadata from on-chain metadata map
+        const metadata = onChainTokenMetaDataMap.get(mint)
+        
+        // Check if metadata exists and has a valid URI that hasn't been processed yet
+        if (metadata && metadata.data.uri && metadata.data.uri.length > 0 && !metaDataInfo[metadata.data.uri]) {
+          metaDataInfo[metadata.data.uri] = {}
+          const response = await fetch(metadata.data.uri)
+          return response.json()
+        }
+      })
+    )
+    
+    // Process results and store successful metadata fetches
+    result.forEach((res) => {
+      if (res.status === 'fulfilled' && res.value && res.value.uri) {
         metaDataInfo[res.value.uri] = res.value
       }
     })
     return metaDataInfo
   }
+  
   const getMetadataPDA = (mint: PublicKey): PublicKey =>
     PublicKey.findProgramAddressSync(
       [Buffer.from('metadata'), METAPLEX_PROGRAM_ID.toBuffer(), mint.toBuffer()],
       METAPLEX_PROGRAM_ID
     )[0]
 
-  const getTokensMetadata = async (mintAddresses: PublicKey[]) => {
+  const getTokensMetadata = async (mintAddresses: PublicKey[]): Promise<Metadata[]> => {
     const metaDataPDAs = mintAddresses.map((mint) => getMetadataPDA(mint))
     const metadataAccounts = (await connection.getMultipleAccountsInfo(metaDataPDAs, 'confirmed')).filter((x) => x)
     if (metadataAccounts && metadataAccounts.length > 0) {
@@ -283,7 +307,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     return []
   }
 
-  const getMintInfo = async (mintAddress: string) => {
+  const getMintInfo = async (mintAddress: string): Promise<MintInfo> => {
     try {
       const mintAccountInfo = await getMint(connection, new PublicKey(mintAddress))
       return mintAccountInfo
@@ -293,54 +317,62 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     }
   }
 
-  const fetchTokenWithMetadata = useCallback(async (mintAddress, tokenAccount, onChainDataMap, metaDataInfoMap) => {
-    const metadata = onChainDataMap.get(mintAddress)
-    const mintInfo = tokenAccount
-      ? {
-          decimals: tokenAccount?.data?.parsed?.info?.tokenAccount?.decimals,
-          mintAuthority: tokenAccount?.data?.parsed?.info?.owner
-        }
-      : await getMintInfo(mintAddress)
+  const fetchTokenWithMetadata = useCallback(
+    async (
+      mintAddress: string,
+      tokenAccount: any,
+      onChainDataMap: Map<string, Metadata>,
+      metaDataInfoMap: Record<string, any>
+    ): Promise<TokenListToken> => {
+      const metadata = onChainDataMap.get(mintAddress)
+      const mintInfo: MintInfo = tokenAccount
+        ? {
+            decimals: tokenAccount?.data?.parsed?.info?.tokenAccount?.decimals,
+            mintAuthority: tokenAccount?.data?.parsed?.info?.owner
+          }
+        : await getMintInfo(mintAddress)
 
-    if (!metadata || !mintInfo) {
-      return {
+      if (!metadata || !mintInfo) {
+        return {
+          address: mintAddress,
+          name: '',
+          symbol: '',
+          decimals: 0,
+          logoURI: '',
+          price: 0.0,
+          tags: [],
+          daily_volume: 0,
+          freeze_authority: null,
+          mint_authority: null,
+          isLST: false,
+          isPrimary: false
+        }
+      }
+
+      let image = ''
+      const metaDataFromCache = metaDataInfoMap.get(metadata.data.uri)
+      if (metaDataFromCache && metaDataFromCache.image) {
+        image = metaDataFromCache.image
+      }
+
+      const token: TokenListToken = {
         address: mintAddress,
-        name: '',
-        symbol: '',
-        decimals: 0,
-        logoURI: '',
+        name: metadata.data.name,
+        symbol: metadata.data.symbol,
+        decimals: mintInfo.decimals,
+        logoURI: image,
         price: 0.0,
         tags: [],
         daily_volume: 0,
         freeze_authority: null,
-        mint_authority: null,
+        mint_authority: mintInfo.mintAuthority ? mintInfo.mintAuthority.toString() : null,
         isLST: false,
         isPrimary: false
       }
-    }
-
-    let image = ''
-    const metaDataFromCache = metaDataInfoMap.get(metadata.data.uri)
-    if (metaDataFromCache && metaDataFromCache.image) {
-      image = metaDataFromCache.image
-    }
-
-    const token: TokenListToken = {
-      address: mintAddress,
-      name: metadata.data.name,
-      symbol: metadata.data.symbol,
-      decimals: mintInfo.decimals,
-      logoURI: image,
-      price: 0.0,
-      tags: [],
-      daily_volume: 0,
-      freeze_authority: null,
-      mint_authority: mintInfo.mintAuthority ? mintInfo.mintAuthority.toString() : null,
-      isLST: false,
-      isPrimary: false
-    }
-    return token
-  }, [])
+      return token
+    },
+    []
+  )
 
   useEffect(() => {
     if (!base58PublicKey) return
