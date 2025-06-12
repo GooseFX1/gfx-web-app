@@ -129,9 +129,11 @@ interface ITokenFeed {
   updateColumnFilters: (column: TokenFeedTokenColumn, filters: UserTokenFeedFilterConfig) => void
   isTokenDepositOpen: boolean
   // TODO: update this type once we know what it is
-  selectToken: (token: any)=>void
+  selectToken: (token: any) => void
   // TODO: update this type once we know what it is
   selectedToken?: any
+  socialPanelTab: 'social' | 'performance'
+  updateSocialPanelTab: (tab: 'social' | 'performance') => void
 }
 
 const TokenFeedContext = createContext<ITokenFeed | null>(null)
@@ -147,6 +149,9 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
     }
   )
   const [quickBuyAmount, setQuickBuyAmount] = useState<string>(userCache?.tokenFeed?.quickBuyAmount ?? '')
+  const [socialPanelTab, setSocialPanelTab] = useState<'social' | 'performance'>(
+    userCache?.tokenFeed?.socialPanelTab ?? 'social'
+  )
   const quickBuyTokenQuery = useTokenQuery({
     address: userCache?.tokenFeed?.quickBuyToken ?? 'So11111111111111111111111111111111111111112'
   })
@@ -249,6 +254,16 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
     setIsTokenDepositOpen.set(!!token)
     setSelectedToken(token)
   }
+  const updateSocialPanelTab = (tab: 'social' | 'performance') => {
+    setSocialPanelTab(tab)
+    updateUserCache({
+      ...userCache,
+      tokenFeed: {
+        ...userCache.tokenFeed,
+        socialPanelTab: tab
+      }
+    })
+  }
   return (
     <TokenFeedContext.Provider
       value={{
@@ -265,7 +280,9 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
         updateColumnFilters,
         isTokenDepositOpen,
         selectToken,
-        selectedToken
+        selectedToken,
+        socialPanelTab,
+        updateSocialPanelTab
       }}
     >
       {children}

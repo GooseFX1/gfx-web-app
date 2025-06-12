@@ -48,7 +48,8 @@ type UserTokenFeedConfig = {
     new: UserTokenFeedFilterConfig,
     migrated: UserTokenFeedFilterConfig,
     soon: UserTokenFeedFilterConfig
-  }
+  },
+  socialPanelTab: 'social' | 'performance'
 }
 
 export interface USER_CONFIG_CACHE {

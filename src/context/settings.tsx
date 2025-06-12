@@ -235,7 +235,8 @@ function newCache(): USER_CONFIG_CACHE {
             telegram: true
           }
         }
-      }
+      },
+      socialPanelTab: 'social'
     },
     hasSignedTC: false,
     endpointName: DEFAULT_ENDPOINT_NAME,
