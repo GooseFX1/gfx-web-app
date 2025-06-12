@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import useBoolean from '../../../../hooks/useBoolean'
 import RewardsLeftPanelHeading from './RewardsHeading'
 import RewardsInput from './RewardsInput'
@@ -197,8 +197,8 @@ export default function RewardsLeftSidePanel(): JSX.Element {
             <div className={'inline-flex w-full justify-between items-center gap-4'}>
               {!connected ? (
                 <Connect
-                  containerStyle={`w-[153px] h-[35px] rounded-[100px]`}
-                  customButtonStyle={`w-[153px] max-w-full h-[35px] min-md:h-[35px]`}
+                  containerStyle={`w-full h-[35px] rounded-[100px]`}
+                  customButtonStyle={`w-full h-[35px] min-md:h-[35px]`}
                 />
               ) : (
                 <Button
