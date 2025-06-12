@@ -19,6 +19,7 @@ import useTransaction from '@/hooks/useTransaction'
 import TransactionBuilder from '@/web3/Builders/transaction.builder'
 import { useMutation, UseMutationResult, useQuery } from '@tanstack/react-query'
 import { QUERY_KEY } from '@/queries/query.helper'
+import { useRewardToggle } from '@/context/reward_toggle'
 
 const cg = new CoinGecko()
 
@@ -58,6 +59,7 @@ const getNetwork = (network) => (network == 'mainnet-beta' || network == 'testne
 export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { network, connection, endpoint } = useConnectionConfig()
   const { base58PublicKey, publicKey } = useWalletBalance()
+  const {rewardModal} = useRewardToggle()
   const [isConfettiVisible, setIsConfettiVisible] = useState(false)
   const [inputValue, setInputValue] = useState<string>()
 
@@ -74,12 +76,14 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (!data.market_data || !data.market_data.current_price || !data.market_data.current_price.usd) return
       return data.market_data.current_price.usd
     },
-    staleTime: Infinity
+    staleTime: Infinity,
+    enabled: rewardModal
   })
   const programQuery = useQuery({
     queryKey: [QUERY_KEY, 'gfx-stake-program', endpoint],
     queryFn: () => new GfxStakeRewards(connection, getNetwork(network), new Wallet(Keypair.generate())),
-    staleTime: Infinity
+    staleTime: Infinity,
+    enabled: rewardModal
   })
 
   const poolStateQuery = useQuery({

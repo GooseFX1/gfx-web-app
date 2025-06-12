@@ -73,6 +73,9 @@ export const axiosFetchWithRetries = async (
   incomingInit?: RequestInit,
   retryAttempts = 3
 ): Promise<Response> => {
+  if (!input || !input?.toString()) {
+    return Promise.reject('NO INPUT URL PROVIDED')
+  }
   let attempt = 0
   let init = incomingInit
   // Adding default headers
@@ -123,10 +126,6 @@ export const axiosFetchWithRetries = async (
       if (!response.ok) {
         // preventing infinite looping
         attempt++
-      }
-
-      // Traffic might get routed to backups or node restarts or if anything throws a 502, retry
-      if (response.status === 502) {
         console.log('Retrying due to 502')
 
         // Backoff to avoid hammering the server
@@ -134,6 +133,7 @@ export const axiosFetchWithRetries = async (
 
         continue
       }
+
       return Promise.resolve(response)
     } catch (e) {
       console.log(`Retrying due to error ${e}`, e)
