@@ -396,7 +396,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         updateUserCache,
         gammaBoostedRewardsIsActive,
         setTermsOfServiceVisible,
-        termsOfServiceVisible,
+        termsOfServiceVisible
       }}
     >
       {children}
