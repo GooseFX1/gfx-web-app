@@ -46,8 +46,6 @@ interface IRewardsContext {
   gofxValue: number
   userStakeRatio: number
   totalStakedGlobally: number
-  isConfettiVisible: boolean
-  setIsConfettiVisible: (value: boolean) => void
   inputValue: string
   setInputValue: (value: string) => void
 }
@@ -60,7 +58,6 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { network, connection, endpoint } = useConnectionConfig()
   const { base58PublicKey, publicKey } = useWalletBalance()
   const { rewardModal } = useRewardToggle()
-  const [isConfettiVisible, setIsConfettiVisible] = useState(false)
   const [inputValue, setInputValue] = useState<string>()
 
   const gofxValueQuery = useQuery({
@@ -220,7 +217,6 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (!res.success) throw new Error('stake failed')
     },
     onSuccess: async () => {
-      setIsConfettiVisible(true)
       setInputValue('')
       await Promise.all([userDataQuery.refetch(), poolStateQuery.refetch()])
     }
@@ -317,8 +313,6 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         gofxValue: gofxValueQuery.data ?? 0,
         userStakeRatio,
         totalStakedGlobally: poolStateQuery.data?.totalStakedGlobally ?? 0,
-        isConfettiVisible,
-        setIsConfettiVisible,
         inputValue,
         setInputValue
       }}

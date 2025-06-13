@@ -8,7 +8,6 @@ import { Button, cn, Dialog, DialogBody, DialogContent, DialogOverlay, DialogPor
 import Rewards from './v2/Rewards'
 import Raffle from './raffle/Raffle'
 import RewardsClose from '@/assets/rewards_close.svg?react'
-import LottieConfetti from '@/pages/FarmV4/LottieConfetti'
 
 export const REWARD_PANEL_INDEX = 0
 export const REFER_PANEL_INDEX = 1
@@ -51,13 +50,11 @@ export const RewardsPopup: FC = () => {
   const breakpoint = useBreakPoint()
   const isMobile = breakpoint.isMobile
 
-const { isConfettiVisible, setIsConfettiVisible } = useRewards()
   return (
     <>
       <Dialog open={rewardModal} onOpenChange={rewardToggle}>
         <DialogPortal>
           <DialogOverlay />
-          {isConfettiVisible && <LottieConfetti onClick={() => setIsConfettiVisible(false)} />}
 
           <DialogContent
             className={`w-full h-max max-h-[100dvh] overflow-y-scroll rounded-b-none 
