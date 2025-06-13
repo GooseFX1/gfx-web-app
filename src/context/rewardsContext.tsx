@@ -19,6 +19,7 @@ import useTransaction from '@/hooks/useTransaction'
 import TransactionBuilder from '@/web3/Builders/transaction.builder'
 import { useMutation, UseMutationResult, useQuery } from '@tanstack/react-query'
 import { QUERY_KEY } from '@/queries/query.helper'
+import { useRewardToggle } from '@/context/reward_toggle'
 
 const cg = new CoinGecko()
 
@@ -58,6 +59,7 @@ const getNetwork = (network) => (network == 'mainnet-beta' || network == 'testne
 export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { network, connection, endpoint } = useConnectionConfig()
   const { base58PublicKey, publicKey } = useWalletBalance()
+  const { rewardModal } = useRewardToggle()
   const [isConfettiVisible, setIsConfettiVisible] = useState(false)
   const [inputValue, setInputValue] = useState<string>()
 
@@ -74,12 +76,14 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (!data.market_data || !data.market_data.current_price || !data.market_data.current_price.usd) return
       return data.market_data.current_price.usd
     },
-    staleTime: Infinity
+    staleTime: Infinity,
+    enabled: rewardModal
   })
   const programQuery = useQuery({
     queryKey: [QUERY_KEY, 'gfx-stake-program', endpoint],
     queryFn: () => new GfxStakeRewards(connection, getNetwork(network), new Wallet(Keypair.generate())),
-    staleTime: Infinity
+    staleTime: Infinity,
+    enabled: rewardModal
   })
 
   const poolStateQuery = useQuery({
@@ -149,8 +153,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         console.log('get-user-metadata-failed', err)
         return null
       }),
-      getAssociatedTokenAddress(ADDRESSES[getNetwork(network)].USDC_MINT, publicKey),
-      getAssociatedTokenAddress(ADDRESSES[getNetwork(network)].GOFX_MINT, publicKey)
+      getAssociatedTokenAddress(ADDRESSES[getNetwork(network)].USDC_MINT, publicKey, true),
+      getAssociatedTokenAddress(ADDRESSES[getNetwork(network)].GOFX_MINT, publicKey, true)
     ])
     const [usdcAccount, gofxAccount] = await Promise.all([
       connection.getAccountInfo(usdcAddress),
@@ -190,9 +194,11 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const txnForUserAccountRequirements = txBuilder
 
     if (txnForUserAccountRequirements._instructions.length > 0) {
-      res = Boolean(await sendTransaction(txnForUserAccountRequirements, {
-        confirmationWaitType: 'confirmed'
-      }))
+      res = Boolean(
+        await sendTransaction(txnForUserAccountRequirements, {
+          confirmationWaitType: 'confirmed'
+        })
+      )
     }
 
     if (!res) {
@@ -216,10 +222,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     onSuccess: async () => {
       setIsConfettiVisible(true)
       setInputValue('')
-      await Promise.all([
-        userDataQuery.refetch(),
-        poolStateQuery.refetch()
-      ])
+      await Promise.all([userDataQuery.refetch(), poolStateQuery.refetch()])
     }
   })
   const unstakeMutation = useMutation({
@@ -231,7 +234,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const ata = await getAssociatedTokenAddress(
           gofxMint, // mint
           publicKey, // owner
-          false
+          true
         )
         const tx = createAssociatedTokenAccountIx(gofxMint, ata, publicKey)
         txBuilder.add(tx)
@@ -244,17 +247,14 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
     },
     onSuccess: async () => {
-      await Promise.all([
-        userDataQuery.refetch(),
-        poolStateQuery.refetch()
-      ])
+      await Promise.all([userDataQuery.refetch(), poolStateQuery.refetch()])
     }
   })
 
   const claimFeesMutation = useMutation({
     mutationFn: async () => {
       const txn = await checkForUserAccount(async () => programQuery.data.claimFees(publicKey))
-      const {success} = await sendTransaction(txn, {
+      const { success } = await sendTransaction(txn, {
         confirmationWaitType: 'confirmed'
       })
       if (!success) {

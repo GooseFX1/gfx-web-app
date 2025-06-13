@@ -1,14 +1,4 @@
-import {
-  createContext,
-  Dispatch,
-  FC,
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from 'react'
+import { createContext, Dispatch, FC, ReactNode, useContext, useEffect, useMemo, useState } from 'react'
 import { getFarmTokenPrices } from '../api/SSL'
 import { Program, Provider } from '@project-serum/anchor'
 import { Program as coralProgram, AnchorProvider, IdlAccounts } from '@coral-xyz/anchor'
@@ -20,6 +10,7 @@ import sslJson from '../pages/FarmV3/idl/sslv2.json'
 import GammaJson from '../pages/FarmV4/idl/gamma.json'
 import { Gamma } from '../pages/FarmV4/idl/gamma.type'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
 interface IPrices {
   [x: string]: {
@@ -75,7 +66,6 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
   const [prices, setPrices] = useState<IPrices>({})
   const [priceFetched, setPriceFetched] = useState<boolean>(false)
   const [statsData, setStatsData] = useState<IStats | null>()
-  const [stakeAccountKey, setAccountKey] = useState<PublicKey>()
   const wal = useWallet()
   const [solPrice, setSolPrice] = useState<number>(0)
   const { publicKey } = useWalletBalance()
@@ -91,17 +81,16 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
         : undefined,
     [connection, publicKey, network]
   )
-  useEffect(() => {
-    if (publicKey) {
-      if (stakeAccountKey === undefined) {
-        getStakingAccountKey(wal, network).then((accountKey) => setAccountKey(accountKey))
-      }
-    } else {
-      setAccountKey(undefined)
-    }
-
-    return null
-  }, [publicKey, connection])
+  const accountKeyQuery = useQuery({
+    queryKey: ['stakeAccountKey', publicKey, connection.rpcEndpoint],
+    queryFn: async () => {
+      if (!publicKey) return undefined
+      return await getStakingAccountKey(wal, network)
+    },
+    enabled: !!publicKey && !!connection,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false
+  })
 
   const SSLProgram: Program = useMemo(
     () =>
@@ -121,16 +110,15 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
       ),
     [connection]
   )
-  const refreshTokenData = useCallback(async () => {
-    ;(async () => {
+  const refreshTokenDataMutation = useMutation({
+    mutationFn: async () => {
       const { data } = await getFarmTokenPrices()
       if (data !== undefined && data !== null) {
         setPrices(data)
       }
-
-      setPriceFetched(true)
-    })()
-  }, [])
+    },
+    onSuccess: () => setPriceFetched(true)
+  })
 
   useEffect(() => {
     if (prices['SOL/USDC']) {
@@ -142,13 +130,13 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
     <PriceFeedFarmContext.Provider
       value={{
         prices,
-        refreshTokenData,
+        refreshTokenData: refreshTokenDataMutation.mutate,
         priceFetched,
         statsData,
         setStatsData,
         stakeProgram,
         SSLProgram,
-        stakeAccountKey,
+        stakeAccountKey: accountKeyQuery.data,
         solPrice,
         GammaProgram
       }}

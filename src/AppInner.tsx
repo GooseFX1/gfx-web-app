@@ -16,12 +16,6 @@ export default function AppInner(): JSX.Element {
     }
   })
 
-  useEffect(() => {
-    const values = queryString.parse(window.location?.search)
-
-    console.log(window.location, values)
-  }, [])
-
   return (
     <DarkModeProvider>
       <ThemeProvider>

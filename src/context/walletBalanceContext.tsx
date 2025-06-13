@@ -197,15 +197,41 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         return { balance: {}, tokens: [] }
       const balance: Balance = gammaTokenQuery.data?.balance ?? {}
 
-      const tokenAccounts = gammaTokenQuery.data?.tokenAccounts
+      // Get token accounts from gamma query data
+      const tokenAccounts: UserTokenAccounts[] = gammaTokenQuery.data?.tokenAccounts
+      // Get on-chain accounts from token query data
       const onChainAccounts = onChainTokenQuery.data?.accounts
+      // Create a Set of token mint addresses from token accounts
+      const tokenMetaData = new Set<string>(tokenAccounts.map((token) => token.mint))
+
+      // Filter accounts that don't have metadata in the tokenMetaData Set
       const tokenWithoutMetadata = onChainAccounts.filter(
-        (account) => !tokenAccounts.find((token) => token.mint === account.account.data.parsed.info.mint)
+        (account) => !tokenMetaData.has(account.account.data.parsed.info.mint)
       )
+      // Fetch metadata for tokens without metadata using their mint addresses
+      const onChainTokenMetaData: Metadata[] = await getTokensMetadata(
+        tokenWithoutMetadata.map((tokenAccount) => new PublicKey(tokenAccount.account?.data?.parsed?.info?.mint))
+      )
+      // Create a Map of mint addresses to their metadata
+      const onChainTokenMetaDataMap: Map<string, Metadata> = new Map(
+        onChainTokenMetaData.map((meta) => [meta.mint.toBase58(), meta])
+      )
+      // Get additional metadata info for tokens
+      const metaDataInfoMap: Record<string, any> = await getMetaDataInfo(
+        onChainTokenMetaDataMap,
+        tokenWithoutMetadata
+      )
+
       const promises = tokenWithoutMetadata.map((tokenAccount) =>
-        fetchTokenWithMetadata(tokenAccount.account?.data?.parsed?.info?.mint, tokenAccount.account)
+        fetchTokenWithMetadata(
+          tokenAccount.account?.data?.parsed?.info?.mint,
+          tokenAccount.account,
+          onChainTokenMetaDataMap,
+          metaDataInfoMap
+        )
       )
-      const tokens = await Promise.all(promises)
+
+      const tokens: TokenListToken[] = await Promise.all(promises)
 
       for (const token of tokens) {
         const onChainAccount = onChainAccounts.find(
@@ -241,28 +267,59 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       !gammaTokenQuery.isFetching
   })
 
-  const getMetadataPDA = async (mint: PublicKey): Promise<PublicKey> =>
-    (
-      await PublicKey.findProgramAddress(
-        [Buffer.from('metadata'), METAPLEX_PROGRAM_ID.toBuffer(), mint.toBuffer()],
-        METAPLEX_PROGRAM_ID
-      )
-    )[0]
+  const getMetaDataInfo = async (
+    onChainTokenMetaDataMap: Map<string, Metadata>,
+    tokenWithoutMetadata: any[]
+  ): Promise<Record<string, any>> => {
+    const metaDataInfo: Record<string, any> = new Map<string, object>()
+    // Process all token accounts in parallel using Promise.allSettled
+    const result = await Promise.allSettled(
+      tokenWithoutMetadata.map(async (tokenAccount) => {
+        const mint = tokenAccount.account?.data?.parsed?.info?.mint
+        if (!mint) return
 
-  const getTokenMetadata = async (mintAddress: string) => {
-    const mintPublicKey = new PublicKey(mintAddress)
-    const metadataPDA = await getMetadataPDA(mintPublicKey)
+        // Get metadata from on-chain metadata map
+        const metadata = onChainTokenMetaDataMap.get(mint)
 
-    const metadataAccount = await connection.getAccountInfo(metadataPDA)
-    if (metadataAccount) {
-      const metadata = Metadata.deserialize(metadataAccount.data)
-      return metadata[0]
-    } else {
-      console.log('Metadata not found on chain.')
-    }
+        // Check if metadata exists and has a valid URI that hasn't been processed yet
+        if (metadata && metadata.data.uri && metadata.data.uri.length > 0 && !metaDataInfo[metadata.data.uri]) {
+          metaDataInfo[metadata.data.uri] = {}
+          const response = await fetch(metadata.data.uri)
+          return response.json()
+        }
+      })
+    )
+
+    // Process results and store successful metadata fetches
+    result.forEach((res) => {
+      if (res.status === 'fulfilled' && res.value && res.value.uri) {
+        metaDataInfo[res.value.uri] = res.value
+      }
+    })
+    return metaDataInfo
   }
 
-  const getMintInfo = async (mintAddress: string) => {
+  const getMetadataPDA = (mint: PublicKey): PublicKey =>
+    PublicKey.findProgramAddressSync(
+      [Buffer.from('metadata'), METAPLEX_PROGRAM_ID.toBuffer(), mint.toBuffer()],
+      METAPLEX_PROGRAM_ID
+    )[0]
+
+  const getTokensMetadata = async (mintAddresses: PublicKey[]): Promise<Metadata[]> => {
+    const metaDataPDAs = mintAddresses.map((mint) => getMetadataPDA(mint))
+    const metadataAccounts = (await connection.getMultipleAccountsInfo(metaDataPDAs, 'confirmed')).filter((x) => x)
+    if (metadataAccounts && metadataAccounts.length > 0) {
+      return metadataAccounts.map((acc) => Metadata.deserialize(acc.data)[0])
+    } else {
+      console.log(
+        'Metadata not found on chain. for mints:',
+        mintAddresses.map((pk) => pk.toBase58())
+      )
+    }
+    return []
+  }
+
+  const getMintInfo = async (mintAddress: string): Promise<MintInfo> => {
     try {
       const mintAccountInfo = await getMint(connection, new PublicKey(mintAddress))
       return mintAccountInfo
@@ -273,10 +330,14 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   }
 
   const fetchTokenWithMetadata = useCallback(
-    async (mintAddress: string, tokenAccount?: AccountInfo<ParsedAccountData>) => {
-      
-      const metadata = await getTokenMetadata(mintAddress)
-      const mintInfo = tokenAccount
+    async (
+      mintAddress: string,
+      tokenAccount: AccountInfo<ParsedAccountData>,
+      onChainDataMap: Map<string, Metadata>,
+      metaDataInfoMap: Record<string, any>
+    ): Promise<TokenListToken> => {
+      const metadata = onChainDataMap.get(mintAddress)
+      const mintInfo: MintInfo = tokenAccount
         ? {
             decimals: tokenAccount?.data?.parsed?.info?.tokenAccount?.decimals,
             mintAuthority: tokenAccount?.data?.parsed?.info?.owner
@@ -301,15 +362,9 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       }
 
       let image = ''
-
-      if (metadata.data.uri) {
-        try {
-          const response = await fetch(metadata.data.uri)
-          const data = await response.json()
-          image = data.image
-        } catch (e) {
-          console.log('Error fetching image', e)
-        }
+      const metaDataFromCache = metaDataInfoMap.get(metadata.data.uri)
+      if (metaDataFromCache && metaDataFromCache.image) {
+        image = metaDataFromCache.image
       }
 
       const token: TokenListToken = {
