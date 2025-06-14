@@ -219,9 +219,8 @@ export default function RewardsLeftSidePanel(): JSX.Element {
           className={`text-b3 font-semibold text-text-lightmode-tertiary dark:text-text-darkmode-tertiary 
         px-2 min-md:px-[11%]`}
         >
-          *Our revenue-sharing program pays you from fees earned with GAMMA and SSL. While staked, your assets stay
-          locked and can’t be sold or transferred. To claim your assets, just wait for the cooldown period to be
-          completed.
+          *Our rewards program shares revenue from protocol fees. While staked, your GOFX is locked for 7 days and
+          can't be sold or transferred. To unstake your GOFX, wait for the cooldown period to complete.
         </p>
       </div>
     </RewardsLeftLayout>
