@@ -16,7 +16,7 @@ import DepositWithdrawLabel from './DepositWithdrawLabel'
 import { TokenRow } from './TokenRow'
 import { ReviewConfirm } from './ReviewConfirm'
 import StickyFooter from './StickyFooter'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import { ModeOfOperation } from './constants'
 import { DepositWithdrawHeader } from './DepositWithdrawHeader'
 import useBreakPoint from '@/hooks/useBreakPoint'
@@ -52,7 +52,7 @@ export const DepositWithdrawSlider: FC<{
   preventAutoClose: boolean
   container?: Element
 }> = ({ preventAutoClose, container }) => {
-  const { wallet } = useWallet()
+  const { walletProvider } = useWallet()
   const { isMobile } = useBreakPoint()
   const { connection } = useConnectionConfig()
   const {
@@ -167,12 +167,11 @@ export const DepositWithdrawSlider: FC<{
         transactionLPAmount,
         slippage,
         selectedCard,
-        publicKey,
         GammaProgram,
         connection,
         userSourceTokenType,
         userTargetTokenType,
-        wallet,
+        walletProvider,
         poolIdQuery.data,
         liqKeyQuery.data
       )

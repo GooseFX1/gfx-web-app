@@ -5,7 +5,7 @@ import BN from 'bn.js'
 // import { getNodeWallet } from '../perps/perpsUtils'
 
 import { Idl } from '@project-serum/anchor'
-import { Wallet, WalletContextState } from '@solana/wallet-adapter-react'
+import { AnchorWallet } from '@/hooks/useWallet'
 import { GAMMA_PROGRAM_ID } from './ids'
 
 export const LENDING_MARKET_AUTH_SEED = 'lma'
@@ -56,9 +56,9 @@ interface ReserveCollateral {
 
 export async function getReservesForMarket(
   connection: Connection,
-  wallet: Wallet
+  wallet: AnchorWallet
 ): Promise<Map<string, KaminoReserve>> {
-  const provider = new Provider(connection, wallet as unknown as WalletContextState, { commitment: 'finalized' })
+  const provider = new Provider(connection, wallet, { commitment: 'finalized' })
 
   const kamino = new Program(KaminoIDL as unknown as Idl, KAMINO_PROGRAM_ID, provider)
   const reserves = await kamino.account.reserve.all([

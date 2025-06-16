@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import useBoolean from '@/hooks/useBoolean'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { useConnectionConfig, useGamma, useWalletModal } from '@/context'

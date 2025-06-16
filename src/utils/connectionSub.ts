@@ -7,9 +7,9 @@ class SolanaSub {
   connection: Connection
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor() {
+  constructor(endpoint: string = HELIUS_RPC.endpoint) {
     this.subs = new Map()
-    this.connection = new Connection(HELIUS_RPC.endpoint, 'processed')
+    this.connection = new Connection(endpoint, 'processed')
   }
 
   changeConnection = (endpoint: string) => {
@@ -69,7 +69,21 @@ class SolanaSub {
     this.connection = connection
   }
 }
+class SolanaSubPool {
+  pool: Map<string, SolanaSub>
 
-const SolanaSubscriber = new SolanaSub()
+  constructor() {
+    this.pool = new Map()
+  }
 
-export default SolanaSubscriber
+  get = (endpoint?: string): SolanaSub => {
+    const e = !endpoint ? HELIUS_RPC.endpoint : endpoint
+    if (this.pool.has(e)) return this.pool.get(e)
+    const sub = new SolanaSub(endpoint)
+    this.pool.set(endpoint, sub)
+    return sub
+  }
+}
+
+const SolanaSubscriberPool = new SolanaSubPool();
+export {SolanaSubscriberPool}

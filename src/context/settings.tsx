@@ -252,6 +252,9 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (Object.keys(cacheUpdateQueue).length === 0) return
     const timeout = setTimeout(() => {
       setUserCache((prevCache) => {
+        // redundant updates
+        if (JSON.stringify(cacheUpdateQueue) == JSON.stringify(prevCache)) return prevCache
+
         const newCache = {
           ...prevCache,
           ...cacheUpdateQueue
@@ -404,37 +407,46 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 }
 
-export async function getLatestPriorityFees(txn: Transaction | VersionedTransaction) {
-  try{
-  const response = await fetch(HELIUS_RPC.endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      id: `getPriorityFeeEstimate-${Date.now()}`,
-      method: 'getPriorityFeeEstimate',
-      params: [
-        {
-          transaction: bs58.encode(txn.serialize()), // Pass the serialized transaction in Base58
-          options: {
-            includeAllPriorityFeeLevels: true
+export async function getPriorityFeeEstimate(
+  connection: Connection,
+  txn: Transaction | VersionedTransaction
+): Promise<PriorityFeeEstimateResponse | null> {
+  try {
+    const response = await fetch(connection.rpcEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: `getPriorityFeeEstimate-${Date.now()}`,
+        method: 'getPriorityFeeEstimate',
+        params: [
+          {
+            transaction: bs58.encode(txn.serialize({ requireAllSignatures: false, verifySignatures: false })),
+            options: {
+              includeAllPriorityFeeLevels: true
+            }
           }
-        }
-      ]
+        ]
+      })
     })
-  })
-  const data = await response.json()
-  console.log('Fee in function for ', data.result)
-  return data.result.priorityFeeLevels as PriorityFeeLevelsFromHelius
-}catch(error){
-  console.log("Failed to fetch getLatestPriorityFees", error)
-
-  // default
-  return 0.0001;
+    const data = await response.json()
+    console.log('Fee in function for ', data)
+    return data.result.priorityFeeLevels as PriorityFeeEstimateResponse
+  } catch (error) {
+    console.log('Failed to fetch getPriorityFeeEstimate', error.message)
+    // default
+    return {
+      min: 1000,
+      low: 50000,
+      medium: 70000,
+      high: 750000,
+      veryHigh: 1000000,
+      unsafeMax: 10000000
+    }
+  }
 }
-}
 
-type PriorityFeeLevelsFromHelius = {
+type PriorityFeeEstimateResponse = {
   min: number
   low: number
   medium: number
@@ -445,8 +457,8 @@ type PriorityFeeLevelsFromHelius = {
 
 export function getPriorityFeeFromLevel(
   priorityFee: PriorityFeeName,
-  priorityFeeLevels: PriorityFeeLevelsFromHelius
-) {
+  priorityFeeLevels: PriorityFeeEstimateResponse
+): number {
   switch (priorityFee) {
     case 'Default':
       return priorityFeeLevels.low

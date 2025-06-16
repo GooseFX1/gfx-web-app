@@ -1,5 +1,5 @@
-import { useWallet } from '@solana/wallet-adapter-react'
-import { useCallback, useEffect, useState, useMemo } from 'react'
+import { useWallet } from '@/hooks/useWallet'
+import { useCallback, useEffect, useState } from 'react'
 import { Client, Member, Treasury } from '@ladderlabs/buddy-sdk'
 import { AccountMeta, Connection, PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useConnectionConfig } from '../context'
@@ -13,9 +13,8 @@ const ORGANIZATION_NAME = 'goose'
 export default function useReferrals(): IReferrals {
   const [client, setClient] = useState<Client | null>(null)
   const [member, setMember] = useState<Member | null>(null)
-  const { wallet } = useWallet()
+  const { publicKey } = useWallet()
   const { connection } = useConnectionConfig()
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
   useEffect(() => {
     // TODO: this client is not being set due to errors. must be resolved to turn on referrals
@@ -121,25 +120,25 @@ interface IReferrals {
 
 export async function create(
   connection: Connection,
-  wallet: PublicKey,
+  publicKey: PublicKey,
   name: string,
   referrer: string
 ): Promise<TransactionInstruction[]> {
-  const client = new Client(connection, wallet)
+  const client = new Client(connection, publicKey)
 
   return await client.initialize.createMember(ORGANIZATION_NAME, name, referrer)
 }
 
 export async function createRandom(
   connection: Connection,
-  wallet: PublicKey,
+  publicKey: PublicKey,
   referrer: string
 ): Promise<{ instructions: TransactionInstruction[]; memberPDA: PublicKey }> {
-  const client = new Client(connection, wallet)
+  const client = new Client(connection, publicKey)
   const name = Client.generateMemberName()
   const memberPDA = client.pda.getMemberPDA(ORGANIZATION_NAME, name)
 
-  const buddyProfile = await client.buddy.getProfile(wallet)
+  const buddyProfile = await client.buddy.getProfile(publicKey)
 
   if (buddyProfile) {
     const treasuryPDA = client.pda.getTreasuryPDA([buddyProfile.account.pda], [10_000], USDC_MINT)
@@ -158,17 +157,17 @@ export async function createRandom(
   const isReferrerValid = await client.initialize.isReferrerValid(referrer, ORGANIZATION_NAME)
 
   return {
-    instructions: await create(connection, wallet, name, referrer),
+    instructions: await create(connection, publicKey, name, referrer),
     memberPDA: isReferrerValid ? memberPDA : PublicKey.default
   }
 }
 
 export async function getRemainingAccountsForTransfer(
   connection: Connection,
-  wallet: PublicKey,
+  publicKey: PublicKey,
   memberPDA?: PublicKey
 ): Promise<AccountMeta[]> {
-  const client = new Client(connection, wallet)
+  const client = new Client(connection, publicKey)
   const remainingAccounts = await client.accounts.transferRewardsAccount(memberPDA, USDC_MINT)
 
   if (remainingAccounts.referrerAccount.toString() === PublicKey.default.toString()) {
@@ -200,8 +199,8 @@ export async function getRemainingAccountsForTransfer(
   }
 }
 
-export function getProgramId(connection: Connection, wallet: PublicKey): PublicKey {
-  const client = new Client(connection, wallet)
+export function getProgramId(connection: Connection, publicKey: PublicKey): PublicKey {
+  const client = new Client(connection, publicKey)
 
   return client.getProgramId()
 }

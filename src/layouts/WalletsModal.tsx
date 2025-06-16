@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import { Adapter, WalletName, WalletReadyState } from '@solana/wallet-adapter-base'
 import { initializeWhenDetected } from '@solflare-wallet/metamask-wallet-standard'
 import { TermsOfService } from './TermsOfService'

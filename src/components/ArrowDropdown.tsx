@@ -1,6 +1,6 @@
 import React, { FC, ReactElement } from 'react'
 import { Dropdown, Row } from 'antd'
-import { CenteredDiv, SVGToWhite, SVGDynamicMode } from '../styles'
+import { CenteredDiv, SVGToWhite } from '../styles'
 import tw, { TwStyle, styled } from 'twin.macro'
 import 'styled-components/macro'
 
@@ -18,26 +18,6 @@ const ARROW_CLICKER = styled(CenteredDiv)<{
     ${({ $cssStyle }) => $cssStyle} !important;
   }
 `
-
-export const ArrowClicker: FC<{
-  arrowRotation?: boolean
-  cssStyle?: TwStyle
-  [x: string]: any
-}> = ({ arrowRotation, cssStyle, ...props }) => (
-  <ARROW_CLICKER $arrowRotation={arrowRotation} $cssStyle={cssStyle} {...props}>
-    <SVGDynamicMode src={`/img/assets/arrow.svg`} alt="arrow" />
-  </ARROW_CLICKER>
-)
-
-export const ArrowClickerWhite: FC<{
-  arrowRotation?: boolean
-  measurements?: string
-  [x: string]: any
-}> = ({ arrowRotation, measurements, ...props }) => (
-  <ARROW_CLICKER $arrowRotation={arrowRotation} $measurements={measurements} {...props}>
-    <SVGToWhite src={`/img/assets/arrow.svg`} alt="arrow" />
-  </ARROW_CLICKER>
-)
 
 export const ArrowDropdown: FC<{
   arrowRotation?: boolean

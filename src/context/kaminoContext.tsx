@@ -41,8 +41,6 @@ export const KaminoProvider: FC<{ children: ReactNode }> = ({ children }) => {
         staleTime: INTERVALS.MINUTE * 5
     })
 
-    console.log("kaminoReserves", kaminoReserves);
-
     const getKaminoReservePerToken = (tokenMint: string) => 
         kaminoReserves?.find(reserve => reserve.liquidityTokenMint === tokenMint)
 

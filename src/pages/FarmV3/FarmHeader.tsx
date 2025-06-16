@@ -5,7 +5,7 @@ import { truncateBigNumber } from '../../utils'
 import { SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import { Button, Container, ContainerTitle, Icon, IconTooltip } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
@@ -32,9 +32,8 @@ export const FarmHeader: FC = () => {
     allPoolFilteredLiquidityAcc
   } = useSSLContext()
   const { prices } = usePriceFeedFarm()
-  const { wallet } = useWallet()
+  const { publicKey } = useWallet()
   const [poolSelectionModal, setPoolSelectionModal] = useBoolean(false)
-  const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
   const { isMobile } = useBreakPoint()
 
   const TVL = useMemo(() => {
@@ -65,7 +64,7 @@ export const FarmHeader: FC = () => {
     if (!totalEarned) return `$0.00`
 
     return '$' + truncateBigNumber(totalEarned)
-  }, [allPoolFilteredLiquidityAcc, prices, allPoolSslData, userPubKey])
+  }, [allPoolFilteredLiquidityAcc, prices, allPoolSslData, publicKey])
 
   const V24H = useMemo(() => {
     if (allPoolSslData == null) return `$0.00`
@@ -153,7 +152,7 @@ export const FarmHeader: FC = () => {
     return '$' + truncateBigNumber(totalFees)
   }, [allPoolSslData, sslTotalFees])
 
-  const infoCards = userPubKey
+  const infoCards = publicKey
     ? [
         { name: 'My Earnings', value: totalEarnings },
         { name: 'TVL', value: TVL },
@@ -220,7 +219,7 @@ export const FarmHeader: FC = () => {
             <ContainerTitle className={'z-[1]'}>
               <h4 className="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}:</h4>
               &nbsp;
-              <IconTooltip tooltipType={'outline'}>{getTooltipText(userPubKey ? index : index + 1)}</IconTooltip>
+              <IconTooltip tooltipType={'outline'}>{getTooltipText(publicKey ? index : index + 1)}</IconTooltip>
             </ContainerTitle>
             <h2> {card.value}</h2>
           </Container>

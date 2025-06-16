@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import useBoolean from '../../../../hooks/useBoolean'
 import RewardsLeftPanelHeading from './RewardsHeading'
 import RewardsInput from './RewardsInput'
@@ -15,7 +15,7 @@ import { Button, cn, DialogCloseDefault, Icon, RadioGroup, RadioGroupItem } from
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import HowItWorksButton from '@/components/rewards/v2/HowItWorksButton'
 import { NATIVE_MINT } from '@solana/spl-token-v2'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const gofxMint = 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'
 export default function RewardsLeftSidePanel(): JSX.Element {
@@ -28,7 +28,7 @@ export default function RewardsLeftSidePanel(): JSX.Element {
   const { connected, publicKey } = useWallet()
   const { connection } = useConnectionConfig()
   const { inputValue, setInputValue } = useRewards()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { totalStaked, stakeMutation, unstakeableTickets, unstakeMutation } = useRewards()
   const [isUnstakeConfirmationModalOpen, setIsUnstakeConfirmationModalOpen] = useBoolean(false)
   const [proposedStakeAmount, setProposedStakeAmount] = useState<string>('')
@@ -132,10 +132,10 @@ export default function RewardsLeftSidePanel(): JSX.Element {
                 variant={'outline'}
                 size={'default'}
                 onClick={() => {
-                  history.replace({
+                  navigate({
                     pathname: '/swap',
                     search: `?mintA=${NATIVE_MINT.toBase58()}&mintB=${gofxMint}`
-                  })
+                  }, { replace: true })
                   rewardToggle(false)
                 }}
                 className={`font-bold text-text-lightmode-primary dark:text-white min-w-[122px] box-border`}
@@ -197,8 +197,8 @@ export default function RewardsLeftSidePanel(): JSX.Element {
             <div className={'inline-flex w-full justify-between items-center gap-4'}>
               {!connected ? (
                 <Connect
-                  containerStyle={`w-[153px] h-[35px] rounded-[100px]`}
-                  customButtonStyle={`w-[153px] max-w-full h-[35px] min-md:h-[35px]`}
+                  containerStyle={`w-full h-[35px] rounded-[100px]`}
+                  customButtonStyle={`w-full h-[35px] min-md:h-[35px]`}
                 />
               ) : (
                 <Button

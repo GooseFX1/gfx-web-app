@@ -36,7 +36,7 @@ import useUserPortfolioPools from '@/queries/GAMMA/pools/useUserPortfolioPools'
 import usePoolDeepLink from '@/hooks/gamma/usePoolDeepLink'
 import useSelectPoolBySymbols from '@/queries/GAMMA/pools/useSelectPoolBySymbols'
 import useSearchParams from '@/hooks/useSearchParams'
-import { useHistory } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { ROUTES } from '@/Router'
 import { toast } from 'sonner'
 import { cn, ToastTitle, IntemediaryToast, IntemediaryToastHeading, OpenToastLink } from 'gfx-component-lib'
@@ -138,7 +138,8 @@ const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { userCache, connection, updateUserCache } = useConnectionConfig()
   const { publicKey } = useWalletBalance()
-  const history = useHistory()
+  const navigate = useNavigate()
+  const location = useLocation()
   const { mode } = useDarkMode()
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<Partial<GAMMAPoolWithUserLiquidity>>({})
@@ -155,15 +156,13 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
 
   const isPortfolio = useMemo(
-    () => history.location.pathname.includes(ROUTES.GAMMA_PORTFOLIO),
-    [history.location.pathname.includes(ROUTES.GAMMA_PORTFOLIO)]
+    () => location.pathname.includes(ROUTES.GAMMA_PORTFOLIO),
+    [location.pathname]
   )
   const setIsPortfolio = useCallback((v: boolean) => {
     const route = v ? ROUTES.GAMMA_PORTFOLIO : ROUTES.GAMMA
-    history.replace({
-      pathname: route
-    })
-  }, [])
+    navigate(route, { replace: true })
+  }, [navigate])
 
   const [calculatePoolType, setCalculatePoolType] = useState<Set<string>>(new Set())
 
@@ -306,7 +305,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     // guarding against unneeded requests
     if (data.isLoading) return { id: 'LOADING' } as GAMMAPoolWithUserLiquidity
     return { id: 'NOT_FOUND' } as GAMMAPoolWithUserLiquidity
-  }, [isPortfolio, poolsQuery, portfolioPoolsQuery, selectedCard])
+  }, [isPortfolio, poolsQuery, portfolioPoolsQuery, selectedCard, deepLink])
 
   const selectPoolByDeeplinkQuery = useSelectPoolBySymbols({
     symbolA: deepLink.symbolA,
@@ -466,13 +465,11 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const baseRoute = isPortfolio ? ROUTES.GAMMA_PORTFOLIO : ROUTES.GAMMA
       const route = !pool ? baseRoute : `${baseRoute}/${pool.mintA.symbol}-${pool.mintB.symbol}`
 
-      if (route != history.location.pathname) {
-        history.replace({
-          pathname: route
-        })
+      if (route != location.pathname) {
+        navigate(route, { replace: true })
       }
     },
-    [history, isPortfolio]
+    [navigate, isPortfolio, location.pathname]
   )
   return (
     <GAMMAContext.Provider

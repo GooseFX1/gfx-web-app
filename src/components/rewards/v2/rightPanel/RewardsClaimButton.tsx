@@ -2,7 +2,7 @@ import React from 'react'
 import useRewards from '../../../../context/rewardsContext'
 import useTimer from '../../../../hooks/useTimer'
 import { numberFormatter } from '../../../../utils'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import { Button, cn } from 'gfx-component-lib'
 
 function RewardsClaimButton(): JSX.Element {

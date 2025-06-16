@@ -1,7 +1,7 @@
 import { FC, useMemo, useState } from 'react'
 import { useConnectionConfig, useDarkMode, useGamma } from '../../context'
 import { bigNumberFormatter, truncateBigNumber } from '../../utils'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import {
   Button,
   cn,
@@ -36,8 +36,7 @@ export const FarmHeader: FC = () => {
     setShowCreatedPools
   } = useGamma()
   const statsQuery = useStatsQuery()
-  const { wallet } = useWallet()
-  const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
+  const { publicKey } = useWallet()
   const { isMobile } = useBreakPoint()
   const [isCreatePool, setIsCreatePool] = useState<boolean>(false)
   const [openRewardsDrawer, setOpenRewardsDrawer] = useState<boolean>(false)
@@ -76,14 +75,14 @@ export const FarmHeader: FC = () => {
         tooltip: ''
       }
     ]
-    // if (userPubKey) {
+    // if (publicKey) {
     //   data.unshift({
     //     name: 'Total Earned', value: totalEarnings.toString(),
     //     tooltip: ''
     //   })
     // }
     return data
-  }, [userPubKey, range, totalEarnings, computedViewRange, statsQuery.data])
+  }, [publicKey, range, totalEarnings, computedViewRange, statsQuery.data])
 
   const options = useMemo(
     () => [
@@ -208,7 +207,7 @@ export const FarmHeader: FC = () => {
                   </Tooltip>
                   &nbsp;
                 </ContainerTitle>
-                <h2>$ {card.value}</h2>
+                <h2 className="text-h2">$ {card.value}</h2>
               </Container>
             )}
           </div>
@@ -235,7 +234,7 @@ const CreateDropdownMenu = ({
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button
-          className="pr-2 cursor-pointer absolute right-5 max-sm:right-[8px] top-0"
+          className="pr-2 absolute right-5 max-sm:right-[8px] top-0"
           colorScheme={'blue'}
           variant={'secondary'}
         >

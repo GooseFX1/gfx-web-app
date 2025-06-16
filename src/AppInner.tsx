@@ -14,7 +14,7 @@ export default function AppInner(): JSX.Element {
     if (values.r && !localStorage.getItem('referrer')) {
       localStorage.setItem('referrer', values.r as string)
     }
-  })
+  }, [])
 
   return (
     <DarkModeProvider>

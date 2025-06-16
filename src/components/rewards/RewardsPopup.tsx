@@ -45,8 +45,7 @@ export const RewardsButton: FC = () => {
 }
 
 export const RewardsPopup: FC = () => {
-  const { rewardToggle, rewardModal } = useRewardToggle()
-  const { panelIndex } = useRewardToggle()
+  const { rewardToggle, rewardModal, panelIndex } = useRewardToggle()
   const breakpoint = useBreakPoint()
   const isMobile = breakpoint.isMobile
 

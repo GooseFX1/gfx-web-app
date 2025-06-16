@@ -15,6 +15,7 @@ import { useTokenRegistry } from './token_registry'
 import { findAssociatedTokenAddress, WRAPPED_SOL_MINT } from '../web3'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { useLocation } from 'react-router-dom'
 
 export type IAccount = {
   amount: string
@@ -46,7 +47,7 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { publicKey } = useWalletBalance()
   const [balances, setBalances] = useState<IAccounts>({})
   const [fetching, setFetching] = useState(false)
-
+  const location = useLocation()
 
   const handleAccountChange = async (sub: number[], connection: Connection, owner: PublicKey, mint: PublicKey) => {
     try {
@@ -114,6 +115,9 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [connection, publicKey])
 
   useEffect(() => {
+    if (!location.pathname.includes('/ssl')) {
+      return
+    }
     let cancelled = false
     const subscriptions: number[] = !cancelled && publicKey ? fetchAccounts() : []
 
@@ -121,7 +125,7 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       cancelled = true
       subscriptions.forEach((subscription) => connection.removeAccountChangeListener(subscription))
     }
-  }, [connection, fetchAccounts, publicKey, tokenRegistry])
+  }, [connection, fetchAccounts, publicKey, tokenRegistry, location])
 
   return (
     <AccountsContext.Provider

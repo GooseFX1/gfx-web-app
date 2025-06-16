@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { isAdminAllowed } from '../../../api/NFTLaunchpad'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { GradientText } from '../../../components'
@@ -35,7 +35,7 @@ const PAGE_WRAPPER = styled.div`
 `
 
 const SSLAnalyticsDashboard: FC = () => {
-  const { wallet, connected } = useWallet()
+  const { publicKey, connected } = useWallet()
   const [adminAllowed, setAdminAllowed] = useState<boolean>(false)
   const [rawData, setRawData] = useState([])
   const [liquidityHistoric, setLiquidityHistoric] = useState([])
@@ -65,7 +65,7 @@ const SSLAnalyticsDashboard: FC = () => {
 
   const getLiveData = async () => {
     const aggregatedData = []
-    const connection = new Connection('https://rpc-proxy.goosefx.workers.dev', {
+    const connection = new Connection('', {
       commitment: 'processed',
       httpAgent: false,
       disableRetryOnRateLimit: true
@@ -127,15 +127,15 @@ const SSLAnalyticsDashboard: FC = () => {
 
   useEffect(() => {
     ;(async () => {
-      if (!wallet?.adapter?.connected) {
+      if (!connected) {
         setAdminAllowed(false)
       }
-      if (wallet?.adapter?.publicKey) {
-        const data = await isAdminAllowed(wallet?.adapter?.publicKey.toString())
+      if (publicKey) {
+        const data = await isAdminAllowed(publicKey.toString())
         setAdminAllowed(data.allowed)
       }
     })()
-  }, [wallet?.adapter?.connected, wallet?.adapter?.publicKey])
+  }, [connected, publicKey])
 
   return !adminAllowed ? (
     <WRAPPER>

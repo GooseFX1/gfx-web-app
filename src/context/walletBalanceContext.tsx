@@ -1,13 +1,6 @@
-import { createContext, useCallback, useContext, useEffect } from 'react'
-import {
-  AccountInfo,
-  ParsedAccountData,
-  PublicKey,
-  TokenAmount,
-  Transaction,
-  TransactionInstruction
-} from '@solana/web3.js'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { createContext, useContext, useEffect, useCallback } from 'react'
+import { ParsedAccountData, PublicKey, TokenAmount, Transaction, TransactionInstruction } from '@solana/web3.js'
+import { useWallet } from '@/hooks/useWallet'
 import { useConnectionConfig } from '@/context/settings'
 // It exists :/
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -62,9 +55,7 @@ export interface IWalletBalanceContext {
 const WalletBalanceContext = createContext<IWalletBalanceContext>(null)
 
 function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JSX.Element {
-  const { wallet, sendTransaction } = useWallet()
-
-  const publicKey: PublicKey | null = wallet?.adapter?.publicKey ?? null
+  const { publicKey, walletProvider } = useWallet()
   const base58PublicKey = publicKey?.toBase58() ?? ''
   const { connection } = useConnectionConfig()
 
@@ -276,8 +267,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     const result = await Promise.allSettled(
       tokenWithoutMetadata.map(async (tokenAccount) => {
         const mint = tokenAccount.account?.data?.parsed?.info?.mint
-        if (!mint) return
-
+        if (!mint) return        
         // Get metadata from on-chain metadata map
         const metadata = onChainTokenMetaDataMap.get(mint)
 
@@ -298,7 +288,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     })
     return metaDataInfo
   }
-
+  
   const getMetadataPDA = (mint: PublicKey): PublicKey =>
     PublicKey.findProgramAddressSync(
       [Buffer.from('metadata'), METAPLEX_PROGRAM_ID.toBuffer(), mint.toBuffer()],
@@ -407,7 +397,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   async function createTokenAccount(data: CreateTokenAccountParams) {
     const txnInstruction = createTokenAccountInstruction(data)
     const txn = new Transaction().add(txnInstruction)
-    const txnSig = await sendTransaction(txn, connection).catch(() => {
+    const txnSig = await walletProvider.sendTransaction(txn, connection).catch(() => {
       console.error('Error creating token account')
       return ''
     })
@@ -419,7 +409,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   async function createTokenAccounts(data: CreateTokenAccountParams[]) {
     const txnInstruction = createTokenAccountInstructions(data)
     const txn = new Transaction().add(...txnInstruction)
-    const txnSig = await sendTransaction(txn, connection).catch(() => {
+    const txnSig = await walletProvider.sendTransaction(txn, connection).catch(() => {
       console.error('Error creating token account')
       return ''
     })

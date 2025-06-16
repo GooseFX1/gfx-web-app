@@ -78,13 +78,6 @@ export const notify = async (
   let description = desc
   if (e) {
     description = e.message
-    if (description !== null && description !== undefined) {
-      const re = /custom program error: (0x\d+)/
-      const match = description.toString().match(re)
-      if (match) {
-        description = (await import('gfx_stocks_pool')).format_error_code(parseInt(match[0]))
-      }
-    }
   }
 
   if (txid) {

@@ -51,7 +51,7 @@ import {
   KAMINO_PROGRAM_ID,
   KaminoReserve
 } from './kamino'
-import { Wallet } from '@solana/wallet-adapter-react'
+import { AnchorWallet } from '@/hooks/useWallet'
 import {
   GammaAccountWithInfo,
   GammaAmmConfig,
@@ -204,13 +204,13 @@ const getAccountsForDepositWithdraw = async (
       getAssociatedTokenAddress(
         mintA,
         userPublicKey,
-        null,
+        true,
         userSourceTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
       ),
       getAssociatedTokenAddress(
         mintB,
         userPublicKey,
-        null,
+        true,
         userTargetTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
       )
     ])
@@ -252,13 +252,13 @@ export const getAccountsForSwappingTokens = async (
     getAssociatedTokenAddress(
       mintAPublicKey,
       userPublicKey,
-      null,
+      true,
       userSourceTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
     ),
     getAssociatedTokenAddress(
       mintBPublickey,
       userPublicKey,
-      null,
+      true,
       userTargetTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
     )
   ])
@@ -303,13 +303,13 @@ const getAccountsForCreatePool = async (
   const token0ata = await getAssociatedTokenAddress(
     token0,
     userPubKey,
-    null,
+    true,
     token0Type === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
   )
   const token1ata = await getAssociatedTokenAddress(
     token1,
     userPubKey,
-    null,
+    true,
     token1Type === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
   )
   const poolIdKey = await getPoolIdKey(ammConfigId, token0, token1)
@@ -515,13 +515,13 @@ export const deposit = async (
   depositAmountTX.add(depositIX)
   //console.log('depositAmountTX', depositAmountTX)
   if (selectedCard?.mintA?.symbol === 'SOL') {
-    const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintA?.address), userPublicKey)
+    const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintA?.address), userPublicKey, true)
     const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
     //console.log('mint a is SOL', selectedCard?.mintA?.symbol, ataAddress, depositAmountTX)
     depositAmountTX.add(tr)
   }
   if (selectedCard?.mintB?.symbol === 'SOL') {
-    const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintB?.address), userPublicKey)
+    const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintB?.address), userPublicKey, true)
     const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
     //console.log('mint b is SOL', selectedCard?.mintB?.symbol, ataAddress, depositAmountTX)
     depositAmountTX.add(tr)
@@ -534,7 +534,7 @@ const getWithdrawRemainingAccounts = async (
   selectedCard: any,
   poolAddress: PublicKey,
   connection: Connection,
-  wallet: Wallet
+  wallet: AnchorWallet
 ) => {
   const kaminoReserves = await getReservesForMarket(connection, wallet)
   const kaminoReserveToken0 = getReservesForMarketLiquidityToken(
@@ -609,15 +609,15 @@ export const withdraw = async (
   lpAmount: BN,
   slippage: number,
   selectedCard: any,
-  userPublicKey: PublicKey,
   program: Program<Gamma>,
   connection: Connection,
   userSourceTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
   userTargetTokenType: 'spl-token' | 'native' | 'spl-token-2022' | '',
-  wallet: Wallet,
+  wallet: AnchorWallet,
   poolIdKey,
   liqKey
 ): Promise<Transaction> => {
+  const userPublicKey = wallet.publicKey
   //console.log('user withdraws', userSourceWithdrawAmount, userTargetWithdrawAmount)
   const withdrawAccounts = await getAccountsForDepositWithdraw(
     selectedCard,
@@ -651,7 +651,7 @@ export const withdraw = async (
   const mintAata = await getAssociatedTokenAddress(
     new PublicKey(selectedCard?.mintA?.address),
     userPublicKey,
-    null,
+    true,
     userSourceTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
   )
   const createTokenA = await checkIfTokenAccExists(
@@ -665,7 +665,7 @@ export const withdraw = async (
   const mintBata = await getAssociatedTokenAddress(
     new PublicKey(selectedCard?.mintB?.address),
     userPublicKey,
-    null,
+    true,
     userTargetTokenType === 'spl-token-2022' ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID
   )
   const createTokenB = await checkIfTokenAccExists(
@@ -684,13 +684,13 @@ export const withdraw = async (
   withdrawAmountTX.add(withdrawIX)
 
   if (selectedCard?.mintA?.symbol === 'SOL') {
-    const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintA?.address), userPublicKey)
+    const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintA?.address), userPublicKey, true)
     const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
     //console.log('mint a is SOL', selectedCard?.mintA?.symbol, ataAddress)
     withdrawAmountTX.add(tr)
   }
   if (selectedCard?.mintB?.symbol === 'SOL') {
-    const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintB?.address), userPublicKey)
+    const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintB?.address), userPublicKey, true)
     const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
     //console.log('mint b is SOL', selectedCard?.mintB?.symbol, ataAddress)
     withdrawAmountTX.add(tr)
@@ -777,12 +777,12 @@ export const createPool = async (
   createPoolTxn.add(createPartnersIX)
 
   if (token0Symbol === 'SOL') {
-    const ataAddress = await getAssociatedTokenAddress(token0, userPubKey)
+    const ataAddress = await getAssociatedTokenAddress(token0, userPubKey, true)
     const tr = createCloseAccountInstruction(ataAddress, userPubKey, userPubKey)
     createPoolTxn.add(tr)
   }
   if (token1Symbol === 'SOL') {
-    const ataAddress = await getAssociatedTokenAddress(token1, userPubKey)
+    const ataAddress = await getAssociatedTokenAddress(token1, userPubKey, true)
     const tr = createCloseAccountInstruction(ataAddress, userPubKey, userPubKey)
     createPoolTxn.add(tr)
   }
@@ -895,11 +895,11 @@ export const swapTokens = async (
   swapTxn.add(swapIX)
 
   if (mintA?.symbol === 'SOL') {
-    const ataAddress = await getAssociatedTokenAddress(mintAPublicKey, userPublicKey)
+    const ataAddress = await getAssociatedTokenAddress(mintAPublicKey, userPublicKey, true)
     const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
     swapTxn.add(tr)
   } else if (mintB?.symbol === 'SOL') {
-    const ataAddress = await getAssociatedTokenAddress(mintBPublickey, userPublicKey)
+    const ataAddress = await getAssociatedTokenAddress(mintBPublickey, userPublicKey, true)
     const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
     swapTxn.add(tr)
   }
@@ -971,7 +971,7 @@ const getRewardVaultKey = async (rewardInfo: PublicKey) => {
 
 const checkIfTokenAccExists = async (
   tokenMintAddress: PublicKey,
-  wallet: PublicKey,
+  publicKey: PublicKey,
   connection,
   ataAddress: PublicKey
 ) => {
@@ -980,7 +980,7 @@ const checkIfTokenAccExists = async (
   // CHECK if the associated token account exists or not if not create one
   if (!associatedTokenAccount) {
     try {
-      const tr = createAssociatedTokenAccountInstruction(wallet, ataAddress, wallet, tokenMintAddress)
+      const tr = createAssociatedTokenAccountInstruction(publicKey, ataAddress, publicKey, tokenMintAddress)
       return tr
     } catch (e) {
       console.log(e)
@@ -993,7 +993,7 @@ const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, 
   try {
     const tx = new Transaction()
     const nativeAmount = convertToNativeValue(amount, 9) //mint decimal of sol = 9
-    const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, walletPublicKey)
+    const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, walletPublicKey, true)
     const accountExists = await connection.getAccountInfo(associatedTokenAccount)
     // Create token account to hold your wrapped SOL
     if (!accountExists)
@@ -1109,7 +1109,7 @@ export const claimRewards = async (
   // const userRewards = await getUserRewards(program, userPublicKey)
   const claimRewardsTxn = new Transaction()
 
-  const associatedTokenAccount = await getAssociatedTokenAddress(boostedRewardInfo.rewardInfo.mint, userPublicKey)
+  const associatedTokenAccount = await getAssociatedTokenAddress(boostedRewardInfo.rewardInfo.mint, userPublicKey, true)
   const accountExists = await connection.getAccountInfo(associatedTokenAccount)
   // Create token account to hold your wrapped SOL
   if (!accountExists)
@@ -1125,7 +1125,7 @@ export const claimRewards = async (
   const tokenRewardsIX = program.instruction.claimRewards({
     accounts: {
       user: userPublicKey,
-      userTokenAccount: await getAssociatedTokenAddress(boostedRewardInfo.rewardInfo.mint, userPublicKey),
+      userTokenAccount: await getAssociatedTokenAddress(boostedRewardInfo.rewardInfo.mint, userPublicKey, true),
       userRewardInfo: boostedRewardInfo.userRewardInfoPublicKey,
       poolState: boostedRewardInfo.rewardInfo.pool,
       authority: await getAuthorityKey(),
@@ -1241,11 +1241,11 @@ export const oracleBasedSwap = async (
   swapTxn.add(swapIX)
 
   if (mintA?.symbol === 'SOL') {
-    const ataAddress = await getAssociatedTokenAddress(mintAPublicKey, userPublicKey)
+    const ataAddress = await getAssociatedTokenAddress(mintAPublicKey, userPublicKey, true)
     const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
     swapTxn.add(tr)
   } else if (mintB?.symbol === 'SOL') {
-    const ataAddress = await getAssociatedTokenAddress(mintBPublickey, userPublicKey)
+    const ataAddress = await getAssociatedTokenAddress(mintBPublickey, userPublicKey, true)
     const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
     swapTxn.add(tr)
   }

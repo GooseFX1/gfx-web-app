@@ -1,6 +1,6 @@
 import { AccountChangeCallback, ProgramAccountChangeCallback, PublicKey } from '@solana/web3.js'
 import { useCallback, useEffect } from 'react'
-import SolanaSubscriber from '../utils/connectionSub'
+import { SolanaSubscriberPool } from '../utils/connectionSub'
 import { useConnectionConfig } from '../context'
 
 interface PubKeyButNoRetrieval {
@@ -37,6 +37,7 @@ function useSolSub(): {
   off: (id: string | string[]) => Promise<void>
 } {
   const { endpoint, connection } = useConnectionConfig()
+  const SolanaSubscriber = SolanaSubscriberPool.get(endpoint)
   SolanaSubscriber.updateConnection(connection)
   useEffect(() => SolanaSubscriber.changeConnection(endpoint), [endpoint])
   const on = useCallback(async (sub: SolsSubs) => {

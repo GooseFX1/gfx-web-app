@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import useBreakPoint from '../hooks/useBreakPoint'
 import { truncateAddress } from '../utils'
 import { useConnectionConfig, useDarkMode, useWalletModal } from '../context'
@@ -20,6 +20,7 @@ import useBoolean from '@/hooks/useBoolean'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { ALLOWED_WALLETS } from '@/pages/FarmV3/constants'
 import { GeorestrictionModal } from './GeorestrictionModal'
+import { useAppKit, useWalletInfo } from '@/hooks/reownConfig'
 
 interface MenuItemProps {
   containerStyle?: string
@@ -30,15 +31,16 @@ interface MenuItemProps {
   fullWidth?: boolean
 }
 
-export const Connect: FC<MenuItemProps> = ({
+// eslint-disable-next-line
+const ConnectClassic: FC<MenuItemProps> = ({
   containerStyle,
   customButtonStyle,
   customMenuListItemsContainerStyle,
   customMenuListItemStyle,
   fullWidth
 }) => {
-  const { wallet, connected, disconnect, connecting, disconnecting } = useWallet()
-  const { base58PublicKey } = useWalletBalance()
+  const { walletProvider, connected, disconnect, connecting, disconnecting } = useWallet()
+  const { balance, base58PublicKey } = useWalletBalance()
   const isAttempting = connecting || disconnecting
   const { blacklisted } = useConnectionConfig()
   const [isOpen, setIsOpen] = useBoolean(false)
@@ -54,10 +56,7 @@ export const Connect: FC<MenuItemProps> = ({
     (blacklisted && pathname === '/farm/temp-withdraw') ||
     (blacklisted && ALLOWED_WALLETS.includes(base58PublicKey))
 
-  const { balance } = useWalletBalance()
-
-  const { adapter } = wallet || {}
-  const { name: adapterName, icon: adapterIcon } = adapter || {}
+  const { name: adapterName, icon: adapterIcon } = walletProvider || {}
 
   useEffect(() => {
     if (geoBlocked && visible) setWalletModalVisible(false)
@@ -68,9 +67,9 @@ export const Connect: FC<MenuItemProps> = ({
       return 'Connect Wallet'
     }
 
-    const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 4
+    const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 5
     return truncateAddress(base58PublicKey, leftRightSize)
-  }, [base58PublicKey, connected, adapterName, wallet, breakpoint, isAttempting])
+  }, [base58PublicKey, connected, adapterName, breakpoint, isAttempting])
 
   // watches for a selected wallet returned from modal
   if (base58PublicKey && !canConnect && !geoBlocked) {
@@ -179,7 +178,7 @@ export const Connect: FC<MenuItemProps> = ({
                 className={`flex items-center justify-center border-2 dark:border-black-1 border-solid
                   border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 overflow-hidden`}
               >
-                <Icon size={'sm'} src={adapterIcon} className='rounded-lg' />
+                <Icon size={'sm'} src={adapterIcon} className="rounded-lg" />
               </div>
               <div>
                 <h4
@@ -286,3 +285,65 @@ export const Connect: FC<MenuItemProps> = ({
     </>
   )
 }
+
+const ConnectReown: FC = ({
+  containerStyle,
+  customButtonStyle,
+  fullWidth
+}) => {
+  const modal = useAppKit()
+  const { walletInfo } = useWalletInfo()
+  const { connected, connecting, publicKey } = useWallet()
+  const breakpoint = useBreakPoint()
+
+  const base58PublicKey = useMemo(() => connected ? publicKey?.toBase58() : null, [publicKey, connected])
+
+  const connectLabel = useMemo(() => {
+    if (!connected || connecting || !base58PublicKey) {
+      return (
+        <span className='mx-2 font-bold'>
+          Connect Wallet
+        </span>
+      )
+    }
+
+    const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 4
+    return (
+      <span className='font-bold'>
+        {truncateAddress(base58PublicKey, leftRightSize)}
+      </span>
+    )
+  }, [base58PublicKey, connected, breakpoint, connecting])
+
+  function openAppKit() {
+    modal.open()
+  }
+
+  return (
+    <Button
+      colorScheme={!connected ? 'purple' : 'primaryGradient'}
+      size={'sm'}
+      className={cn(
+        `flex py-1.75 focus-visible:outline-none gap-1.75`,
+        connected && !connecting ? 'justify-start pl-1 pr-3' : 'justify-center',
+        customButtonStyle,
+        containerStyle
+      )}
+      fullWidth={fullWidth}
+      onClick={openAppKit}
+      isLoading={connecting}
+    >
+      {connected && (
+        <div
+          className={`flex items-center justify-center border-4 dark:border-black-1 border-solid
+                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 w-[24px] h-[24px] overflow-hidden`}
+        >
+          <img className={'w-auto rounded-lg'} src={walletInfo?.icon} alt={`${walletInfo?.name}_icon`} />
+        </div>
+      )}
+      {connectLabel}
+    </Button>
+  )
+}
+
+export { ConnectReown as Connect }

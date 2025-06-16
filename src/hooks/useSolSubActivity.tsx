@@ -3,7 +3,7 @@ import useActivityTracker, { UseActivityTrackerProps } from '@/hooks/useActivity
 import { AccountChangeCallback, ProgramAccountChangeCallback, PublicKey } from '@solana/web3.js'
 import { useCallback, useEffect } from 'react'
 import useBoolean from '@/hooks/useBoolean'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 
 type UseSolSubActivityProps = SolsSubs & Omit<UseActivityTrackerProps, 'callbackOff'>
 

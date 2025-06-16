@@ -1,11 +1,10 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
-import { PublicKey } from '@solana/web3.js'
 import { ShowDepositedToggle, SkeletonCommon } from '../../components'
 import { useConnectionConfig, useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { checkMobile, formatUserBalance, truncateBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { Pool, poolType, SSLToken } from './constants'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 
 import { getPriceObject } from '../../web3'
 import BN from 'bn.js'
@@ -22,7 +21,7 @@ export const FarmTable: FC = () => {
   const { userCache, updateUserCache } = useConnectionConfig()
 
   const breakpoint = useBreakPoint()
-  const { wallet } = useWallet()
+  const { publicKey } = useWallet()
   const {
     operationPending,
     pool,
@@ -43,11 +42,6 @@ export const FarmTable: FC = () => {
   const { prices } = usePriceFeedFarm()
   const [allClaimModal, setAllClaimModal] = useState<boolean>(false)
 
-  const pubKey: PublicKey | null = useMemo(
-    () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
-    [wallet?.adapter?.publicKey]
-  )
-
   const numberOfCoinsDeposited = useMemo(() => {
     const count = sslData.reduce((accumulator, data) => {
       const amountInNative = filteredLiquidityAccounts[data?.mint?.toBase58()]?.amountDeposited?.toString()
@@ -58,7 +52,7 @@ export const FarmTable: FC = () => {
       return accumulator
     }, 0)
     return count
-  }, [pool, filteredLiquidityAccounts, sslData, pubKey])
+  }, [pool, filteredLiquidityAccounts, sslData, publicKey])
 
   const farmTableRow = useMemo(
     () =>
@@ -101,7 +95,7 @@ export const FarmTable: FC = () => {
   )
 
   useEffect(() => {
-    if (pubKey === null && userCache.farm.showDepositedFilter)
+    if (publicKey === null && userCache.farm.showDepositedFilter)
       setShowDeposited(() => {
         updateUserCache({
           farm: {
@@ -110,7 +104,7 @@ export const FarmTable: FC = () => {
         })
         return false
       })
-  }, [pubKey, userCache])
+  }, [publicKey, userCache])
 
   useEffect(() => {
     sslData?.length && setInitialLoad(false)
@@ -221,7 +215,7 @@ export const FarmTable: FC = () => {
             </p>
           </div>
         </div>
-        {checkMobile() && isClaimable > 0 && pubKey && (
+        {checkMobile() && isClaimable > 0 && publicKey && (
           <Button
             variant={'outline'}
             colorScheme={'secondaryGradient'}
@@ -271,7 +265,7 @@ export const FarmTable: FC = () => {
               className={'min-w-[100px]'}
             />
             <div className={'flex flex-row ml-auto gap-3.75'}>
-              {isClaimable > 0 && pubKey != null && (
+              {isClaimable > 0 && publicKey != null && (
                 <Button
                   className={'before:animate-border-spin'}
                   variant={'outline'}
@@ -282,7 +276,7 @@ export const FarmTable: FC = () => {
                   Claim All
                 </Button>
               )}
-              {pubKey != null && (
+              {publicKey != null && (
                 <div className={cn('flex items-center mr-2', isClaimable ? `ml-0` : `ml-auto`)}>
                   <ShowDepositedToggle enabled={showDeposited} setEnable={handleShowDepositedToggle} />
                   <div
@@ -300,12 +294,12 @@ export const FarmTable: FC = () => {
       {breakpoint.isMobile && (
         <div className="flex flex-row">
           <SearchBar
-            className={pubKey ? 'w-[55%]' : 'min-md:w-[95%]'}
+            className={publicKey ? 'w-[55%]' : 'min-md:w-[95%]'}
             onChange={(e) => initiateGlobalSearch(e.target.value)}
             onClear={() => setSearchTokens('')}
             value={searchTokens}
           />
-          {pubKey && (
+          {publicKey && (
             <div className="ml-auto flex items-center">
               <Switch variant={'default'} checked={showDeposited} onClick={handleShowDepositedToggle} />
               <div

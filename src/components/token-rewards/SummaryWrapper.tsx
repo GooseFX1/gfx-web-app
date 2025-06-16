@@ -1,7 +1,7 @@
 import { useDarkMode } from '@/context'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { Connect } from '@/layouts'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import { DialogClose, Icon } from 'gfx-component-lib'
 import { StepCounter, totalSteps } from './StepCounter'
 

@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Button, cn, Container, Icon } from 'gfx-component-lib'
 import { Connect } from '@/layouts'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 
 type MigrateCardProps = {
   openPositionsAcrossPrograms: number

@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { RewardsButton } from '../components/rewards/RewardsPopup'
 import { useDarkMode, useRewardToggle } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
@@ -45,8 +45,8 @@ import PriorityFee from '@/components/footer/PriorityFee'
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
-  const history = useHistory()
-  const navigateHome = useCallback(() => history.push(APP_DEFAULT_ROUTE), [history])
+  const navigate = useNavigate()
+  const navigateHome = useCallback(() => navigate(APP_DEFAULT_ROUTE), [navigate])
   const { rewardModal, rewardToggle } = useRewardToggle()
   const location = useLocation()
   const query = new URLSearchParams(location.search)
@@ -138,8 +138,7 @@ const MobileNav: FC = () => {
   const { mode } = useDarkMode()
   const { pathname } = useLocation()
   const [isOpen, setIsOpen] = useBoolean(false)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const history = useHistory()
+  const navigate = useNavigate()
   const isMoreOpen = pathname.includes('bridge') || pathname.includes('ssl')
 
   if (breakpoint.isLaptop || breakpoint.isDesktop) return null
@@ -170,7 +169,7 @@ const MobileNav: FC = () => {
                 )}
                 onClick={() => {
                   setIsOpen.off()
-                  history.push('/swap')
+                  navigate('/swap')
                 }}
               >
                 <img
@@ -189,7 +188,7 @@ const MobileNav: FC = () => {
                 )}
                 onClick={() => {
                   setIsOpen.off()
-                  history.push('/gamma')
+                  navigate('/gamma')
                 }}
               >
                 <img
@@ -220,7 +219,7 @@ const MobileNav: FC = () => {
                       description={'LP using a single asset'}
                       onClick={() => {
                         setIsOpen.off()
-                        history.push('/ssl')
+                        navigate('/ssl')
                       }}
                       isActive={pathname.includes('ssl')}
                     />
@@ -229,7 +228,7 @@ const MobileNav: FC = () => {
                       description={'Bridge your assets to and from other chains'}
                       onClick={() => {
                         setIsOpen.off()
-                        history.push('/bridge')
+                        navigate('/bridge')
                       }}
                       isActive={pathname.includes('bridge')}
                     />
@@ -276,7 +275,7 @@ const MobileNav: FC = () => {
 const DesktopNav: FC = () => {
   const breakpoint = useBreakPoint()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const history = useHistory()
+  const navigate = useNavigate()
   const { pathname } = useLocation()
   const [isMoreOpen, setIsMoreOpen] = useBoolean(false)
 
@@ -289,7 +288,7 @@ const DesktopNav: FC = () => {
     <div className={`flex items-center gap-6 mx-auto`}>
       <Button
         variant={'ghost'}
-        onClick={() => history.push('/swap')}
+        onClick={() => navigate('/swap')}
         className={cn(
           `tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
           pathname.includes('swap') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
@@ -304,7 +303,7 @@ const DesktopNav: FC = () => {
       </Button>
       <Button
         variant={'ghost'}
-        onClick={() => history.push('/gamma')}
+        onClick={() => navigate('/gamma')}
         className={cn(
           `tracking-wider flex-col gap-1.5 p-0 text-center text-h6 font-semibold font-poppins`,
           pathname.includes('gamma') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
@@ -347,13 +346,13 @@ const DesktopNav: FC = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent portal={false} className={'mt-3 w-[300px]'}>
-          <DropdownMenuItem onClick={() => history.push('/ssl')} isActive={pathname.includes('ssl')}>
+          <DropdownMenuItem onClick={() => navigate('/ssl')} isActive={pathname.includes('ssl')}>
             <div>
               <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>SSL</h4>
               <p className={'text-b3'}>LP using a single asset</p>
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => history.push('/bridge')} isActive={pathname.includes('bridge')}>
+          <DropdownMenuItem onClick={() => navigate('/bridge')} isActive={pathname.includes('bridge')}>
             <div>
               <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Bridge</h4>
               <p className={'text-b3'}>Bridge your assets to and from other chains</p>

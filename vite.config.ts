@@ -118,8 +118,21 @@ export default defineConfig(({ mode }) => ({
     alias: [
       { find: /^~/, replacement: '' },
       { find: /^@\//, replacement: '/src/' },
-      { find: 'goosefx-amm-sdk', replacement: '/gamma-sdk' }
+      { find: 'goosefx-amm-sdk', replacement: '/gamma-sdk' },
+      { find: 'process/', replacement: 'process' },
     ]
   },
-  assetsInclude: ['gamma-wasm/gamma_wasm_bg.wasm']
+  assetsInclude: ['gamma-wasm/gamma_wasm_bg.wasm'],
+  optimizeDeps: {
+    exclude: ['process', 'process/'],
+    esbuildOptions: {
+      define: {
+        global: 'globalThis'
+      }
+    }
+  },
+  define: {
+    // Only keep valid define keys
+    'process.env': '{}'
+  }
 }))

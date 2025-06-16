@@ -2,7 +2,7 @@ import React, { createContext, FC, ReactNode, useContext, useEffect, useLayoutEf
 import { JupToken } from '@/pages/FarmV4/constants'
 import { fetchTokensByPublicKey } from '@/api/gamma'
 import { useConnectionConfig } from '@/context/settings'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import useTokenInput, { useTokenInputCommands } from '@/hooks/useTokenInput'
 import useTokensQuery from '@/queries/useTokensQuery'
 import { useQuery } from '@tanstack/react-query'
@@ -30,8 +30,8 @@ interface ISwapConfig {
 const SwapContext = createContext<ISwapConfig | null>(null)
 
 export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const history = useHistory()
-  const {search} = useLocation()
+  const navigate = useNavigate()
+  const location = useLocation()
   const { userCache, updateUserCache } = useConnectionConfig()
   const [searchValue, setSearchValue] = useState<string>('')
   const [selectedTokenA, setSelectedTokenA] = useState<JupToken | null>(null)
@@ -41,7 +41,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(userCache?.swap?.slippage ?? 1.0)
 
   const tokenDeepLinkQuery = useQuery({
-    queryKey: ['tokenDeepLink', search],
+    queryKey: ['tokenDeepLink', location.search],
     queryFn: async () => {
       const query = new URLSearchParams(location.search);
       const mintA = query.get('mintA');
@@ -89,12 +89,12 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     const newUrl = `${location.pathname}?${params.toString()}`;
     if (location.pathname !== newUrl) {
-      history.push({
+      navigate({
         pathname: location.pathname,
         search: params.toString()
-      });
+      }, { replace: true });
     }
-  }, [selectedTokenA, selectedTokenB])
+  }, [selectedTokenA, selectedTokenB, navigate, location.pathname])
 
   useEffect(() => {
     updateUserCache({

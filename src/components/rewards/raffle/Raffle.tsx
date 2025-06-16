@@ -1,4 +1,4 @@
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import React, { useEffect, useState } from 'react'
 import 'styled-components/macro'
 import { getMyRecentWinnings } from '../../../api/rewards'
@@ -55,8 +55,6 @@ function Raffle(): JSX.Element {
 }
 
 // const Raffle1 = (): ReactElement => {
-//   const {wallet} = useWallet()
-//   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
 //   const [myRecentWinnings, setMyRecentWinnings] = useState()
 //
 //   useEffect(() => {

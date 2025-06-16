@@ -1,6 +1,6 @@
 import React, { FC, ReactElement, useState } from 'react'
 import { Connect } from '@/layouts'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import {
   Button,
   cn,

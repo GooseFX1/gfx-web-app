@@ -5,7 +5,7 @@ import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
 import { notify } from '@/utils'
 
 interface UseTokenAccountReturn {
-  walletPublicKey: PublicKey | null
+  publicKey: PublicKey | null
   createTokenAccountIfNotExist: (
     mint: PublicKey,
     rest?: { allowOffCurve?: boolean; programId?: PublicKey; associatedTokenAddress?: PublicKey }
@@ -20,10 +20,8 @@ interface UseTokenAccountReturn {
 }
 // eslint-disable-line @typescript-eslint/no-unused-vars
 export default function useTokenAccount(): UseTokenAccountReturn {
-  const walletContext = useWallet()
+  const { publicKey, walletProvider } = useWallet()
   const { connection } = useConnection()
-  const { wallet, sendTransaction } = walletContext
-  const walletPublicKey = wallet?.adapter?.publicKey || null
 
   async function createTokenAccountIfNotExist(
     mint: PublicKey,
@@ -33,19 +31,19 @@ export default function useTokenAccount(): UseTokenAccountReturn {
       associatedTokenAddress?: PublicKey
     }
   ) {
-    if (!walletPublicKey) return
+    if (!publicKey) return
     const { tokenAccountInfo, tokenAccount } = await getAccountInfo(mint, rest)
     if (tokenAccountInfo.value === null) {
       const tx = await createAssociatedTokenAccountInstruction(
-        walletPublicKey,
+        publicKey,
         tokenAccount,
-        walletPublicKey,
+        publicKey,
         mint,
         rest?.programId,
         rest?.associatedTokenAddress
       )
 
-      await sendTransaction(new Transaction().add(tx), connection)
+      await walletProvider.sendTransaction(new Transaction().add(tx), connection)
         .then((sig) => {
           console.log(sig)
           notify({
@@ -64,6 +62,7 @@ export default function useTokenAccount(): UseTokenAccountReturn {
         })
     }
   }
+  
   async function getAccountInfo(
     mint: PublicKey,
     rest?: {
@@ -72,19 +71,25 @@ export default function useTokenAccount(): UseTokenAccountReturn {
       associatedTokenAddress?: PublicKey
     }
   ) {
-    if (!walletPublicKey) return { tokenAccountInfo: null, tokenAccount: null }
+    if (!publicKey) return { tokenAccountInfo: null, tokenAccount: null }
+    const {
+      allowOffCurve = true,
+      programId,
+      associatedTokenAddress
+    } = rest || {}
     const tokenAccount = getAssociatedTokenAddressSync(
       mint,
-      walletPublicKey,
-      rest?.allowOffCurve,
-      rest?.programId,
-      rest?.associatedTokenAddress
+      publicKey,
+      allowOffCurve,
+      programId,
+      associatedTokenAddress
     )
     const tokenAccountInfo = await connection.getParsedAccountInfo(tokenAccount)
     return { tokenAccountInfo, tokenAccount }
   }
+
   return {
-    walletPublicKey,
+    publicKey,
     createTokenAccountIfNotExist,
     getAccountInfo
   }

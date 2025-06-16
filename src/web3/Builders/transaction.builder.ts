@@ -96,7 +96,7 @@ class TransactionBuilder {
       // console.log("SIMULATED CU", computeUnits)
       // console.log('Assuming comsumption of', computeUnits, 'compute units')
     }
-
+    
     if (useVersionedTransaction) {
       const message = new TransactionMessage({
         instructions: this._instructions,
@@ -106,7 +106,10 @@ class TransactionBuilder {
 
       return new VersionedTransaction(message)
     }
-    return new Transaction().add(...this._instructions)
+    const tx = new Transaction().add(...this._instructions)
+    tx.recentBlockhash = recentBlockhash
+    tx.feePayer = walletPublicKey
+    return tx
   }
 
   async _getTransactionWithoutPriorityFee(
@@ -125,6 +128,18 @@ class TransactionBuilder {
     }
     return new Transaction().add(...this._instructions)
   }
+
+  // _shouldUseVersionedTransaction(instructions: TransactionInstruction[]): boolean {
+  //   const altAccounts = instructions.some(ix => 
+  //     ix.keys.some(key => key.isLookupTable)
+  //   );
+    
+  //   const legacyMessage = new TransactionMessage().compileToLegacyMessage();
+  //   if (legacyMessage.serialize().length >= 1232 || altAccounts) {
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
   clear(): TransactionBuilder {
     this._instructions = []

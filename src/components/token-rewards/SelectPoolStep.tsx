@@ -1,6 +1,6 @@
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { Connect } from '@/layouts'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import {
   DialogClose,
   DropdownMenuTrigger,
