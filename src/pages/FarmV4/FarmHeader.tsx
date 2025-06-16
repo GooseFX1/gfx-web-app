@@ -207,7 +207,7 @@ export const FarmHeader: FC = () => {
                   </Tooltip>
                   &nbsp;
                 </ContainerTitle>
-                <h2>$ {card.value}</h2>
+                <h2 className="text-h2">$ {card.value}</h2>
               </Container>
             )}
           </div>
@@ -234,7 +234,7 @@ const CreateDropdownMenu = ({
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button
-          className="pr-2 cursor-pointer absolute right-5 max-sm:right-[8px] top-0"
+          className="pr-2 absolute right-5 max-sm:right-[8px] top-0"
           colorScheme={'blue'}
           variant={'secondary'}
         >

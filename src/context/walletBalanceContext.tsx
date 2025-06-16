@@ -270,8 +270,6 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         if (!mint) return        
         // Get metadata from on-chain metadata map
         const metadata = onChainTokenMetaDataMap.get(mint)
-        // Get metadata from on-chain metadata map
-        const metadata = onChainTokenMetaDataMap.get(mint)
 
         // Check if metadata exists and has a valid URI that hasn't been processed yet
         if (metadata && metadata.data.uri && metadata.data.uri.length > 0 && !metaDataInfo[metadata.data.uri]) {
