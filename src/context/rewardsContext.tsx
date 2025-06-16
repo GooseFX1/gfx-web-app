@@ -46,8 +46,6 @@ interface IRewardsContext {
   gofxValue: number
   userStakeRatio: number
   totalStakedGlobally: number
-  isConfettiVisible: boolean
-  setIsConfettiVisible: (value: boolean) => void
   inputValue: string
   setInputValue: (value: string) => void
 }
@@ -59,8 +57,7 @@ const getNetwork = (network) => (network == 'mainnet-beta' || network == 'testne
 export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { network, connection, endpoint } = useConnectionConfig()
   const { base58PublicKey, publicKey } = useWalletBalance()
-  const {rewardModal} = useRewardToggle()
-  const [isConfettiVisible, setIsConfettiVisible] = useState(false)
+  const { rewardModal } = useRewardToggle()
   const [inputValue, setInputValue] = useState<string>()
 
   const gofxValueQuery = useQuery({
@@ -194,9 +191,11 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const txnForUserAccountRequirements = txBuilder
 
     if (txnForUserAccountRequirements._instructions.length > 0) {
-      res = Boolean(await sendTransaction(txnForUserAccountRequirements, {
-        confirmationWaitType: 'confirmed'
-      }))
+      res = Boolean(
+        await sendTransaction(txnForUserAccountRequirements, {
+          confirmationWaitType: 'confirmed'
+        })
+      )
     }
 
     if (!res) {
@@ -218,12 +217,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (!res.success) throw new Error('stake failed')
     },
     onSuccess: async () => {
-      setIsConfettiVisible(true)
       setInputValue('')
-      await Promise.all([
-        userDataQuery.refetch(),
-        poolStateQuery.refetch()
-      ])
+      await Promise.all([userDataQuery.refetch(), poolStateQuery.refetch()])
     }
   })
   const unstakeMutation = useMutation({
@@ -248,17 +243,14 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
     },
     onSuccess: async () => {
-      await Promise.all([
-        userDataQuery.refetch(),
-        poolStateQuery.refetch()
-      ])
+      await Promise.all([userDataQuery.refetch(), poolStateQuery.refetch()])
     }
   })
 
   const claimFeesMutation = useMutation({
     mutationFn: async () => {
       const txn = await checkForUserAccount(async () => programQuery.data.claimFees(publicKey))
-      const {success} = await sendTransaction(txn, {
+      const { success } = await sendTransaction(txn, {
         confirmationWaitType: 'confirmed'
       })
       if (!success) {
@@ -321,8 +313,6 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         gofxValue: gofxValueQuery.data ?? 0,
         userStakeRatio,
         totalStakedGlobally: poolStateQuery.data?.totalStakedGlobally ?? 0,
-        isConfettiVisible,
-        setIsConfettiVisible,
         inputValue,
         setInputValue
       }}

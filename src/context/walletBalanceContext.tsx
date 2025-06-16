@@ -208,7 +208,10 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         onChainTokenMetaData.map((meta) => [meta.mint.toBase58(), meta])
       )
       // Get additional metadata info for tokens
-      const metaDataInfoMap: Record<string, any> = await getMetaDataInfo(onChainTokenMetaDataMap, tokenWithoutMetadata)
+      const metaDataInfoMap: Record<string, any> = await getMetaDataInfo(
+        onChainTokenMetaDataMap,
+        tokenWithoutMetadata
+      )
 
       const promises = tokenWithoutMetadata.map((tokenAccount) =>
         fetchTokenWithMetadata(
@@ -264,11 +267,12 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     const result = await Promise.allSettled(
       tokenWithoutMetadata.map(async (tokenAccount) => {
         const mint = tokenAccount.account?.data?.parsed?.info?.mint
-        if (!mint) return
-        
+        if (!mint) return        
         // Get metadata from on-chain metadata map
         const metadata = onChainTokenMetaDataMap.get(mint)
-        
+        // Get metadata from on-chain metadata map
+        const metadata = onChainTokenMetaDataMap.get(mint)
+
         // Check if metadata exists and has a valid URI that hasn't been processed yet
         if (metadata && metadata.data.uri && metadata.data.uri.length > 0 && !metaDataInfo[metadata.data.uri]) {
           metaDataInfo[metadata.data.uri] = {}
@@ -277,7 +281,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         }
       })
     )
-    
+
     // Process results and store successful metadata fetches
     result.forEach((res) => {
       if (res.status === 'fulfilled' && res.value && res.value.uri) {
@@ -320,7 +324,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   const fetchTokenWithMetadata = useCallback(
     async (
       mintAddress: string,
-      tokenAccount: any,
+      tokenAccount: AccountInfo<ParsedAccountData>,
       onChainDataMap: Map<string, Metadata>,
       metaDataInfoMap: Record<string, any>
     ): Promise<TokenListToken> => {

@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useMemo, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import { useConnectionConfig, useDarkMode, useGamma } from '../../context'
 import { bigNumberFormatter, truncateBigNumber } from '../../utils'
 import { useWallet } from '@/hooks/useWallet'
@@ -60,8 +60,8 @@ export const FarmHeader: FC = () => {
           range === 0
             ? bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.stats24h?.volume)))
             : range === 1
-            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.stats7d?.volume)))
-            : bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.stats30d?.volume))),
+              ? bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.stats7d?.volume)))
+              : bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.stats30d?.volume))),
         tooltip: ''
       },
       {
@@ -70,8 +70,8 @@ export const FarmHeader: FC = () => {
           range === 0
             ? bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.stats24h?.fees)))
             : range === 1
-            ? bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.stats7d?.fees)))
-            : bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.stats30d?.fees))),
+              ? bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.stats7d?.fees)))
+              : bigNumberFormatter(BigNumber.max(0, new BigNumber(statsQuery.data?.stats30d?.fees))),
         tooltip: ''
       }
     ]
@@ -185,34 +185,30 @@ export const FarmHeader: FC = () => {
           />
           <div className="flex flex-row gap-2.5 self-stretch">
             {infoCards?.map((card, index) =>
-              card.name === '24H Fees' ? (
-                <Fragment key={`empty-${index}`}></Fragment>
-              ) : (
-                <Container
-                  key={`${card.name}-${index}`}
-                  className={'w-[130px] justify-center h-full'}
-                  colorScheme={'primaryGradient'}
-                  size={'lg'}
-                >
-                  <ContainerTitle className={'z-[1]'}>
-                    <Tooltip>
-                      <TooltipTrigger
-                        className={cn(
-                          `text-grey-1 dark:text-grey-2 !cursor-pointer
+              <Container
+                key={`${card.name}-${index}`}
+                className={'w-[130px] justify-center h-full'}
+                colorScheme={'primaryGradient'}
+                size={'lg'}
+              >
+                <ContainerTitle className={'z-[1]'}>
+                  <Tooltip>
+                    <TooltipTrigger
+                      className={cn(
+                        `text-grey-1 dark:text-grey-2 !cursor-pointer
                     text-tiny font-semibold no-underline`,
-                          card.tooltip.trim() && `underline decoration-dotted mb-1 underline-offset-4`
-                        )}
-                        disabled={!card.tooltip.trim()}
-                      >
-                        {card?.name}:
-                      </TooltipTrigger>
-                      <TooltipContent>{card.tooltip}</TooltipContent>
-                    </Tooltip>
-                    &nbsp;
-                  </ContainerTitle>
-                  <h2>$ {card.value}</h2>
-                </Container>
-              )
+                        card.tooltip.trim() && `underline decoration-dotted mb-1 underline-offset-4`
+                      )}
+                      disabled={!card.tooltip.trim()}
+                    >
+                      {card?.name}:
+                    </TooltipTrigger>
+                    <TooltipContent>{card.tooltip}</TooltipContent>
+                  </Tooltip>
+                  &nbsp;
+                </ContainerTitle>
+                <h2>$ {card.value}</h2>
+              </Container>
             )}
           </div>
         </div>
