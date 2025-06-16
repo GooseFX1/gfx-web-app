@@ -211,11 +211,6 @@ export const DepositWithdrawSlider: FC<{
     if (selectedCard && publicKey) {
       setUserSourceTokenBal(balance[selectedCard?.mintA?.address].tokenAmount.uiAmount)
       setUserTargetTokenBal(balance[selectedCard?.mintB?.address].tokenAmount.uiAmount)
-    }
-  }, [selectedCard, balance, publicKey])
-
-  useEffect(() => {
-    if (selectedCard && publicKey) {
       setUserSourceTokenType(balance[selectedCard?.mintA?.address].tokenType)
       setUserTargetTokenType(balance[selectedCard?.mintB?.address].tokenType)
     }
