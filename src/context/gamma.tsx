@@ -364,8 +364,16 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         await sleep(1500)
       }
       if (selectPoolByDeeplinkQuery.data) {
-        setSelectedCard(selectPoolByDeeplinkQuery.data)
+        if (
+          (queryHasUserLiqData && !selectedCard?.userLpPosition) ||
+          selectedCard?.id != selectPoolByDeeplinkQuery.data.id
+        ) {
+          console.log('setting selected card - top')
+          setSelectedCard(selectPoolByDeeplinkQuery.data)
+        }
       } else if (selectedCardHasData) {
+        console.log('setting selected card - top empty')
+
         setSelectedCard({})
       }
     }
