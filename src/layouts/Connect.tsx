@@ -20,7 +20,7 @@ import useBoolean from '@/hooks/useBoolean'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { ALLOWED_WALLETS } from '@/pages/FarmV3/constants'
 import { GeorestrictionModal } from './GeorestrictionModal'
-import { useAppKit, useWalletInfo } from '@/hooks/reownConfig'
+import { useAppKit, useWalletInfo, useAppKitAccount } from '@/hooks/reownConfig'
 
 interface MenuItemProps {
   containerStyle?: string
@@ -291,12 +291,26 @@ const ConnectReown: FC = ({
   customButtonStyle,
   fullWidth
 }) => {
+  const { embeddedWalletInfo } = useAppKitAccount();
   const modal = useAppKit()
   const { walletInfo } = useWalletInfo()
   const { connected, connecting, publicKey } = useWallet()
   const breakpoint = useBreakPoint()
-
+  const { mode } = useDarkMode()
   const base58PublicKey = useMemo(() => connected ? publicKey?.toBase58() : null, [publicKey, connected])
+
+  const walletIcon: string | null = useMemo(() => {
+    if (walletInfo?.name === 'AUTH' && embeddedWalletInfo?.authProvider) {
+      // authProvider: 'google' | 'apple' | 'facebook' | 'x' | 'discord' | 'farcaster' | 'github' | 'email',
+      return `/img/mainnav/provider_custom_${mode}.svg`
+    }
+
+    if (walletInfo?.icon) {
+      return walletInfo.icon
+    }
+
+    return null
+  }, [walletInfo, embeddedWalletInfo])
 
   const connectLabel = useMemo(() => {
     if (!connected || connecting || !base58PublicKey) {
@@ -338,7 +352,7 @@ const ConnectReown: FC = ({
           className={`flex items-center justify-center border-4 dark:border-black-1 border-solid
                   border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 w-[24px] h-[24px] overflow-hidden`}
         >
-          <img className={'w-auto rounded-lg'} src={walletInfo?.icon} alt={`${walletInfo?.name}_icon`} />
+          <img className={'w-auto rounded-lg'} src={walletIcon} alt={`${walletInfo?.name}_icon`} />
         </div>
       )}
       {connectLabel}

@@ -13,7 +13,7 @@ import { Connection, PublicKey } from '@solana/web3.js'
 import { useConnectionConfig } from './settings'
 import { useTokenRegistry } from './token_registry'
 import { findAssociatedTokenAddress, WRAPPED_SOL_MINT } from '../web3'
-import { useWalletBalance } from '@/context/walletBalanceContext'
+import { useWallet } from '@/hooks/useWallet'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { useLocation } from 'react-router-dom'
 
@@ -44,7 +44,7 @@ const AccountsContext = createContext<IAccountsConfig | null>(null)
 export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
   const { tokens: tokenRegistry } = useTokenRegistry()
-  const { publicKey } = useWalletBalance()
+  const { publicKey } = useWallet()
   const [balances, setBalances] = useState<IAccounts>({})
   const [fetching, setFetching] = useState(false)
   const location = useLocation()
