@@ -236,7 +236,8 @@ function newCache(): USER_CONFIG_CACHE {
           }
         }
       },
-      socialPanelTab: 'social'
+      socialPanelTab: 'social',
+      mobileSelectedColumn: 'new'
     },
     hasSignedTC: false,
     endpointName: DEFAULT_ENDPOINT_NAME,

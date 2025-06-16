@@ -134,6 +134,8 @@ interface ITokenFeed {
   selectedToken?: any
   socialPanelTab: 'social' | 'performance'
   updateSocialPanelTab: (tab: 'social' | 'performance') => void
+  mobileSelectedColumn: TokenFeedTokenColumn
+  updateMobileSelectedColumn: (column: TokenFeedTokenColumn) => void
 }
 
 const TokenFeedContext = createContext<ITokenFeed | null>(null)
@@ -162,6 +164,9 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
   }>(userCache.tokenFeed?.columnFilters ?? defaultTokenFeedFilters)
   const [isTokenDepositOpen, setIsTokenDepositOpen] = useBoolean(false)
   const [selectedToken, setSelectedToken] = useState<TokenListToken | undefined>(undefined)
+  const [mobileSelectedColumn, setMobileSelectedColumn] = useState<TokenFeedTokenColumn>(
+    userCache?.tokenFeed?.mobileSelectedColumn ?? 'new'
+  )
   const maxColumnsReached = useMemo(() => {
     const totalColumnsEnabled = Object.keys(enabledColumns).filter(
       (key) => enabledColumns[key as keyof TokenFeedColumns]
@@ -264,6 +269,17 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
       }
     })
   }
+
+  const updateMobileSelectedColumn = (column: TokenFeedTokenColumn) => {
+    setMobileSelectedColumn(column)
+    updateUserCache({
+      ...userCache,
+      tokenFeed: {
+        ...userCache.tokenFeed,
+        mobileSelectedColumn: column
+      }
+    })
+  }
   return (
     <TokenFeedContext.Provider
       value={{
@@ -282,7 +298,9 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
         selectToken,
         selectedToken,
         socialPanelTab,
-        updateSocialPanelTab
+        updateSocialPanelTab,
+        mobileSelectedColumn,
+        updateMobileSelectedColumn
       }}
     >
       {children}

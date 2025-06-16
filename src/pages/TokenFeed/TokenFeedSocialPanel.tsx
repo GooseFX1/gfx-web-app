@@ -3,7 +3,7 @@ import TokenFeedContainer, {
   TokenFeedContainerHeader,
   TokenFeedContentContainer
 } from '@/pages/TokenFeed/TokenFeedContainer'
-import { cn, RadioGroup, RadioGroupItem } from 'gfx-component-lib'
+import { cn } from 'gfx-component-lib'
 import Lottie from 'lottie-react'
 import { Connect } from '@/layouts'
 import { useTokenFeed } from '@/context/tokenFeedContext'
@@ -16,9 +16,10 @@ import ComingSoonLite from '@/animations/coming_soon_lite.json'
 import { useDarkMode } from '@/context'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { H2, H3, P } from '@/components/text/TextComponents'
+import TokenFeedSocialRadioGroup from '@/pages/TokenFeed/TokenFeedSocialRadioGroup'
 
 function TokenFeedSocialPanel() {
-  const { enabledColumns, socialPanelTab, updateSocialPanelTab } = useTokenFeed()
+  const { enabledColumns, socialPanelTab } = useTokenFeed()
 
   const { mode } = useDarkMode()
   const { connected } = useWallet()
@@ -37,24 +38,8 @@ function TokenFeedSocialPanel() {
   return (
     <TokenFeedContainer className={'md:mr-auto'}>
       <TokenFeedContainerHeader>
-        <RadioGroup
-          defaultValue={'social'}
-          value={socialPanelTab}
-          onValueChange={updateSocialPanelTab}
-          className={'flex-shrink gap-1.25 w-max'}
-        >
-          <RadioGroupItem value={'social'} variant={'primary'} size={'md'}>
-            Social Feed
-          </RadioGroupItem>
-          <RadioGroupItem
-            value={'performance'}
-            variant={'primary'}
-            size={'md'}
-            className={'flex flex-row gap-1 items-center justify-center'}
-          >
-            My Performance
-          </RadioGroupItem>
-        </RadioGroup>
+        <TokenFeedSocialRadioGroup />
+
         <div className={`inline-flex items-center justify-between w-full`}>
           <H3 className={`text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`}>0.00% AVG APR</H3>
           <P className={`text-text-lightmode-tertiary dark:text-text-darkmode-tertiary font-semibold`}>0 Tokens</P>

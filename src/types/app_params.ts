@@ -49,7 +49,8 @@ type UserTokenFeedConfig = {
     migrated: UserTokenFeedFilterConfig,
     soon: UserTokenFeedFilterConfig
   },
-  socialPanelTab: 'social' | 'performance'
+  socialPanelTab: 'social' | 'performance',
+  mobileSelectedColumn: 'new' | 'migrated' | 'soon',
 }
 
 export interface USER_CONFIG_CACHE {
