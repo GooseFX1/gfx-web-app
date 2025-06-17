@@ -32,7 +32,7 @@ export const FarmHeader: FC = () => {
     setIsPortfolio,
     isPortfolio,
     setShowDeposited,
-    setShowCreatedPools,
+    setShowCreatedPools
   } = useGamma()
   const statsQuery = useStatsQuery()
   const { publicKey } = useWallet()
