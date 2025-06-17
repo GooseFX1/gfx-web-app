@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogBody,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogOverlay,
   DialogPortal
@@ -43,6 +42,9 @@ function TokenFeedMobileDrawer({ container }: { container?: HTMLElement | null }
             touchAction: 'none',
             zIndex: '50'
           }}
+          onInteractOutside={()=>{
+            setOpen.off()
+          }}
         >
           <DialogHeader className={'flex flex-col gap-4'}>
             <span
@@ -58,7 +60,6 @@ function TokenFeedMobileDrawer({ container }: { container?: HTMLElement | null }
             </div>
           </DialogHeader>
           <DialogBody>TEST</DialogBody>
-          <DialogFooter>Test</DialogFooter>
         </DialogContent>
       </DialogPortal>
     </Dialog>

@@ -1,4 +1,5 @@
-import { useConnection, useWallet } from '@solana/wallet-adapter-react'
+import { useConnection } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import { AccountInfo, ParsedAccountData, PublicKey, RpcResponseAndContext, Transaction } from '@solana/web3.js'
 import { getAssociatedTokenAddressSync } from '@solana/spl-token'
 import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'

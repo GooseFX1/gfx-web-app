@@ -18,7 +18,11 @@ import { useTokenFeed } from '@/context/tokenFeedContext'
 import useTokenInput from '@/hooks/useTokenInput'
 import IconWithFallbackAndLoader from '@/components/IconWithFallbackAndLoader'
 
-function TokenFeedQuickBuy() {
+function TokenFeedQuickBuy({
+  groupClassName
+                           }:{
+  groupClassName?: string
+}) {
   const { updateQuickBuyAmount, updateQuickBuyToken, quickBuyTokenQuery } = useTokenFeed()
   const [value, valueOperations] = useTokenInput()
   const [focus, setFocus] = useBoolean(false)
@@ -31,6 +35,7 @@ function TokenFeedQuickBuy() {
 
   return (
     <InputGroup
+      className={groupClassName}
       leftItem={
         <InputElementLeft
           className={cn(

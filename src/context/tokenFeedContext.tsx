@@ -6,7 +6,7 @@ import useTokenQuery from '@/queries/useTokenQuery'
 import { TokenListToken } from '@/context/gamma'
 import { UseQueryResult } from '@tanstack/react-query'
 import { UserTokenFeedFilterConfig } from '@/types/app_params'
-import useBoolean from '@/hooks/useBoolean'
+import useBoolean, { UseBooleanSetter } from '@/hooks/useBoolean'
 
 type TokenFeedColumns = {
   social: boolean
@@ -128,6 +128,7 @@ interface ITokenFeed {
   }
   updateColumnFilters: (column: TokenFeedTokenColumn, filters: UserTokenFeedFilterConfig) => void
   isTokenDepositOpen: boolean
+  setIsTokenDepositOpen: UseBooleanSetter
   // TODO: update this type once we know what it is
   selectToken: (token: any) => void
   // TODO: update this type once we know what it is
@@ -295,6 +296,7 @@ function TokenFeedProvider({ children }: { children?: React.ReactNode | React.Re
         columnFilters,
         updateColumnFilters,
         isTokenDepositOpen,
+        setIsTokenDepositOpen,
         selectToken,
         selectedToken,
         socialPanelTab,
