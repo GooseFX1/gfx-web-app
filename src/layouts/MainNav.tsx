@@ -193,7 +193,7 @@ const MobileNav: FC = () => {
                   )}
                   onClick={() => {
                     setIsOpen.off()
-                    history.push('/token-feed')
+                    navigate('/token-feed')
                   }}
                 >
                   <img
@@ -332,7 +332,7 @@ const DesktopNav: FC = () => {
       {featureFlags.tokenFeed && (
         <Button
           variant={'ghost'}
-          onClick={() => history.push(ROUTES.TOKEN_FEED)}
+          onClick={() => navigate(ROUTES.TOKEN_FEED)}
           className={cn(
             `tracking-wider flex-col gap-[2px] p-0 text-center text-h6 font-semibold font-poppins justify-center
             leading-4`,
