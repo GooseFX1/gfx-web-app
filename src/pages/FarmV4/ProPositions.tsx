@@ -6,8 +6,8 @@ import MyPositionItems from './MyPositions'
 import FarmSort from '@/pages/FarmV4/FarmSort'
 import useBoolean from '@/hooks/useBoolean'
 import TokenSearchBar from '@/pages/FarmV4/TokenSearchBar'
-import { ClaimAllRewards } from '@/components/token-rewards/ClaimAllButton'
 import { ClaimAllRewardsDialog } from '@/components/token-rewards/ClaimAllRewardsDialog'
+import { Button } from 'gfx-component-lib'
 
 const ProPositions: FC = () => {
   const [openClaimAllRewardsDialog, setOpenClaimAllRewardsDialog] = useBoolean(false)
@@ -49,14 +49,21 @@ const ProPositions: FC = () => {
         <div className="flex w-full items-center justify-between">
           <TokenSearchBar />
           <div className="flex justify-between items-center gap-[15px]">
-                <ClaimAllRewards
-                  openClaimAllRewardsDialog={openClaimAllRewardsDialog}
-                  setOpenClaimAllRewardsDialog={setOpenClaimAllRewardsDialog.set}
-                />
-                <ClaimAllRewardsDialog
-                  openClaimAllRewardsDialog={openClaimAllRewardsDialog}
-                  setOpenClaimAllRewardsDialog={setOpenClaimAllRewardsDialog.set}
-                />
+            <Button
+              onClick={() => setOpenClaimAllRewardsDialog(true)}
+              variant={'ghost'}
+              size={'sm'}
+              className={`
+  bg-[#7A7A7A] text-white rounded-lg px-4 py-2 text-sm font-medium
+  hover:bg-[#8A8A8A] transition-colors duration-200
+`}
+            >
+              Claim All Rewards
+            </Button>
+            <ClaimAllRewardsDialog
+              openClaimAllRewardsDialog={openClaimAllRewardsDialog}
+              setOpenClaimAllRewardsDialog={setOpenClaimAllRewardsDialog.set}
+            />
             <FarmSort isOpen={isOpen} setIsOpen={setIsOpen.set} />
           </div>
         </div>
