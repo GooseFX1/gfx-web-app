@@ -22,12 +22,8 @@ import { BoostedRewardsProvider } from './context/boostedRewardsContext'
 import { KaminoProvider } from './context/kaminoContext'
 const Bridge = lazy(() => import('./pages/Bridge'))
 const GenericNotFound = lazy(() => import('./pages/InvalidUrl'))
-const AnalyticsWrapper = lazy(() => import('./pages/Analytics/AnalyticsWrapper'))
-const SSLAnalyticsDashboard = lazy(() => import('./pages/Analytics/ssl/SSLAnalyticsDashboard'))
 const Farm = lazy(() => import('./pages/FarmV3/Farm'))
 const FarmV4 = lazy(() => import('./pages/FarmV4/Farm'))
-
-const CoinGeckoPairs = lazy(() => import('./pages/Analytics/ssl/SSLPairs'))
 
 const WRAPPER_STYLES: CSSProperties = {
   flex: '1',
@@ -154,9 +150,6 @@ export const Router: FC = () => {
                               </SwapProvider>
                             }
                           />
-                          <Route path="/analytics" element={<AnalyticsWrapper />} />
-                          <Route path="/analytics/ssl" element={<SSLAnalyticsDashboard />} />
-                          <Route path="/analytics/ssl/pairdata" element={<CoinGeckoPairs />} />
                           <Route path="*" element={<GenericNotFound />} />
                         </Routes>
                       </Suspense>

@@ -24,7 +24,6 @@ import useBreakPoint from '../../hooks/useBreakPoint'
 import FarmSort from '@/pages/FarmV4/FarmSort'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import TokenSearchBar from '@/pages/FarmV4/TokenSearchBar'
-import { ClaimAllRewards } from '@/components/token-rewards/ClaimAllButton'
 import { ClaimAllRewardsDialog } from '@/components/token-rewards/ClaimAllRewardsDialog'
 
 export const FarmContainer: FC = () => {
@@ -125,10 +124,14 @@ export const FarmContainer: FC = () => {
             <div className="flex items-center w-full justify-between relative">
               <TokenSearchBar />
               <div className="flex justify-between items-center gap-[15px]">
-                <ClaimAllRewards
-                  openClaimAllRewardsDialog={openClaimAllRewardsDialog}
-                  setOpenClaimAllRewardsDialog={setOpenClaimAllRewardsDialog.set}
-                />
+                <Button
+                  onClick={() => setOpenClaimAllRewardsDialog(true)}
+                  size={'sm'}
+                  className={`bg-[#7A7A7A] text-white rounded-lg px-4 py-2 text-sm 
+                    font-medium hover:bg-[#8A8A8A] transition-colors duration-200 `}
+                >
+                  Claim All Rewards
+                </Button>
                 <ClaimAllRewardsDialog
                   openClaimAllRewardsDialog={openClaimAllRewardsDialog}
                   setOpenClaimAllRewardsDialog={setOpenClaimAllRewardsDialog.set}
