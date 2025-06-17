@@ -27,7 +27,7 @@ const FarmV4: FC = () => {
   return (
     <div
       id="farm-container"
-      className={`dark:bg-black-1 bg-grey-5 h-[calc(100vh - 56px)] overflow-auto max-w-[1440px]
+      className={`dark:bg-black-1 bg-grey-5 overflow-auto max-w-[1440px]
        m-auto no-scrollbar gap-7.5`}
       ref={setOnboardContainer}
     >
@@ -35,7 +35,7 @@ const FarmV4: FC = () => {
       <FarmHeader />
       <DepositWithdrawSlider preventAutoClose={preventDepositAutoClose} container={depositContainer} />
 
-      <div className={'gap-7.5 p-5 max-sm:px-2.5 max-sm:pb-3.75 pt-0'} ref={setDepositContainer}>
+      <div className={'gap-7.5'} ref={setDepositContainer}>
         <FarmContainer />
         {/* <Faqs /> */}
       </div>

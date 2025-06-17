@@ -18,6 +18,40 @@ type UserGAMMAConfig = {
 type UserSWAPConfig = {
   slippage: number
 }
+type MinMaxFilter = {
+  min?: string
+  max?: string
+}
+export type UserTokenFeedFilterConfig = {
+  volume: MinMaxFilter
+  marketCap: MinMaxFilter
+  bondingCurveProgress: MinMaxFilter
+  age: MinMaxFilter
+  holders: MinMaxFilter
+  topHolders: MinMaxFilter
+  enabledSocials: {
+    x: boolean
+    website: boolean
+    telegram: boolean
+  }
+}
+type UserTokenFeedConfig = {
+  enabledColumns: {
+    social: boolean
+    new: boolean
+    migrated: boolean
+    soon: boolean
+  },
+  quickBuyAmount?: string,
+  quickBuyToken?: string,
+  columnFilters: {
+    new: UserTokenFeedFilterConfig,
+    migrated: UserTokenFeedFilterConfig,
+    soon: UserTokenFeedFilterConfig
+  },
+  socialPanelTab: 'social' | 'performance',
+  mobileSelectedColumn: 'new' | 'migrated' | 'soon',
+}
 
 export interface USER_CONFIG_CACHE {
   hasDexOnboarded: boolean
@@ -25,6 +59,7 @@ export interface USER_CONFIG_CACHE {
   endpoint: string
   farm: UserFarmConfig
   gamma: UserGAMMAConfig
+  tokenFeed: UserTokenFeedConfig
   hasSignedTC: boolean
   priorityFee: PriorityFeeName
   swap: UserSWAPConfig

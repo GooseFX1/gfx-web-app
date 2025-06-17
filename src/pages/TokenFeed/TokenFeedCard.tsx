@@ -1,0 +1,225 @@
+import React, { FC, ReactNode, useEffect, useState } from 'react'
+import { Button, cn, Icon, ToastTitle } from 'gfx-component-lib'
+import { openLinkInNewTab } from '@/web3'
+import { loadIconImage, numberFormatter } from '@/utils'
+import { TokenFeedToken } from '@/pages/TokenFeed/TokenFeedContainer'
+import { useQuery } from '@tanstack/react-query'
+import { INTERVALS } from '@/utils/time'
+import { toast } from 'sonner'
+import SuccessIcon from '@/assets/Success-icon.svg?react'
+import { useDarkMode, useGamma } from '@/context'
+import CircularProgress from '@/components/CircularProgress'
+import { H4, H3, P } from '@/components/text/TextComponents'
+import { useTokenFeed } from '@/context/tokenFeedContext'
+import useTokenQuery from '@/queries/useTokenQuery'
+import { IconWithFallback } from '@/components/common/IconWithFallback'
+import { UserTokenFeedFilterConfig } from '@/types/app_params'
+
+const IconWithInfo: FC<{
+  data: ReactNode
+  src: string
+}> = ({ data, src }) => (
+  <div className={`inline-flex py-1 gap-1 items-center group`}>
+    <Icon
+      className={`rounded-full !w-[18px] !h-[18px] !max-w-[18px] !max-h-[18px] !min-w-[18px] !min-h-[18px]
+      group-hover:hue-rotate-[-45deg]`}
+      src={src}
+    />
+    <P className={`text-b3 text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`}>{data}</P>
+  </div>
+)
+const SocialIcon: FC<{
+  socialLink: string
+  src: string
+}> = ({ src, socialLink }) => (
+  <Icon
+    src={src}
+    size={'sm'}
+    className={`cursor-pointer hover:invert hover:hue-rotate-[553deg]`}
+    onClick={() => openLinkInNewTab(socialLink)}
+  />
+)
+const TokenFeedStats: FC<{
+  marketCap: string
+  volume: string
+}> = ({ marketCap, volume }) => (
+  <div className={`inline-flex gap-5`}>
+    <P className={`text-b2 text-text-lightmode-primary dark:text-text-darkmode-primary`}>MC ${marketCap}</P>
+    <P className={`text-b2 text-text-lightmode-primary dark:text-text-darkmode-primary`}>V ${volume}</P>
+  </div>
+)
+
+function TokenFeedCard({
+  token,
+  currentFilters
+}: {
+  token: TokenFeedToken
+  key?: string
+  currentFilters: UserTokenFeedFilterConfig
+}) {
+  const { mode } = useDarkMode()
+  const { setIsCreatePool, setCreatePoolTokenA } = useGamma()
+  const { quickBuyAmount, quickBuyTokenQuery, selectToken } = useTokenFeed()
+  // TODO: remove this once we get actual data
+  const [progressSim, setProgressSim] = useState(0)
+
+  const doesTokenPoolExist = useQuery({
+    queryKey: ['doesTokenExist', token.address],
+    queryFn: async () => {
+      // TODO: implement this
+      console.log('DO THIS HERE')
+      return true
+    },
+    enabled: !!token.address,
+    staleTime: INTERVALS.SECOND * 5
+  })
+
+  const tokenQuery = useTokenQuery({
+    address: token?.address
+  })
+
+  const copyTokenDetails = () => {
+    navigator.clipboard.writeText(token.address)
+    toast(
+      <div>
+        <ToastTitle
+          className={'items-center'}
+          iconLeft={<SuccessIcon className={'stroke-background-green h-4 w-4'} />}
+        >
+          <H4 className={'text-text-green'}>Success</H4>
+        </ToastTitle>
+        <P className={'text-b3 mt-2'}>Token address copied successfully!</P>
+      </div>,
+      {
+        id: 'copyTokenFeedAddress'
+      }
+    )
+  }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgressSim((prev) => {
+        const newProgress = prev + 1
+        if (newProgress >= 100) {
+          clearInterval(interval)
+          return 100
+        }
+        return newProgress
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const handleLp = () => {
+    console.log('a')
+    if (doesTokenPoolExist.isSuccess && tokenQuery.isSuccess) {
+      console.log('b')
+      if (!doesTokenPoolExist.data) {
+        console.log('c')
+        setIsCreatePool(true)
+        setCreatePoolTokenA(tokenQuery.data)
+      } else {
+        console.log('c1')
+        selectToken(tokenQuery.data)
+      }
+    }
+  }
+  const handleQuickBuy = () => {
+    if (!doesTokenPoolExist.data) {
+      // TODO: jup flow
+    } else {
+      selectToken(tokenQuery.data)
+    }
+  }
+  const img = loadIconImage(token.src, mode)
+
+  return (
+    <div
+      className={`flex flex-col p-2 gap-2 rounded-[8px] bg-background-lightmode-secondary
+     dark:bg-background-darkmode-secondary min-w-[280px] w-full max-w-[417px]`}
+    >
+      <div className={'inline-flex gap-2 justify-between'}>
+        <H3>{token.tickerSymbol}</H3>
+        <P className={`text-b2`}>{token.name}</P>
+        <Icon
+          src={'/img/assets/clipboard_dark.svg'}
+          className={`!w-[15px] !h-[15px] !max-w-[15px] !max-h-[15px] !min-w-[15px] !min-h-[15px]
+              cursor-pointer`}
+          onClick={copyTokenDetails}
+        />
+        <div className={'inline-flex ml-auto gap-4'}>
+          {currentFilters?.enabledSocials?.x && (
+            <SocialIcon socialLink={'https://twitter.com/'} src={`/img/assets/x_${mode}.svg`} />
+          )}
+          <SocialIcon socialLink={'https://twitter.com/'} src={`/img/assets/token_redirect_${mode}.svg`} />
+          {currentFilters?.enabledSocials?.telegram && (
+            <SocialIcon socialLink={'https://twitter.com/'} src={`/img/assets/embedded_post_${mode}.svg`} />
+          )}
+          {currentFilters?.enabledSocials?.website && (
+            <SocialIcon socialLink={'https://twitter.com/'} src={`/img/assets/website_${mode}.svg`} />
+          )}
+        </div>
+      </div>
+      <div className={`inline-flex gap-4 justify-between`}>
+        <div className={'w-[50px] h-[50px] p-1.25 relative'}>
+          <CircularProgress progress={progressSim} />
+          <Icon
+            src={img}
+            className={cn(
+              '!w-[40px] !h-[40px] !min-w-[40px] !min-h-[40px] !max-w-[40px] !max-h-[40px] !rounded-full'
+            )}
+          />
+        </div>
+        <div className={`flex flex-col gap-2 w-max`}>
+          <TokenFeedStats marketCap={numberFormatter(2000)} volume={numberFormatter(2000)} />
+          <div className={`inline-flex gap-2`}>
+            <IconWithInfo src={'/img/assets/clock_dark.svg'} data={token.age} />
+            <IconWithInfo src={'/img/assets/holders_dark.svg'} data={numberFormatter(token.holders)} />
+            <IconWithInfo src={'/img/assets/top_holders_dark.svg'} data={token.topHolders} />
+          </div>
+        </div>
+        <div className={`flex gap-2 items-center ml-auto`}>
+          <Button
+            variant={'primary'}
+            colorScheme={
+              !token?.bondingCurveProgress || token?.bondingCurveProgress < 100 ? 'grey' : 'secondaryGradient'
+            }
+            size={'md'}
+            className={cn(
+              `px-2.5 py-[5px] min-w-[56px] max-w-[87px] h-[35px]
+                   from-brand-secondaryGradient-primary to-brand-secondaryGradient-secondary`,
+              (!token?.bondingCurveProgress || token?.bondingCurveProgress < 100) &&
+                `animate-lightTextPulse dark:animate-darkTextPulse bg-buttons-lightmode-disabled-primary
+                 dark:bg-buttons-darkmode-disabled-primary`
+            )}
+            onClick={handleQuickBuy}
+            disabled={!token?.bondingCurveProgress || token?.bondingCurveProgress < 100}
+          >
+            {!token?.bondingCurveProgress || token?.bondingCurveProgress < 100 ? (
+              'Bonding'
+            ) : quickBuyAmount ? (
+              <>
+                {quickBuyAmount}&nbsp;
+                <IconWithFallback src={loadIconImage(quickBuyTokenQuery.data?.logoURI, mode)} size={'sm'} />
+              </>
+            ) : (
+              <Icon src={`/img/assets/swap_white.svg`} size={'sm'} />
+            )}
+          </Button>
+          {token.migrated && (
+            <Button
+              colorScheme={'secondaryGradient'}
+              variant={'outline'}
+              size={'md'}
+              className={`px-2.5 py-[5px] w-[56px]  h-[35px]`}
+              onClick={handleLp}
+            >
+              LP
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default TokenFeedCard

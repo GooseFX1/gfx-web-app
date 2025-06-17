@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { RewardsButton } from '../components/rewards/RewardsPopup'
-import { useDarkMode, useRewardToggle } from '../context'
+import { useConnectionConfig, useDarkMode, useRewardToggle } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -41,6 +41,7 @@ import SocialLinks from '@/components/common/SocialLinks'
 import { NAV_LINKS, navigateTo, navigateToCurried } from '@/utils/requests'
 import { FooterDivider } from '@/layouts/Footer'
 import PriorityFee from '@/components/footer/PriorityFee'
+import { ROUTES } from '@/Router'
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
@@ -135,6 +136,7 @@ const MobileAccordionContent: FC<MobileAccordionContentProps> = ({
 )
 const MobileNav: FC = () => {
   const breakpoint = useBreakPoint()
+  const { featureFlags } = useConnectionConfig()
   const { mode } = useDarkMode()
   const { pathname } = useLocation()
   const [isOpen, setIsOpen] = useBoolean(false)
@@ -173,12 +175,37 @@ const MobileNav: FC = () => {
                 }}
               >
                 <img
-                  className="h-[35px]"
+                  className="!h-[35px] aspect-square"
                   src={`/img/mainnav/swap-${mode}${pathname.includes('swap') ? '-active' : '-inactive'}.svg`}
                   alt="dark"
                 />
                 &nbsp;Swap
               </ListItem>
+              {featureFlags.tokenFeed && (
+                <ListItem
+                  variant={pathname.includes(ROUTES.TOKEN_FEED) && 'primary'}
+                  className={cn(
+                    `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
+                         dark:text-text-darkmode-tertiary h-[43px]`,
+                    pathname.includes(ROUTES.TOKEN_FEED)
+                      ? 'text-text-lightmode-primary dark:text-text-darkmode-primary'
+                      : ''
+                  )}
+                  onClick={() => {
+                    setIsOpen.off()
+                    history.push('/token-feed')
+                  }}
+                >
+                  <img
+                    className="!h-[35px] !w-[35px] p-1.5 aspect-square"
+                    src={`/img/mainnav/token_feed_${mode}${
+                      pathname.includes(ROUTES.TOKEN_FEED) ? '_active' : '_inactive'
+                    }.svg`}
+                    alt="dark"
+                  />
+                  &nbsp;Trade
+                </ListItem>
+              )}
               <ListItem
                 variant={pathname.includes('gamma') && 'primary'}
                 className={cn(
@@ -192,7 +219,7 @@ const MobileNav: FC = () => {
                 }}
               >
                 <img
-                  className="h-[35px] w-[35px]"
+                  className="!h-[35px] !w-[35px] py-[5px] px-[2.5px] aspect-square"
                   src={`/img/mainnav/pool-${mode}${pathname.includes('gamma') ? '-active' : '-inactive'}.svg`}
                   alt="dark"
                 />
@@ -206,8 +233,8 @@ const MobileNav: FC = () => {
                       className={`inline-flex items-center font-poppins font-semibold font-inherit text-inherit`}
                     >
                       <img
-                        className="h-[35px]"
-                        src={`/img/mainnav/more-${mode}${isMoreOpen ? '-active' : ''}.svg`}
+                        className="!h-[35px] aspect-square"
+                        src={`/img/mainnav/more-${mode}${isMoreOpen ? '-active' : '-inactive'}.svg`}
                         alt="dark"
                       />
                       &nbsp;More
@@ -274,6 +301,7 @@ const MobileNav: FC = () => {
 
 const DesktopNav: FC = () => {
   const breakpoint = useBreakPoint()
+  const { featureFlags } = useConnectionConfig()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -290,31 +318,53 @@ const DesktopNav: FC = () => {
         variant={'ghost'}
         onClick={() => navigate('/swap')}
         className={cn(
-          `tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
+          `tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins leading-4`,
           pathname.includes('swap') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
         )}
       >
         <img
-          className="!w-[26px] !h-[26px] mb-0.5"
+          className="!w-[24px] !h-[24px] aspect-square"
           src={`/img/mainnav/swap-${mode}${pathname.includes('swap') ? '-active' : '-inactive'}.svg`}
           alt="dark"
         />
-        Swap
+        <h6 className={'h-6 leading-4'}>Swap</h6>
       </Button>
+      {featureFlags.tokenFeed && (
+        <Button
+          variant={'ghost'}
+          onClick={() => history.push(ROUTES.TOKEN_FEED)}
+          className={cn(
+            `tracking-wider flex-col gap-[2px] p-0 text-center text-h6 font-semibold font-poppins justify-center
+            leading-4`,
+            pathname.includes(ROUTES.TOKEN_FEED)
+              ? 'text-text-lightmode-primary dark:text-text-darkmode-primary'
+              : ''
+          )}
+        >
+          <img
+            className="!w-[24px] !h-[24px] p-0.5 "
+            src={`/img/mainnav/token_feed_${mode}${
+              pathname.includes(ROUTES.TOKEN_FEED) ? '_active' : '_inactive'
+            }.svg`}
+            alt="dark"
+          />
+          <h6 className={'h-6 leading-4'}>Trade</h6>
+        </Button>
+      )}
       <Button
         variant={'ghost'}
         onClick={() => navigate('/gamma')}
         className={cn(
-          `tracking-wider flex-col gap-1.5 p-0 text-center text-h6 font-semibold font-poppins`,
+          `tracking-wider flex-col gap-[2px] p-0 text-center font-semibold font-poppins`,
           pathname.includes('gamma') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
         )}
       >
         <img
-          className="!w-[26px] !h-[26px] mb-0.5"
+          className="!w-[24px] !h-[24px] aspect-square p-0.5 "
           src={`/img/mainnav/pool-${mode}${pathname.includes('gamma') ? '-active' : '-inactive'}.svg`}
           alt="dark"
         />
-        Pools
+        <h6 className={'h-6 leading-4'}>Pools</h6>
       </Button>
 
       <DropdownMenu onOpenChange={setIsMoreOpen.toggle}>
@@ -322,27 +372,24 @@ const DesktopNav: FC = () => {
           <Button
             variant={'ghost'}
             className={cn(
-              `tracking-wider p-0 flex-col text-center justify-center items-center text-h6 [&>span]:inline-flex gap-0`,
+              `tracking-wider p-0 flex-col text-center justify-center items-center text-h6 [&>span]:inline-flex
+               gap-[2px] leading-4`,
               isMoreActive ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
             )}
           >
             <span className={`inline-flex justify-center items-center`}>
               <img
-                className="w-[26px] h-[26px] mb-0.5"
-                src={`/img/mainnav/more-${mode}${isMoreActive ? '-active' : ''}.svg`}
+                className="!w-[24px] !h-[24px] p-0.5"
+                src={`/img/mainnav/more-${mode}${isMoreActive ? '-active' : '-inactive'}.svg`}
                 alt="dark"
               />
               <CircularArrow
-                cssStyle={tw`w-[12px] h-[12px]`}
+                cssStyle={tw`w-[12px] h-[12px] mt-auto mb-[2px]`}
                 invert={isMoreOpen}
-                css={[
-                  isMoreActive || isMoreOpen
-                    ? tw`opacity-[1]`
-                    : tw`opacity-[0.6]`
-                ]}
+                css={[isMoreActive || isMoreOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
               />
             </span>
-            More
+            <h6 className={'h-6 leading-4'}>More</h6>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent portal={false} className={'mt-3 w-[300px]'}>

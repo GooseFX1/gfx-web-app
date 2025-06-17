@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import 'styled-components/macro'
 import Slider from 'react-slick'
 import { useWallet } from '@/hooks/useWallet'
@@ -30,16 +30,11 @@ import useGetGammaConfigIdQuery from '@/queries/GAMMA/pools/useGetGammaConfigIdQ
 import { useMutation } from '@tanstack/react-query'
 import useAddOrCheckTokenQuery from '@/queries/GAMMA/pools/useAddOrCheckTokenQuery'
 
-export const CreatePool: FC<{
-  isCreatePool: boolean
-  setIsCreatePool: Dispatch<SetStateAction<boolean>>
-}> = ({ isCreatePool, setIsCreatePool }): JSX.Element => {
+export const CreatePool = (): JSX.Element => {
   const slider = React.useRef<Slider>(null)
   const breakpoint = useBreakPoint()
   const [currentSlide, setCurrentSlide] = useState<number>(0)
-  const [tokenA, setTokenA] = useState(null)
   const [amountTokenA, setAmountTokenA] = useState<string>('')
-  const [tokenB, setTokenB] = useState(null)
   const [amountTokenB, setAmountTokenB] = useState<string>('')
   const [feeTier, setFeeTier] = useState<string>('0.01')
   const { connected } = useWallet()
@@ -55,7 +50,13 @@ export const CreatePool: FC<{
     forceCronAndUpdateLocalData,
     calculatePoolType,
     setCreatePoolState,
-    updateGammaRoute
+    updateGammaRoute,
+    isCreatePool,
+    setIsCreatePool,
+    createPoolTokenA: tokenA,
+    setCreatePoolTokenA: setTokenA,
+    createPoolTokenB: tokenB,
+    setCreatePoolTokenB: setTokenB
   } = useGamma()
   const { balance, publicKey } = useWalletBalance()
 

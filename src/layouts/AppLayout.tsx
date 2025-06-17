@@ -14,14 +14,14 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
       <MainNav />
       <div
         className={cn(
-          `overflow-x-hidden min-w-vw min-h-[calc(100vh_-_56px)] max-sm:max-h-vh flex flex-col
-          bg-background-lightmode-primary dark:bg-background-darkmode-primary
+          `overflow-hidden min-w-vw flex flex-col max-h-[calc(100vh_-_56px)]
+          bg-background-lightmode-primary dark:bg-background-darkmode-primary h-svh
           `,
           rewardModal ? 'overflow-hidden' : '',
           mode === 'dark' ? 'dark' : ''
         )}
       >
-        <div className={`min-2xl:w-[2500px] min-md:mb-[45px]`} id="gfx-app-layout">
+        <div className={`min-2xl:w-[2500px] overflow-scroll md:mb-[39px] py-4 no-scrollbar`} id="gfx-app-layout">
           {children}
         </div>
         <Footer />

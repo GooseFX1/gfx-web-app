@@ -6,6 +6,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useState
 } from 'react'
@@ -84,6 +85,10 @@ export const RPCs = {
   Custom: CUSTOM_RPC
 }
 
+type FeatureFlags = {
+  tokenFeed: boolean
+}
+
 interface ISettingsConfig {
   chainId: ENV
   connection: Connection
@@ -107,6 +112,7 @@ interface ISettingsConfig {
   gammaBoostedRewardsIsActive: boolean
   setTermsOfServiceVisible: Dispatch<SetStateAction<boolean>>
   termsOfServiceVisible: boolean
+  featureFlags: FeatureFlags
 }
 
 const SettingsContext = React.createContext<ISettingsConfig | null>(null)
@@ -126,6 +132,112 @@ function newCache(): USER_CONFIG_CACHE {
       currentSort: GAMMA_MAIN_SORT_CONFIG_DEFAULT,
       viewMode: 'row',
       jtoRewardsBanner: true
+    },
+    tokenFeed: {
+      enabledColumns: {
+        social: true,
+        new: true,
+        migrated: true
+      },
+      quickBuyAmount: undefined,
+      quickBuyToken: 'So11111111111111111111111111111111111111112',
+      columnFilters: {
+        new: {
+          age: {
+            min: undefined,
+            max: undefined
+          },
+          holders: {
+            min: undefined,
+            max: undefined
+          },
+          topHolders: {
+            min: undefined,
+            max: undefined
+          },
+          bondingCurveProgress: {
+            min: undefined,
+            max: undefined
+          },
+          marketCap: {
+            min: undefined,
+            max: undefined
+          },
+          volume: {
+            min: undefined,
+            max: undefined
+          },
+          enabledSocials: {
+            x: true,
+            website: true,
+            telegram: true
+          }
+        },
+        migrated: {
+          age: {
+            min: undefined,
+            max: undefined
+          },
+          holders: {
+            min: undefined,
+            max: undefined
+          },
+          topHolders: {
+            min: undefined,
+            max: undefined
+          },
+          bondingCurveProgress: {
+            min: undefined,
+            max: undefined
+          },
+          marketCap: {
+            min: undefined,
+            max: undefined
+          },
+          volume: {
+            min: undefined,
+            max: undefined
+          },
+          enabledSocials: {
+            x: true,
+            website: true,
+            telegram: true
+          }
+        },
+        soon: {
+          age: {
+            min: undefined,
+            max: undefined
+          },
+          holders: {
+            min: undefined,
+            max: undefined
+          },
+          topHolders: {
+            min: undefined,
+            max: undefined
+          },
+          bondingCurveProgress: {
+            min: undefined,
+            max: undefined
+          },
+          marketCap: {
+            min: undefined,
+            max: undefined
+          },
+          volume: {
+            min: undefined,
+            max: undefined
+          },
+          enabledSocials: {
+            x: true,
+            website: true,
+            telegram: true
+          }
+        }
+      },
+      socialPanelTab: 'social',
+      mobileSelectedColumn: 'new'
     },
     hasSignedTC: false,
     endpointName: DEFAULT_ENDPOINT_NAME,
@@ -233,7 +345,9 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [gammaBoostedRewardsIsActive, setGammaBoostedRewardsIsActive] = useState<boolean>(true)
   const [userCache, setUserCache] = useState<USER_CONFIG_CACHE>(getOrCreateCache())
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState<boolean>(false)
-
+  const [featureFlags, setFeatureFlags] = useState<FeatureFlags>({
+    tokenFeed: true
+  })
   const [endpointName, setEndpointName] = useState<EndPointName>(() =>
     userCache.endpointName ? userCache.endpointName : DEFAULT_ENDPOINT_NAME
   )
@@ -247,7 +361,15 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     // predicts multiple sets to prevent race condition overwriting sets instead takes latest and merges
     setCacheUpdateQueue((prevCache) => ({ ...prevCache, ...cache }))
   }, [])
-
+  useLayoutEffect(() => {
+    // each feature flag
+    console.log('MODE', import.meta.env.MODE)
+    if (import.meta.env.MODE == 'production') {
+      setFeatureFlags({
+        tokenFeed: false
+      })
+    }
+  }, [])
   useEffect(() => {
     if (Object.keys(cacheUpdateQueue).length === 0) return
     const timeout = setTimeout(() => {
@@ -399,7 +521,8 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         updateUserCache,
         gammaBoostedRewardsIsActive,
         setTermsOfServiceVisible,
-        termsOfServiceVisible
+        termsOfServiceVisible,
+         featureFlags
       }}
     >
       {children}

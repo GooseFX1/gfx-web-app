@@ -20,13 +20,15 @@ import { Swap } from '@/pages/Swap'
 import { SwapProvider } from '@/context/newSwap'
 import { BoostedRewardsProvider } from './context/boostedRewardsContext'
 import { KaminoProvider } from './context/kaminoContext'
+import TokenFeedProvider from './context/tokenFeedContext'
+
 const Bridge = lazy(() => import('./pages/Bridge'))
 const GenericNotFound = lazy(() => import('./pages/InvalidUrl'))
 const AnalyticsWrapper = lazy(() => import('./pages/Analytics/AnalyticsWrapper'))
 const SSLAnalyticsDashboard = lazy(() => import('./pages/Analytics/ssl/SSLAnalyticsDashboard'))
 const Farm = lazy(() => import('./pages/FarmV3/Farm'))
 const FarmV4 = lazy(() => import('./pages/FarmV4/Farm'))
-
+const TokenFeed = lazy(() => import('./pages/TokenFeed/TokenFeed'))
 const CoinGeckoPairs = lazy(() => import('./pages/Analytics/ssl/SSLPairs'))
 
 const WRAPPER_STYLES: CSSProperties = {
@@ -42,7 +44,8 @@ const INNER_STYLES: CSSProperties = { width: '500px', height: '500px' }
 // route and used in query enabling
 export const ROUTES = {
   GAMMA: '/gamma',
-  GAMMA_PORTFOLIO: '/gamma/portfolio'
+  GAMMA_PORTFOLIO: '/gamma/portfolio',
+  TOKEN_FEED: '/token-feed'
 } as const
 
 function PageLoader() {
@@ -67,7 +70,7 @@ function PageLoader() {
 }
 
 export const Router: FC = () => {
-  const { isUnderMaintenance } = useConnectionConfig()
+  const { isUnderMaintenance, featureFlags } = useConnectionConfig()
 
   return (
     <BrowserRouter>
@@ -104,7 +107,7 @@ export const Router: FC = () => {
                               <GammaProvider>
                                 <KaminoProvider>
                                   <BoostedRewardsProvider>
-                                    <FarmV4 />
+                                    <FarmV4 />{' '}
                                   </BoostedRewardsProvider>
                                 </KaminoProvider>
                               </GammaProvider>
@@ -116,7 +119,7 @@ export const Router: FC = () => {
                               <GammaProvider>
                                 <KaminoProvider>
                                   <BoostedRewardsProvider>
-                                    <FarmV4 />
+                                    <FarmV4 />{' '}
                                   </BoostedRewardsProvider>
                                 </KaminoProvider>
                               </GammaProvider>
@@ -128,7 +131,7 @@ export const Router: FC = () => {
                               <GammaProvider>
                                 <KaminoProvider>
                                   <BoostedRewardsProvider>
-                                    <FarmV4 />
+                                    <FarmV4 />{' '}
                                   </BoostedRewardsProvider>
                                 </KaminoProvider>
                               </GammaProvider>
@@ -140,12 +143,28 @@ export const Router: FC = () => {
                               <GammaProvider>
                                 <KaminoProvider>
                                   <BoostedRewardsProvider>
-                                    <FarmV4 />
+                                    <FarmV4 />{' '}
                                   </BoostedRewardsProvider>
                                 </KaminoProvider>
                               </GammaProvider>
                             }
                           />
+                          {featureFlags.tokenFeed && (
+                            <Route
+                              path={ROUTES.TOKEN_FEED}
+                              element={
+                                <GammaProvider>
+                                  <KaminoProvider>
+                                    <BoostedRewardsProvider>
+                                      <TokenFeedProvider>
+                                        <TokenFeed />
+                                      </TokenFeedProvider>{' '}
+                                    </BoostedRewardsProvider>
+                                  </KaminoProvider>
+                                </GammaProvider>
+                              }
+                            />
+                          )}
                           <Route
                             path="/swap"
                             element={
