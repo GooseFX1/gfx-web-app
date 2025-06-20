@@ -301,7 +301,8 @@ const ConnectReown: FC = ({
 
   const walletIcon: string | null = useMemo(() => {
     if (walletInfo?.name === 'AUTH' && embeddedWalletInfo?.authProvider) {
-      // authProvider: 'google' | 'apple' | 'facebook' | 'x' | 'discord' | 'farcaster' | 'github' | 'email',
+      // authProvider: 'google' | 'apple' | 'facebook' | 'x' | 'discord' | 'farcaster' | 'github' | 'email'
+      // 'email' will use current icon
       return `/img/mainnav/provider_custom_${mode}.svg`
     }
 

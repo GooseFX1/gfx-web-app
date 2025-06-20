@@ -292,7 +292,7 @@ export const getPoolValuesByRange = (pool, viewRange) => {
     case 0:
       return {
         formattedVolume: numberFormatter(
-          Math.max(0, pool.stats.daily.volumeTokenAUsd + pool.stats.daily.volumeTokenBUsd)
+          Math.max(0, pool.stats.daily.volumeTokenAUsd)
         ),
         formattedFees: numberFormatter(Math.max(0, pool.stats.daily.feesUsd)),
         formattedAPR: Math.max(
@@ -318,7 +318,7 @@ export const getPoolValuesByRange = (pool, viewRange) => {
     case 1:
       return {
         formattedVolume: numberFormatter(
-          Math.max(0, pool.stats.weekly.volumeTokenAUsd + pool.stats.weekly.volumeTokenBUsd)
+          Math.max(0, pool.stats.weekly.volumeTokenAUsd)
         ),
         formattedFees: numberFormatter(Math.max(0, pool.stats.weekly.feesUsd)),
         formattedAPR: Math.max(
@@ -345,7 +345,7 @@ export const getPoolValuesByRange = (pool, viewRange) => {
     case 2:
       return {
         formattedVolume: numberFormatter(
-          Math.max(0, pool.stats.monthly.volumeTokenAUsd + pool.stats.monthly.volumeTokenBUsd)
+          Math.max(0, pool.stats.monthly.volumeTokenAUsd)
         ),
         formattedFees: numberFormatter(Math.max(0, pool.stats.monthly.feesUsd)),
         formattedAPR: Math.max(
