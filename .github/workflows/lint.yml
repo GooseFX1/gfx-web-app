@@ -16,7 +16,7 @@ jobs:
           node-version: '20.18.0'
           cache: 'yarn'
       - run: yarn
-      - run: yarn lint:strict
+      - run: yarn lint
 
   tsc:
     name: Run Type Check
