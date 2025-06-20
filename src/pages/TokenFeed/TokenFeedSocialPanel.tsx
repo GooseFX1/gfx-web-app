@@ -14,7 +14,7 @@ import LockedLite from '@/animations/profile_locked_lite.json'
 import ComingSoonDark from '@/animations/coming_soon_dark.json'
 import ComingSoonLite from '@/animations/coming_soon_lite.json'
 import { useDarkMode } from '@/context'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@/hooks/useWallet'
 import { H2, H3, P } from '@/components/text/TextComponents'
 import TokenFeedSocialRadioGroup from '@/pages/TokenFeed/TokenFeedSocialRadioGroup'
 

@@ -64,8 +64,9 @@ export const TokenFeedContentContainer: FC<{ children: ReactNode | ReactNode[]; 
 export const TokenFeedTokensContainer: FC<{
   tokens: TokenFeedToken[]
   currentFilters: UserTokenFeedFilterConfig
-}> = ({ tokens, currentFilters }) => (
-  <TokenFeedContentContainer>
+  className?: string
+}> = ({ tokens, currentFilters, className }) => (
+  <TokenFeedContentContainer className={className}>
     {tokens.length > 0 ? (
       tokens.map((token) => <TokenFeedCard key={token.address} token={token} currentFilters={currentFilters} />)
     ) : (

@@ -3,7 +3,6 @@ import { H2 } from '@/components/text/TextComponents'
 import TokenFeedQuickBuy from '@/pages/TokenFeed/TokenFeedQuickBuy'
 import TokenFeedGridSettings from '@/pages/TokenFeed/TokenFeedGridSettings'
 import { cn } from 'gfx-component-lib'
-import TokenFeedLPDrawer from '@/pages/TokenFeed/TokenFeedLPDrawer'
 import TokenFeedSocialPanel from '@/pages/TokenFeed/TokenFeedSocialPanel'
 import TokenFeedNewTokenPanel from '@/pages/TokenFeed/TokenFeedNewTokenPanel'
 import TokenFeedMigratedTokenPanel from '@/pages/TokenFeed/TokenFeedMigratedTokenPanel'
@@ -25,7 +24,6 @@ function TokenFeedDesktopView() {
            lg:grid-cols-[repeat(3,_minmax(330px,_1fr))] 
        `)}
       >
-        <TokenFeedLPDrawer />
         <TokenFeedSocialPanel />
         <TokenFeedNewTokenPanel />
         <TokenFeedMigratedTokenPanel />

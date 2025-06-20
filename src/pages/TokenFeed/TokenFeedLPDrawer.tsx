@@ -31,12 +31,12 @@ import ProgressBar from '@/components/ProgressBar'
 import TokenFeedDrawerTokenMetrics from './TokenFeedDrawerTokenMetrics'
 import TokenFeedDrawerBuySell from '@/pages/TokenFeed/TokenFeedDrawerBuySell'
 import { Connect } from '@/layouts'
-import { useWallet } from '@solana/wallet-adapter-react'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { useDarkMode, useGamma } from '@/context'
 import { BASE_SLIPPAGE } from '@/pages/FarmV4/constants'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import useBoolean from '@/hooks/useBoolean'
+import { useWallet } from '@/hooks/useWallet'
 
 const TokenFeedDrawerMetrics: FC<{
   label: string
@@ -56,7 +56,7 @@ function TokenFeedLpDrawer() {
   const { isMobile } = useBreakPoint()
   const { isDarkMode, mode } = useDarkMode()
   const { connected } = useWallet()
-  const { isTokenDepositOpen, selectedToken, selectToken } = useTokenFeed()
+  const { isTokenDepositOpen, setIsTokenDepositOpen, selectedToken, selectToken } = useTokenFeed()
   const { balance } = useWalletBalance()
   const [swapButtonText, setSwapButtonText] = useState('Insufficient Funds')
   const [isSwapEnabled, setIsSwapEnabled] = useBoolean(false)
@@ -124,14 +124,24 @@ function TokenFeedLpDrawer() {
     }
   }
   return (
-    <Dialog open={isTokenDepositOpen} onOpenChange={() => selectToken(null)}>
+    <Dialog
+      open={isTokenDepositOpen}
+      onOpenChange={(v) => {
+        setIsTokenDepositOpen.set(v)
+        if (!v) {
+          setTimeout(() => selectToken(null), 300)
+        }
+      }}
+    >
       <DialogPortal>
         <DialogOverlay />
         <DialogContent
           placement={isMobile ? 'bottom' : 'right'}
           fullScreen={isMobile}
           className={`flex flex-col gap-3 p-0 rounded-none h-full sm:w-[450px] sm:max-h-screen border-1 border-solid
-           sm:border-r-0 dark:border-black-4 sm:rounded-none border-b-0 rounded-b-[0px] max-h-[calc(100vh-56px)]`}
+           sm:border-r-0 dark:border-black-4 sm:rounded-none border-b-0 rounded-b-[0px] max-h-[calc(100vh-56px)]
+           max-sm:rounded-t-[8px]
+           `}
         >
           <DialogHeader
             className={`px-[10px] py-2 border-b-1 border-b-solid border-border-lightmode-secondary
@@ -170,15 +180,20 @@ function TokenFeedLpDrawer() {
             </div>
             <DialogCloseDefault className={`top-2`} />
           </DialogHeader>
-          <DialogBody className={`px-2.5 flex flex-col gap-2.5 bg-white dark:bg-black-2 relative w-full py-2
-           overflow-y-hidden`}>
+          <DialogBody
+            className={`px-2.5 flex flex-col gap-2.5 bg-white dark:bg-black-2 relative w-full py-2
+           overflow-y-hidden`}
+          >
             <TokenFeedDrawerTokenMetrics selectedToken={selectedToken} />
             <TokenFeedDrawerBuySell selectedToken={selectedToken} onTokensUpdate={onTokensUpdate} />
           </DialogBody>
-          <DialogFooter className={`flex-row p-2.5 gap-2 bg-white dark:bg-black-2 relative w-full py-2
-           overflow-y-hidden`}>
+          <DialogFooter
+            className={`flex-row p-2.5 gap-2 bg-white dark:bg-black-2 relative w-full py-2
+           overflow-y-hidden border-t-1 border-solid border-border-lightmode-secondary
+             dark:border-border-darkmode-secondary `}
+          >
             {!connected ? (
-              <Connect fullWidth />
+              <Connect />
             ) : (
               <Button variant={'primary'} colorScheme={'blue'} fullWidth disabled={!isSwapEnabled}>
                 {swapButtonText}
