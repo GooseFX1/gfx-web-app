@@ -296,14 +296,12 @@ const ConnectReown: FC = ({
   const { walletInfo } = useWalletInfo()
   const { connected, connecting, publicKey } = useWallet()
   const breakpoint = useBreakPoint()
-  const { mode } = useDarkMode()
   const base58PublicKey = useMemo(() => connected ? publicKey?.toBase58() : null, [publicKey, connected])
 
   const walletIcon: string | null = useMemo(() => {
     if (walletInfo?.name === 'AUTH' && embeddedWalletInfo?.authProvider) {
       // authProvider: 'google' | 'apple' | 'facebook' | 'x' | 'discord' | 'farcaster' | 'github' | 'email'
-      // 'email' will use current icon
-      return `/img/mainnav/provider_custom_${mode}.svg`
+      return `/img/mainnav/social_${embeddedWalletInfo?.authProvider.toLowerCase()}.svg`
     }
 
     if (walletInfo?.icon) {
@@ -350,8 +348,11 @@ const ConnectReown: FC = ({
     >
       {connected && (
         <div
-          className={`flex items-center justify-center border-4 dark:border-black-1 border-solid
-                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 w-[24px] h-[24px] overflow-hidden`}
+          className={cn(
+            `flex items-center justify-center dark:border-black-1 border-solid
+                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 w-[24px] h-[24px] overflow-hidden`,
+            walletInfo?.name === 'AUTH' ? 'border-1' : 'border-4'
+          )}
         >
           <img className={'w-auto rounded-lg'} src={walletIcon} alt={`${walletInfo?.name}_icon`} />
         </div>

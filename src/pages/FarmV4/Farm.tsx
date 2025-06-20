@@ -35,7 +35,7 @@ const FarmV4: FC = () => {
       <FarmHeader />
       <DepositWithdrawSlider preventAutoClose={preventDepositAutoClose} container={depositContainer} />
 
-      <div className={'gap-7.5'} ref={setDepositContainer}>
+      <div className={'gap-7.5 px-5 max-sm:px-2.5 '} ref={setDepositContainer}>
         <FarmContainer />
         {/* <Faqs /> */}
       </div>
