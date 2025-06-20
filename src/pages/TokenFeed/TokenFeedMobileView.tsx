@@ -5,7 +5,7 @@ import TokenFeedSettings from '@/pages/TokenFeed/TokenFeedSettings'
 import { useTokenFeed } from '@/context/tokenFeedContext'
 import { H3 } from '@/components/text/TextComponents'
 import TokenFeedQuickBuy from '@/pages/TokenFeed/TokenFeedQuickBuy'
-import { TokenFeedTokensContainer } from '@/pages/TokenFeed/TokenFeedContainer'
+import InfiniteTokenFeedList from '@/pages/TokenFeed/InfiniteTokenFeedList'
 
 function TokenFeedMobileView() {
   const { mobileSelectedColumn, updateMobileSelectedColumn, columnFilters } = useTokenFeed()
@@ -42,7 +42,91 @@ function TokenFeedMobileView() {
         </H3>
         <TokenFeedQuickBuy groupClassName={`w-[240px]`}/>
       </div>
-      <TokenFeedTokensContainer className={`py-0`} tokens={[
+      <InfiniteTokenFeedList tokenList={[
+        {
+          age: '14m',
+          name: 'GooseFX',
+          address: 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD',
+          holders: 1000,
+          tickerSymbol: 'GFX',
+          topHolders: '0.1%',
+          migrated: false
+        },
+        {
+          age: '14m',
+          name: 'GooseFX',
+          address: 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD',
+          holders: 1000,
+          tickerSymbol: 'GFX',
+          topHolders: '0.1%',
+          migrated: false,
+          bondingCurveProgress: 100
+        },
+        {
+          age: '14m',
+          name: 'GooseFX',
+          address: 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD',
+          holders: 1000,
+          tickerSymbol: 'GFX',
+          topHolders: '0.1%',
+          migrated: false
+        },
+        {
+          age: '14m',
+          name: 'GooseFX',
+          address: 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD',
+          holders: 1000,
+          tickerSymbol: 'GFX',
+          topHolders: '0.1%',
+          migrated: false
+        },
+        {
+          age: '14m',
+          name: 'GooseFX',
+          address: 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD',
+          holders: 1000,
+          tickerSymbol: 'GFX',
+          topHolders: '0.1%',
+          migrated: false,
+          bondingCurveProgress: 100
+        },
+        {
+          age: '14m',
+          name: 'GooseFX',
+          address: 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD',
+          holders: 1000,
+          tickerSymbol: 'GFX',
+          topHolders: '0.1%',
+          migrated: false
+        },
+        {
+          age: '14m',
+          name: 'GooseFX',
+          address: 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD',
+          holders: 1000,
+          tickerSymbol: 'GFX',
+          topHolders: '0.1%',
+          migrated: false
+        },
+        {
+          age: '14m',
+          name: 'GooseFX',
+          address: 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD',
+          holders: 1000,
+          tickerSymbol: 'GFX',
+          topHolders: '0.1%',
+          migrated: false,
+          bondingCurveProgress: 100
+        },
+        {
+          age: '14m',
+          name: 'GooseFX',
+          address: 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD',
+          holders: 1000,
+          tickerSymbol: 'GFX',
+          topHolders: '0.1%',
+          migrated: false
+        },
         {
           age: '14m',
           name: 'GooseFX',
