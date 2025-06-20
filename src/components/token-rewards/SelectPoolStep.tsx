@@ -232,7 +232,7 @@ function PoolSelectInput({
 
   const formattedVolume = useMemo(() => {
     if (!pool || !pool.stats || !pool.stats.daily) return '0.00'
-    const volume = Math.max(0, pool.stats.daily.volumeTokenAUsd + pool.stats.daily.volumeTokenBUsd)
+    const volume = Math.max(0, pool.stats.daily.volumeTokenAUsd)
     return volume ? numberFormatter(Math.max(0, volume)) : '0.00'
   }, [pool])
 
@@ -459,7 +459,7 @@ function PoolSelectItem({
                             truncate font-semibold
                             `}
           >
-            ${numberFormatter(Math.max(0, pool.stats.daily.volumeTokenAUsd + pool.stats.daily.volumeTokenBUsd))}
+            ${numberFormatter(Math.max(0, pool.stats.daily.volumeTokenAUsd))}
           </p>
         </div>
       </RenderAs>
