@@ -16,7 +16,7 @@ import {
   TooltipTrigger
 } from 'gfx-component-lib'
 import { TokenListToken, useDarkMode, useGamma } from '../../context'
-import { JupToken, POOL_LIST_PAGE_SIZE, POPULAR_TOKENS } from './constants'
+import { JupToken, POOL_LIST_PAGE_SIZE } from './constants'
 //import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
 import Text from '@/components/Text'
@@ -30,6 +30,7 @@ import Decimal from 'decimal.js-light'
 import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import useTokensQuery from '@/queries/useTokensQuery'
+import { POPULAR_TOKENS } from '../../constants'
 
 const CreatePoolChooseTokenStep: FC<{
   tokenA: TokenListToken

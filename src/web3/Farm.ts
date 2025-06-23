@@ -22,7 +22,7 @@ import {
   GAMMA_PROGRAM_ID,
   MEMO_ID,
   OBSERVATION_PREFIX,
-  POOL_SEED_PRFIX,
+  POOL_SEED_PREFIX,
   POOL_VAULT_SEED_PREFIX,
   REWARD_INFO_SEED,
   REWARD_VAULT_SEED,
@@ -117,7 +117,7 @@ export const getPoolIdKey = async (
 
     const getPoolIdKey: [PublicKey, number] = await PublicKey.findProgramAddress(
       [
-        Buffer.from(POOL_SEED_PRFIX),
+        Buffer.from(POOL_SEED_PREFIX),
         ammConfigId?.toBuffer(),
         compare > 0 ? mintA?.toBuffer() : mintB?.toBuffer(),
         compare > 0 ? mintB?.toBuffer() : mintA?.toBuffer()
@@ -1251,4 +1251,12 @@ export const oracleBasedSwap = async (
   }
 
   return swapTxn
+}
+
+export async function getPoolAddress(ammConfig: PublicKey, programId?: PublicKey): Promise<PublicKey> {
+  const [poolId] = await PublicKey.findProgramAddress(
+    [Buffer.from(POOL_SEED_PREFIX), ammConfig.toBuffer()],
+    programId ? programId : new PublicKey(GAMMA_PROGRAM_ID)
+  )
+  return poolId
 }

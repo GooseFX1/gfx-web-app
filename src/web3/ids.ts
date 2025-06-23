@@ -3,10 +3,6 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { AccountInfo, PublicKey } from '@solana/web3.js'
 import { SSLToken } from '../pages/FarmV3/constants'
 
-export const SYNTH_DEFAULT_MINT = new PublicKey('So11111111111111111111111111111111111111112')
-
-export const AUTH_PROGRAM_ID = new PublicKey('auth9SigNpDKz4sJJ1DfCTuZrZNSAgh9sFD3rboVmgg')
-
 export type Mint = {
   address: PublicKey
   decimals: number
@@ -56,20 +52,13 @@ export const ADDRESSES: {
         address: PublicKey
         controller?: PublicKey
       }
-      nestquestSale: {
-        address: PublicKey
-        civic_gatekeeper: PublicKey
-        sol_revenue: PublicKey
-        gofx_revenue: PublicKey
-        program_id: PublicKey
-      }
     }
   }
 } = {
   'mainnet-beta': {
     sslPool: {
       SOL: {
-        address: SYNTH_DEFAULT_MINT,
+        address: WRAPPED_SOL_MINT,
         decimals: 9,
         name: 'Solana'
       },
@@ -119,7 +108,7 @@ export const ADDRESSES: {
         decimals: 9
       },
       SOL: {
-        address: SYNTH_DEFAULT_MINT,
+        address: WRAPPED_SOL_MINT,
         decimals: 9,
         sslPool: true
       },
@@ -203,13 +192,6 @@ export const ADDRESSES: {
       ssl: {
         address: new PublicKey('7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5'),
         controller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
-      },
-      nestquestSale: {
-        address: new PublicKey('EBNsQvZppDTRgcW6jc93QbEqFUm2aJRyxK4CEFhgQ3V8'),
-        civic_gatekeeper: new PublicKey('ignREusXmGrscGNUesoU9mxfds9AiYTezUKex2PsZV6'),
-        sol_revenue: new PublicKey('3hrfavXTqLNJt2rvuYP3vKEg7Ks2MQbnBRkXjqHPC93a'), // change this
-        gofx_revenue: new PublicKey('AfbSheiV3PJdA8ydTDQjGnQfHLafsqZJFkJp2iENWcGb'),
-        program_id: new PublicKey('NQSGXu86wvXx88mvzhh9PfD3dJfGX3n1SdFdYacGX9H')
       }
     }
   },
@@ -262,115 +244,8 @@ export const ADDRESSES: {
         address: new PublicKey('2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'),
         decimals: 9
       },
-      gUSD: {
-        address: new PublicKey('USDhTjkUXFfigLELiFpbBnpLmEm4aXHvdY2kDSadJDH'),
-        decimals: 2
-      },
-      gBTC: {
-        address: new PublicKey('6WAa7ppJD7QAExhse21XUjFcYn9utTYEzPMvMpjea3pM'),
-        decimals: 8
-      },
-      gETH: {
-        address: new PublicKey('ETHEUsA7cMt4z3GPeAJbK9B6NpTckrvzGBLUigsjQpFN'),
-        decimals: 8
-      },
-      gMNGO: {
-        address: new PublicKey('BJUGa4AGbuvWix35UZcdkfKZHnr94d5n67aVqTJqH4vX'),
-        decimals: 8
-      },
-      gDOGE: {
-        address: new PublicKey('FyJmXCfvKX1Q4zifMBcvYAdqEiUbeZWoSvAkuiy7BEyL'),
-        decimals: 8
-      },
-      gSABER: {
-        address: new PublicKey('7BCgsMbDakNHx7Mb7ErJykE3eTzqjwYsDvJMGVia9Ff3'),
-        decimals: 8
-      },
-      gRAY: {
-        address: new PublicKey('BVneTUZCE9ePHUATdtwin3PjS1n9QQ1QzMZWf7CJPfyW'),
-        decimals: 8
-      },
-      gCOPE: {
-        address: new PublicKey('5axcoFsk588MaS4CE5D1KFFDsExowzMjKVHFyHZvcdRG'),
-        decimals: 8
-      },
-      gBNB: {
-        address: new PublicKey('C4a5suEMGogxkJVwGzam9yUgxyQ3pLFXESLqjwHg1Vwc'),
-        decimals: 8
-      },
-      gFTT: {
-        address: new PublicKey('88fcHMmVLEpp3kHTUDki1QBMdfzTfxNaN6awCniSbPTN'),
-        decimals: 8
-      },
-      gLUNA: {
-        address: new PublicKey('DztJtx4Zjz4bTpnno4R6DXQ7twA8DLPEFm1DY3qYC4Zd'),
-        decimals: 8
-      },
-      gSOL: {
-        address: new PublicKey('SoLrqFDDRzCazB7n6EeL7VbKjhvmNKRpnjQxea9HRTg'),
-        decimals: 8
-      },
-      gSRM: {
-        address: new PublicKey('Fg4E5t5Vbt8QzG7Uy7U1H6r6MHduLtEwP9FVZUMeScai'),
-        decimals: 8
-      },
-      gAAPL: {
-        address: new PublicKey('9sqW7s2oDvCw291grpzuRQ1Y4x38ABNVEqoCyyBZFpUv'),
-        decimals: 8
-      },
-      gTSLA: {
-        address: new PublicKey('5vRDUMS4B1Gsxu79NL2NfQqPf365urokq6SCHbgqtgTU'),
-        decimals: 8
-      },
-      gGME: {
-        address: new PublicKey('HuyZCb7rHHucRxFJX9eg9B6THpbywgYuEHXGbCVhFqgG'),
-        decimals: 8
-      },
-      gSPY: {
-        address: new PublicKey('7VY2Hp3CJjRLn27xW6EmjzuDyf7wYpbrrBYKobBQEKCw'),
-        decimals: 8
-      },
-      gGE: {
-        address: new PublicKey('CUeFGD4RDbb6Gh9KRCNQa75JmLS4MjxsWkd3waz7qHse'),
-        decimals: 8
-      },
-      gAMC: {
-        address: new PublicKey('DeStTq4cj3h2WC35CPwwcbn9VhAgdpey9xD9gbTt5FiU'),
-        decimals: 8
-      },
-      gAVAX: {
-        address: new PublicKey('AVAXrcSeoZKHuiTH7MQPLz7xSuGa33DEkMmB3pUaBoct'),
-        decimals: 8
-      },
-      gNFLX: {
-        address: new PublicKey('GAKT9KGRT3uC641dcMqR6CLozDaSDkAddymFY3qWEjQR'),
-        decimals: 8
-      },
-      gGOOG: {
-        address: new PublicKey('BfJpBqRGqNeAsNTio4PDutmUyGsk4RGGi78BuaCjiuy'),
-        decimals: 8
-      },
-      gQQQ: {
-        address: new PublicKey('5L6yBfXZARi2UQVLkwnLqifYLcLXVEKSeBo6FR7kp2zg'),
-        decimals: 8
-      }
     },
-    pools: {
-      CRYPTO: {
-        address: new PublicKey('Gi5j5JVxhsYhyek2yReiZTzUnj38dgh5phb9Ue3pWpMX'),
-        listing: new PublicKey('F5xcJSy4c6MZvdPMoNHUPY7w6gV6pTAi3L6kRezbBwiM'),
-        type: 'synth'
-      },
-      STOCK: {
-        address: new PublicKey('L4mn5JMUBAKkuWbEv1YGP65eeJAE2Z4neVxMkT8ncEJ'),
-        listing: new PublicKey('Bg8HQ2AN6vhjTL4Ht8jn18VFTZh1LTUuzPu1kg71vvkQ'),
-        type: 'synth'
-      },
-      'GOFX/TKNB': {
-        address: new PublicKey('Ga9vweHkkvxRVeadA3NRGx2RHfFs6w2t4hKRmBinQzYL'),
-        type: 'crypto'
-      }
-    },
+    pools: {},
     programs: {
       pool: {
         address: new PublicKey('29S8DHSwXLSwTSj25Tdx8Q8vAVqAmZ1TycnJYLp3owk5'),
@@ -392,13 +267,6 @@ export const ADDRESSES: {
       ssl: {
         address: new PublicKey('7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5'),
         controller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
-      },
-      nestquestSale: {
-        address: new PublicKey('3QvkzDXSgrLmsCK5ZDoddPFL7tYjzC5oHiiA5TJ9NsoA'),
-        civic_gatekeeper: new PublicKey('ignREusXmGrscGNUesoU9mxfds9AiYTezUKex2PsZV6'),
-        sol_revenue: new PublicKey('3hrfavXTqLNJt2rvuYP3vKEg7Ks2MQbnBRkXjqHPC93a'), // change this
-        gofx_revenue: new PublicKey('8mYdcqseZ327gLW1b5Mr19srw6yMP7z2ZG6sNbq8R8G2'),
-        program_id: new PublicKey('MKT2yrwL977mJwu9suRUBkckpnBShxtKN3ppasBseAb')
       }
     }
   },
@@ -452,34 +320,9 @@ export const ADDRESSES: {
       },
       ssl: {
         address: PublicKey.default
-      },
-      nestquestSale: {
-        address: PublicKey.default,
-        civic_gatekeeper: PublicKey.default,
-        sol_revenue: PublicKey.default,
-        gofx_revenue: PublicKey.default,
-        program_id: PublicKey.default
       }
     }
   }
-}
-
-export class LazyAccountInfoProxy<T> {
-  executable = false
-  owner = ''
-  lamports = 0
-
-  get data(): any {
-    //
-    return undefined as unknown as T
-  }
-}
-
-export interface LazyAccountInfo {
-  executable: boolean
-  owner: string
-  lamports: number
-  data: [string, string]
 }
 
 const PubKeysInternedMap = new Map<string, PublicKey>()
@@ -506,8 +349,6 @@ export interface PublicKeyStringAndAccount<T> {
   account: AccountInfo<T>
 }
 
-export const AR_SOL_HOLDER_ID = new PublicKey('6FKvsq4ydWFci6nGq9ckbjYMtnmaqAoatz5c9XWjiDuS')
-
 export const WRAPPED_SOL_MINT = new PublicKey('So11111111111111111111111111111111111111112')
 
 export const TOKEN_PROGRAM_ID = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA')
@@ -518,85 +359,46 @@ export const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = new PublicKey(
   'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'
 )
 
-export const BPF_UPGRADE_LOADER_ID = new PublicKey('BPFLoaderUpgradeab1e11111111111111111111111')
-
 export const MEMO_ID = new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr')
-
-export const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s' as string
-
-export const VAULT_ID = 'vau1zxA2LbssAUEF7Gpw91zMM1LvXrvpzJtmZ58rPsn' as string
-
-export const AUCTION_ID = 'auctxRXPeJoc4817jDhf4HbjnhEcr1cCXenosMhK5R8' as string
-
-export const METAPLEX_ID = 'p1exdMJcjVao65QdewkaZRUnU6VPSXhus9n2GzWfh98' as string
-
-export const PACK_CREATE_ID = new PublicKey('packFeFNZzMfD9aVWL7QbGz1WcU7R9zpf6pvNsw2BLu')
-
-export const ORACLE_ID = new PublicKey('rndshKFf48HhGaPbaCd3WQYtgCNKzRgVQ3U2we4Cvf9')
-
-export const SYSTEM = new PublicKey('11111111111111111111111111111111')
 
 export const SYS_VAR_RENT = new PublicKey('SysvarRent111111111111111111111111111111111')
 
+export const SYSTEM = new PublicKey('11111111111111111111111111111111')
+
+export const GOFX_MINT = 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'
+export const GOFX_MINT_PUBKEY = new PublicKey(GOFX_MINT)
+
 // SSL-V2 CONSTANTS
 
-export const STAKE_PREFIX = 'GFX-STAKINGACCOUNT'
+export const SSL_PREFIX = 'ssl'
+export const LIQUIDITY_ACCOUNT_PREFIX = 'liquidity-account'
+export const PT_MINT_PREFIX = 'pt-mint'
+export const STAKE_PREFIX = 'staking'
+export const POOL_REGISTRY_PREFIX = 'pool-registry'
+export const SSL_POOL_SIGNER_PREFIX = 'ssl-pool-signer'
+export const EVENT_EMITTER = 'event-emitter'
+export const SSL_V2_ADMIN = '5JAm5YViPHY8rJz9FwNsa2LpW2y2JvjHn3e4wz3y7E9Z'
 
-export const SSL_PREFIX = 'GFX-SSL'
-
-export const LIQUIDITY_ACCOUNT_PREFIX = 'liquidity_account'
-
-export const POOL_REGISTRY_PREFIX = 'pool_registry'
-export const EVENT_EMITTER = 'event'
-
-export const SSL_V2_ADMIN = new PublicKey('GeSkmvDED55EjnybgdN1gJ89p5V5H9W6jrrhxbZ1pDhQ')
-
-export const SSL_PROGRAM_ID = 'GFXsSL5sSaDfNFQUYsHekbWBW1TsFdjDYzACh62tEHxn'
-
-export const SSL_POOL_SIGNER_PREFIX = 'ssl_pool'
-
-export const PT_MINT_PREFIX = 'GFX-SSL-PTMINT'
+// STAKE CONSTANTS
 
 export const STAKE_PROGRAM_ID = '8KJx48PYGHVC9fxzRRtYp4x4CM2HyYCm2EjVuAP4vvrx'
 
 // AUCTION HOUSE CONSTANTS
-export const AUCTION_HOUSE_PREFIX = 'auction_house'
-export const TREASURY_PREFIX = 'treasury'
-export const AUCTION_HOUSE_PROGRAM_ID = 'hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk'
+export const TREASURY_MINT = new PublicKey('So11111111111111111111111111111111111111112')
+export const TREASURY_MINT_WRAPPED_SOL = 'So11111111111111111111111111111111111111112'
 
-export const MAGIC_EDEN_AUCTION_HOUSE = 'E8cU1WiRWjanGxmn96ewBgk9vPTcL6AEZ1t6F6fkgUWe'
-
-export const AUCTION_HOUSE = '4T5iWwyTWXP6nyEKymGpAAEy57Sn1GPE2GaNmLsJVPqi'
-export const OLD_AUCTION_HOUSE = '5GtAPDZWwnWRDjaTgjHDnvpiGBi9TbLVqRrggLH5Ztuv'
-// export const AUCTION_HOUSE: string = '4T5iWwyTWXP6nyEKymGpAAEy57Sn1GPE2GaNmLsJVPqi'
-
-export const TREASURY_MINT = 'So11111111111111111111111111111111111111112'
-
-// Current Authority
-export const AUCTION_HOUSE_AUTHORITY = 'CeU4mJ3piGG59rd48iDV7jbPu3zijir6dBcD5xzrwp37'
-export const OLD_AUCTION_HOUSE_AUTHORITY = '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'
-export const TEMP_AUCTION_HOUSE_AUTHORITY = '3hrfavXTqLNJt2rvuYP3vKEg7Ks2MQbnBRkXjqHPC93Z'
-
-export const AH_FEE_ACCT = '7PQhSEPvLM87Kdd1cbydhaMGPxKf2J1fzU65VALvK6J2'
-
-export const TREASURY_ACCT = 'Crh7HNLeizFgSNBjfxj6jf7NcmwPuN53a93NBi2fa8h'
-
-export const FEE_PAYER_BAL_GENESIS = 0
-
-export const TREASURY_BAL_GENESIS = 0
-
-export const SELLER_FEE_BASIS_POINTS = 100
-
-export const REQUIRES_SIGN_OFF = false
-
-export const CAN_CHANGE_SALE_PRICE = false
-
-export const AH_BUMP = 253
-
-export const AH_FEE_BUMP = 251
-
-export const AH_TREASURY_BUMP = 255
-
+// GooseFX
+// TODO: When new goosefx-ssl-sdk is released, we can use the constants from there instead
+export const GFX_CONTROLLER = new PublicKey(
+  process.env.REACT_APP_NETWORK === 'devnet'
+    ? 'FMqznan48D4hMvwKSSH5fMhZR3z3LRwDHoVAs3gEBB4S'
+    : '8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ'
+)
+export const SSL_PROGRAM_ID = new PublicKey(
+  process.env.REACT_APP_NETWORK === 'devnet'
+    ? 'JYe7AcuQ7CqhkGvchJGvSKF8ei41FuDKb1h47qkbFNf'
+    : '7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5'
+)
 // GAMMA CONSTANTS:
 
 export const GAMMA_PROGRAM_ID = 'GAMMA7meSFWaBXF25oSUgmGRwaW6sCMFLmBNiMSdbHVT'

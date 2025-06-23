@@ -3,116 +3,16 @@ import {
   Keypair,
   Commitment,
   Connection,
-  RpcResponseAndContext,
-  SignatureStatus,
-  SimulatedTransactionResponse,
   Transaction,
-  TransactionInstruction,
-  TransactionSignature
+  TransactionInstruction
 } from '@solana/web3.js'
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { perpsNotify, notifyUsingPromise } from '../utils/perpsNotifications'
-import { confirmTransaction } from './index'
 import TransactionBuilder from '@/web3/Builders/transaction.builder'
-
-interface BlockhashAndFeeCalculator {
-  blockhash: string
-  lastValidBlockHeight: number
-}
+import { awaitTransactionSignatureConfirmation } from './transactions'
 
 export const DEFAULT_TIMEOUT = 60000
-
-export const getErrorForTransaction = async (connection: Connection, txid: string): Promise<string[]> => {
-  // wait for all confirmation before geting transaction
-  await connection.confirmTransaction(txid, 'max')
-
-  const tx = await connection.getParsedConfirmedTransaction(txid)
-
-  const errors: string[] = []
-  if (tx?.meta && tx.meta.logMessages) {
-    tx.meta.logMessages.forEach((log) => {
-      const regex = /Error: (.*)/gm
-      let m
-      while ((m = regex.exec(log)) !== null) {
-        // This is necessary to avoid infinite loops with zero-width matches
-        if (m.index === regex.lastIndex) {
-          regex.lastIndex++
-        }
-
-        if (m.length > 1) {
-          errors.push(m[1])
-        }
-      }
-    })
-  }
-
-  return errors
-}
-
-export const sendTransaction = async (
-  connection: Connection,
-  wallet: WalletContextState,
-  instructions: TransactionInstruction[] | Transaction,
-  signers: Keypair[],
-  awaitConfirmation = true,
-  commitment: Commitment = 'singleGossip',
-  includesFeePayer = false,
-  block?: BlockhashAndFeeCalculator
-): Promise<{ txid: string; slot: number }> => {
-  if (!wallet.publicKey) throw new WalletNotConnectedError()
-
-  let transaction: Transaction
-  if (instructions instanceof Transaction) {
-    transaction = instructions
-  } else {
-    transaction = new Transaction()
-    instructions.forEach((instruction) => transaction.add(instruction))
-    transaction.recentBlockhash = (block || (await connection.getLatestBlockhash(commitment))).blockhash
-
-    if (includesFeePayer) {
-      transaction.setSigners(...signers.map((s) => s.publicKey))
-    } else {
-      transaction.setSigners(
-        // fee payed by the wallet owner
-        wallet.publicKey,
-        ...signers.map((s) => s.publicKey)
-      )
-    }
-
-    if (signers.length > 0) {
-      transaction.partialSign(...signers)
-    }
-    if (!includesFeePayer) {
-      transaction = await wallet.signTransaction(transaction)
-    }
-  }
-
-  const rawTransaction = transaction.serialize()
-  const options = {
-    skipPreflight: true,
-    commitment
-  }
-
-  const txid = await connection.sendRawTransaction(rawTransaction, options)
-  let slot = 0
-
-  if (awaitConfirmation) {
-    const confirmation = await awaitTransactionSignatureConfirmation(txid, DEFAULT_TIMEOUT, connection, commitment)
-
-    if (!confirmation) throw new Error('Timed out awaiting confirmation on transaction')
-    slot = confirmation?.slot || 0
-
-    if (confirmation?.err) {
-      const errors = await getErrorForTransaction(connection, txid)
-
-      console.log(errors)
-      throw new Error(`Raw transaction ${txid} failed`)
-    }
-  }
-
-  return { txid, slot }
-}
 
 export const sendPerpsTransaction = async (
   connection: Connection,
@@ -120,8 +20,7 @@ export const sendPerpsTransaction = async (
   instructions: TransactionInstruction[] | Transaction,
   signers: Keypair[]
 ): Promise<{ txid: string; slot: number }> => {
-  const commitment: Commitment = 'processed',
-    includesFeePayer = false
+  const commitment: Commitment = 'processed'
   if (!wallet.publicKey) throw new WalletNotConnectedError()
 
   let transaction: Transaction
@@ -132,34 +31,27 @@ export const sendPerpsTransaction = async (
     instructions.forEach((instruction) => transaction.add(instruction))
     transaction.recentBlockhash = (await connection.getLatestBlockhash(commitment)).blockhash
 
-    if (includesFeePayer) {
-      transaction.setSigners(...signers.map((s) => s.publicKey))
-    } else {
-      transaction.setSigners(
-        // fee payed by the wallet owner
-        wallet.publicKey,
-        ...signers.map((s) => s.publicKey)
-      )
-    }
+    transaction.setSigners(
+      // fee payed by the wallet owner
+      wallet.publicKey,
+      ...signers.map((s) => s.publicKey)
+    )
 
     if (signers.length > 0) {
       transaction.partialSign(...signers)
     }
-    //if (!includesFeePayer) {
-    //  transaction = await wallet.signTransaction(transaction)
-    //}
   }
 
   const executeOperation = async (): Promise<{ txid: string; slot: number }> => {
     try {
       const signature = await wallet.wallet.adapter.sendTransaction(transaction, connection)
       console.log('signature: ', signature)
-      const response = await confirmTransaction(connection, signature, 'processed')
+      const response = await awaitTransactionSignatureConfirmation(signature, DEFAULT_TIMEOUT, connection, 'processed')
 
-      if (response.value.err !== null) {
+      if (response.err !== null) {
         throw new Error(`Transaction failed: ${signature}`)
       }
-      return { txid: signature, slot: response.value?.slot || 0 }
+      return { txid: signature, slot: response?.slot || 0 }
     } catch (err) {
       console.error('error: ', err)
       throw new Error(`Timed out awaiting confirmation on transaction: ${err.message || err}`)
@@ -216,7 +108,7 @@ export const sendPerpsTransactions = async (
   connection: Connection,
   wallet: WalletContextState,
   transactions: Transaction[]
-): Promise<{ txid: string; slot: number }[]> => {
+): Promise<{ txid:string; slot: number }[]> => {
   const commitment: Commitment = 'processed',
     awaitConfirmation = true
   if (!wallet.publicKey) throw new WalletNotConnectedError()
@@ -246,7 +138,7 @@ export const sendPerpsTransactions = async (
 
     for (const [key, response] of ixResponse.entries()) {
       if (awaitConfirmation) {
-        const confirmation = await confirmTransaction(connection, response.txid, 'processed')
+        const confirmation = await awaitTransactionSignatureConfirmation(response.txid, DEFAULT_TIMEOUT, connection, 'processed')
 
         if (!confirmation) {
           console.log('in error notifier')
@@ -258,8 +150,7 @@ export const sendPerpsTransactions = async (
         }
 
         if (confirmation?.err) {
-          const errors = await getErrorForTransaction(connection, response.txid)
-          console.log(errors)
+          console.log(`Raw transaction ${response.txid} failed with error:`, confirmation.err)
           throw new Error(`Raw transaction ${response.txid} failed`)
         }
       }
@@ -287,137 +178,6 @@ export const sendPerpsTransactions = async (
   }
 }
 
-async function simulateTransaction(
-  connection: Connection,
-  transaction: Transaction,
-  commitment: Commitment
-): Promise<RpcResponseAndContext<SimulatedTransactionResponse>> {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  transaction.recentBlockhash = await connection._recentBlockhash(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    connection._disableBlockhashCaching
-  )
-
-  const signData = transaction.serializeMessage()
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const wireTransaction = transaction._serialize(signData)
-  const encodedTransaction = wireTransaction.toString('base64')
-  const config: any = { encoding: 'base64', commitment }
-  const args = [encodedTransaction, config]
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const res = await connection._rpcRequest('simulateTransaction', args)
-  if (res.error) {
-    throw new Error('failed to simulate transaction: ' + res.error.message)
-  }
-  return res.result
-}
-
-async function awaitTransactionSignatureConfirmation(
-  txid: TransactionSignature,
-  timeout: number,
-  connection: Connection,
-  commitment: Commitment = 'recent',
-  queryStatus = false,
-  errorMessage?: {
-    header: string
-    description: string
-    key: any
-  }
-): Promise<SignatureStatus | null | void> {
-  let done = false
-  let status: SignatureStatus | null | void = {
-    slot: 0,
-    confirmations: 0,
-    err: null
-  }
-
-  //eslint-disable-next-line
-  let subId = 0
-  status = await new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (done) {
-        return
-      }
-      done = true
-      console.log('Rejecting for timeout...')
-      reject({ timeout: true })
-    }, timeout)
-    try {
-      //eslint-disable-next-line
-      subId = connection.onSignature(
-        txid,
-        (result, context) => {
-          done = true
-          status = {
-            err: result.err,
-            slot: context.slot,
-            confirmations: 0
-          }
-          if (result.err) {
-            console.log('Rejected via websocket', result.err)
-            perpsNotify({
-              message: errorMessage.header,
-              description: errorMessage.description,
-              action: 'close',
-              key: errorMessage.key,
-              styles: {}
-            })
-            reject(status)
-          } else {
-            console.log('Resolved via websocket', result)
-            resolve(status)
-          }
-        },
-        commitment
-      )
-    } catch (e) {
-      done = true
-      console.error('WS error in setup', txid, e)
-    }
-
-    //since await is only in while function, we pu in an executable function
-    ;(async () => {
-      while (!done && queryStatus) {
-        // eslint-disable-next-line no-loop-func
-        ;(async () => {
-          try {
-            const signatureStatuses = await connection.getSignatureStatuses([txid])
-            status = signatureStatuses && signatureStatuses.value[0]
-            if (!done) {
-              if (!status) {
-                console.log('REST null result for', txid, status)
-              } else if (status.err) {
-                console.log('REST error for', txid, status)
-                done = true
-                reject(status.err)
-              } else if (!status.confirmations) {
-                console.log('REST no confirmations for', txid, status)
-              } else {
-                console.log('REST confirmation for', txid, status)
-                done = true
-                resolve(status)
-              }
-            }
-          } catch (e) {
-            if (!done) {
-              console.log('REST connection error: txid', txid, e)
-            }
-          }
-        })()
-        await sleep(2000)
-      }
-    })()
-  })
-
-  done = true
-  console.log('Returning status', status)
-  return status
-}
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }

@@ -19,6 +19,9 @@ import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
 import { CONTROLLER_LAYOUT, STAKING_ACCOUNT_LAYOUT } from 'goosefx-ssl-sdk'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { AnchorWallet } from '@/hooks/useWallet'
+import { signAndSendRawTransaction } from './utils'
+import { awaitTransactionSignatureConfirmation } from './transactions'
+import { DEFAULT_TIMEOUT } from './connection'
 
 export interface TxnReturn {
   error?: Error
@@ -111,12 +114,15 @@ const stakeAmount = async (
 
     stakeAmountTX.add(stakeAmountIX)
 
-    signature = await wallet.sendTransaction(stakeAmountTX, connection, { skipPreflight: true })
+    signature = await signAndSendRawTransaction(connection, wallet, stakeAmountTX, ...[stakingAccountKey, tokenVault, userTokenVault])
     console.log(signature)
 
-    const confirm = await confirmTransaction(connection, signature, 'confirmed')
-    console.log(confirm, 'stake amount')
-    return { confirm, signature }
+    if (signature) {
+      const confirm = await awaitTransactionSignatureConfirmation(signature, DEFAULT_TIMEOUT, connection, 'processed')
+      return { signature, confirm, error: null }
+    } else {
+      return { signature: null, confirm: null, error: new Error('Transaction failed') }
+    }
   } catch (error) {
     console.error(error, 'stake error')
     return { error, signature }
@@ -153,11 +159,15 @@ export const executeUnstakeAndClaim = async (
       accounts: unstakeAmountInstruction
     })
     const unstakeAmountTX: Transaction = new Transaction().add(unstakeAmountIX)
-    const signature = await wallet.sendTransaction(unstakeAmountTX, connection, { skipPreflight: true })
+    const signature = await signAndSendRawTransaction(connection, wallet, unstakeAmountTX, ...[stakingAccountKey, tokenVault, userTokenAta, feeCollectorAta])
     console.log(signature)
-    const confirm = await confirmTransaction(connection, signature, 'confirmed')
 
-    return { confirm, signature }
+    if (signature) {
+      const confirm = await awaitTransactionSignatureConfirmation(signature, DEFAULT_TIMEOUT, connection, 'processed')
+      return { signature, confirm, error: null }
+    } else {
+      return { signature: null, confirm: null, error: new Error('Transaction failed') }
+    }
   } catch (error) {
     return { error, signature: null }
   }

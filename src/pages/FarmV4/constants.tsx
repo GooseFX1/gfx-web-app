@@ -88,7 +88,7 @@ export const faqsMigrate = [
     question: 'Can I partially migrate my LP position from other AMMs to GAMMA?',
     answer: (
       <div>
-        No, partial migration isn’t supported. When you migrate an LP position, it is fully withdrawn from the
+        No, partial migration isn't supported. When you migrate an LP position, it is fully withdrawn from the
         other AMM and deposited into GAMMA.
       </div>
     )
@@ -97,7 +97,7 @@ export const faqsMigrate = [
     question: 'What happens to my pending yield on the AMM I migrate from?',
     answer: (
       <div>
-        Any pending yield will remain on the original AMM. You’ll need to visit their site to claim it. Only the LP
+        Any pending yield will remain on the original AMM. You'll need to visit their site to claim it. Only the LP
         position is migrated to GAMMA.
       </div>
     )
@@ -212,13 +212,6 @@ export const GAMMA_SORT_CONFIG_PUBKEY_REQUIRED = ['9', '10']
 export const BASE_SLIPPAGE = [0.1, 0.5, 1.0]
 export const TOKEN_LIST_PAGE_SIZE = 50
 export const POOL_LIST_PAGE_SIZE = 16
-export const POPULAR_TOKENS = new Set([
-  'So11111111111111111111111111111111111111112',
-  'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-  'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
-  'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
-  '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'
-])
 export const GAMMA_STABLE_TOKENS = [
   'USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA', //USDS
   'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', //USDT

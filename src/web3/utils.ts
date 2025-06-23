@@ -14,6 +14,7 @@ import { useLocalStorage } from '../utils'
 import { NETWORK_CONSTANTS } from '../constants'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID } from './ids'
 
 const SECONDS_30 = 30 * 1000
 const COMMITMENT_LEVELS = ['processed', 'confirmed', 'finalized']
@@ -21,9 +22,11 @@ const COMMITMENT_LEVELS = ['processed', 'confirmed', 'finalized']
 export const SOL_TLD_AUTHORITY = new PublicKey('58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx')
 
 export const isValidSolanaAddress = (address: string): boolean => {
+  if (!address) return false
   try {
-    return PublicKey.isOnCurve(address)
-  } catch (error) {
+    const publicKey = new PublicKey(address)
+    return PublicKey.isOnCurve(publicKey)
+  } catch (err) {
     return false
   }
 }
@@ -78,7 +81,7 @@ export const findAssociatedTokenAddress = async (
   (
     await PublicKey.findProgramAddress(
       [walletAddress.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), tokenMintAddress.toBuffer()],
-      ASSOCIATED_TOKEN_PROGRAM_ID
+      SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
     )
   )[0]
 
@@ -89,33 +92,14 @@ export const signAndSendRawTransaction = async (
   ...signers: Array<Signer>
 ): Promise<TransactionSignature | null> => {
   try {
-    const transaction: Transaction = transactionData
-    transaction.feePayer = wallet.publicKey
-    transaction.recentBlockhash = (await connection.getLatestBlockhash('max')).blockhash
-
-    signers.forEach((signer) => transaction.partialSign(signer))
-
-    let simulateResult: SimulatedTransactionResponse | null = null
-    try {
-      simulateResult = (await connection.simulateTransaction(transaction)).value
-      if (simulateResult.logs) {
-        for (let i = simulateResult.logs.length - 1; i >= 0; --i) {
-          const line = simulateResult.logs[i]
-          if (line.startsWith('Program log: ')) {
-            throw new Error('Transaction failed: ' + line.slice('Program log: '.length))
-          }
-        }
-      }
-    } catch (e) {
-      console.error('Error: No simulation logs generated')
-      console.dir(e)
-    }
-
-    const signedTransaction = await wallet.signTransaction(transaction)
-    const tx = await connection.sendRawTransaction(signedTransaction?.serialize()) //, { skipPreflight: true }
-    return tx
-  } catch (e) {
-    console.log(e)
+    const tx = new Transaction().add(...transactionData.instructions)
+    tx.recentBlockhash = (await connection.getLatestBlockhash('max')).blockhash
+    tx.setSigners(wallet.publicKey, ...signers.map((s) => s.publicKey))
+    const signedTx = await wallet.signTransaction(tx)
+    const signature = await connection.sendRawTransaction(signedTx.serialize())
+    return signature
+  } catch (error) {
+    console.error('signAndSendRawTransaction error', error)
     return null
   }
 }
@@ -137,42 +121,17 @@ export const simulateTransaction = async (
   return sim
 }
 
-// TODO: reconcile this function with other similar definition in the codebase
 export const findProgramAddress = async (
   seeds: (Buffer | Uint8Array)[],
   programId: PublicKey
 ): Promise<[string, number]> => {
-  // eslint-disable-next-line
-  const localStorage = useLocalStorage()
-  const key = `pda-${seeds.reduce((agg, item) => agg + item.toString('hex'), '')}${programId.toString()}`
-
-  const cached = localStorage.getItem(key)
-  if (cached) {
-    const value = JSON.parse(cached)
-
-    return [value.key, parseInt(value.nonce)] as [string, number]
-  }
-
-  const result = await PublicKey.findProgramAddress(seeds, programId)
-
-  try {
-    localStorage.setItem(
-      key,
-      JSON.stringify({
-        key: result[0].toBase58(),
-        nonce: result[1]
-      })
-    )
-  } catch {
-    // ignore
-  }
-
-  return [result[0].toBase58(), result[1]] as [string, number]
+  const [address, bump] = await PublicKey.findProgramAddress(seeds, programId)
+  return [address.toBase58(), bump]
 }
 
 export const int64to8 = (n: number): Uint8Array => {
-  const arr = BigUint64Array.of(BigInt(n))
-  return new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
+  const a = new BN(n)
+  return a.toArrayLike(Buffer, 'le', 8)
 }
 
 export const bnTo8 = (bn: BN): Uint8Array => Buffer.from([...bn.toArray('le', 8)])
@@ -181,13 +140,11 @@ export const getNetworkConnectionText = (network: string): string =>
   network === NETWORK_CONSTANTS.DEVNET ? NETWORK_CONSTANTS.DEVNET_SDK : NETWORK_CONSTANTS.MAINNET_SDK
 
 export const openLinkInNewTab = (url: string): void => {
-  const newTab = window.open(url, '_blank')
-  if (newTab) {
-    newTab.focus()
-  }
+  const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
+  if (newWindow) newWindow.opener = null
 }
+
 export const getPriceObject = (str: string): string => {
-  if (str === 'USDC') return `USDC/USDT`
-  if (str === 'USDT') return 'USDT/USD'
-  return `${str}/USDC`
+  const arr = str.split(' ')
+  return arr[0]
 }
