@@ -18,17 +18,6 @@ export const MyPositionStats: FC<{
       <div className="flex justify-between mb-2">
         <span
           className={`!text-regular font-semibold dark:text-text-darkmode-secondary
-               text-text-lightmode-secondary`}
-        >
-          Est. 24H Fees
-        </span>
-        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">
-          ${bigNumberFormatter(new BigNumber(selectedCard?.stats?.daily?.feesUsd))}
-        </span>
-      </div>
-      <div className="flex justify-between mb-2">
-        <span
-          className={`!text-regular font-semibold dark:text-text-darkmode-secondary
                text-text-lightmode-secondary
               `}
         >

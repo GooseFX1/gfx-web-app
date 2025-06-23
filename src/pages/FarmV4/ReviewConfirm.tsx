@@ -5,14 +5,18 @@ import DepositWithdrawLabel from './DepositWithdrawLabel'
 import { bigNumberFormatter, numberFormatter } from '@/utils'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import BigNumber from 'bignumber.js'
+import { useBoostedRewards } from '@/context/boostedRewardsContext'
+import { getPoolValuesByRange } from './FarmRow'
+import { PublicKey } from '@solana/web3.js'
 
 export const ReviewConfirm: FC<{
   tokenAActionValue: string
   tokenBActionValue: string
   isDeposit: boolean
 }> = ({ tokenAActionValue, tokenBActionValue, isDeposit }): ReactElement => {
-  const { selectedCard, referralDetails } = useGamma()
+  const { selectedCard, referralDetails, viewRange } = useGamma()
   const { balance } = useWalletBalance()
+  const { getActiveRewardByPoolId } = useBoostedRewards()
   const depositValue = useMemo(() => {
     const depositAValue = new BigNumber(balance[selectedCard?.mintA?.address]?.price).multipliedBy(
       tokenAActionValue
@@ -23,6 +27,23 @@ export const ReviewConfirm: FC<{
 
     return depositAValue.plus(depositBValue)
   }, [balance, selectedCard, tokenBActionValue, tokenAActionValue])
+
+  // TODO: calculate estimated fee emmision in token value
+  const apr = useMemo(() => {
+    if (!selectedCard) return '0'
+    const { formattedAPR } = getPoolValuesByRange(selectedCard, viewRange)
+    const activeReward = getActiveRewardByPoolId(selectedCard.id ? new PublicKey(selectedCard.id) : PublicKey.default)
+    const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
+    const poolTvl = new BigNumber(selectedCard.tvl || 0)
+    if (activeReward && poolTvl.gt(0)) {
+      return numberFormatter(
+        new BigNumber(formattedAPR)
+          .plus(activeRewardsAmount.div(poolTvl).multipliedBy(100).multipliedBy(365).toNumber())
+          .toNumber()
+      )
+    }
+    return numberFormatter(formattedAPR)
+  }, [selectedCard, viewRange, getActiveRewardByPoolId])
 
   return (
     <>
@@ -49,11 +70,7 @@ export const ReviewConfirm: FC<{
             Est. 24H Fees
           </span>
           <span className="!font-regular font-semibold dark:text-grey-8 text-black-4">
-            $
-            {numberFormatter(
-              Math.max(0, selectedCard?.stats?.daily?.feesUsd) || 0.0,
-              new BigNumber(Math.max(0, selectedCard?.stats?.daily?.feesUsd) || 0.0).gt(0) ? 4 : 2
-            )}
+            {apr}%
           </span>
         </div>
         <div className="flex justify-between mb-2">
