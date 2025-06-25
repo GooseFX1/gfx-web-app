@@ -177,7 +177,7 @@ function TokenFeedCard({
             <IconWithInfo src={'/img/assets/top_holders_dark.svg'} data={token.topHolders} />
           </div>
         </div>
-        <div className={`flex gap-2 items-center ml-auto`}>
+        <div className={`flex gap-2 items-center w-full flex-wrap @container/buttons`}>
           <Button
             variant={'primary'}
             colorScheme={
@@ -185,7 +185,7 @@ function TokenFeedCard({
             }
             size={'md'}
             className={cn(
-              `px-2.5 py-[5px] min-w-[56px] max-w-[87px] h-[35px]
+              `px-2.5 py-[5px] min-w-[56px] w-full @[117px]:w-max h-[35px]
                    from-brand-secondaryGradient-primary to-brand-secondaryGradient-secondary`,
               (!token?.bondingCurveProgress || token?.bondingCurveProgress < 100) &&
                 `animate-lightTextPulse dark:animate-darkTextPulse bg-buttons-lightmode-disabled-primary
@@ -210,7 +210,7 @@ function TokenFeedCard({
               colorScheme={'secondaryGradient'}
               variant={'outline'}
               size={'md'}
-              className={`px-2.5 py-[5px] w-[56px]  h-[35px]`}
+              className={`px-2.5 py-[5px] min-w-[56px] h-[35px] w-full @[117px]:w-max `}
               onClick={handleLp}
             >
               LP

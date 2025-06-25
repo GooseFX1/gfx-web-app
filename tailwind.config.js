@@ -15,6 +15,7 @@ For more details: https://github.com/ben-rogerson/twin.examples/blob/master/cra-
 */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const config = require('./tailwindConfig')
+const query =  require('@tailwindcss/container-queries');
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx,less}', './index.html'],
   //purge: ['./src/**/*.{js,jsx,ts,tsx,less}', './index.html'],
@@ -28,6 +29,7 @@ module.exports = {
     preflight: false
   },
   plugins: [
+    query,
     function ({ addUtilities }) {
       addUtilities({
         ".text-primary-gradient": {

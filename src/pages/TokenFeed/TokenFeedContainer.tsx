@@ -27,7 +27,7 @@ type TokenFeedContainerProps = {
 export const TokenFeedContainerHeader: FC<{ children: ReactNode | ReactNode[] }> = ({ children }) => (
   <div
     className={`flex flex-col border-b-1 border-solid border-b-border-lightmode-secondary 
-  dark:border-b-border-darkmode-secondary gap-2 pb-2`}
+  dark:border-b-border-darkmode-secondary gap-2 pb-2 w-full`}
   >
     {children}
   </div>
@@ -59,7 +59,8 @@ export const TokenFeedContainerHeaderWithTitle: FC<Partial<TokenFeedContainerPro
 export const TokenFeedContentContainer: FC<{ children: ReactNode | ReactNode[]; className?: string }> = ({
   children,
   className
-}) => <div className={cn(`flex flex-1 flex-col gap-4 pt-4 overflow-scroll`, className)}>{children}</div>
+}) => <div
+  className={cn(`flex flex-1 flex-col gap-4 pt-4 overflow-scroll w-full`, className)}>{children}</div>
 
 export const TokenFeedTokensContainer: FC<{
   tokens: TokenFeedToken[]
@@ -79,8 +80,8 @@ function TokenFeedContainer({ children, className }: { children: ReactNode | Rea
   return (
     <div
       className={cn(
-        `flex flex-col p-4 w-full max-w-[450px] border-1 border-solid dark:border-border-darkmode-secondary
-    rounded-[16px] border-border-lightmode-secondary h-[724px] overflow-hidden
+        `flex flex-col p-4 w-full border-1 border-solid dark:border-border-darkmode-secondary
+    rounded-[16px] border-border-lightmode-secondary h-[724px] overflow-hidden items-center
     `,
         className
       )}
