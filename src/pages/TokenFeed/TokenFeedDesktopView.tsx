@@ -12,16 +12,16 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 
 function TokenFeedDesktopView() {
   const { totalColumnsEnabled } = useTokenFeed()
-  const { isMobile, isTablet } = useBreakPoint()
+  const { isMobile, isTablet, isSmallTablet } = useBreakPoint()
   const gridTemplateColumns = useMemo(()=>{
     if (isMobile){
       return `repeat(1, minmax(450px, 1fr))`
-    } else if (isTablet){
+    } else if (isTablet || isSmallTablet){
       return `repeat(2, minmax(330px, 1fr))`
     } else {
       return `repeat(${totalColumnsEnabled}, minmax(330px, 1fr))`
     }
-  },[totalColumnsEnabled, isMobile, isTablet])
+  },[totalColumnsEnabled, isMobile, isTablet, isSmallTablet])
   return (
     <div className={`flex flex-col w-full max-w-[1380px] gap-4 mx-auto`}>
       <div className={'inline-flex w-full justify-between'}>
