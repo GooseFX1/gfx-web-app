@@ -1,8 +1,8 @@
 import React, { FC, ReactNode } from 'react'
 import { cn, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
-import TokenFeedCard from '@/pages/TokenFeed/TokenFeedCard'
 import { H3 } from '@/components/text/TextComponents'
 import { UserTokenFeedFilterConfig } from '@/types/app_params'
+import InfiniteTokenFeedList from '@/pages/TokenFeed/InfiniteTokenFeedList'
 
 export type TokenFeedToken = {
   address: string
@@ -68,9 +68,7 @@ export const TokenFeedTokensContainer: FC<{
   className?: string
 }> = ({ tokens, currentFilters, className }) => (
   <TokenFeedContentContainer className={className}>
-    {tokens.length > 0 ? (
-      tokens.map((token) => <TokenFeedCard key={token.address} token={token} currentFilters={currentFilters} />)
-    ) : (
+    {tokens.length > 0 ? <InfiniteTokenFeedList tokenList={tokens} currentFilters={currentFilters} /> : (
       <H3 className={`text-center`}>No Tokens Found</H3>
     )}
   </TokenFeedContentContainer>

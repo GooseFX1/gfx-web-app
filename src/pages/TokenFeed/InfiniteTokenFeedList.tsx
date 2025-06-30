@@ -15,7 +15,8 @@ function InfiniteTokenFeedList({
 }) {
   const infiniteLoaderRef = useRef(null)
   const hasMountedRef = useRef(false)
-
+  // TODO: replace with query's state
+  const isLoadingTokenList = false;
   useEffect(() => {
     if (hasMountedRef.current) {
       if (infiniteLoaderRef.current) {
@@ -26,7 +27,7 @@ function InfiniteTokenFeedList({
   }, [tokenList])
   const itemCount = tokenList.length + 1
   const Item = ({ index, style }: { index: number; style: React.CSSProperties }) => {
-    if (index >= tokenList.length) {
+    if (index >= tokenList.length && isLoadingTokenList) {
       return (
         <div style={style} className="flex items-center justify-center h-14">
           <span>Loading more tokens...</span>
@@ -34,6 +35,9 @@ function InfiniteTokenFeedList({
       )
     }
     const token = tokenList[index]
+    if (!token) {
+      return null
+    }
     return (
       <div style={style}>
         <TokenFeedCard token={token} currentFilters={currentFilters} />
@@ -57,7 +61,7 @@ function InfiniteTokenFeedList({
           itemCount={itemCount}
           onItemsRendered={onItemsRendered}
           ref={ref}
-          height={clamp(tokenList.length * 105, 105 * 5, screen.height - 300)}
+          height={clamp(tokenList.length * 105, 105 * 10, screen.height)}
           itemSize={105}
           overscanCount={20}
         >
