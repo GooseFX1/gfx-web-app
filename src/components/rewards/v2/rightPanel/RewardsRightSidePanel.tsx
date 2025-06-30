@@ -63,7 +63,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
         </RewardInfoRow>
         <RewardInfoRow
           label={'Earning Rate'}
-          tooltip={`Your APY or annualized return estimate based on daily fees.`}
+          tooltip={`This APY is calculated on a rolling 7D window and then annualized.`}
         >
           {apy}% APY
         </RewardInfoRow>

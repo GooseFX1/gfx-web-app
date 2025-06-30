@@ -220,7 +220,8 @@ export default function RewardsLeftSidePanel(): JSX.Element {
         px-2 min-md:px-[11%]`}
         >
           *Our rewards program shares revenue from protocol fees. While staked, your GOFX is locked for 7 days and
-          can't be sold or transferred. To unstake your GOFX, wait for the cooldown period to complete.
+          can't be sold or transferred. To unstake your GOFX, wait for the cooldown period to complete. APY is
+          generated from a 7D rolling average, and then annualized. Please be aware it is not calculated on a 24H basis.
         </p>
       </div>
     </RewardsLeftLayout>
