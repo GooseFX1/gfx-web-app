@@ -284,7 +284,7 @@ export const CreatePool = (): JSX.Element => {
                   {currentSlide === 0 ? 'Next' : 'Create & Deposit'}
                 </Button>
               ) : (
-                <Connect />
+                <Connect fullWidth={true} />
               )}
             </div>
           </DialogBody>

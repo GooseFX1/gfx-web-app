@@ -23,6 +23,7 @@ import BigNumber from 'bignumber.js'
 import { TokenRewardsDrawer } from '@/components/token-rewards'
 import useStatsQuery from '@/queries/GAMMA/useStatsQuery'
 import RewardsPrograms from '@/components/marketingCollabs/RewardsPrograms'
+import { CreatePool } from './CreatePool'
 
 export const FarmHeader: FC = () => {
   const {
@@ -107,6 +108,7 @@ export const FarmHeader: FC = () => {
   return (
     <div className="mt-[15px]">
       <TokenRewardsDrawer isOpen={openRewardsDrawer} setOpen={setOpenRewardsDrawer} />
+      <CreatePool />
 
       <div className={'max-sm:px-2.5 px-5'}>
         <DocsBanner />
