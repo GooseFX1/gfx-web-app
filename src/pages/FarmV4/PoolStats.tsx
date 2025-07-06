@@ -1,7 +1,7 @@
 import { FC, ReactElement, useEffect, useMemo, useState } from 'react'
 import { Badge, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import { GAMMAPool } from '@/types/gamma'
-import { numberFormatter } from '@/utils'
+import { numberFormatter } from '@/utils/math'
 import BigNumber from 'bignumber.js'
 import { fetchTokensByPublicKey } from '@/api/gamma'
 import { getPoolValuesByRange } from '@/pages/FarmV4/FarmRow'

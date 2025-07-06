@@ -15,8 +15,8 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import useSolSub from '@/hooks/useSolSub'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject } from '@/web3'
-import { bigNumberFormatter, numberFormatter, truncateBigString, withdrawBigStringSSL } from '@/utils'
-import { SkeletonCommon } from '@/components'
+import { bigNumberFormatter } from '@/utils/math'
+import { SkeletonCommon } from '@/components/SkeletonCommon'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import TokenInput from '@/components/common/TokenInput'
 import { Connect } from '@/layouts'
@@ -27,6 +27,7 @@ import { toast } from 'sonner'
 import BigNumber from 'bignumber.js'
 import useTransaction from '@/hooks/useTransaction'
 import { PropsWithKey } from '@/types/helper'
+import { numberFormatter, truncateBigString } from '@/utils/math'
 
 const MIN_AMOUNT_DEPOSIT = 0.01
 const MIN_AMOUNT_WITHDRAW = 0.01

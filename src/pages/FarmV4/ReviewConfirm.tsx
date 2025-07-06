@@ -2,7 +2,7 @@ import { useGamma } from '@/context'
 import { FC, ReactElement, useMemo } from 'react'
 import { Container, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import DepositWithdrawLabel from './DepositWithdrawLabel'
-import { bigNumberFormatter, numberFormatter } from '@/utils'
+import { numberFormatter, bigNumberFormatter } from '@/utils/math'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import BigNumber from 'bignumber.js'
 

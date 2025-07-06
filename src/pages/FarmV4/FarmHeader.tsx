@@ -1,6 +1,6 @@
 import { FC, useMemo, useState } from 'react'
 import { useConnectionConfig, useDarkMode, useGamma } from '../../context'
-import { bigNumberFormatter, truncateBigNumber } from '../../utils'
+import { bigNumberFormatter, truncateBigNumber } from '@/utils/math'
 import { useWallet } from '@/hooks/useWallet'
 import {
   Button,

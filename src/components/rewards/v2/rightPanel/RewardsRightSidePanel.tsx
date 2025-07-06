@@ -1,5 +1,5 @@
 import useRewards from '../../../../context/rewardsContext'
-import { numberFormatter } from '../../../../utils'
+import { numberFormatter } from '@/utils/math'
 import RewardsClaimButton from './RewardsClaimButton'
 import React, { FC } from 'react'
 import RewardsRightLayout from '../../layout/RewardsRightLayout'

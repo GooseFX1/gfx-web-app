@@ -8,19 +8,6 @@ export const sleep = (ms: number): Promise<void> => new Promise((resolve) => set
 
 export const getUnixTs = (): number => new Date().getTime() / 1000
 
-export function abbreviateNumber(num: number, fixedNum: number): string {
-  if (!num) {
-    return '0'
-  }
-
-  const fixed = !fixedNum || fixedNum < 0 ? 0 : fixedNum
-  const b = num.toPrecision(2).split('e')
-  const k = b.length === 1 ? 0 : Math.floor(Math.min(Number(b[1].slice(1)), 14) / 3)
-  const c = Number(k < 1 ? num.toFixed(fixed) : (num / Math.pow(10, k * 3)).toFixed(1 + fixed))
-  const d = c < 0 ? c : Math.abs(c)
-  return d + ['', 'K', 'M', 'B', 'T'][k]
-}
-
 export function capitalizeFirstLetter(s: string): string {
   return `${s.charAt(0).toUpperCase()}${s.slice(1)}`
 }
@@ -54,10 +41,6 @@ export function flatten(
   })(obj, prefix)
 
   return result
-}
-
-export function monetaryFormatValue(n: number): string {
-  return isNaN(n) ? '0' : Intl.NumberFormat('en-US').format(n)
 }
 
 export function shortenAddress(address: string, chars = 4): string {
@@ -213,123 +196,6 @@ export const parseUnixTimestamp = (unixTime: string): string => {
 
 export const clamp = (num: number, min: number, max: number): number => Math.min(Math.max(num, min), max)
 
-/*
-  It takes a number as an argument, converts it into a string in the truncated form & returns it.
-  If the number is greater than 1 billion, it formats the number to a string with 2 digits after 
-  the decimal. For example 1230000000 -> 1.23B. It handles thousands, millions in the same way.
-  If the number is less than 1000, it simply returns it upto 2 decimal places.
-*/
-export const truncateBigNumber = (bigNumber: number): string | number => {
-  if (!bigNumber || bigNumber === null) return '0.00'
-
-  try {
-    if (bigNumber >= 1000000000) {
-      const nArray = (bigNumber / 1000000000).toString().split('.')
-      const beforeDecimal = nArray[0]
-      let afterDecimal = nArray.length > 1 ? nArray[1] : null
-      if (!afterDecimal || afterDecimal === '0') afterDecimal = '00'
-      else if (afterDecimal.length >= 2) afterDecimal = afterDecimal.slice(0, 2)
-      else if (afterDecimal.length < 2) afterDecimal = afterDecimal + '0'
-      return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'B'
-    }
-    if (bigNumber >= 1000000) {
-      const nArray = (bigNumber / 1000000).toString().split('.')
-      const beforeDecimal = nArray[0]
-      let afterDecimal = nArray.length > 1 ? nArray[1] : null
-      if (!afterDecimal || afterDecimal === '0') afterDecimal = '00'
-      else if (afterDecimal.length >= 2) afterDecimal = afterDecimal.slice(0, 2)
-      else if (afterDecimal.length < 2) afterDecimal = afterDecimal + '0'
-      return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'M'
-    }
-    if (bigNumber >= 1000) {
-      const nArray = (bigNumber / 1000).toString().split('.')
-      const beforeDecimal = nArray[0]
-      let afterDecimal = nArray[1]
-      if (!afterDecimal || afterDecimal === '0') afterDecimal = '00'
-      else if (afterDecimal.length >= 2) afterDecimal = afterDecimal.slice(0, 2)
-      else if (afterDecimal.length < 2) afterDecimal = afterDecimal + '0'
-      return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'K'
-    } else {
-      const nArray = bigNumber.toString().split('.')
-      const beforeDecimal = nArray[0]
-      let afterDecimal = nArray.length > 1 ? nArray[1] : null
-      if (!afterDecimal || afterDecimal === '0') afterDecimal = '00'
-      else if (afterDecimal.length >= 2) afterDecimal = afterDecimal.slice(0, 2)
-      else if (afterDecimal.length < 2) afterDecimal = afterDecimal + '0'
-      return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '')
-    }
-  } catch (error) {
-    console.log('BIG NUM ERROR', bigNumber)
-  }
-}
-
-/*
-  It takes a string as an argument(which is a BN converted to string) and simply adds decimal in the
-  string as BN does not supports decimals. It places the decimal by calculating the length of the string
-  and the number of decimals present in the token mint.
-  If the string is greater than 1 billion, it formats the number to a string with 2 digits after 
-  the decimal. For example 1230000000 -> 1.23B. It handles thousands, millions in the same way.
-  If the number is less than 1000, it simply returns it upto 2 decimal places.
-*/
-export const truncateBigString = (nativeString: string, mintDecimals: number): string => {
-  if (!nativeString || nativeString === null || nativeString === '0' || typeof nativeString !== 'string')
-    return '0.00'
-
-  let usdString = ''
-  const nativeStringLen = nativeString.length
-  if (nativeStringLen > mintDecimals) {
-    usdString =
-      nativeString.substring(0, nativeStringLen - mintDecimals) +
-      '.' +
-      nativeString.substring(nativeStringLen - mintDecimals, nativeStringLen - mintDecimals + 2)
-  } else {
-    let i = 0
-    let result = '0.'
-    while (i < mintDecimals - nativeStringLen) {
-      result += '0'
-      i++
-    }
-    usdString = result + nativeString
-    usdString = usdString?.substring(0, 4)
-  }
-  const decimalIndex = usdString?.indexOf('.')
-  const beforeDecimal = usdString?.substring(0, decimalIndex)
-  const length = beforeDecimal.length
-
-  try {
-    if (length > 9) {
-      const resultStr =
-        beforeDecimal.substring(0, length - 9) + '.' + beforeDecimal.substring(length - 9, length - 9 + 2)
-      return resultStr + 'B'
-    }
-    if (length > 6) {
-      const resultStr =
-        beforeDecimal.substring(0, length - 6) + '.' + beforeDecimal.substring(length - 6, length - 6 + 2)
-      return resultStr + 'M'
-    }
-    if (length > 3) {
-      const resultStr =
-        beforeDecimal.substring(0, length - 3) + '.' + beforeDecimal.substring(length - 3, length - 3 + 2)
-      return resultStr + 'K'
-    }
-    return usdString
-  } catch (error) {
-    console.log('BIG STRING ERROR', usdString)
-  }
-}
-
-/*
-  It takes the user input amount to deposit/withdraw as a string and converts it into native value 
-  by removing the decimals in the string and appending or prefixing '0' depending upon the length of
-  the user input string and the mint decimals of the token. There is an if/else block which checks whether
-  the user input string has a decimal or not. If the user input string has a decimal if block will run, otherwise 
-  else block will run.
-  For example: For 1.24 SOL input, the if block will run and append (9-2-1 = 6) zeroes to the input string where:
-  9 -> mintDecimals, 2 -> afterdecimal length(24 -> length is 2), 1(less than sign, so the while loop 
-  won't iterate for the 7th time).
-  If there are no decimals, then simply append mint - 1 zeroes. For example: For 1 SOL input, the else block will 
-  run and append (9 - 1) = 8 zeroes.
-*/
 export const convertToNativeValue = (value: string, decimals: number): string => {
   try {
     const decimalIndex = value.indexOf('.')
@@ -367,54 +233,6 @@ export const convertToNativeValue = (value: string, decimals: number): string =>
   }
 }
 
-/*
-  It takes the user deposited amount as an argument and formats the deposited native amount into a non-native
-  string and then calculates the beforeDecimal and afterDecimal part of the user deposited amount. It is then used for 
-  sorting the BN balances on clicking the sorting arrow on ui. It is done this way because the values on ui are strings
-  and we can sort string only after converting into numbers (BN in this case).
-*/
-export const formatUserBalance = (nativeBN: string, mintDecimals: number): any => {
-  if (!nativeBN || nativeBN === null || nativeBN === '0') return null
-
-  let beforeDecimalBN = new BN(0)
-  let afterDecimalBN = new BN(0)
-  let usdString = ''
-  const nativeStringLen = nativeBN?.length
-
-  if (nativeStringLen > mintDecimals) {
-    usdString =
-      nativeBN?.substring(0, nativeStringLen - mintDecimals) +
-      '.' +
-      nativeBN?.substring(nativeStringLen - mintDecimals, nativeStringLen - mintDecimals + 2)
-  } else {
-    let i = 0
-    let result = '0.'
-    while (i < mintDecimals - nativeStringLen) {
-      result += '0'
-      i++
-    }
-    usdString = result + nativeBN
-    usdString = usdString?.substring(0, 4)
-  }
-
-  const decimalIndex = usdString?.indexOf('.')
-  const beforeDecimal = usdString?.substring(0, decimalIndex)
-  const afterDecimal = usdString?.substring(decimalIndex + 1)
-  beforeDecimalBN = new BN(beforeDecimal)
-  afterDecimalBN = new BN(afterDecimal)
-
-  return {
-    beforeDecimalBN,
-    afterDecimalBN
-  }
-}
-
-/*
-  It is exactly as same as the first function, the only difference is that it does not return the string in the
-  truncated form(B,M,K). It returns the entire amount deposited by the user without any caps to decimal places. 
-  It is used to show entire deposited value when the user clicks 'Max' in 'withdraw' mode. This is to make sure that 
-  the user can see the entire deposited amount and then withdraw the cryto dust as well.
-*/
 export const withdrawBigStringSSL = (nativeString: string, mintDecimals: number): string => {
   if (!nativeString || nativeString === null || nativeString === '0' || typeof nativeString !== 'string')
     return '0.00'

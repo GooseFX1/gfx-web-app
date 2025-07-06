@@ -24,6 +24,7 @@ import { JupToken } from '@/pages/FarmV4/constants'
 import { InfiniteTokenListScrollView } from '@/pages/Swap/InfiniteTokenListSwap'
 import { useTokens } from '@/hooks/useTokens'
 import { StepCounter, totalSteps } from './StepCounter'
+import { POPULAR_TOKENS } from '@/constants'
 
 interface SelectTokenStepProps {
   currentStep: number

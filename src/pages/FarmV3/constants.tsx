@@ -3,7 +3,7 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
 import { GFX_LINK } from '../../styles'
-import { truncateBigNumber } from '../../utils'
+import { truncateBigNumber, numberFormatter } from '@/utils/math'
 
 interface Message {
   type?: string

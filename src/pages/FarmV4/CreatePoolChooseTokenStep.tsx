@@ -30,7 +30,7 @@ import Decimal from 'decimal.js-light'
 import { InfiniteTokenList } from '@/pages/FarmV4/InfiniteTokenList'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import useTokensQuery from '@/queries/useTokensQuery'
-import { POPULAR_TOKENS } from '../../constants'
+import { POPULAR_TOKENS } from '@/constants'
 
 const CreatePoolChooseTokenStep: FC<{
   tokenA: TokenListToken

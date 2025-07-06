@@ -5,6 +5,7 @@ import useFirstRender from './useFirstRender'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { clamp } from '@/utils'
 import useDebounce from '@/hooks/useDebounce'
+import { POPULAR_TOKENS } from '@/constants'
 
 export function useTokens({ searchValue: initialSearchValue }: { searchValue: string }) {
   const [tokens, setTokens] = useState<JupToken[]>([])

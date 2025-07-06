@@ -18,10 +18,11 @@ import { useBoostedRewards } from '@/context/boostedRewardsContext'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEY } from '@/queries/query.helper'
 import { useKamino } from '@/context/kaminoContext'
+import { numberFormatter as mathNumberFormatter } from '@/utils/math'
 
 const renderTokenBalance = (p: GAMMAPortfolioPool) => {
-  const ratioA = numberFormatter(+p.tokenARatio, 2)
-  const ratioB = numberFormatter(+p.tokenBRatio, 2)
+  const ratioA = mathNumberFormatter(p.tokenARatio, 2)
+  const ratioB = mathNumberFormatter(p.tokenBRatio, 2)
   return `${ratioA} / ${ratioB}`
 }
 
@@ -98,12 +99,12 @@ const MyPositionItem: FC<{
 
   const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
   const apr = activeReward
-    ? numberFormatter(
+    ? mathNumberFormatter(
         new BigNumber(formattedAPR)
           .plus(activeRewardsAmount.div(pool.tvl).multipliedBy(100).multipliedBy(365).toNumber())
           .toNumber()
       )
-    : numberFormatter(formattedAPR)
+    : mathNumberFormatter(formattedAPR)
 
   const lendingApy = apyForPool(pool)
 
@@ -164,7 +165,7 @@ const MyPositionItem: FC<{
         className="flex items-center justify-center text-regular
                           font-semibold dark:text-grey-8 text-black-4"
       >
-        ${numberFormatter(+pool.currentPositionUsd)}
+        ${mathNumberFormatter(pool.currentPositionUsd)}
       </div>
       {/* fees */}
       {isDesktop && (
@@ -228,7 +229,7 @@ const MyPositionItem: FC<{
                           />
                           <span className="font-poppins font-semibold text-[15px]">{token.symbol}</span>
                           <span className="font-display font-semibold text-[15px] ml-auto">
-                            {numberFormatter(apy)}%
+                            {mathNumberFormatter(apy)}%
                           </span>
                         </div>
                       )
@@ -249,7 +250,7 @@ const MyPositionItem: FC<{
                       />
                       <span className="font-poppins font-semibold text-[15px]">{reward.token.symbol}</span>
                       <span className="font-display font-semibold text-[15px] ml-auto">
-                        {numberFormatter(
+                        {mathNumberFormatter(
                           reward.pricePerDayUsd.div(pool.tvl).multipliedBy(100).multipliedBy(365).toNumber()
                         )}
                         %

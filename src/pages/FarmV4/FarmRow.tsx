@@ -15,12 +15,13 @@ import { useDarkMode, useGamma } from '@/context'
 import useBreakpoint from '../../hooks/useBreakPoint'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
-import { loadIconImage, numberFormatter } from '@/utils'
+import { loadIconImage } from '@/utils'
 import { IconWithFallback } from '@/components/common/IconWithFallback'
 import BigNumber from 'bignumber.js'
 import { PublicKey } from '@solana/web3.js'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
 import { useKamino } from '@/context/kaminoContext'
+import { numberFormatter } from '@/utils/math'
 type FarmRowProps = {
   pool: GAMMAPoolWithUserLiquidity
   props?: any
