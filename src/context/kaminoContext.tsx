@@ -1,7 +1,6 @@
 import React, { createContext, FC, ReactNode, useCallback, useContext } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { INTERVALS } from '@/utils/time'
-import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { QUERY_KEY } from '@/queries/query.helper'
 import { fetchTokensByPublicKey } from '@/api/gamma'
 import { TokenListToken } from './gamma'
@@ -23,7 +22,7 @@ interface KaminoReserve {
 interface IKaminoConfig {
     kaminoReserves: KaminoReserve[] | undefined
     getKaminoReservePerToken: (tokenMint: string) => KaminoReserve | undefined
-    apyForPool: (pool: GAMMAPoolWithUserLiquidity) => {apy: number, token: TokenListToken}[]
+    apyForPool: (mintA: string, mintB: string) => {apy: number, token: TokenListToken}[]
 }
 
 const KaminoContext = createContext<IKaminoConfig | null>(null)
@@ -59,9 +58,9 @@ export const KaminoProvider: FC<{ children: ReactNode }> = ({ children }) => {
         staleTime: INTERVALS.MINUTE * 5
     })
 
-    const apyForPool = useCallback((pool: GAMMAPoolWithUserLiquidity) => {
-        const reserve1 = getKaminoReservePerToken(pool.mintA.address)
-        const reserve2 = getKaminoReservePerToken(pool.mintB.address)
+    const apyForPool = useCallback((mintA: string, mintB: string): {apy: number, token: TokenListToken}[] => {
+        const reserve1 = getKaminoReservePerToken(mintA)
+        const reserve2 = getKaminoReservePerToken(mintB)
         if (!reserve1 && !reserve2) return []
 
         const apyList = []

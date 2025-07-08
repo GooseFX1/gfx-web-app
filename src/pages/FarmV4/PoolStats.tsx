@@ -8,10 +8,13 @@ import { getPoolValuesByRange } from '@/pages/FarmV4/FarmRow'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
 import { PublicKey } from '@solana/web3.js'
 import { useGamma } from '@/context'
+import { useKamino } from '@/context/kaminoContext'
 
 export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
+  if (!pool.mintA || !pool.mintB) return <></>
   const { viewRange } = useGamma()
   const { getActiveRewardByPoolId } = useBoostedRewards()
+  const { apyForPool } = useKamino()
   const poolTVL = useMemo(() => {
     const liquidity = parseFloat(pool.tvl)
     return liquidity ? numberFormatter(Math.max(0, liquidity)) : '0.00'
@@ -23,17 +26,35 @@ export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
 
   const [fees, setFees] = useState<string>('Loading')
 
-  const activeReward = getActiveRewardByPoolId(pool.id ? new PublicKey(pool.id) : PublicKey.default)
-  const { formattedAPR } = useMemo(() => getPoolValuesByRange(pool, viewRange), [pool.stats, viewRange])
+  // --- BEGIN: APR calculation logic copied from FarmRow.tsx ---
+  const { tradeAPR } = useMemo(() => getPoolValuesByRange(pool, viewRange), [pool.stats, viewRange])
 
-  const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
-  const apr = activeReward
-    ? numberFormatter(
-        new BigNumber(formattedAPR)
-          .plus(activeRewardsAmount.div(pool.tvl).multipliedBy(100).multipliedBy(365).toNumber())
-          .toNumber()
-      )
-    : numberFormatter(formattedAPR)
+  const lendingApy = useMemo(
+    () => (pool.mintA && pool.mintB ? apyForPool(pool.mintA.address, pool.mintB.address) : []),
+    [pool]
+  )
+  const lendingApySum = useMemo(() => lendingApy.reduce((acc, curr) => acc + curr.apy, 0), [lendingApy])
+
+  const activeReward = useMemo(
+    () => getActiveRewardByPoolId(new PublicKey(pool.id)),
+    [pool.id, getActiveRewardByPoolId]
+  )
+
+  const activeRewardsAmount = useMemo(
+    () => activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0)),
+    [activeReward]
+  )
+
+  const activeRewardsApr = useMemo(
+    () => activeRewardsAmount.div(pool.tvl).multipliedBy(100).multipliedBy(365),
+    [activeRewardsAmount, pool.tvl]
+  )
+
+  const apr = useMemo(
+    () => numberFormatter(new BigNumber(tradeAPR).plus(lendingApySum).plus(activeRewardsApr).toNumber()),
+    [tradeAPR, lendingApySum, activeRewardsApr, numberFormatter]
+  )
+  // --- END: APR calculation logic copied from FarmRow.tsx ---
 
   useEffect(() => {
     ;(async () => {

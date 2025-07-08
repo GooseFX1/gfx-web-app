@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { Badge, Button, Icon, Tooltip, TooltipContent, TooltipTrigger, cn } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import { PublicKey } from '@solana/web3.js'
@@ -92,20 +92,31 @@ const MyPositionItem: FC<{
   const { mode } = useDarkMode()
 
   const { apyForPool } = useKamino()
-  const activeReward = activeRewards?.[pool.id]
+  const activeReward = activeRewards?.[pool.id] || []
   const isOwner = base58PublicKey === pool.poolCreator
-  const { formattedAPR, tradeAPR } = getPoolValuesByRange(pool, viewRange)
+  const { tradeAPR } = useMemo(() => getPoolValuesByRange(pool, viewRange), [pool, viewRange])
 
-  const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
-  const apr = activeReward
-    ? numberFormatter(
-        new BigNumber(formattedAPR)
-          .plus(activeRewardsAmount.div(pool.tvl).multipliedBy(100).multipliedBy(365).toNumber())
-          .toNumber()
-      )
-    : numberFormatter(formattedAPR)
+  // --- BEGIN: APR calculation logic copied from FarmRow.tsx ---
+  const lendingApyList = useMemo(
+    () => (pool?.mintA && pool?.mintB ? apyForPool(pool.mintA.address, pool.mintB.address) : []),
+    [pool, apyForPool]
+  )
+  const lendingApySum = useMemo(() => lendingApyList.reduce((acc, curr) => acc + curr.apy, 0), [lendingApyList])
 
-  const lendingApy = apyForPool(pool)
+  const activeRewardsAmount = useMemo(
+    () => activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0)),
+    [activeReward]
+  )
+
+  const activeRewardsApr = useMemo(
+    () => activeRewardsAmount.div(pool?.tvl || 0).multipliedBy(100).multipliedBy(365),
+    [activeRewardsAmount, pool?.tvl]
+  )
+
+  const apr = useMemo(
+    () => numberFormatter(new BigNumber(tradeAPR).plus(lendingApySum).plus(activeRewardsApr).toNumber()),
+    [tradeAPR, lendingApySum, activeRewardsApr, numberFormatter]
+  )
 
   return (
     <div
@@ -206,18 +217,18 @@ const MyPositionItem: FC<{
           <TooltipContent className="w-[266px] max-w-[266px] p-2">
             <div className="">
               {/* should only show if kaminoUSD is greater than 0 or activeReward */}
-              {lendingApy.length > 0 || activeReward ? (
+              {lendingApyList.length > 0 || activeReward ? (
                 <div className="flex flex-row justify-between mb-2">
                   <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
                   <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
                 </div>
               ) : null}
 
-              {lendingApy.length > 0 && !isMobile && (
+              {lendingApyList.length > 0 && !isMobile && (
                 <div>
                   <h2 className="text-[13px] text-primary-gradient mb-2">Kamino Yield</h2>
 
-                  {lendingApy.map(
+                  {lendingApyList.map(
                     ({ apy, token }, index) =>
                       apy > 0 && (
                         <div key={`${token.symbol}-${index}`} className="flex flex-row items-center mb-2">
@@ -258,7 +269,7 @@ const MyPositionItem: FC<{
                   ))}
                 </div>
               )}
-              {lendingApy.length > 0 || activeReward ? (
+              {lendingApyList.length > 0 || activeReward ? (
                 <div
                   className="w-full h-[1px] border-t-1 border-border-lightmode-secondary 
               dark:border-border-darkmode-secondary my-2"

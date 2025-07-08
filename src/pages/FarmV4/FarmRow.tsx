@@ -38,23 +38,37 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
     const liquidity = parseFloat(pool.tvl)
     return liquidity ? numberFormatter(Math.max(0, liquidity)) : '0.00'
   }, [pool])
-  const { formattedVolume, formattedFees, formattedAPR, tradeAPR } = useMemo(
+
+  const { formattedVolume, formattedFees, tradeAPR } = useMemo(
     () => getPoolValuesByRange(pool, viewRange),
     [pool.stats, viewRange]
   )
 
-  const activeReward = getActiveRewardByPoolId(new PublicKey(pool.id))
+  const lendingApy = useMemo(
+    () => (pool && pool.mintA && pool.mintB ? apyForPool(pool.mintA.address, pool.mintB.address) : []),
+    [pool]
+  )
+  const lendingApySum = useMemo(() => lendingApy.reduce((acc, curr) => acc + curr.apy, 0), [lendingApy])
 
-  const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
-  const apr = activeReward
-    ? numberFormatter(
-        new BigNumber(formattedAPR)
-          .plus(activeRewardsAmount.div(pool.tvl).multipliedBy(100).multipliedBy(365).toNumber())
-          .toNumber()
-      )
-    : numberFormatter(formattedAPR)
+  const activeReward = useMemo(
+    () => getActiveRewardByPoolId(new PublicKey(pool.id)),
+    [pool.id, getActiveRewardByPoolId]
+  )
 
-  const lendingApy = apyForPool(pool)
+  const activeRewardsAmount = useMemo(
+    () => activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0)),
+    [activeReward]
+  )
+
+  const activeRewardsApr = useMemo(
+    () => activeRewardsAmount.div(pool.tvl).multipliedBy(100).multipliedBy(365),
+    [activeRewardsAmount, pool.tvl]
+  )
+
+  const apr = useMemo(
+    () => numberFormatter(new BigNumber(tradeAPR).plus(lendingApySum).plus(activeRewardsApr).toNumber()),
+    [tradeAPR, lendingApySum, activeRewardsApr, numberFormatter]
+  )
 
   return (
     <div
@@ -197,10 +211,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
                     />
                     <span className="font-poppins font-semibold text-[15px]">{reward.token.symbol}</span>
                     <span className="font-display font-semibold text-[15px] ml-auto">
-                      {numberFormatter(
-                        reward.pricePerDayUsd.div(pool.tvl).multipliedBy(100).multipliedBy(365).toNumber()
-                      )}
-                      %
+                      {numberFormatter(reward.pricePerDayUsd.div(pool.tvl).multipliedBy(100).multipliedBy(365))}%
                     </span>
                   </div>
                 ))}
@@ -282,27 +293,18 @@ export const getPoolValuesByRange = (pool, viewRange) => {
     return {
       formattedVolume: '0.00',
       formattedFees: '0.00',
-      formattedAPR: 0,
       tradeAPR: '0.00',
-      kaminoAPR: '0.00',
+      kaminoAPRAPI: '0.00',
       kaminoUSD: '0.00'
     }
   }
   switch (viewRange) {
     case 0:
       return {
-        formattedVolume: numberFormatter(
-          Math.max(0, pool.stats.daily.volumeTokenAUsd)
-        ),
+        formattedVolume: numberFormatter(Math.max(0, pool.stats.daily.volumeTokenAUsd)),
         formattedFees: numberFormatter(Math.max(0, pool.stats.daily.feesUsd)),
-        formattedAPR: Math.max(
-          0,
-          pool.stats.daily.feesAprUsd +
-            pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd +
-            pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
-        ),
         tradeAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUsd)),
-        kaminoAPR: numberFormatter(
+        kaminoAPRAPI: numberFormatter(
           Math.max(
             0,
             pool.stats.daily.withdrawnKaminoProfitTokenAAprUsd + pool.stats.daily.withdrawnKaminoProfitTokenBAprUsd
@@ -317,18 +319,10 @@ export const getPoolValuesByRange = (pool, viewRange) => {
       }
     case 1:
       return {
-        formattedVolume: numberFormatter(
-          Math.max(0, pool.stats.weekly.volumeTokenAUsd)
-        ),
+        formattedVolume: numberFormatter(Math.max(0, pool.stats.weekly.volumeTokenAUsd)),
         formattedFees: numberFormatter(Math.max(0, pool.stats.weekly.feesUsd)),
-        formattedAPR: Math.max(
-          0,
-          pool.stats.weekly.feesAprUsd +
-            pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
-            pool.stats.weekly.withdrawnKaminoProfitTokenBAprUsd
-        ),
         tradeAPR: numberFormatter(Math.max(0, pool.stats.weekly.feesAprUsd)),
-        kaminoAPR: numberFormatter(
+        kaminoAPRAPI: numberFormatter(
           Math.max(
             0,
             pool.stats.weekly.withdrawnKaminoProfitTokenAAprUsd +
@@ -344,18 +338,10 @@ export const getPoolValuesByRange = (pool, viewRange) => {
       }
     case 2:
       return {
-        formattedVolume: numberFormatter(
-          Math.max(0, pool.stats.monthly.volumeTokenAUsd)
-        ),
+        formattedVolume: numberFormatter(Math.max(0, pool.stats.monthly.volumeTokenAUsd)),
         formattedFees: numberFormatter(Math.max(0, pool.stats.monthly.feesUsd)),
-        formattedAPR: Math.max(
-          0,
-          pool.stats.monthly.feesAprUsd +
-            pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +
-            pool.stats.monthly.withdrawnKaminoProfitTokenBAprUsd
-        ),
         tradeAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUsd)),
-        kaminoAPR: numberFormatter(
+        kaminoAPRAPI: numberFormatter(
           Math.max(
             0,
             pool.stats.monthly.withdrawnKaminoProfitTokenAAprUsd +

@@ -8,6 +8,7 @@ import BigNumber from 'bignumber.js'
 import { useBoostedRewards } from '@/context/boostedRewardsContext'
 import { getPoolValuesByRange } from './FarmRow'
 import { PublicKey } from '@solana/web3.js'
+import { useKamino } from '@/context/kaminoContext'
 
 export const ReviewConfirm: FC<{
   tokenAActionValue: string
@@ -17,6 +18,7 @@ export const ReviewConfirm: FC<{
   const { selectedCard, referralDetails, viewRange } = useGamma()
   const { balance } = useWalletBalance()
   const { getActiveRewardByPoolId } = useBoostedRewards()
+  const { apyForPool } = useKamino()
   const depositValue = useMemo(() => {
     const depositAValue = new BigNumber(balance[selectedCard?.mintA?.address]?.price).multipliedBy(
       tokenAActionValue
@@ -27,23 +29,59 @@ export const ReviewConfirm: FC<{
 
     return depositAValue.plus(depositBValue)
   }, [balance, selectedCard, tokenBActionValue, tokenAActionValue])
+ 
+  const lendingApy = useMemo(
+    () =>
+      selectedCard?.mintA?.address && selectedCard?.mintB?.address
+        ? apyForPool(selectedCard.mintA.address, selectedCard.mintB.address)
+        : [],
+    [selectedCard, apyForPool]
+  )
+  const lendingApySum = useMemo(
+    () => lendingApy.reduce((acc, curr) => acc + curr.apy, 0),
+    [lendingApy]
+  )
 
-  // TODO: calculate estimated fee emmision in token value
-  const apr = useMemo(() => {
-    if (!selectedCard) return '0'
-    const { formattedAPR } = getPoolValuesByRange(selectedCard, viewRange)
-    const activeReward = getActiveRewardByPoolId(selectedCard.id ? new PublicKey(selectedCard.id) : PublicKey.default)
-    const activeRewardsAmount = activeReward?.reduce((acc, curr) => acc.plus(curr.pricePerDayUsd), new BigNumber(0))
-    const poolTvl = new BigNumber(selectedCard.tvl || 0)
-    if (activeReward && poolTvl.gt(0)) {
-      return numberFormatter(
-        new BigNumber(formattedAPR)
-          .plus(activeRewardsAmount.div(poolTvl).multipliedBy(100).multipliedBy(365).toNumber())
+  const activeReward = useMemo(
+    () => selectedCard?.id ? getActiveRewardByPoolId(new PublicKey(selectedCard.id)) : [],
+    [selectedCard, getActiveRewardByPoolId]
+  )
+
+  const activeRewardsAmount = useMemo(
+    () =>
+      activeReward?.reduce(
+        (acc, curr) => acc.plus(curr.pricePerDayUsd),
+        new BigNumber(0)
+      ) || new BigNumber(0),
+    [activeReward]
+  )
+
+  const activeRewardsApr = useMemo(
+    () =>
+      selectedCard?.tvl && activeRewardsAmount
+        ? activeRewardsAmount
+            .div(selectedCard.tvl)
+            .multipliedBy(100)
+            .multipliedBy(365)
+        : new BigNumber(0),
+    [activeRewardsAmount, selectedCard]
+  )
+
+  const { tradeAPR } = useMemo(
+    () => selectedCard ? getPoolValuesByRange(selectedCard, viewRange) : { tradeAPR: '0' },
+    [selectedCard, viewRange]
+  )
+
+  const apr = useMemo(
+    () =>
+      numberFormatter(
+        new BigNumber(tradeAPR)
+          .plus(lendingApySum)
+          .plus(activeRewardsApr)
           .toNumber()
-      )
-    }
-    return numberFormatter(formattedAPR)
-  }, [selectedCard, viewRange, getActiveRewardByPoolId])
+      ),
+    [tradeAPR, lendingApySum, activeRewardsApr, numberFormatter]
+  )
 
   return (
     <>
