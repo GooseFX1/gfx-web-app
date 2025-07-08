@@ -26,7 +26,6 @@ export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
 
   const [fees, setFees] = useState<string>('Loading')
 
-  // --- BEGIN: APR calculation logic copied from FarmRow.tsx ---
   const { tradeAPR } = useMemo(() => getPoolValuesByRange(pool, viewRange), [pool.stats, viewRange])
 
   const lendingApy = useMemo(

@@ -96,7 +96,6 @@ const MyPositionItem: FC<{
   const isOwner = base58PublicKey === pool.poolCreator
   const { tradeAPR } = useMemo(() => getPoolValuesByRange(pool, viewRange), [pool, viewRange])
 
-  // --- BEGIN: APR calculation logic copied from FarmRow.tsx ---
   const lendingApyList = useMemo(
     () => (pool?.mintA && pool?.mintB ? apyForPool(pool.mintA.address, pool.mintB.address) : []),
     [pool, apyForPool]
