@@ -219,7 +219,7 @@ const MyPositionItem: FC<{
               {lendingApyList.length > 0 || activeReward ? (
                 <div className="flex flex-row justify-between mb-2">
                   <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
-                  <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
+                  <span className="font-display font-semibold text-[15px]">{numberFormatter(tradeAPR)}%</span>
                 </div>
               ) : null}
 

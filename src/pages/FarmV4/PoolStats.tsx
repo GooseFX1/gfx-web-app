@@ -53,7 +53,6 @@ export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
     () => numberFormatter(new BigNumber(tradeAPR).plus(lendingApySum).plus(activeRewardsApr).toNumber()),
     [tradeAPR, lendingApySum, activeRewardsApr, numberFormatter]
   )
-  // --- END: APR calculation logic copied from FarmRow.tsx ---
 
   useEffect(() => {
     ;(async () => {

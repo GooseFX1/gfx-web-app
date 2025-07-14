@@ -66,8 +66,11 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
   )
 
   const apr = useMemo(
-    () => numberFormatter(new BigNumber(tradeAPR).plus(lendingApySum).plus(activeRewardsApr).toNumber()),
-    [tradeAPR, lendingApySum, activeRewardsApr, numberFormatter]
+    () => {
+      const apr = new BigNumber(tradeAPR).plus(lendingApySum).plus(activeRewardsApr).toNumber()
+      return numberFormatter(apr)
+    },
+    [tradeAPR, lendingApySum, activeRewardsApr]
   )
 
   return (
@@ -171,7 +174,7 @@ const FarmRow: FC<FarmRowProps> = ({ pool, ...props }) => {
             {lendingApy.length > 0 || activeReward ? (
               <div className="flex flex-row justify-between mb-2">
                 <span className="font-poppins font-semibold text-[15px]">Trade APR</span>
-                <span className="font-display font-semibold text-[15px]">{tradeAPR}%</span>
+                <span className="font-display font-semibold text-[15px]">{numberFormatter(tradeAPR)}%</span>
               </div>
             ) : null}
 
@@ -303,7 +306,7 @@ export const getPoolValuesByRange = (pool, viewRange) => {
       return {
         formattedVolume: numberFormatter(Math.max(0, pool.stats.daily.volumeTokenAUsd)),
         formattedFees: numberFormatter(Math.max(0, pool.stats.daily.feesUsd)),
-        tradeAPR: numberFormatter(Math.max(0, pool.stats.daily.feesAprUsd)),
+        tradeAPR: Math.max(0, pool.stats.daily.feesAprUsd),
         kaminoAPRAPI: numberFormatter(
           Math.max(
             0,
@@ -321,7 +324,7 @@ export const getPoolValuesByRange = (pool, viewRange) => {
       return {
         formattedVolume: numberFormatter(Math.max(0, pool.stats.weekly.volumeTokenAUsd)),
         formattedFees: numberFormatter(Math.max(0, pool.stats.weekly.feesUsd)),
-        tradeAPR: numberFormatter(Math.max(0, pool.stats.weekly.feesAprUsd)),
+        tradeAPR: Math.max(0, pool.stats.weekly.feesAprUsd),
         kaminoAPRAPI: numberFormatter(
           Math.max(
             0,
@@ -340,7 +343,7 @@ export const getPoolValuesByRange = (pool, viewRange) => {
       return {
         formattedVolume: numberFormatter(Math.max(0, pool.stats.monthly.volumeTokenAUsd)),
         formattedFees: numberFormatter(Math.max(0, pool.stats.monthly.feesUsd)),
-        tradeAPR: numberFormatter(Math.max(0, pool.stats.monthly.feesAprUsd)),
+        tradeAPR: Math.max(0, pool.stats.monthly.feesAprUsd),
         kaminoAPRAPI: numberFormatter(
           Math.max(
             0,
