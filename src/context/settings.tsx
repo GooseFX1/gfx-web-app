@@ -52,7 +52,7 @@ const banned_countries = countries.map((c) => c.code)
 
 export const DEFAULT_SLIPPAGE = 0.005
 export const DEFAULT_ENDPOINT_NAME = 'Helius'
-export type EndPointName = 'Custom' | 'QuickNode' | 'Helius'
+export type EndPointName = 'Custom' | 'Helius'
 
 export type RPC = {
   chainId: ENV
@@ -61,12 +61,6 @@ export type RPC = {
   network: WalletAdapterNetwork
 }
 
-export const QN_RPC: RPC = {
-  chainId: ENV.MainnetBeta,
-  name: 'QuickNode',
-  endpoint: `https://rpc-proxy.goosefx.workers.dev`,
-  network: WalletAdapterNetwork.Mainnet
-}
 export const HELIUS_RPC: RPC = {
   chainId: ENV.MainnetBeta,
   name: 'Helius',
@@ -80,7 +74,6 @@ const CUSTOM_RPC: RPC = {
   network: WalletAdapterNetwork.Mainnet
 }
 export const RPCs = {
-  QuickNode: QN_RPC,
   Helius: HELIUS_RPC,
   Custom: CUSTOM_RPC
 }
