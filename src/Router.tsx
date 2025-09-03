@@ -20,16 +20,10 @@ import { Swap } from '@/pages/Swap'
 import { SwapProvider } from '@/context/newSwap'
 import { BoostedRewardsProvider } from './context/boostedRewardsContext'
 import { KaminoProvider } from './context/kaminoContext'
-import TokenFeedProvider from './context/tokenFeedContext'
 
 const Bridge = lazy(() => import('./pages/Bridge'))
 const GenericNotFound = lazy(() => import('./pages/InvalidUrl'))
-const AnalyticsWrapper = lazy(() => import('./pages/Analytics/AnalyticsWrapper'))
-const SSLAnalyticsDashboard = lazy(() => import('./pages/Analytics/ssl/SSLAnalyticsDashboard'))
-const Farm = lazy(() => import('./pages/FarmV3/Farm'))
 const FarmV4 = lazy(() => import('./pages/FarmV4/Farm'))
-const TokenFeed = lazy(() => import('./pages/TokenFeed/TokenFeed'))
-const CoinGeckoPairs = lazy(() => import('./pages/Analytics/ssl/SSLPairs'))
 
 const WRAPPER_STYLES: CSSProperties = {
   flex: '1',
@@ -70,7 +64,7 @@ function PageLoader() {
 }
 
 export const Router: FC = () => {
-  const { isUnderMaintenance, featureFlags } = useConnectionConfig()
+  const { isUnderMaintenance } = useConnectionConfig()
 
   return (
     <BrowserRouter>
@@ -99,8 +93,6 @@ export const Router: FC = () => {
                             />
                           )}
                           <Route path="/bridge" element={<Bridge />} />
-                          <Route path="/ssl" element={<Farm />} />
-                          <Route path="/ssl/temp-withdraw" element={<Farm />} />
                           <Route
                             path={ROUTES.GAMMA}
                             element={
@@ -149,22 +141,6 @@ export const Router: FC = () => {
                               </GammaProvider>
                             }
                           />
-                          {featureFlags.tokenFeed && (
-                            <Route
-                              path={ROUTES.TOKEN_FEED}
-                              element={
-                                <GammaProvider>
-                                  <KaminoProvider>
-                                    <BoostedRewardsProvider>
-                                      <TokenFeedProvider>
-                                        <TokenFeed />
-                                      </TokenFeedProvider>{' '}
-                                    </BoostedRewardsProvider>
-                                  </KaminoProvider>
-                                </GammaProvider>
-                              }
-                            />
-                          )}
                           <Route
                             path="/swap"
                             element={
@@ -173,9 +149,6 @@ export const Router: FC = () => {
                               </SwapProvider>
                             }
                           />
-                          <Route path="/analytics" element={<AnalyticsWrapper />} />
-                          <Route path="/analytics/ssl" element={<SSLAnalyticsDashboard />} />
-                          <Route path="/analytics/ssl/pairdata" element={<CoinGeckoPairs />} />
                           <Route path="*" element={<GenericNotFound />} />
                         </Routes>
                       </Suspense>

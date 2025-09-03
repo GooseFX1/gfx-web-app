@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { RewardsButton } from '../components/rewards/RewardsPopup'
-import { useConnectionConfig, useDarkMode, useRewardToggle } from '../context'
+import { useDarkMode, useRewardToggle } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -41,7 +41,6 @@ import SocialLinks from '@/components/common/SocialLinks'
 import { NAV_LINKS, navigateTo, navigateToCurried } from '@/utils/requests'
 import { FooterDivider } from '@/layouts/Footer'
 import PriorityFee from '@/components/footer/PriorityFee'
-import { ROUTES } from '@/Router'
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
@@ -136,12 +135,11 @@ const MobileAccordionContent: FC<MobileAccordionContentProps> = ({
 )
 const MobileNav: FC = () => {
   const breakpoint = useBreakPoint()
-  const { featureFlags } = useConnectionConfig()
   const { mode } = useDarkMode()
   const { pathname } = useLocation()
   const [isOpen, setIsOpen] = useBoolean(false)
   const navigate = useNavigate()
-  const isMoreOpen = pathname.includes('bridge') || pathname.includes('ssl')
+  const isMoreOpen = pathname.includes('bridge')
 
   if (breakpoint.isLaptop || breakpoint.isDesktop) return null
   return (
@@ -181,31 +179,6 @@ const MobileNav: FC = () => {
                 />
                 &nbsp;Swap
               </ListItem>
-              {featureFlags.tokenFeed && (
-                <ListItem
-                  variant={pathname.includes(ROUTES.TOKEN_FEED) && 'primary'}
-                  className={cn(
-                    `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
-                         dark:text-text-darkmode-tertiary h-[43px]`,
-                    pathname.includes(ROUTES.TOKEN_FEED)
-                      ? 'text-text-lightmode-primary dark:text-text-darkmode-primary'
-                      : ''
-                  )}
-                  onClick={() => {
-                    setIsOpen.off()
-                    navigate('/token-feed')
-                  }}
-                >
-                  <img
-                    className="!h-[35px] !w-[35px] p-1.5 aspect-square"
-                    src={`/img/mainnav/token_feed_${mode}${
-                      pathname.includes(ROUTES.TOKEN_FEED) ? '_active' : '_inactive'
-                    }.svg`}
-                    alt="dark"
-                  />
-                  &nbsp;Trade
-                </ListItem>
-              )}
               <ListItem
                 variant={pathname.includes('gamma') && 'primary'}
                 className={cn(
@@ -227,7 +200,7 @@ const MobileNav: FC = () => {
               </ListItem>
 
               <Accordion type={'single'} collapsible variant={'unset'}>
-                <AccordionItem value={'ssl'} variant={'unset'}>
+                <AccordionItem value={'more'} variant={'unset'}>
                   <AccordionTrigger variant={'primary'} isSelected={isMoreOpen} className={'text-h3  px-1.25'}>
                     <span
                       className={`inline-flex items-center font-poppins font-semibold font-inherit text-inherit`}
@@ -241,15 +214,6 @@ const MobileNav: FC = () => {
                     </span>
                   </AccordionTrigger>
                   <AccordionContent variant={'unset'} className={'flex flex-col gap-1.5 pt-2.5'}>
-                    <MobileAccordionContent
-                      title={'SSL'}
-                      description={'LP using a single asset'}
-                      onClick={() => {
-                        setIsOpen.off()
-                        navigate('/ssl')
-                      }}
-                      isActive={pathname.includes('ssl')}
-                    />
                     <MobileAccordionContent
                       title={'Bridge'}
                       description={'Bridge your assets to and from other chains'}
@@ -301,7 +265,6 @@ const MobileNav: FC = () => {
 
 const DesktopNav: FC = () => {
   const breakpoint = useBreakPoint()
-  const { featureFlags } = useConnectionConfig()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -310,7 +273,7 @@ const DesktopNav: FC = () => {
   const { mode } = useDarkMode()
   if (breakpoint.isMobile || breakpoint.isTablet) return null
 
-  const isMoreActive = pathname.includes('bridge') || pathname.includes('ssl')
+  const isMoreActive = pathname.includes('bridge')
 
   return (
     <div className={`flex items-center gap-6 mx-auto`}>
@@ -329,28 +292,6 @@ const DesktopNav: FC = () => {
         />
         <h6 className={'h-6 leading-4'}>Swap</h6>
       </Button>
-      {featureFlags.tokenFeed && (
-        <Button
-          variant={'ghost'}
-          onClick={() => navigate(ROUTES.TOKEN_FEED)}
-          className={cn(
-            `tracking-wider flex-col gap-[2px] p-0 text-center text-h6 font-semibold font-poppins justify-center
-            leading-4`,
-            pathname.includes(ROUTES.TOKEN_FEED)
-              ? 'text-text-lightmode-primary dark:text-text-darkmode-primary'
-              : ''
-          )}
-        >
-          <img
-            className="!w-[24px] !h-[24px] p-0.5 "
-            src={`/img/mainnav/token_feed_${mode}${
-              pathname.includes(ROUTES.TOKEN_FEED) ? '_active' : '_inactive'
-            }.svg`}
-            alt="dark"
-          />
-          <h6 className={'h-6 leading-4'}>Trade</h6>
-        </Button>
-      )}
       <Button
         variant={'ghost'}
         onClick={() => navigate('/gamma')}
@@ -393,12 +334,6 @@ const DesktopNav: FC = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent portal={false} className={'mt-3 w-[300px]'}>
-          <DropdownMenuItem onClick={() => navigate('/ssl')} isActive={pathname.includes('ssl')}>
-            <div>
-              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>SSL</h4>
-              <p className={'text-b3'}>LP using a single asset</p>
-            </div>
-          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => navigate('/bridge')} isActive={pathname.includes('bridge')}>
             <div>
               <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Bridge</h4>

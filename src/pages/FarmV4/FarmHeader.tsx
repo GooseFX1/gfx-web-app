@@ -225,7 +225,6 @@ const CreateDropdownMenu = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const { mode } = useDarkMode()
-  const {setIsCreatePool} = useGamma()
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -245,34 +244,6 @@ const CreateDropdownMenu = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[258px]">
-        <DropdownMenuItem
-          onClick={() => {
-            setIsCreatePool(true)
-          }}
-        >
-          <div className={`rounded-sm transition-colors text-left cursor-pointer flex flex-row gap-2`}>
-            <Icon
-              src={`/img/assets/create-pool-${mode}.svg`}
-              alt="Rewards"
-              className="w-[20px] h-[20px] max-w-[20px] max-h-[20px]"
-            />
-            <div className="flex flex-col gap-1">
-              <h3
-                className="text-base font-semibold font-sans 
-                        text-text-lightmode-primary dark:text-text-darkmode-primary"
-              >
-                Create a Pool
-              </h3>
-              <p
-                className="text-sm text-text-lightmode-secondary 
-                dark:text-text-darkmode-secondary whitespace-normal"
-              >
-                Easily create a new liquidity pool by depositing tokens. Pair assets, and earn trading fees from
-                every transaction.
-              </p>
-            </div>
-          </div>
-        </DropdownMenuItem>
         {gammaBoostedRewardsIsActive && (
           <DropdownMenuItem
             onClick={() => {
