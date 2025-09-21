@@ -16,7 +16,7 @@ const GenericNotFound: FC<{ redirectLink?: string; redirectString?: string }> = 
   return (
     <div
       className={`
-    flex flex-1 flex-col items-center relative h-[calc(100vh_-_39px)] w-full
+    flex flex-1 flex-col items-center relative h-[100vh] w-full
     `}
     >
       <Lottie animationData={notFound} className="h-[500px]" />

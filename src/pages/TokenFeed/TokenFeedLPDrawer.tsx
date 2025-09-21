@@ -139,7 +139,7 @@ function TokenFeedLpDrawer() {
           placement={isMobile ? 'bottom' : 'right'}
           fullScreen={isMobile}
           className={`flex flex-col gap-3 p-0 rounded-none h-full sm:w-[450px] sm:max-h-screen border-1 border-solid
-           sm:border-r-0 dark:border-black-4 sm:rounded-none border-b-0 rounded-b-[0px] max-h-[calc(100vh-56px)]
+           sm:border-r-0 dark:border-black-4 sm:rounded-none border-b-0 rounded-b-[0px] max-h-[100vh]
            max-sm:rounded-t-[8px]
            `}
         >

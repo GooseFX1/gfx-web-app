@@ -64,13 +64,13 @@ export type RPC = {
 export const HELIUS_RPC: RPC = {
   chainId: ENV.MainnetBeta,
   name: 'Helius',
-  endpoint: `https://yearling-adorne-fast-mainnet.helius-rpc.com/`,
+  endpoint: `https://api.mainnet-beta.solana.com`,
   network: WalletAdapterNetwork.Mainnet
 }
 const CUSTOM_RPC: RPC = {
   chainId: ENV.MainnetBeta,
   name: 'Custom',
-  endpoint: 'https://yearling-adorne-fast-mainnet.helius-rpc.com/', // fallback for first set
+  endpoint: 'https://api.mainnet-beta.solana.com', // fallback for first set
   network: WalletAdapterNetwork.Mainnet
 }
 export const RPCs = {

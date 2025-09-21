@@ -76,7 +76,7 @@ export const Router: FC = () => {
                 <PriceFeedFarmProvider>
                   <AppLayout>
                     <Toaster duration={5000} />
-                    {isUnderMaintenance ? (
+                    {isUnderMaintenance || process.env.NODE_ENV !== 'production' ? (
                       <Maintenance />
                     ) : (
                       <Suspense fallback={<PageLoader />}>
