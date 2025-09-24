@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 
 interface IUseBreakPoint {
   isMobile: boolean
+  isSmallTablet: boolean
   isTablet: boolean
   isLaptop: boolean
   isDesktop: boolean
@@ -14,6 +15,7 @@ const DESKTOP_BREAKPOINT = 1200
 function useBreakPoint(): IUseBreakPoint {
   const [breakpoints, setBreakpoints] = useState(() => ({
     isMobile: window.innerWidth <= MOBILE_BREAKPOINT,
+    isSmallTablet: window.innerWidth > MOBILE_BREAKPOINT && window.innerWidth < TABLET_BREAKPOINT,
     isTablet: window.innerWidth >= TABLET_BREAKPOINT && window.innerWidth < DESKTOP_BREAKPOINT,
     isLaptop: window.innerWidth >= DESKTOP_BREAKPOINT,
     isDesktop: window.innerWidth >= DESKTOP_BREAKPOINT
@@ -22,6 +24,7 @@ function useBreakPoint(): IUseBreakPoint {
   const handleResize = useCallback(() => {
     setBreakpoints({
       isMobile: window.innerWidth <= MOBILE_BREAKPOINT,
+      isSmallTablet: window.innerWidth > MOBILE_BREAKPOINT && window.innerWidth < TABLET_BREAKPOINT,
       isTablet: window.innerWidth >= TABLET_BREAKPOINT && window.innerWidth < DESKTOP_BREAKPOINT,
       isLaptop: window.innerWidth >= DESKTOP_BREAKPOINT,
       isDesktop: window.innerWidth >= DESKTOP_BREAKPOINT
